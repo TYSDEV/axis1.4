@@ -70,7 +70,7 @@ import javax.xml.namespace.QName;
 
 import org.apache.axis.wsdl.wsdl2ws.WrapperFault;
 import org.apache.axis.wsdl.wsdl2ws.WrapperUtils;
-import org.apache.axis.wsdl.wsdl2ws.cpp.CPPUtils;
+import org.apache.axis.wsdl.wsdl2ws.c.CUtils;
 import org.apache.axis.wsdl.wsdl2ws.info.MethodInfo;
 import org.apache.axis.wsdl.wsdl2ws.info.ParameterInfo;
 import org.apache.axis.wsdl.wsdl2ws.info.Type;
@@ -184,14 +184,14 @@ public class WrapWriter extends CFileWriter{
 		}
 		MethodInfo minfo = (MethodInfo)methods.get(0);
 		//if conditions (if parts)		
-		writer.write("\tif (0 == strcmp(method, \""+ minfo.getMethodname() +"\"))\n");
-		writer.write("\t\treturn "+minfo.getMethodname()+"(mc);\n");
+		writer.write("\tif (0 == strcmp(method, \""+ minfo.getMethodname() + "\"))\n");
+		writer.write("\t\treturn "+minfo.getMethodname() + CUtils.WRAPPER_METHOD_APPENDER + "(mc);\n");
 		//(else if parts)
 		if (methods.size() > 1) {
 			for (int i = 1; i < methods.size(); i++) {
 				minfo = (MethodInfo)methods.get(i);
-				writer.write("\telse if (0 == strcmp(method, \""+ minfo.getMethodname() +"\"))\n");
-				writer.write("\t\treturn "+minfo.getMethodname()+"(mc);\n");
+				writer.write("\telse if (0 == strcmp(method, \""+ minfo.getMethodname() + "\"))\n");
+				writer.write("\t\treturn "+minfo.getMethodname() + CUtils.WRAPPER_METHOD_APPENDER + "(mc);\n");
 			}
 		}
 		//(else part)
@@ -255,7 +255,7 @@ public class WrapWriter extends CFileWriter{
 		writer.write("// This method wrap the service method \n");
 		writer.write("//////////////////////////////////////////////////////////////////\n");
 		//method signature
-		writer.write("int "+classname+"::" + methodName + "(IMessageData* mc)\n{\n");
+		writer.write("int "+classname+"::" + methodName + CUtils.WRAPPER_METHOD_APPENDER + "(IMessageData* mc)\n{\n");
 		writer.write("\tIWrapperSoapSerializer *pIWSSZ = NULL;\n");
 		writer.write("\tmc->getSoapSerializer(&pIWSSZ);\n");
 		writer.write("\tif (!pIWSSZ) return AXIS_FAIL;\n");
@@ -266,8 +266,12 @@ public class WrapWriter extends CFileWriter{
 		for (int i = 0; i < paramsB.size(); i++) {
 			paraTypeName = ((ParameterInfo)paramsB.get(i)).getLangName();
 			if((CUtils.isSimpleType(((ParameterInfo)paramsB.get(i)).getLangName()))){
-				//for simple types	
-				writer.write("\t"+paraTypeName+" v"+i+" = pIWSDZ->"+CPPUtils.getParameterGetValueMethodName(paraTypeName)+"();\n");
+				//for simple types
+				if ("char*".equals(paraTypeName)|| "Axis_Base64Binary".equals(paraTypeName) || "Axis_HexBinary".equals(paraTypeName)){	
+					writer.write("\t"+paraTypeName+" v"+i+" = strdup(pIWSDZ->"+CUtils.getParameterGetValueMethodName(paraTypeName)+"());\n");
+				}else{
+					writer.write("\t"+paraTypeName+" v"+i+" = pIWSDZ->"+CUtils.getParameterGetValueMethodName(paraTypeName)+"();\n");					
+				}
 			}else if((type = this.wscontext.getTypemap().getType(((ParameterInfo)paramsB.get(i)).getSchemaName())) != null && type.isArray()){
 				QName qname = type.getTypNameForAttribName("item");
 				String containedType = null;
@@ -277,7 +281,7 @@ public class WrapWriter extends CFileWriter{
 					writer.write("\tv"+i+".m_Size = pIWSDZ->GetArraySize();\n");
 					writer.write("\tif (v"+i+".m_Size < 1) return AXIS_FAIL;\n");
 					writer.write("\tv"+i+".m_Array = new "+containedType+"[v"+i+".m_Size];\n");
-					writer.write("\tif (AXIS_SUCCESS != pIWSDZ->GetArray((Axis_Array*)(&v"+i+"), "+CPPUtils.getXSDTypeForBasicType(containedType)+")) return AXIS_FAIL;\n");
+					writer.write("\tif (AXIS_SUCCESS != pIWSDZ->GetArray((Axis_Array*)(&v"+i+"), "+CUtils.getXSDTypeForBasicType(containedType)+")) return AXIS_FAIL;\n");
 				}
 				else{
 					containedType = qname.getLocalPart();
@@ -329,13 +333,13 @@ public class WrapWriter extends CFileWriter{
 			writer.write(");\n");
 			/* set the result */
 			if (returntypeissimple){
-				writer.write("\treturn pIWSSZ->AddOutputParam(\""+methodName+"Return\", ret, "+CPPUtils.getXSDTypeForBasicType(outparamType)+");\n");
+				writer.write("\treturn pIWSSZ->AddOutputParam(\""+methodName+"Return\", ret, "+CUtils.getXSDTypeForBasicType(outparamType)+");\n");
 			}else if(returntypeisarray){
 				QName qname = retType.getTypNameForAttribName("item");
 				String containedType = null;
 				if (CUtils.isSimpleType(qname)){
 					containedType = CUtils.getclass4qname(qname);
-					writer.write("\treturn pIWSSZ->AddOutputParam(\""+methodName+"Return\", (Axis_Array*)(&ret),"+CPPUtils.getXSDTypeForBasicType(containedType)+");\n");
+					writer.write("\treturn pIWSSZ->AddOutputParam(\""+methodName+"Return\", (Axis_Array*)(&ret),"+CUtils.getXSDTypeForBasicType(containedType)+");\n");
 				}
 				else{
 					containedType = qname.getLocalPart();

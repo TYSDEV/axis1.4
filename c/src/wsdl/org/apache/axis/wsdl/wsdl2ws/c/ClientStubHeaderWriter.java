@@ -73,10 +73,10 @@ import org.apache.axis.wsdl.wsdl2ws.info.ParameterInfo;
 import org.apache.axis.wsdl.wsdl2ws.info.Type;
 import org.apache.axis.wsdl.wsdl2ws.info.WebServiceContext;
 
-public class ServiceWriter extends CFileWriter{
+public class ClientStubHeaderWriter extends HeaderFileWriter{
 	private WebServiceContext wscontext;
 	private ArrayList methods;	
-	public ServiceWriter(WebServiceContext wscontext)throws WrapperFault{
+	public ClientStubHeaderWriter(WebServiceContext wscontext)throws WrapperFault{
 		super(WrapperUtils.getClassNameFromFullyQualifiedName(wscontext.getSerInfo().getQualifiedServiceName()));
 		this.wscontext = wscontext;
 		this.methods = wscontext.getSerInfo().getMethods();
@@ -87,17 +87,53 @@ public class ServiceWriter extends CFileWriter{
 		if(targetOutputLocation.endsWith("/"))
 			targetOutputLocation = targetOutputLocation.substring(0, targetOutputLocation.length() - 1);
 		new File(targetOutputLocation).mkdirs();
-		String fileName = targetOutputLocation + "/" + classname + ".c";
+		String fileName = targetOutputLocation + "/" + classname + ".h";
 		return new File(fileName);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.apache.axis.wsdl.wsdl2ws.cpp.HeaderFileWriter#writeAttributes()
+	 */
+	protected void writeAttributes() throws WrapperFault {
+		try {
+			writer.write("private:\n\tCall* m_pCall;\n");
+		}catch(IOException e){
+			throw new WrapperFault(e);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.apache.axis.wsdl.wsdl2ws.cpp.HeaderFileWriter#writeClassComment()
+	 */
 	protected void writeClassComment() throws WrapperFault {
 		try{
-			writer.write("///////////////////////////////////////////////////////////////////////\n");	
-			writer.write("//This is the Service implementation C file genarated by theWSDL2Ws.\n");
-			writer.write("//		"+classname+".c\n");
+			writer.write("/////////////////////////////////////////////////////////////////////////////\n");
+			writer.write("// This is the Client Stub Class genarated by the tool WSDL2Ws\n");
+			writer.write("// "+classname+".h: interface for the "+classname+"class.\n");
 			writer.write("//\n");
 			writer.write("//////////////////////////////////////////////////////////////////////\n");
+		}catch(IOException e){
+			throw new WrapperFault(e);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.apache.axis.wsdl.wsdl2ws.cpp.HeaderFileWriter#writeConstructors()
+	 */
+	protected void writeConstructors() throws WrapperFault {
+		try{
+		writer.write("public:\n\t"+classname+"();\n");
+		}catch(IOException e){
+			throw new WrapperFault(e);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.apache.axis.wsdl.wsdl2ws.cpp.HeaderFileWriter#writeDistructors()
+	 */
+	protected void writeDistructors() throws WrapperFault {
+		try{
+		writer.write("public:\n\tvirtual ~"+classname+"();\n");
 		}catch(IOException e){
 			throw new WrapperFault(e);
 		}
@@ -110,29 +146,32 @@ public class ServiceWriter extends CFileWriter{
 		MethodInfo minfo;
 		boolean isSimpleType;
 		 try{
-		  writer.write("\n");	
+		  writer.write("public: \n");	
 		  for(int i = 0; i < methods.size(); i++){
 			  minfo = (MethodInfo)this.methods.get(i);
-
+			  //write return type
 			  if(minfo.getReturnType()==null)
-				  writer.write("void ");
+				  writer.write("\tvoid ");
 			  else {
-				String outparam = minfo.getReturnType().getLangName();
-				writer.write(WrapperUtils.getClassNameFromParamInfoConsideringArrays(minfo.getReturnType(),wscontext)+" ");
+			  	  String outparam = minfo.getReturnType().getLangName();
+				  isSimpleType = CUtils.isSimpleType(outparam);
+				  writer.write("\t"+WrapperUtils.getClassNameFromParamInfoConsideringArrays(minfo.getReturnType(),wscontext)+" ");
 			  }
 			  writer.write(minfo.getMethodname()+"(");
+            
 			  //write parameter names 
-			//write parameter names 
-			Iterator params = minfo.getParameterTypes().iterator();
-			if(params.hasNext()){
-				ParameterInfo fparam = (ParameterInfo)params.next();
-				writer.write(WrapperUtils.getClassNameFromParamInfoConsideringArrays(fparam,wscontext)+" Value"+0);
-			}
-			for(int j =1; params.hasNext();j++){
-				ParameterInfo nparam = (ParameterInfo)params.next();
-				writer.write(","+WrapperUtils.getClassNameFromParamInfoConsideringArrays(nparam,wscontext)+" Value"+j);
-			}
-			writer.write(")\n{\n}\n");
+			  Iterator params = minfo.getParameterTypes().iterator();
+			  if(params.hasNext()){
+			  	  ParameterInfo fparam = (ParameterInfo)params.next();
+				  isSimpleType = CUtils.isSimpleType(fparam.getLangName());
+				  writer.write(WrapperUtils.getClassNameFromParamInfoConsideringArrays(fparam,wscontext)+" Value"+0);
+			  }
+			  for(int j =1; params.hasNext();j++){
+				  ParameterInfo nparam = (ParameterInfo)params.next();
+				  isSimpleType = CUtils.isSimpleType(nparam.getLangName());
+				  writer.write(","+WrapperUtils.getClassNameFromParamInfoConsideringArrays(nparam,wscontext)+" Value"+j);
+			  }
+			  writer.write(");\n");
 		  }
 		}catch (Exception e) {
 			  e.printStackTrace();
@@ -144,24 +183,29 @@ public class ServiceWriter extends CFileWriter{
 	 */
 	protected void writePreprocssorStatements() throws WrapperFault {
 		try{
+			writer.write("#define USES_AXIS_C_TYPES\n\n");
+			writer.write("#include <axis/client/Call.h>\n");
 			Type atype;
 			Iterator types = this.wscontext.getTypemap().getTypes().iterator();
 			HashSet typeSet = new HashSet();
-			writer.write("#include <axis/common/AxisUserAPI.h>\n\n");
 			while(types.hasNext()){
 				atype = (Type)types.next();
 				typeSet.add(atype.getLanguageSpecificName());
-			}		
+			}
 			Iterator itr = typeSet.iterator();
 			while(itr.hasNext())
 			{
 				writer.write("#include \""+itr.next().toString()+".h\"\n");
-			}		
+			}			
 			writer.write("\n");
 		}catch (IOException e) {
 			e.printStackTrace();
 			throw new WrapperFault(e);
 		}
 	}
-
+	protected String getFileType()
+	{
+		return "ClientStub";	
+	}
 }
+

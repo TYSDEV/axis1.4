@@ -58,110 +58,79 @@
  * @author Susantha Kumara(susantha@opensource.lk, skumara@virtusa.com)
  */
 
+
 package org.apache.axis.wsdl.wsdl2ws.c;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
+
+import javax.xml.namespace.QName;
 
 import org.apache.axis.wsdl.wsdl2ws.WrapperFault;
-import org.apache.axis.wsdl.wsdl2ws.WrapperUtils;
-import org.apache.axis.wsdl.wsdl2ws.info.MethodInfo;
-import org.apache.axis.wsdl.wsdl2ws.info.ParameterInfo;
 import org.apache.axis.wsdl.wsdl2ws.info.Type;
 import org.apache.axis.wsdl.wsdl2ws.info.WebServiceContext;
 
-public class ServiceWriter extends CFileWriter{
-	private WebServiceContext wscontext;
-	private ArrayList methods;	
-	public ServiceWriter(WebServiceContext wscontext)throws WrapperFault{
-		super(WrapperUtils.getClassNameFromFullyQualifiedName(wscontext.getSerInfo().getQualifiedServiceName()));
-		this.wscontext = wscontext;
-		this.methods = wscontext.getSerInfo().getMethods();
+public class ArrayParamWriter extends ParamWriter{
+	public ArrayParamWriter(WebServiceContext wscontext,Type type)throws WrapperFault{
+		super(wscontext,type);
 	}
-
+	public void writeSource()throws WrapperFault{
+	   try{
+			this.writer = new BufferedWriter(new FileWriter(getFilePath(), false));
+			writeClassComment();
+			// if this headerfile not defined define it 
+			this.writer.write("#if !defined(__"+classname.toUpperCase()+"_"+getFileType().toUpperCase()+"_H__INCLUDED_)\n");
+			this.writer.write("#define __"+classname.toUpperCase()+"_"+getFileType().toUpperCase()+"_H__INCLUDED_\n\n");
+			if (attribs.length != 1){
+				System.out.println("Array "+classname+" contains unexpected no of variables");
+				throw new WrapperFault("Array type "+classname+" contain unexpected no of types");
+			}
+			//include header file for the contained type
+			QName qname = type.getTypNameForAttribName("item");
+			if (!CUtils.isSimpleType(qname)){
+				writer.write("#include \""+attribs[0][1]+".h\"\n\n");
+			}
+			else{
+				writer.write("#include <axis/common/AxisUserAPI.h>\n\n");
+			}
+			writeArrayStruct();
+			this.writer.write("#endif // !defined(__"+classname.toUpperCase()+"_"+getFileType().toUpperCase()+"_H__INCLUDED_)\n");
+			writer.flush();
+			writer.close();
+			System.out.println(getFilePath().getAbsolutePath() + " created.....");
+		} catch (IOException e) {
+			e.printStackTrace();
+			throw new WrapperFault(e);
+		}
+	}
 	protected File getFilePath() throws WrapperFault {
 		String targetOutputLocation = this.wscontext.getWrapInfo().getTargetOutputLocation();
 		if(targetOutputLocation.endsWith("/"))
 			targetOutputLocation = targetOutputLocation.substring(0, targetOutputLocation.length() - 1);
 		new File(targetOutputLocation).mkdirs();
-		String fileName = targetOutputLocation + "/" + classname + ".c";
+		String fileName = targetOutputLocation + "/" + this.classname + ".h";
 		return new File(fileName);
 	}
-
-	protected void writeClassComment() throws WrapperFault {
-		try{
-			writer.write("///////////////////////////////////////////////////////////////////////\n");	
-			writer.write("//This is the Service implementation C file genarated by theWSDL2Ws.\n");
-			writer.write("//		"+classname+".c\n");
-			writer.write("//\n");
-			writer.write("//////////////////////////////////////////////////////////////////////\n");
-		}catch(IOException e){
-			throw new WrapperFault(e);
+	
+	protected void writeArrayStruct()throws WrapperFault{
+		try{			
+			writer.write("typedef struct "+classname+"Tag\n{\n");
+			writer.write("\t"+attribs[0][1]+"* m_Array;\n\tint m_Size;\n} "+classname+";\n\n");
+		} catch (IOException e) {
+			 throw new WrapperFault(e);
 		}
 	}
-
-	/* (non-Javadoc)
-	 * @see org.apache.axis.wsdl.wsdl2ws.cpp.HeaderFileWriter#writeMethods()
-	 */
-	protected void writeMethods() throws WrapperFault {
-		MethodInfo minfo;
-		boolean isSimpleType;
-		 try{
-		  writer.write("\n");	
-		  for(int i = 0; i < methods.size(); i++){
-			  minfo = (MethodInfo)this.methods.get(i);
-
-			  if(minfo.getReturnType()==null)
-				  writer.write("void ");
-			  else {
-				String outparam = minfo.getReturnType().getLangName();
-				writer.write(WrapperUtils.getClassNameFromParamInfoConsideringArrays(minfo.getReturnType(),wscontext)+" ");
-			  }
-			  writer.write(minfo.getMethodname()+"(");
-			  //write parameter names 
-			//write parameter names 
-			Iterator params = minfo.getParameterTypes().iterator();
-			if(params.hasNext()){
-				ParameterInfo fparam = (ParameterInfo)params.next();
-				writer.write(WrapperUtils.getClassNameFromParamInfoConsideringArrays(fparam,wscontext)+" Value"+0);
-			}
-			for(int j =1; params.hasNext();j++){
-				ParameterInfo nparam = (ParameterInfo)params.next();
-				writer.write(","+WrapperUtils.getClassNameFromParamInfoConsideringArrays(nparam,wscontext)+" Value"+j);
-			}
-			writer.write(")\n{\n}\n");
-		  }
-		}catch (Exception e) {
-			  e.printStackTrace();
-			  throw new WrapperFault(e);
-		}	}
-
-	/* (non-Javadoc)
-	 * @see org.apache.axis.wsdl.wsdl2ws.cpp.HeaderFileWriter#writePreprocssorStatements()
-	 */
-	protected void writePreprocssorStatements() throws WrapperFault {
-		try{
-			Type atype;
-			Iterator types = this.wscontext.getTypemap().getTypes().iterator();
-			HashSet typeSet = new HashSet();
-			writer.write("#include <axis/common/AxisUserAPI.h>\n\n");
-			while(types.hasNext()){
-				atype = (Type)types.next();
-				typeSet.add(atype.getLanguageSpecificName());
-			}		
-			Iterator itr = typeSet.iterator();
-			while(itr.hasNext())
-			{
-				writer.write("#include \""+itr.next().toString()+".h\"\n");
-			}		
-			writer.write("\n");
-		}catch (IOException e) {
-			e.printStackTrace();
-			throw new WrapperFault(e);
-		}
+		
+	protected void writeConstructors()throws WrapperFault{}
+	   
+	protected void writeDistructors() throws WrapperFault {}
+	
+	protected void writeMethods()throws WrapperFault{}
+	
+	protected String getFileType()
+	{
+		return "Array";	
 	}
-
 }
