@@ -141,11 +141,13 @@ int AxisTransport::Send_bytes(const char* pSendBuffer, const void* pStream)
 int AxisTransport::Get_bytes(char* pRecvBuffer, int nBuffSize, int* pRecvSize, const void* pStream)
 {
     Receiver* pReceiver = (Receiver*) pStream;
-    const string& strReceive =  pReceiver->Recv();
-    int nLen = strlen(strReceive.c_str());
-    if(nLen < nBuffSize)
-    {
-        strcpy(pRecvBuffer, strReceive.c_str());
+    const char* strReceive =  pReceiver->Recv(nBuffSize);
+	int nLen;
+	if (strReceive)
+	{
+		nLen = strlen(strReceive);
+		nLen = (nLen < nBuffSize) ? nLen : nBuffSize; 
+        strncpy(pRecvBuffer, strReceive, nLen);
         *pRecvSize = nLen;
         return AXIS_SUCCESS;
     }
@@ -162,10 +164,10 @@ int AxisTransport::Send_transport_information(void* pSoapStream)
 		Sender* pSender = (Sender*) pSStream->str.op_stream;
 		if (!pSender) return AXIS_FAIL;
 		string sName, sValue;
-		for (int x=0; x<pSStream->so.http.ip_headercount;x++)
+		for (int x=0; x<pSStream->so.http.op_headercount;x++)
 		{
-			sName = pSStream->so.http.ip_headers[x].headername;
-			sValue = pSStream->so.http.ip_headers[x].headervalue;
+			sName = pSStream->so.http.op_headers[x].headername;
+			sValue = pSStream->so.http.op_headers[x].headervalue;
 			pSender->SetProperty(sName, sValue);
 		}
 		return AXIS_SUCCESS;

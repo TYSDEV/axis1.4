@@ -81,6 +81,8 @@ Call::Call()
 	m_pIWSDZ = NULL;
 	m_Soap.so.http.ip_headercount = 0;
 	m_Soap.so.http.ip_headers = NULL;
+	m_Soap.so.http.op_headercount = 0;
+	m_Soap.so.http.op_headers = NULL;
 	initialize_module(0);
 	m_pTransport = NULL;
 	m_nReturnType = XSD_UNKNOWN;

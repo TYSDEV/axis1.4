@@ -72,25 +72,42 @@ Receiver::~Receiver()
 
 }
 
-const std::string& Receiver::Recv() throw (AxisException)
+const char* Receiver::Recv(int nMaxToRead) throw (AxisException)
 {
-	try
-	{
-		*m_pTrChannel >> repMsg;
-	}
-	catch(AxisException& ex)
-	{
-		// Get the fault message.
-		*m_pTrChannel >> repMsg;
-		#ifdef _DEBUG
-		//	std::cerr << ex.GetErrorMsg() << std::endl;
-		#endif
-	}
-	catch(...)
-	{
-		throw AxisException(RECEPTION_ERROR);
-	}
+	const char* pToReturn = NULL;
 
-	return repMsg;
+	if (0 == m_BytesRead)
+	{
+		try
+		{
+			*m_pTrChannel >> (&m_pMsg);
+			m_MsgSize = strlen(m_pMsg);
+		}
+		catch(AxisException& ex)
+		{
+			// Get the fault message.
+			*m_pTrChannel >> (&m_pMsg);
+			m_MsgSize = strlen(m_pMsg);
+			#ifdef _DEBUG
+			//	std::cerr << ex.GetErrorMsg() << std::endl;
+			#endif
+		}
+		catch(...)
+		{
+			throw AxisException(RECEPTION_ERROR);
+		}
+	}
+	if (m_MsgSize > 0)
+	{
+		pToReturn = m_pMsg;
+		m_BytesRead = (m_MsgSize < nMaxToRead) ? m_MsgSize : nMaxToRead;
+		m_MsgSize -= m_BytesRead;
+		m_pMsg += m_BytesRead;
+		return pToReturn;		
+	}
+	else
+	{
+		return NULL;
+	}
 }
 

@@ -90,7 +90,7 @@ SoapSerializer::SoapSerializer()
 	m_pSoapEnvelope = NULL;
 	m_iSoapVersion = SOAP_VER_1_1;
 	m_pOutputStream = NULL;
-    m_cSerializedBuffer = malloc(INITIAL_SERIALIZE_BUFFER_SIZE);
+    m_cSerializedBuffer = (char*) malloc(INITIAL_SERIALIZE_BUFFER_SIZE);
 	m_iCurrentSerBufferSize = 0;
     m_iBufferSize = INITIAL_SERIALIZE_BUFFER_SIZE;
 }
@@ -376,7 +376,7 @@ IWrapperSoapSerializer& SoapSerializer::operator <<(const AxisChar* cSerialized)
 	if((m_iCurrentSerBufferSize + iTmpSerBufferSize)>= m_iBufferSize) 
 	{
         m_iBufferSize *= 2;
-        m_cSerializedBuffer = realloc(m_cSerializedBuffer, m_iBufferSize);
+        m_cSerializedBuffer = (char*) realloc(m_cSerializedBuffer, m_iBufferSize);
 	}    
 	strcat(m_cSerializedBuffer, cSerialized);
 	m_iCurrentSerBufferSize += iTmpSerBufferSize;
