@@ -62,7 +62,6 @@ import org.apache.commons.logging.LogFactory;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.Serializable;
 import java.util.Hashtable;
 
 /**
@@ -82,7 +81,7 @@ import java.util.Hashtable;
 
 import org.apache.axis.transport.http.HTTPConstants;
 
-public abstract class Part implements Serializable
+public abstract class Part
 {
     protected static Log log =
         LogFactory.getLog(Part.class.getName());
