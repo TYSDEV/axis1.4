@@ -215,7 +215,7 @@ Rename axiscpp.conf_win to axiscpp.conf.
 <br> <br>
 
 13. Start the SimpleAxisServer by providing the port to which it operates.(eg: c:\SimpleAxisServer>SimpleAxisServer 80)<br> <br>
-<b>Note:</b>If SimpleAxisServer is not running then paste AxisClient.dll to the place where SimpleAxisServer.exe is.
+<b>Note:</b>If SimpleAxisServer does not start then paste AxisClient.dll to the place where SimpleAxisServer.exe is.
 <br> <br>
 
 Also in order to run the provided samples do the following.<br> <br>
