@@ -43,13 +43,13 @@ public class EWSTask extends Task{
             if(module == null){
                 throw new BuildException("the module name not specifed");
             }
-            root = project.getBaseDir();
+            root = getProject().getBaseDir();
             File moduleFile = new File(root,module);
             File outDirFile = new File(root,outDir);
             
             AntClassLoader cl = new AntClassLoader(
                                 getClass().getClassLoader(),
-                                project,
+                                getProject(),
                                 classpath,
                                 true);
             Thread.currentThread().setContextClassLoader(cl);
@@ -139,7 +139,7 @@ public class EWSTask extends Task{
     }
     public Path createClasspath() {
       if (classpath == null) {
-        classpath = new Path(project);
+        classpath = new Path(getProject());
       }
       return classpath.createPath();
     }
