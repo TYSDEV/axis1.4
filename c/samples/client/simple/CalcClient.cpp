@@ -6,7 +6,7 @@ bool IsNumber(const char* p);
 
 int main(int argc, char* argv[])
 {
-	char endpoint[256];
+	char endpoint[512];
 	const char* server="localhost";
 	const char* port="80";
 	const char* op = 0;
@@ -52,7 +52,7 @@ int main(int argc, char* argv[])
 	if (strcmp(op, "add") == 0)
 	{
                 iResult = ws.add(i1, i2);
-                ws.getFaultDetail(&pcDetail);
+                //ws.getFaultDetail(&pcDetail);
                 printf("pcDetail:%s\n", pcDetail);
 	}
 	else 	if (strcmp(op, "sub") == 0)
