@@ -67,6 +67,7 @@
 #include <string>
 #include <axis/common/AxisTrace.h>
 
+
 WSDDDocument::WSDDDocument()
 {
 	m_lev0 = WSDD_UNKNOWN;
@@ -94,13 +95,11 @@ int WSDDDocument::GetDeployment(const AxisChar* sWSDD, WSDDDeployment* pDeployme
 
 int WSDDDocument::ParseDocument(const AxisChar* sWSDD)
 {
-	AXISTRACE1("inside ParseDocument\n", 2);
 	try
 	{
 		SAX2XMLReader* parser = XMLReaderFactory::createXMLReader();
 		parser->setContentHandler(this);
-		parser->setErrorHandler(this);     
-		//AXISTRACE1("BEFORE parser->parse(sWSDD);");
+		parser->setErrorHandler(this);     		
 		parser->parse(sWSDD);   
 		delete parser;
 		if (m_bFatalError || m_bError) return AXIS_FAIL;

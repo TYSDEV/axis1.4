@@ -57,7 +57,7 @@
 #if !defined(__AXIS_AXISCONFIG_H_INCLUDED__)
 #define __AXIS_AXISCONFIG_H_INCLUDED__
 
-#define CONFBUFFSIZE 200
+#define CONFBUFFSIZE 256
 
 /**
     @class AxisConfig

@@ -72,6 +72,7 @@
 #include <axis/wsdd/WSDDDeployment.h>
 
 extern WSDDDeployment* g_pWSDDDeployment;
+extern AxisTrace* g_pAT;
 
 HandlerLoader::HandlerLoader()
 {

@@ -72,6 +72,8 @@
 #include <axis/common/AxisConfig.h>
 #include <axis/common/AxisTrace.h>
 
+extern AxisTrace* g_pAT;
+
 extern unsigned char chEBuf[1024];
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction

@@ -9,6 +9,7 @@
 
 extern WSDDDeployment* g_pWSDDDeployment;
 extern HandlerPool* g_pHandlerPool;
+extern AxisTrace* g_pAT;
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction

@@ -64,6 +64,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <axis/common/AxisTrace.h>
+extern AxisTrace* g_pAT;
 
 
 int set_header(Ax_soapstream* soap, char * pchkey, char * pchvalue)

@@ -15,7 +15,9 @@ libsoap_la_SOURCES = Attribute.cpp \
         SoapSerializer.cpp \
         URIMapping.cpp \
         XMLStreamHandler.cpp \
-	SoapKeywordMapping.cpp
+	SoapKeywordMapping.cpp \
+	SoapBinInputStream.cpp \
+	SoapInputSource.cpp
 
 libsoap_la_LIBADD = -L$(AXISCPP_HOME)/lib/xerces-c -lxerces-c
 INCLUDES = -I$(AXISCPP_HOME)/include

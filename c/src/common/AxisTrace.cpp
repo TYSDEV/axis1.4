@@ -68,6 +68,7 @@
 
 
 extern AxisConfig* g_pConfig;
+
 unsigned char res[1024];
 
 
@@ -75,13 +76,36 @@ using namespace std;
 
 AxisTrace::AxisTrace()
 {
-    m_sFileName = NULL;
+    //fileTrace = NULL;
 }
 
 AxisTrace::~AxisTrace()
 {
+    fclose(fileTrace);
 }
 
+int AxisTrace::openFile()
+{
+    char* sFileName =  g_pConfig->GetAxisLogPath();
+    if((fileTrace = fopen(sFileName, "w")) == NULL)
+        return AXIS_FAIL;
+    fclose(fileTrace);
+    int length = strlen(sFileName) + 12;
+    char* setPerm = (char*) malloc(length);
+    if(setPerm)
+    {
+        strcpy(setPerm, "chmod 777 ");
+        strcat(setPerm, sFileName);
+    }
+
+#ifdef __GNUC__
+    system(setPerm);
+#endif
+    if((fileTrace = fopen(sFileName, "ab")) == NULL)
+        return AXIS_FAIL;
+                
+    return AXIS_SUCCESS;
+}
 
 /** 
 *   Logs messages according to their severity level.
@@ -92,12 +116,9 @@ AxisTrace::~AxisTrace()
 */
 int AxisTrace::logaxis(const char* sLog, int level, char* arg2, int arg3)
 {
-    m_sFileName =  g_pConfig->GetAxisLogPath();
-    
-    if ((fileTrace = fopen(m_sFileName, "a")) == NULL)
-    {
+    if(!fileTrace)
         return AXIS_FAIL;
-    }   
+    
     
     time_t ltime;
     time(&ltime);
@@ -129,7 +150,7 @@ int AxisTrace::logaxis(const char* sLog, int level, char* arg2, int arg3)
     fputs("-------------------------------------------------", fileTrace);
     fputs("\n", fileTrace);
         
-    fclose(fileTrace);    
+    //fclose(fileTrace);    
     /*
         *fout << "time:" << ctime(&ltime)
         << " :file:"<< arg2 << " :line:" << arg3 << ":" << endl
@@ -150,12 +171,8 @@ int AxisTrace::logaxis(const char* sLog, int level, char* arg2, int arg3)
 */
 int AxisTrace::logaxis(const char* sLog1, const char* sLog2, int level, char* arg3, int arg4)
 {
-    m_sFileName =  g_pConfig->GetAxisLogPath();
-
-    if ((fileTrace = fopen(m_sFileName, "a")) == NULL)
-    {
-        return AXIS_FAIL;
-    }   
+    if(!fileTrace)
+        return AXIS_FAIL; 
   
     time_t ltime;
     time(&ltime);
@@ -186,7 +203,7 @@ int AxisTrace::logaxis(const char* sLog1, const char* sLog2, int level, char* ar
     fputs("\n", fileTrace);
     fputs("-------------------------------------------------", fileTrace);
     fputs("\n", fileTrace);
-    fclose(fileTrace);
+    //fclose(fileTrace);
         
     /**fout << "time:" << ctime(&ltime)
     << " :file:"<< arg3 << " :line:" << arg4 << endl

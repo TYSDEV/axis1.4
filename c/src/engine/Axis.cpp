@@ -90,6 +90,7 @@
 #include <axis/common/AxisUtils.h>
 #include <axis/common/AxisConfig.h>
 #include <axis/wsdd/WSDDKeywords.h>
+#include <axis/common/AxisTrace.h>
 
 
 #define BYTESTOREAD 64
@@ -113,6 +114,7 @@ HandlerPool* g_pHandlerPool;
 WSDDDeployment* g_pWSDDDeployment;
 AxisConfig* g_pConfig;
 SoapSerializer* g_pSZ;
+AxisTrace* g_pAT;
 
 
 extern "C" int process_request(Ax_soapstream *str)
@@ -254,11 +256,16 @@ extern "C" int initialize_module(int bServer)
 	ModuleInitialize();
 	if (bServer) //no client side wsdd processing at the moment
 	{
-        int status = g_pConfig->ReadConfFile();
+        int status = g_pConfig->ReadConfFile();/*Read from the configuration file*/
         if(status == AXIS_SUCCESS)
         {
             char* pWsddPath = g_pConfig->GetWsddFilePath();
             if (AXIS_SUCCESS != g_pWSDDDeployment->LoadWSDD(pWsddPath)) return AXIS_FAIL;
+            int status = g_pAT->openFile();
+            if(status == AXIS_FAIL)
+            {
+                return AXIS_FAIL;
+            }
         }
         else
         {
@@ -304,6 +311,7 @@ void ModuleInitialize()
 	//un synchronized read-only global variables.
 	g_pWSDDDeployment = new WSDDDeployment();
     g_pConfig = new AxisConfig();
+    g_pAT = new AxisTrace();
     
     
 }
@@ -321,4 +329,5 @@ void ModuleUnInitialize()
 	//un synchronized read-only global variables.
 	delete g_pWSDDDeployment;
     delete g_pConfig;
+    delete g_pAT;
 }

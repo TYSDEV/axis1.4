@@ -65,10 +65,10 @@
 #include <stdio.h>
 
 #define __AXISTRACE__
-#if defined(__AXISTRACE__)
-  #define AXISTRACE1(X, Y) tracer.logaxis(X,Y,__FILE__,__LINE__);
-  #define AXISTRACE2(X,Y, Z) tracer.logaxis(X,Y,Z,__FILE__,__LINE__);
-  #define AXISTRACE3(X) tracer.trace(X);
+#if defined(__AXISTRACE__)  
+  #define AXISTRACE1(X, Y) g_pAT->logaxis(X,Y,__FILE__,__LINE__);
+  #define AXISTRACE2(X,Y, Z) g_pAT->logaxis(X,Y,Z,__FILE__,__LINE__);
+  #define AXISTRACE3(X) g_pAT->trace(X);
   
 #endif
 #if !defined(__AXISTRACE__)
@@ -101,17 +101,17 @@ public:
 	 * @return The status which indicates whether the operation is success (AXIS_SUCCESS) or not (AXIS_FAIL).
 	 */
 	int trace(const char* pchLog);
-    int GetConfPath();
+    int openFile();
   
 private:
     char strLine[4];
     char* strLevel;
-    char* m_sFileName;
+    //char* m_sFileName;
     FILE* fileTrace;
     FILE* ConfFile; 
 
 };
 
-static AxisTrace tracer;
+//static AxisTrace tracer;
 
 #endif

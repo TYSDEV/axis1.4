@@ -68,6 +68,7 @@
 #include <axis/engine/HandlerChain.h>
 #include <axis/common/AxisTrace.h>
 #include <axis/common/GDefine.h>
+extern AxisTrace* g_pAT;
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
