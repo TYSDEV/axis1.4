@@ -70,9 +70,9 @@ SOAPStruct* echoSimpleTypesAsStruct(void* pStub, xsd__string Value0, int Value1,
 	pCall->_functions->setTransportProperty(pCall->_object,SOAPACTION_HEADER , "cgroupB#echoSimpleTypesAsStruct");
 	pCall->_functions->setSOAPVersion(pCall->_object, SOAP_VER_1_1);
 	pCall->_functions->setOperation(pCall->_object, "echoSimpleTypesAsStruct", "http://soapinterop.org/");
-	pCall->_functions->addParameter(pCall->_object, (void*)&Value0, "inputFloat", XSD_FLOAT);
+	pCall->_functions->addParameter(pCall->_object, (void*)&Value0, "inputString", XSD_STRING);
 	pCall->_functions->addParameter(pCall->_object, (void*)&Value1, "inputInteger", XSD_INT);
-	pCall->_functions->addParameter(pCall->_object, (void*)&Value2, "inputString", XSD_STRING);
+    pCall->_functions->addParameter(pCall->_object, (void*)&Value2, "inputFloat", XSD_FLOAT);
 	if (AXIS_SUCCESS == pCall->_functions->invoke(pCall->_object))
 	{
 		if(AXIS_SUCCESS == pCall->_functions->checkMessage(pCall->_object, "echoSimpleTypesAsStructResponse", "http://soapinterop.org/"))
