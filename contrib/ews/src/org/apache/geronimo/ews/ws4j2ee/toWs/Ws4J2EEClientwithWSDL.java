@@ -70,7 +70,7 @@ public class Ws4J2EEClientwithWSDL implements Generator {
 			wscontext.getMiscInfo().setTargetJ2EEContainer(clparser.getContanier());
             
             
-            //parsing of the webservice.xml happen here 
+            //parsing of the webservices.xml happen here 
             ServiceReferanceContext serviceContext = 
             	factory.getParserFactory().parseServiceReferance(wscontext,
             		new FileInputStream(wscfClientfile));

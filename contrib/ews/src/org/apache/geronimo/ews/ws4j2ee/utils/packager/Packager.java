@@ -48,13 +48,19 @@ public class Packager {
                     if (file.isDirectory()) {
                         ArrayList list = new ArrayList();
                         getSourceFiles(list, file);
+                        
                         for (int j = 0; j < list.size(); j++) {
-                            File temp = new File((String) list.get(i));
+                            File temp = new File((String) list.get(j));
+                            String filename = temp.getAbsolutePath();
+                            int index = filename.indexOf("classes/");
+                            if(index > 0){
+                                filename = filename.substring(index + "classes/".length());
+                            }
                             JARFileEntry newEntry =
-                                new JARFileEntry(
-                                    temp.getName(),
+                                new JARFileEntry(filename,
                                     new FileInputStream(temp));
                             jfile.addJarEntry(newEntry);
+                            System.out.println(filename);
 							
                         }
                     }

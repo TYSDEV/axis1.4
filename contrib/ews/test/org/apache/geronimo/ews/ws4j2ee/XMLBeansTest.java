@@ -44,10 +44,10 @@ public class XMLBeansTest extends AbstractTestCase{
         EjbJarDocument ejbjarDoc = EjbJarDocument.Factory.parse(
             new FileInputStream(getTestFile(testDir+"testData/math/ejb-jar.xml")));
         EjbJarDocument.EjbJar ejbjar =  ejbjarDoc.getEjbJar();
-        System.out.println(ejbjar.getDisplayName().getStringValue());
+        //System.out.println(ejbjar.getDisplayName().getStringValue());
         
         XmlObject[] vals = ejbjar.selectPath("ejb-jar/enterprise-beans/session");
-        System.out.println(vals.length);
+        //System.out.println(vals.length);
     }    
 
     public void testNamspacedD()throws Exception{
@@ -65,12 +65,12 @@ public class XMLBeansTest extends AbstractTestCase{
     
     public void testWSDD()throws Exception{
         WebservicesDocument wsDoc = WebservicesDocument.Factory.parse(
-            new FileInputStream(getTestFile("samples/ejb/echo/META-INF/webservice.xml")));
+            new FileInputStream(getTestFile("samples/ejb/echo/META-INF/webservices.xml")));
         WebservicesType ws =  wsDoc.getWebservices();
-        System.out.println(ws.getDisplayNameArray().length);
+        //System.out.println(ws.getDisplayNameArray().length);
         
         XmlObject[] vals = wsDoc.selectPath("declare namespace j2ee=\'http://java.sun.com/xml/ns/j2ee\' j2ee:webservices/j2ee:display-name");
-        System.out.println(((DisplayNameType)vals[0]).getStringValue());
+        //System.out.println(((DisplayNameType)vals[0]).getStringValue());
     }
 
 }

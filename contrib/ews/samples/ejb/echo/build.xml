@@ -16,7 +16,7 @@
 	</target>
 	<target name="jar" depends="compile" unless="jars.uptodate">
 		<mkdir dir="${build.classes}/META-INF/"/>
-		<copy file ="${basedir}/META-INF/webservice.xml" todir="${build.classes}/META-INF"/>
+		<copy file ="${basedir}/META-INF/webservices.xml" todir="${build.classes}/META-INF"/>
 		<copy file ="${basedir}/META-INF/ejb-jar.xml" todir="${build.classes}/META-INF"/>
 		<mkdir dir="${jar.dir}"/>
  		<jar jarfile="${jar.dir}/echo.jar" basedir="${build.classes}" >

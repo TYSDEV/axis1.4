@@ -16,6 +16,8 @@
 
 package org.apache.geronimo.ews.ws4j2ee.wsutils;
 
+import org.apache.axis.utils.ClassUtils;
+
 /**
  * <p>This class is the pool that pool the servlet based JSR109 implementations
  * These is a issue of the same thing happen differently when the code gerneration
@@ -33,7 +35,7 @@ public class ImplBeanPool {
 	} 
 	private Object getBean(String classname)throws J2EEFault{
 		try {
-            Class implClass = Class.forName(classname);
+            Class implClass = ClassUtils.forName(classname);
             return implClass.newInstance();
         } catch (Exception e) {
             e.printStackTrace();

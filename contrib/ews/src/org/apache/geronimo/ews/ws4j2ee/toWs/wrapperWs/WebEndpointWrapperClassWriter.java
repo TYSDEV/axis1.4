@@ -45,7 +45,7 @@ import org.apache.geronimo.ews.ws4j2ee.toWs.UnrecoverableGenerationFault;
  *          but only the SEI methods are exposed to the client.  </li>
  *	    <li>?A Service Implementation must be a stateless object. A Service 
  *           Implementation Bean must not save client specific state across method 
- *           calls either within the bean instance’s data members or external to 
+ *           calls either within the bean instanceï¿½s data members or external to 
  *           the instance. A container may use any bean instance to service a request.</li>
  *	    <li>?The class must be public, must not be final and must not be abstract.</li>
  *	    <li>?The class must not define the finalize() method.</li>
@@ -85,11 +85,12 @@ public class WebEndpointWrapperClassWriter extends JavaClassWriter {
 
 	protected String getimplementsPart() {
 		return " implements "
-			+ j2eewscontext.getMiscInfo().getJaxrpcSEI();
+			+ j2eewscontext.getMiscInfo().getJaxrpcSEI() +",org.apache.geronimo.ews.ws4j2ee.wsutils.ContextAccssible";
 	}
 
 	protected void writeAttributes() throws GenerationFault {
 		out.write("private " + implBean + " bean = null;\n");
+        out.write("private org.apache.axis.MessageContext msgcontext;\n");
 	}
 
 	protected void writeConstructors() throws GenerationFault {
@@ -104,6 +105,9 @@ public class WebEndpointWrapperClassWriter extends JavaClassWriter {
 	 * @see org.apache.geronimo.ews.ws4j2ee.toWs.JavaClassWriter#writeMethods()
 	 */
 	protected void writeMethods() throws GenerationFault {
+        out.write("\tpublic void setMessageContext(org.apache.axis.MessageContext msgcontext){;\n");
+        out.write("\t\tthis.msgcontext = msgcontext;\n");
+        out.write("\t}\n");
 		String parmlistStr = null;
  		ArrayList operations = j2eewscontext.getMiscInfo().getSEIOperations();
 		 for(int i =0;i<operations.size();i++){
@@ -133,7 +137,7 @@ public class WebEndpointWrapperClassWriter extends JavaClassWriter {
 			 out.write(") throws java.rmi.RemoteException");
 			 ArrayList faults = op.getFaults();
 			 for(int j = 0;j<faults.size();j++){
-				 out.write(","+(String)faults.get(i));
+				 out.write(","+(String)faults.get(j));
 			 }
 			 out.write("{\n");
 		

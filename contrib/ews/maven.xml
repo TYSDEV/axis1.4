@@ -129,7 +129,7 @@
 			<ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="samples/ejb/zip"/>
 			<ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="samples/servlet/bookquote"/>
 			<ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="samples/ejb/echo"/>
-			<!-- <ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="samples/servlet/echo"/>	-->		
+			<ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="samples/servlet/echo"/>		
         </j:jelly>
     </preGoal> 
     

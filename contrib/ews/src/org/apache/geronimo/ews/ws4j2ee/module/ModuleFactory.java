@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.apache.geronimo.ews.ws4j2ee.utils.packager.load;
+package org.apache.geronimo.ews.ws4j2ee.module;
 
 import java.io.File;
 
@@ -24,7 +24,7 @@ import org.apache.geronimo.ews.ws4j2ee.toWs.UnrecoverableGenerationFault;
 /**
  * @author Srinath Perera(hemapani@opensource.lk)
  */
-public class PackageModuleFactory {
+public class ModuleFactory {
 
     /**
      * @param path - path to the package
@@ -33,31 +33,30 @@ public class PackageModuleFactory {
      * @throws GenerationFault
      */
     
-	public static PackageModule createPackageModule(
-			String path,boolean firstmodule)throws UnrecoverableGenerationFault{
-		return createPackageModule(path,Thread.currentThread().getContextClassLoader(),firstmodule);
+	public static Module createPackageModule(
+			String path)throws UnrecoverableGenerationFault{
+		return createPackageModule(path,Thread.currentThread().getContextClassLoader());
 	}
 			
 			
-    public static PackageModule createPackageModule(
+    public static Module createPackageModule(
         String path,
-    	ClassLoader parentCL,
-        boolean firstmodule)throws UnrecoverableGenerationFault{
+    	ClassLoader parentCL)throws UnrecoverableGenerationFault{
         try {
             if (path != null) {
             	File file = new File(path);
                 if(!file.exists())
                     throw new UnrecoverableGenerationFault("file not found "+file.getAbsolutePath());
             	if(file.isDirectory()){
-            		return new DirPackageModule(path,parentCL);
+            		return new DirModule(path,parentCL);
             	}else if (path.endsWith(".jar") || path.endsWith(".JAR"))
-                    return new JarPackageModule(path,parentCL,firstmodule);
+                    return new JarModule(path,parentCL);
                 else if (path.endsWith(".war") || path.endsWith(".WAR"))
-                    return new WARPackageModule(path, parentCL, firstmodule);
+                    return new WARModule(path, parentCL);
                 else if (path.endsWith(".ear") || path.endsWith(".EAR"))
-                    return new EARPackageModule(path, parentCL, firstmodule);
+                    return new EARModule(path);
                 else if(path.endsWith(".xml"))
-					return new DirPackageModule(new File(path));
+					return new DirModule(new File(path));
                 else
 					throw new UnrecoverableGenerationFault("unknown type of file");
             }

@@ -25,7 +25,7 @@ import org.apache.geronimo.ews.ws4j2ee.toWs.Ws4J2ee;
  * SEI. This should be the prefered way for the J2EE developer. User can give a 
  * packaged application as explained by the JSR109 specification to the tool.
  * the arguments are 
- * 	GenerateWithoutWSDL &lt;webservice.xml-file&gt; -o&lt;targetoutput&gt; &lt;additionl argument that are given toJava2WSDL&gt;   
+ * 	GenerateWithoutWSDL &lt;webservices.xml-file&gt; -o&lt;targetoutput&gt; &lt;additionl argument that are given toJava2WSDL&gt;   
  * @author Srinath Perera(hemapani@opensource.lk)
  */
 public class GenerateWithoutWSDLTest extends AbstractTestCase {
@@ -40,7 +40,7 @@ public class GenerateWithoutWSDLTest extends AbstractTestCase {
 	public void testMathSample() throws Exception{
 		try{
 			String[] args2 = new String[]{
-				getTestFile(testDir+"testData/math/webservice.xml"),"-o",
+				getTestFile(testDir+"testData/math/webservices.xml"),"-o",
 				outDir+"withoutWSDL/math/server" ,"-l" ,
 				"http://127.0.0.1/aixs/math"};
 			Ws4J2ee.main(args2);

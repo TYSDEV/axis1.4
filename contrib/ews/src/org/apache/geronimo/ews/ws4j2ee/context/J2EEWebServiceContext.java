@@ -51,7 +51,7 @@ public interface J2EEWebServiceContext {
     public void setWSDLContext(WSDLContext wsdlcontext);
 
 	/**
-	 * Information about the webservice.xml file
+	 * Information about the webservices.xml file
 	 * @return
 	 */
     public WSCFContext getWSCFContext();
