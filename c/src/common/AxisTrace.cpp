@@ -96,7 +96,7 @@ int AxisTrace::logaxis(const char* sLog, int level, char* arg2, int arg3)
     
     if ((fileTrace = fopen(m_sFileName, "a")) == NULL)
     {
-        return FAIL;
+        return AXIS_FAIL;
     }   
     
     time_t ltime;
@@ -136,7 +136,7 @@ int AxisTrace::logaxis(const char* sLog, int level, char* arg2, int arg3)
         << sLog.c_str() << endl
         << "-------------------------------------------------" << endl;
     */
-    return SUCCESS;
+    return AXIS_SUCCESS;
    
 }
 
@@ -154,7 +154,7 @@ int AxisTrace::logaxis(const char* sLog1, const char* sLog2, int level, char* ar
 
     if ((fileTrace = fopen(m_sFileName, "a")) == NULL)
     {
-        return FAIL;
+        return AXIS_FAIL;
     }   
   
     time_t ltime;
@@ -194,7 +194,7 @@ int AxisTrace::logaxis(const char* sLog1, const char* sLog2, int level, char* ar
     << "-------------------------------------------------" << endl;
     */
 
-    return SUCCESS;
+    return AXIS_SUCCESS;
     
 }
 
@@ -202,7 +202,7 @@ int AxisTrace::trace(const char *pchLog)
 {
 	printf("DEBUG LINE :\n%s\n", pchLog);
 
-	return SUCCESS;
+	return AXIS_SUCCESS;
 }
 
 /*

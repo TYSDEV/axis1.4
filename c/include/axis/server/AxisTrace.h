@@ -95,7 +95,7 @@ public:
 	/**
 	 * Writes the given string to the standard console.
 	 * @param pchLog The given string which will be printed to the standard console.
-	 * @return The status which indicates whether the operation is success (SUCCESS) or not (FAIL).
+	 * @return The status which indicates whether the operation is success (AXIS_SUCCESS) or not (AXIS_FAIL).
 	 */
 	int trace(const char* pchLog);
     int GetConfPath();
