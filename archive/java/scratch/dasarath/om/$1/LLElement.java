@@ -10,11 +10,13 @@
  */
 public class LLElement {
 	LLElement nextSib, prevSib, firstChild;
+	LLAttr fattr;
 
 	public LLElement() {
 		firstChild= null;
 		nextSib= null;
 		prevSib= null;
+		fattr= null;
 	}
 
 	public void addChild(LLElement child) {
@@ -27,6 +29,27 @@ public class LLElement {
 		}
 		firstChild= child;
 	}
+
+	public void addAttr(LLAttr a){
+		a.prevSib= null;
+		if (fattr == null)
+			a.nextSib = null;
+		else {
+			a.nextSib = fattr;
+			fattr.prevSib = a;
+		}
+		fattr = a;
+	}
+	
+	public LLAttr getAttr(String n){
+		LLAttr a= fattr;
+		while (a != null) {
+			if (a.name.equals(n))
+				return a;
+			a= a.nextSib;
+		}
+		return null;
+	}	
 	
 	public LLElement traverse(){
 		LLElement e= firstChild;

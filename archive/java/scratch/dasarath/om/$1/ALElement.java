@@ -1,6 +1,8 @@
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Vector;
 
 /**
  * @author Dasarath
@@ -8,10 +10,22 @@ import java.util.Iterator;
  * @date Dec 30, 2004
  */
 public class ALElement {
-	ArrayList al;
+//	ArrayList al;
+	Vector al;
+	HashMap	attrs;
 
 	public ALElement() {
-		al = new ArrayList();
+//		al = new ArrayList();
+		al= new Vector();
+		attrs= new HashMap();
+	}
+	
+	public void addAttr(ALAttr a){
+		attrs.put(a.name, a);
+	}
+	
+	public void getAttr(String n){
+		attrs.get(n);
 	}
 
 	public void addChild(ALElement child) {
