@@ -2,7 +2,7 @@
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 2002 The Apache Software Foundation.  All rights
+ * Copyright (c) 2003 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -24,7 +24,7 @@
  *    Alternately, this acknowledgment may appear in the software itself,
  *    if and wherever such third-party acknowledgments normally appear.
  *
- * 4. The names "SOAP" and "Apache Software Foundation" must
+ * 4. The names "Axis" and "Apache Software Foundation" must
  *    not be used to endorse or promote products derived from this
  *    software without prior written permission. For written
  *    permission, please contact apache@apache.org.
@@ -51,43 +51,66 @@
  * individuals on behalf of the Apache Software Foundation.  For more
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
- *
- *
- *
- *
- * @author Damitha Kumarage (damitha@opensource.lk, damitha@jkcsworld.com)
- *
  */
  
-#ifdef WIN32
-#pragma warning (disable : 4786)
-#endif
+/**
+ * @author Srinath Perera(hemapani@openource.lk)
+ * @author Susantha Kumara(susantha@opensource.lk, skumara@virtusa.com)
+ */
 
-#if !defined(__HANDLER_INCLUDED__)
-#define __HANDLER_INCLUDED__
+package org.apache.axis.wsdl.wsdl2ws.c;
 
-#include "BasicHandler.h"
-#include <map>
-/*
-#ifdef _DEBUG
-#include "AxisTrace.h"
-#endif 
-*/
-using namespace std;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 
-class Handler : public BasicHandler
-{
-public:
-  Handler(){};
-  virtual ~Handler(){};
+import org.apache.axis.wsdl.wsdl2ws.WrapperFault;
+import org.apache.axis.wsdl.wsdl2ws.info.Type;
+import org.apache.axis.wsdl.wsdl2ws.info.WebServiceContext;
 
-  virtual const string& GetOption(const string& sArg)=0;
-  virtual void SetOptionList(const map<string, string>* OptionList)=0;
-  int AXISCALL GetType(){return NORMAL_HANDLER;};
-
-
-protected:
-  const map<string, string>* m_pOption;
-};
-
-#endif /*__HANDLER_INCLUDED__*/
+public abstract class ParamCFileWriter extends ParamWriter{
+	public ParamCFileWriter(WebServiceContext wscontext,Type type)throws WrapperFault{
+		super(wscontext,type);
+	}
+	   
+	public void writeSource()throws WrapperFault{
+	   try{
+	  		this.writer = new BufferedWriter(new FileWriter(getFilePath(), false));
+			writeClassComment();
+	   		writePreprocssorStatements();
+	   		writeGlobalCodes();
+	   		writeAttributes();
+	   		writeMethods();
+	   		//cleanup
+	   		writer.flush();
+	   		writer.close();
+	   		System.out.println(getFilePath().getAbsolutePath() + " created.....");
+	    } catch (IOException e) {
+			e.printStackTrace();
+			throw new WrapperFault(e);
+		}
+	}
+	   
+   	protected void writeMethods()throws WrapperFault{}
+   	protected  abstract void writeGlobalCodes()throws WrapperFault; 
+   	protected File getFilePath() throws WrapperFault {
+	   String targetOutputLocation = this.wscontext.getWrapInfo().getTargetOutputLocation();
+	   if(targetOutputLocation.endsWith("/"))
+		   targetOutputLocation = targetOutputLocation.substring(0, targetOutputLocation.length() - 1);
+	   new File(targetOutputLocation).mkdirs();
+	   String fileName = targetOutputLocation + "/" + this.classname + ".c";
+	   return new File(fileName);
+   	}
+   
+   	protected void writePreprocssorStatements()throws WrapperFault{
+		try {
+			writer.write("#include <malloc.h>\n");
+			writer.write("#include \""+this.classname + ".h\"\n");
+			writer.write("#include <axis/common/AxisWrapperAPI.h>\n\n");
+		} catch (IOException e) {
+			e.printStackTrace();
+			throw new WrapperFault(e);
+		}
+   }
+}
