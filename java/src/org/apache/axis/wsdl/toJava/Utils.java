@@ -273,37 +273,6 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
     } // isFaultComplex
 
     /**
-     * Return the QName of a fault
-     * 
-     * Can return null if no parts in fault
-     */ 
-    public static QName getFaultQName(Fault fault, SOAPFault soapFault) {
-        // get the name of the part - there can be only one!
-        Message message = fault.getMessage();
-        Map parts = message.getParts();
-        // If no parts, skip it
-        if (parts.size() == 0) {
-            return null;
-        }
-                
-        // We have 2 cases
-        // - part is an element, use element name and namespace
-        // - part is a type, use part name and binding namespace 
-        Part part = (Part) parts.values().iterator().next();
-                
-        // Someone should have already made sure that
-        // if use=literal, no use of namespace on the soap:fault
-        // if use=encoded, no use of element on the part
-        if (part.getTypeName() != null) {
-            String namespace = soapFault.getNamespaceURI();
-            // Now make a QName
-            return new QName(namespace, part.getName());
-        } else {
-            // Use the element's QName for the fault
-            return part.getElementName();
-        }
-    }
-    /**
      * If the specified node represents a supported JAX-RPC enumeration,
      * a Vector is returned which contains the base type and the enumeration values.
      * The first element in the vector is the base type (an TypeEntry).
@@ -735,7 +704,7 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
 
     /**
      * Given a MIME type, return the AXIS-specific type QName.
-     * @param the MIME type name
+     * @param mimeName the MIME type name
      * @return the AXIS-specific QName for the MIME type
      */
     public static QName getMIMETypeQName(String mimeName) {

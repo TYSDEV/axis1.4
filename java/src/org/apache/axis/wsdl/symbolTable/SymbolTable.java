@@ -1626,9 +1626,7 @@ public class SymbolTable {
                                           binding.getQName().toString()}));
                     }
                     
-                    // FIXME
-                    Part p = (Part)(opFault.getMessage().getParts().values().iterator().next());
-                    QName xmlType = p.getTypeName();
+                    QName xmlType = Utils.getFaultType(opFault, this);
                     
                     // put the updated entry back in the map
                     faults.add(new JavaDefinitionWriter.FaultInfo(opFault, 
