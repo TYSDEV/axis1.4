@@ -55,9 +55,13 @@ AxisConfig::AxisConfig ()
 #ifdef WIN32
 	m_pcValueArray[AXCONF_XMLPARSER] = "AxisXMLParser_D.dll";
 	m_pcValueArray[AXCONF_TRANSPORTHTTP] = "AxisTransport_D.dll";
+    m_pcValueArray[AXCONF_NODENAME] = "server name";
+    m_pcValueArray[AXCONF_LISTENPORT] = "listen port";
 #else
 	m_pcValueArray[AXCONF_XMLPARSER] = "/usr/local/Axis/libs/libaxis_xmlparser.so";
 	m_pcValueArray[AXCONF_TRANSPORTHTTP] = "/usr/local/Axis/libs/libaxis_transport.so";
+    m_pcValueArray[AXCONF_NODENAME] = "server name";
+    m_pcValueArray[AXCONF_LISTENPORT] = "listen port";
 #endif
 #else
 #ifdef WIN32
@@ -68,10 +72,10 @@ AxisConfig::AxisConfig ()
 	m_pcValueArray[AXCONF_TRANSPORTHTTP] = "/usr/local/Axis/libs/libaxis_transport.so";
         m_pcValueArray[AXCONF_LOGPATH] = "/usr/local/Axis/logs/AxisLog";
         m_pcValueArray[AXCONF_CLIENTLOGPATH] = "/usr/local/Axis/logs/AxisClientLog";
-        m_pcValueArray[AXCONF_WSDDFILEPATH] = "/usr/local/Axis/conf/server.wsdd";
-        m_pcValueArray[AXCONF_CLIENTWSDDFILEPATH] = "/usr/local/Axis/conf/client.wsdd";
-        m_pcValueArray[AXCONF_NODENAME] = "<server name>";
-        m_pcValueArray[AXCONF_LISTENPORT] = "<listen port>";
+        //m_pcValueArray[AXCONF_WSDDFILEPATH] = "/usr/local/Axis/conf/server.wsdd";
+        //m_pcValueArray[AXCONF_CLIENTWSDDFILEPATH] = "/usr/local/Axis/conf/client.wsdd";
+        m_pcValueArray[AXCONF_NODENAME] = "server name";
+        m_pcValueArray[AXCONF_LISTENPORT] = "listen port";
 #endif
 #endif
 

@@ -102,7 +102,7 @@ int MathOps::div(int Value0, int Value1)
 		        m_pCall->unInitialize();
                         throw AxisClientException(pSoapFault);
 		    }
-                    if(0 == strcmp("OutOfBoundStruct", pcCmplxFaultName))
+		    else if(0 == strcmp("OutOfBoundStruct", pcCmplxFaultName))
                     {
                         OutOfBoundStruct* pFaultDetail = NULL;
                         pFaultDetail = (OutOfBoundStruct*)pSoapFault->
@@ -115,7 +115,7 @@ int MathOps::div(int Value0, int Value1)
 		        m_pCall->unInitialize();
                         throw AxisClientException(pSoapFault);
 		    }
-                    if(0 == strcmp("SpecialDetailStruct", pcCmplxFaultName))
+		    else if(0 == strcmp("SpecialDetailStruct", pcCmplxFaultName))
                     {
                         SpecialDetailStruct* pFaultDetail = NULL;
                         pFaultDetail = (SpecialDetailStruct*)pSoapFault->
