@@ -171,7 +171,7 @@ this machine. <br> <br>
 It could happen with some other apache 2 versions or in different service packs.
 ) <br> <br>
 
-14. Open an internet browser and check <a href="http://localhost/axis">http://localhost/axis</a> . If the module has loaded properly then you will get the axis welcome page with a listing of deployed web services.<br> <br>
+14. Open an internet browser and check <a href="http://localhost/axis">http://localhost/axis</a> If the module has loaded properly then you will get the axis welcome page with a listing of deployed web services.<br> <br>
 
 <p><a name=#simpleaxis"></a></p>
 
