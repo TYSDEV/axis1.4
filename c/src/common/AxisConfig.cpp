@@ -28,6 +28,8 @@
 #include <stdio.h>
 #include <string.h>
 
+AXIS_CPP_NAMESPACE_START
+
 AxisConfig::AxisConfig ()
 {
     m_pcAxisHome = 0;
@@ -179,3 +181,5 @@ int main(void)
 }
 
 */
+
+AXIS_CPP_NAMESPACE_END

@@ -27,7 +27,10 @@
 #include "../common/AxisTrace.h"
 #include "AxisWsddException.h"
 
-extern AxisTrace* g_pAT;
+extern AXIS_CPP_NAMESPACE_PREFIX AxisTrace* g_pAT;
+
+AXIS_CPP_NAMESPACE_START
+
 
 WSDDDeployment::WSDDDeployment()
 {
@@ -346,4 +349,4 @@ void WSDDDeployment::setDeploymentType(DEPLOYMENTTYPE nType)
     m_DeplType = nType;
 }
 
-
+AXIS_CPP_NAMESPACE_END

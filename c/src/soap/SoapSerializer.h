@@ -23,6 +23,8 @@
 #include "../common/BasicTypeSerializer.h"
 #include <axis/server/WSDDDefines.h>
 
+AXIS_CPP_NAMESPACE_START
+
 class SoapEnvelope;
 class SoapHeader;
 class SoapMethod;
@@ -197,6 +199,8 @@ public:
 	int addOutputAnyObject(AnyType* pAnyObject);
 	int serializeAnyObject(AnyType* pAnyObject);
 };
+
+AXIS_CPP_NAMESPACE_END
 
 #endif 
 

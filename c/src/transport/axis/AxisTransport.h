@@ -37,6 +37,8 @@
 #include "Sender.hpp"
 #include "Receiver.hpp"
 
+AXIS_CPP_NAMESPACE_USE
+
 class AxisTransport : public SOAPTransport
 {
 public:

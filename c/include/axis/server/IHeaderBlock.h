@@ -21,7 +21,13 @@
 #include "SoapEnvVersions.h"
 
 #ifdef __cplusplus
+
+AXIS_CPP_NAMESPACE_START
+
 class Attribute;
+
+AXIS_CPP_NAMESPACE_END
+
 #endif
 
 enum HEADER_BLOCK_STD_ATTR_TYPE 
@@ -57,14 +63,14 @@ enum HEADER_BLOCK_STD_ATTR_TYPE
  * Revision 1.12  2004/06/13 susantha
  * Added support for writing C web services and handlers
  */
-
+AXIS_CPP_NAMESPACE_START
 typedef struct {
 	const BasicNode* (AXISCALL* getFirstChild)(void* pObj);
 	/*add all other API functions here*/
 } HeaderBlockFunctions;
-
+AXIS_CPP_NAMESPACE_END
 #ifdef __cplusplus
-
+AXIS_CPP_NAMESPACE_START
 class IHeaderBlock
 {
 public:
@@ -308,14 +314,14 @@ public:
 	static HeaderBlockFunctions ms_VFtable;
 	static bool bInitialized;
 };
-
+AXIS_CPP_NAMESPACE_END
 #endif
-
+AXIS_CPP_NAMESPACE_START
 typedef struct { 
 	void* _object; /* this will be C++ Call Object */
 	HeaderBlockFunctions* _functions; /* this is the static function table */
 } HeaderBlock_C;
-
+AXIS_CPP_NAMESPACE_END
 #ifndef __cplusplus
 typedef HeaderBlock_C HeaderBlock; 
 #endif

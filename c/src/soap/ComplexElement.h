@@ -45,6 +45,8 @@
 #include <list>
 #include <axis/server/BasicNode.h>
 
+AXIS_CPP_NAMESPACE_START
+
 using namespace std;
 
 /**
@@ -178,5 +180,7 @@ private:
     AxisChar* m_pachLocalName;
     AxisChar* m_pachURI;
 };
+
+AXIS_CPP_NAMESPACE_END
 
 #endif

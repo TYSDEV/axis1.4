@@ -46,6 +46,8 @@
 #include "SoapSerializer.h"
 #include <axis/server/GDefine.h>
 
+AXIS_CPP_NAMESPACE_START
+
 ComplexElement::ComplexElement()
 {
     m_pachPrefix = '\0';
@@ -366,3 +368,5 @@ int ComplexElement::getNoOfChildren()
 {
     return iNoOfChildren;
 }
+
+AXIS_CPP_NAMESPACE_END
