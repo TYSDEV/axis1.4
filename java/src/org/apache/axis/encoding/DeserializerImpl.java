@@ -413,13 +413,13 @@ public class DeserializerImpl extends SOAPHandler
                              prefix, attributes,
                              context);
                       ref = dser.getValue();       
-                      componentsReadyFlag = true;
-                    }         
+                    }
                }
                 
                 // If the ref is not a MessageElement, then it must be an
                 // element that has already been deserialized.  Use it directly.
                 value = ref;
+                componentsReadyFlag = true;
                 valueComplete();
             }
             
@@ -446,13 +446,13 @@ public class DeserializerImpl extends SOAPHandler
                              DeserializationContext context)
         throws SAXException
     {
-        QName type = context.getTypeFromAttributes(namespace,
-                                                   localName,
-                                                   attributes);
-
         // If I'm the base class, try replacing myself with an
         // appropriate deserializer gleaned from type info.
         if (this.getClass().equals(DeserializerImpl.class)) {
+            QName type = context.getTypeFromAttributes(namespace,
+                                                       localName,
+                                                       attributes);
+
             // If no type is specified, use the defaultType if available.
             // xsd:string is used if no type is provided.
             if (type == null) {
