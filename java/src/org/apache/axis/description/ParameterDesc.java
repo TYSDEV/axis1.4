@@ -86,7 +86,7 @@ public class ParameterDesc implements Serializable {
     /** A TypeEntry corresponding to this parameter */
     public TypeEntry typeEntry;
     /** The Parameter mode (in, out, inout) */
-    public byte mode = IN;
+    private byte mode = IN;
     /** The XML type of this parameter */
     private QName typeQName;
     /** The Java type of this parameter */
@@ -100,7 +100,7 @@ public class ParameterDesc implements Serializable {
 
     /** Indicates whether input/output values are stored in the header */
     private boolean inHeader = false;
-    private boolean outHeader = false;
+    private boolean outHeader = false; 
 
     public ParameterDesc() {
     }
@@ -166,6 +166,8 @@ public class ParameterDesc implements Serializable {
         text+=indent + "isReturn:   " + isReturn + "\n";
         text+=indent + "typeQName:  " + typeQName + "\n";
         text+=indent + "javaType:   " + javaType + "\n";
+        text+=indent + "inHeader:   " + inHeader + "\n";
+        text+=indent + "outHeader:  " + outHeader+ "\n";
         return text;
     } // toString
     
@@ -275,21 +277,6 @@ public class ParameterDesc implements Serializable {
         this.order = order;
     }
 
-    /**
-     * Indicates ParameterDesc represents return of OperationDesc
-     * @return true if return parameter of OperationDesc
-     */
-    public boolean getIsReturn() {
-        return isReturn;
-    }
-    /**
-     * Set to true to indicate return parameter of OperationDesc
-     * @param value boolean that indicates if return parameter of OperationDesc
-     */
-    public void setIsReturn(boolean value) {
-        isReturn = value;
-    }
-
     public void setInHeader(boolean value) {
         this.inHeader = value;
     }
@@ -304,6 +291,21 @@ public class ParameterDesc implements Serializable {
 
     public boolean isOutHeader() {
         return this.outHeader;
+    }
+
+    /**
+     * Indicates ParameterDesc represents return of OperationDesc
+     * @return true if return parameter of OperationDesc
+     */
+    public boolean getIsReturn() {
+        return isReturn;
+    }
+    /**
+     * Set to true to indicate return parameter of OperationDesc
+     * @param value boolean that indicates if return parameter of OperationDesc
+     */
+    public void setIsReturn(boolean value) {
+        isReturn = value;
     }
 
     private void writeObject(ObjectOutputStream out)
@@ -341,4 +343,5 @@ public class ParameterDesc implements Serializable {
         }
         in.defaultReadObject();
     }
+
 } // class ParameterDesc

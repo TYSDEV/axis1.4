@@ -67,6 +67,7 @@ import org.apache.axis.message.RPCElement;
 import org.apache.axis.message.RPCParam;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPBodyElement;
+import org.apache.axis.message.RPCHeaderParam;
 import org.apache.axis.soap.SOAPConstants;
 import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.JavaUtils;
@@ -320,6 +321,7 @@ public class RPCProvider extends JavaProvider
         resBody.setNamespaceURI( body.getNamespaceURI() );
         resBody.setEncodingStyle(msgContext.getEncodingStyle());
 
+        try {
         // Return first
         if ( operation.getMethod().getReturnType() != Void.TYPE ) {
             QName returnQName = operation.getReturnQName();
@@ -332,12 +334,22 @@ public class RPCProvider extends JavaProvider
             {
                 RPCParam result = new RPCParam
                    (Constants.QNAME_RPC_RESULT, returnQName.getLocalPart());
-                resBody.addParam(result);
+                if (!operation.isReturnHeader()) {
+                    resBody.addParam(result);
+                } else {
+                    resEnv.addHeader(new RPCHeaderParam(result));
+                }
+
             }
 
             RPCParam param = new RPCParam(returnQName, objRes);
             param.setParamDesc(operation.getReturnParamDesc());
-            resBody.addParam(param);
+            if (!operation.isReturnHeader()) {
+                resBody.addParam(param);
+            } else { 
+                resEnv.addHeader(new RPCHeaderParam(param));
+            }
+                
         }
 
         // Then any other out params
@@ -350,8 +362,18 @@ public class RPCProvider extends JavaProvider
                 ParameterDesc paramDesc = param.getParamDesc();
 
                 param.setValue(value);
-                resBody.addParam(param);
+                if (paramDesc != null &&
+                    paramDesc.isOutHeader()) {
+                    resEnv.addHeader(new RPCHeaderParam(param));
+                } else {
+                    resBody.addParam(param);
+                }
             }
+        }
+
+        } catch (Exception e) {
+            System.out.println(e);
+            throw e;
         }
 
         resEnv.addBodyElement(resBody);

@@ -58,6 +58,7 @@ import org.apache.axis.description.OperationDesc;
 import org.apache.axis.description.ParameterDesc;
 import org.apache.axis.description.ServiceDesc;
 import org.apache.axis.encoding.SerializationContext;
+import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.XMLUtils;
 import org.w3c.dom.Element;
 import org.xml.sax.helpers.AttributesImpl;
@@ -116,6 +117,11 @@ public class WSDDOperation extends WSDDElement
         if (retTypeStr != null && !retTypeStr.equals(""))
             desc.setReturnType(XMLUtils.getQNameFromString(retTypeStr, e));
 
+        String retHStr = e.getAttribute(ATTR_RETHEADER);
+        if (retHStr != null) {
+            desc.setReturnHeader(JavaUtils.isTrueExplicitly(retHStr));
+        }
+
         Element [] parameters = getChildElements(e, ELEM_WSDD_PARAM);
         for (int i = 0; i < parameters.length; i++) {
             Element paramEl = parameters[i];
@@ -141,6 +147,10 @@ public class WSDDOperation extends WSDDElement
             attrs.addAttribute("", ATTR_RETTYPE, ATTR_RETTYPE,
                                "CDATA",
                                context.qName2String(desc.getReturnType()));
+        }
+        if (desc.isReturnHeader()) {
+            attrs.addAttribute("", ATTR_RETHEADER, ATTR_RETHEADER,
+                               "CDATA", "true");
         }
 
         if (desc.getName() != null) {

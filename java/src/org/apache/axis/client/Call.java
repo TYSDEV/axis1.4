@@ -77,6 +77,7 @@ import org.apache.axis.encoding.ser.BaseDeserializerFactory;
 import org.apache.axis.encoding.ser.BaseSerializerFactory;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.message.RPCElement;
+import org.apache.axis.message.RPCHeaderParam;
 import org.apache.axis.message.RPCParam;
 import org.apache.axis.message.SOAPBodyElement;
 import org.apache.axis.message.SOAPEnvelope;
@@ -1546,30 +1547,27 @@ public class Call implements javax.xml.rpc.Call {
             ParameterDesc param = (ParameterDesc)parameters.get(i);
             if (param.getMode() != ParameterDesc.OUT) {
                 QName paramQName = param.getQName();
-                if (param.isInHeader()) {
 
-                    // Add this parameter as a header.
-                    SOAPHeaderElement header = new SOAPHeaderElement(
-                            paramQName.getNamespaceURI(),
-                            paramQName.getLocalPart(),
-                            params[j++]);
-                    addHeader(header);
+                // Create an RPCParam if param isn't already an RPCParam.
+                RPCParam rpcParam = null;
+                Object p = params[j++];
+                if(p instanceof RPCParam) {
+                    rpcParam = (RPCParam)p;
+                } else {
+                    rpcParam = new RPCParam(paramQName.getNamespaceURI(),
+                                            paramQName.getLocalPart(),
+                                            p);
                 }
-                else {
-                    // Since this parameter isn't a header, keep it in the args list.
-                    RPCParam rpcParam = null;
-                    Object p = params[j++];
-                    if(p instanceof RPCParam) {
-                        rpcParam = (RPCParam)p;
-                    } else {
-                        rpcParam = new RPCParam(paramQName.getNamespaceURI(),
-                                                paramQName.getLocalPart(),
-                                                p);
-                    }
-                    // Attach the ParameterDescription to the RPCParam
-                    // so that the serializer can use the (javaType, xmlType)
-                    // information.
-                    rpcParam.setParamDesc(param);
+                // Attach the ParameterDescription to the RPCParam
+                // so that the serializer can use the (javaType, xmlType)
+                // information.
+                rpcParam.setParamDesc(param);
+                
+                // Add the param to the header or vector depending
+                // on whether it belongs in the header or body.
+                if (param.isInHeader()) {
+                    addHeader(new RPCHeaderParam(rpcParam));
+                } else {
                     result.add(rpcParam);
                 }
             }

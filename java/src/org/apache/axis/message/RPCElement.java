@@ -59,6 +59,7 @@ import org.apache.axis.AxisFault;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
 import org.apache.axis.description.OperationDesc;
+import org.apache.axis.description.ParameterDesc;
 import org.apache.axis.description.ServiceDesc;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.SerializationContext;
@@ -68,6 +69,9 @@ import org.apache.axis.utils.Messages;
 import org.apache.axis.wsdl.toJava.Utils;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
+import javax.xml.soap.SOAPElement;
+import java.util.ArrayList;
+import java.util.Enumeration;
 
 import javax.xml.namespace.QName;
 
@@ -178,6 +182,11 @@ public class RPCElement extends SOAPBodyElement
 
             for (int i = 0; i < operations.length; i++) {
                 OperationDesc operation = operations[i];
+
+                // See if any information is coming from a header
+                boolean needHeaderProcessing =
+                    needHeaderProcessing(operation, isResponse);
+
                 if (operation.getNumInParams() >= numParams || 
                     elementIsFirstParam ||
                     operation.getStyle() == Style.WRAPPED) {
@@ -206,12 +215,27 @@ public class RPCElement extends SOAPBodyElement
 
                         publishToHandler((org.xml.sax.ContentHandler) context);
 
+                        // If parameter values are located in headers,
+                        // get the information and publish the header
+                        // elements to the rpc handler.
+                        if (needHeaderProcessing) {
+                            processHeaders(operation, isResponse,
+                                           context, rpcHandler);
+                        }
+
+
                         // Success!!  This is the right one...
                         msgContext.setOperation(operation);
                         return;
                     } catch (SAXException e) {
                         // If there was a problem, try the next one.
                         savedException = e;
+                        params = new Vector();
+                        continue;
+                    }  catch (AxisFault e) {
+                        // Thrown by getHeadersByName...
+                        // If there was a problem, try the next one.
+                        savedException = new SAXException(e);
                         params = new Vector();
                         continue;
                     }
@@ -308,5 +332,120 @@ public class RPCElement extends SOAPBodyElement
         if (isRPC || noParams) {
             context.endElement();
         }
+    }
+
+    /**
+     * needHeaderProcessing
+     * @param operation OperationDesc
+     * @param isResponse boolean indicates if request or response message
+     * @return true if the operation description indicates parameters/results
+     * are located in the soap header.
+     */
+    private boolean needHeaderProcessing(OperationDesc operation, 
+                                         boolean isResponse) {
+
+        // Search parameters/return to see if any indicate
+        // that instance data is contained in the header.
+        ArrayList paramDescs = operation.getParameters();
+        if (paramDescs != null) {
+            for (int j=0; j<paramDescs.size(); j++) {
+                ParameterDesc paramDesc = 
+                    (ParameterDesc) paramDescs.get(j);
+                if ((!isResponse && paramDesc.isInHeader()) ||
+                    (isResponse && paramDesc.isOutHeader())) {
+                    return true;
+                }
+            }
+        }
+        if (isResponse && 
+            operation.getReturnParamDesc() != null &&
+            operation.getReturnParamDesc().isOutHeader()) {
+            return true;
+        }        
+        return false;
+    }
+
+    /**
+     * needHeaderProcessing
+     * @param opereration OperationDesc
+     * @param isResponse boolean indicates if request or response message
+     * @param context DeserializationContext
+     * @param handler RPCHandler used to deserialize parameters
+     * @return true if the operation description indicates parameters/results
+     * are located in the soap header.
+     */
+    private void processHeaders(OperationDesc operation,
+                                boolean isResponse,
+                                DeserializationContext context,
+                                RPCHandler handler)
+        throws AxisFault, SAXException
+    {
+        // Inform handler that subsequent elements come from
+        // the header
+
+        handler.setHeaderElement(true);
+        // Get the soap envelope
+        SOAPElement envelope = getParentElement();
+        while (envelope != null &&
+               !(envelope instanceof SOAPEnvelope)) {
+            envelope = envelope.getParentElement();
+        }
+        if (envelope == null) 
+            return;
+
+        // Find parameters that have instance
+        // data in the header.
+        ArrayList paramDescs = operation.getParameters();
+        if (paramDescs != null) {
+            for (int j=0; j<paramDescs.size(); j++) {
+                ParameterDesc paramDesc = (ParameterDesc) paramDescs.get(j);
+                if ((!isResponse && paramDesc.isInHeader()) ||
+                    (isResponse && paramDesc.isOutHeader())) {
+                    // Get the headers that match the parameter's
+                    // QName
+                    Enumeration headers = ((SOAPEnvelope) envelope).
+                        getHeadersByName(
+                           paramDesc.getQName().getNamespaceURI(),
+                           paramDesc.getQName().getLocalPart(),
+                           true);
+                    // Publish each of the found elements to the
+                    // handler.  The pushElementHandler and
+                    // setCurElement calls are necessary to 
+                    // have the message element recognized as a
+                    // child of the RPCElement.
+                    while(headers != null &&
+                          headers.hasMoreElements()) {
+                        context.pushElementHandler(handler);
+                        context.setCurElement(null);
+                        ((MessageElement) headers.nextElement()).
+                            publishToHandler(
+                               (org.xml.sax.ContentHandler)context);
+                    }
+                }
+            }
+        }
+        
+        // Now do the same processing for the return parameter.
+        if (isResponse && 
+            operation.getReturnParamDesc() != null &&
+            operation.getReturnParamDesc().isOutHeader()) {
+            ParameterDesc paramDesc = operation.getReturnParamDesc();
+            Enumeration headers =
+                ((SOAPEnvelope) envelope).
+                getHeadersByName(
+                    paramDesc.getQName().getNamespaceURI(),
+                    paramDesc.getQName().getLocalPart(),
+                    true);
+            while(headers != null &&
+                  headers.hasMoreElements()) {
+                context.pushElementHandler(handler);
+                context.setCurElement(null);
+                
+                ((MessageElement) headers.nextElement()).
+                    publishToHandler((org.xml.sax.ContentHandler)context);
+            }                                                                 
+        }
+
+        handler.setHeaderElement(false);
     }
 }
