@@ -24,8 +24,8 @@
 
 #include "../../platforms/PlatformAutoSense.hpp"
 
-#include "ChannelFactory.hpp"
-//#include "../SSLChannel.hpp"
+#include "SSLChannelFactory.hpp"
+#include "../SSLChannel.hpp"
 #include <stdio.h>
 #include "AxisTransportException.h"
 //#include "../../common/AxisTrace.h"
@@ -35,22 +35,22 @@
 
 AXIS_CPP_NAMESPACE_START
 
-const char* ChannelFactory::m_pcLibraryName = 0;
-DLHandler ChannelFactory::m_LibHandler = 0;
-CREATE_OBJECT3 ChannelFactory::m_Create = 0;
-DELETE_OBJECT3 ChannelFactory::m_Delete = 0;
+const char* SSLChannelFactory::m_pcLibraryName = 0;
+DLHandler SSLChannelFactory::m_LibHandler = 0;
+CREATE_OBJECT3 SSLChannelFactory::m_Create = 0;
+DELETE_OBJECT3 SSLChannelFactory::m_Delete = 0;
 
-ChannelFactory::ChannelFactory()
+SSLChannelFactory::SSLChannelFactory()
 {
 	m_LibHandler = 0;
 }
 
-ChannelFactory::~ChannelFactory()
+SSLChannelFactory::~SSLChannelFactory()
 {
 
 }
 
-int ChannelFactory::initialize(const char* pcLibraryName)
+int SSLChannelFactory::initialize(const char* pcLibraryName)
 {
     //m_pcLibraryName = g_pConfig->getAxisConfProperty(AXCONF_SSLCHANNEL);
       m_pcLibraryName = pcLibraryName;
@@ -76,27 +76,27 @@ int ChannelFactory::initialize(const char* pcLibraryName)
    return AXIS_SUCCESS;
 }
 
-int ChannelFactory::uninitialize()
+int SSLChannelFactory::uninitialize()
 {
 	return unloadLib();
 }
 
 /**
- * Should create an instance of Secure Channel
+ * Should create an instance of SSL Channel
  */
-SSLChannel* ChannelFactory::getSSLChannelObject()
+SSLChannel* SSLChannelFactory::getSSLChannelObject()
 {
-	SSLChannel* pSecure = 0;
-	if (m_Create) m_Create(&pSecure);
-	return pSecure;
+	SSLChannel* pTpt = 0;
+	if (m_Create) m_Create(&pTpt);
+	return pTpt;
 }
 
-void ChannelFactory::destroySSLChannelObject(SSLChannel* pObject)
+void SSLChannelFactory::destroySSLChannelObject(SSLChannel* pObject)
 {
 	m_Delete(pObject);
 }
 
-int ChannelFactory::loadLib()
+int SSLChannelFactory::loadLib()
 {
     m_LibHandler = PLATFORM_LOADLIB(m_pcLibraryName);
     if (!m_LibHandler)
@@ -107,7 +107,7 @@ int ChannelFactory::loadLib()
     return AXIS_SUCCESS;
 }
 
-int ChannelFactory::unloadLib()
+int SSLChannelFactory::unloadLib()
 {
     PLATFORM_UNLOADLIB(m_LibHandler);
 

@@ -1,7 +1,7 @@
 #if !defined(_AXIS_SECURECHANNEL_H)
 #define _AXIS_SECURECHANNEL_H
 #include "ISecureChannel.hpp"
-#include "ChannelFactory.hpp"
+#include "SSLChannelFactory.hpp"
 #include "../SSLChannel.hpp"
 #include "Channel.h"
 #include <iostream>
@@ -43,7 +43,7 @@ private:
 protected:
 	string sServerName;
         //SecureChannel* m_pSecureChannel;
-	ChannelFactory* m_pFactory;
+	SSLChannelFactory* m_pFactory;
         SSLChannel* m_pSSLChannel;
 };
 

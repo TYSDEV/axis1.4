@@ -1,9 +1,9 @@
-#include "SecureChannel.hpp"
-#include "ChannelFactory.hpp"
+#include "SecureChannel.h"
+#include "SSLChannelFactory.hpp"
 
 SecureChannel::SecureChannel()
 {
-    m_pFactory = new ChannelFactory();
+    m_pFactory = new SSLChannelFactory();
     //m_pFactory->initialize();
     //m_pSSLChannel = m_pFactory->getSSLChannelObject(); 
     //m_pSSLChannel->SSLInit();

@@ -23,14 +23,13 @@
  */
 
 
-#if !defined(AXIS_CHANNELFACTORY_H__OF_AXIS_INCLUDED_)
-#define AXIS_CHANNELFACTORY_H__OF_AXIS_INCLUDED_
+#if !defined(AXIS_SSLCHANNELFACTORY_H__OF_AXIS_INCLUDED_)
+#define AXIS_SSLCHANNELFACTORY_H__OF_AXIS_INCLUDED_
 
 #include "../../platforms/PlatformAutoSense.hpp"
 
 #include <axis/GDefine.hpp>
 #include "../SSLChannel.hpp"
-//#include "SecureChannel.hpp"
 
 #define CREATE_FUNCTION3 "CreateInstance"
 #define DELETE_FUNCTION3 "DestroyInstance"
@@ -38,11 +37,11 @@
 typedef int (* CREATE_OBJECT3) (SSLChannel** inst);
 typedef int (* DELETE_OBJECT3) (SSLChannel* inst);
 AXIS_CPP_NAMESPACE_START
-class ChannelFactory  
+class SSLChannelFactory  
 {
 public:
-	ChannelFactory();
-	virtual ~ChannelFactory();
+	SSLChannelFactory();
+	virtual ~SSLChannelFactory();
 	/**
      * Used to initialize the global object. Following tasks are done
      * 1. Get the parser library name from the configuration file.
