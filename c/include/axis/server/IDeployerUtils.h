@@ -55,10 +55,14 @@
  * <http://www.apache.org/>.
  *
  *
+ *
+ *
+ * @author Roshan Weerasuriya (roshan@jkcs.slt.lk, roshan@opensource.lk)
+ *
  */
 
 
-// IDeployerUtils.h: 
+// IDeployerUtils.h: interface for the IDeployerUtils class.
 //
 //////////////////////////////////////////////////////////////////////
 
@@ -71,13 +75,6 @@
 
 #include "AxisUserAPI.h"
 
-/**
-    @class IDeployerUtils
-    @brief interface for the IDeployerUtils class.
-
-
-    @author Roshan Weerasuriya (roshan@jkcs.slt.lk, roshan@opensource.lk)
-*/
 class IDeployerUtils
 {
 public:

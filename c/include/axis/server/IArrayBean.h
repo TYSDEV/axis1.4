@@ -53,8 +53,12 @@
  * <http://www.apache.org/>.
  *
  *
+ *
+ *
+ * @author Susantha Kumara (skumara@virtusa.com)
+ *
  */
-// IArrayBean.h: 
+// IArrayBean.h: interface for the IArrayBean class.
 //
 //////////////////////////////////////////////////////////////////////
 
@@ -64,14 +68,6 @@
 #include "GDefine.h"
 #include "AxisUserAPI.h"
 
-/**
-    @class IArrayBean
-    @brief interface for the IArrayBean class.
-
-
-
-    @author Susantha Kumara (skumara@virtusa.com)
-*/
 class IArrayBean  
 {
 public:

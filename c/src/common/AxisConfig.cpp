@@ -68,25 +68,13 @@
 
 AxisConfig::AxisConfig()
 {
-    /*assigning default values for configuration variables*/
-    #ifdef WIN32
-        strcpy(m_sWsddFilePath, "c:/Axis/conf/server.wsdd");
-        strcpy(m_sAxisLogPath, "c:/Axis/conf/AxisLog");
-
-    #else
-        strcpy(m_sWsddFilePath, "/usr/local/apache/Axis/conf/server.wsdd");
-        strcpy(m_sAxisLogPath, "/usr/local/apache/Axis/logs/AxisLog");
-    #endif
+    ReadConfFile();
 }
 
 AxisConfig::~AxisConfig()
 {
 }
 
-/**
-    This method will read from the configuration file called axiscpp.conf
-* which is located in a place defined by AXIS_HOME environment variable.
-*/
 int AxisConfig::ReadConfFile()
 {
     FILE* fileConfig = NULL;
@@ -95,14 +83,13 @@ int AxisConfig::ReadConfFile()
     char line[CONFBUFFSIZE] = {0};
     char key[CONFBUFFSIZE] = {0};
 	char value[CONFBUFFSIZE] = {0};
-             
+
 	sConfPath = getenv("AXIS_HOME");
-	if (!sConfPath)
-        return AXIS_FAIL;
+	if (!sConfPath) return FAIL;
 	strcpy(sNewConfPath, sConfPath);
     strcat(sNewConfPath, "/axiscpp.conf");
     if ((fileConfig = fopen(sNewConfPath, "rt")) == NULL)
-		return AXIS_FAIL;
+		return FAIL;
 
     while(fgets(line, CONFBUFFSIZE, fileConfig) != NULL)
     {
@@ -121,7 +108,7 @@ int AxisConfig::ReadConfFile()
 		 */
 		AxisUtils::clearArray(value, CONFBUFFSIZE);
 
-        while((line[k] != '\n') && (line[k]!='\0'))
+        while(line[k] != '\n')
         {
             value[j]=line[k];
             k += 1;
@@ -133,7 +120,7 @@ int AxisConfig::ReadConfFile()
         if(strcmp(key, "AXISLOGPATH") == 0)
             strcpy(m_sAxisLogPath, value);
     }
-    return AXIS_SUCCESS;
+    return SUCCESS;
 }
 
 char* AxisConfig::GetWsddFilePath()
@@ -142,6 +129,6 @@ char* AxisConfig::GetWsddFilePath()
 }
 
 char* AxisConfig::GetAxisLogPath()
-{    
+{
     return m_sAxisLogPath;
 }

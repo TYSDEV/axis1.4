@@ -55,9 +55,13 @@
  * <http://www.apache.org/>.
  *
  *
+ *
+ *
+ * @author Roshan Weerasuriya (roshan@jkcs.slt.lk, roshan@opensource.lk)
+ *
  */
 
-// haracterElement.h: 
+// haracterElement.h: interface for the CharacterElement class.
 //
 //////////////////////////////////////////////////////////////////////
 
@@ -66,13 +70,6 @@
 
 #include "BasicNode.h"
 
-/**
-    @class CharacterElement
-    @brief interface for the CharacterElement class.
-
-
-    @author Roshan Weerasuriya (roshan@jkcs.slt.lk, roshan@opensource.lk)
-*/
 class CharacterElement : public BasicNode
 {
 public:

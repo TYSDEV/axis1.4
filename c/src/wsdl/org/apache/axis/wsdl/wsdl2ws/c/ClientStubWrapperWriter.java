@@ -120,7 +120,7 @@ public class ClientStubWrapperWriter extends CFileWriter{
 	  	String sGlobalInstanceName = "gs_pAxis_"+classname+"_Service";	
 	  	for(int i = 0; i < methods.size(); i++){
 			minfo = (MethodInfo)this.methods.get(i);
-		  	if(minfo.getReturnType()==null)
+		  	if(minfo.getReturnType().getLangName()==null)
 			  	writer.write("void ");
 		  	else {
 				String outparam = minfo.getReturnType().getLangName();

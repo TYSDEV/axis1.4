@@ -114,7 +114,7 @@ int AxisUtils::clearArray(char *arrCh, int iSize)
 		arrCh[iTmp] = '\0';
 	}
 
-	return AXIS_SUCCESS;
+	return SUCCESS;
 }
 
 bool AxisUtils::isCharacterAvailable(const string &sString, const char cCharacter)

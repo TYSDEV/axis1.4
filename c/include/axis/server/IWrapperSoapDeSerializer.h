@@ -54,9 +54,13 @@
  * <http://www.apache.org/>.
  *
  *
+ *
+ *
+ * @author Roshan Weerasuriya (roshan@jkcs.slt.lk, roshan@opensource.lk)
+ *
  */
 
-// IWrapperSoapDeSerializer.h: 
+// IWrapperSoapDeSerializer.h: interface for the IWrapperSoapDeSerializer class.
 //
 //////////////////////////////////////////////////////////////////////
 
@@ -71,13 +75,6 @@
 using namespace std;
 class IParam;
 
-/**
-    @class IWrapperSoapDeSerializer
-    @brief interface for the IWrapperSoapDeSerializer class. 
-
-
-    @author Roshan Weerasuriya (roshan@jkcs.slt.lk, roshan@opensource.lk)
-*/
 class IWrapperSoapDeSerializer : public virtual ISoapDeSerializer
 {
 public:
@@ -86,13 +83,13 @@ public:
 	virtual int Deserialize(IParam* pIParam, int bHref)=0;
 	virtual ~IWrapperSoapDeSerializer() {};
 
-	/** Method used by wrappers to get a deserialized Array of complex types */
+	/* Method used by wrappers to get a deserialized Array of complex types */
 	virtual Axis_Array GetArray(void* pDZFunct, void* pCreFunct, void* pDelFunct, void* pSizeFunct, const AxisChar* pchTypeName, const AxisChar* pchURI)=0;
-	/** Method used by wrappers to get a deserialized Array of basic types */
+	/* Method used by wrappers to get a deserialized Array of basic types */
 	virtual Axis_Array GetArray(XSDTYPE nType)=0;
 	virtual int GetArraySize()=0;
 	virtual int GetArray(Axis_Array* pArray, XSDTYPE nType)=0;
-	/** Method used by wrappers to get a deserialized single object of complex type */
+	/* Method used by wrappers to get a deserialized single object of complex type */
 	virtual void* GetObject(void* pDZFunct, void* pCreFunct, void* pDelFunct, const AxisChar* pchTypeName, const AxisChar* pchURI)=0;
 	
 	/* Methods used by wrappers to get a deserialized value of basic types */
@@ -113,15 +110,14 @@ public:
     virtual const AxisChar* GetQName() = 0;
 	virtual const AxisChar* GetHexString() = 0;
 	virtual const AxisChar* GetBase64String() = 0;
-    /**return a tm struct which contain year-month-date-hour-
+    /*return a tm struct which contain year-month-date-hour-
       minute-second*/
     virtual struct tm GetDateTime() = 0;
     virtual struct tm GetDate() = 0;
     virtual struct tm GetTime() = 0;
-    /**return a tm struct which contain years-months-dates-hours-
+    /*return a tm struct which contain years-months-dates-hours-
       minutes-seconds which represents a duration*/
     virtual long GetDuration() = 0;
-	virtual int GetStatus() = 0;
 };
 
 #endif // !defined(AFX_IWRAPPERSOAPDESERIALIZER_H__A6C89D23_4098_4A73_BFD7_D8F115AD9BA0__INCLUDED_)

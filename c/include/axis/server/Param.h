@@ -54,9 +54,14 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  *
+ *
+ *
+ *
+ * @author Susantha Kumara (skumara@virtusa.com)
+ *
  */
 
-// Param.h: 
+// Param.h: interface for the Param class.
 //
 //////////////////////////////////////////////////////////////////////
 #ifdef WIN32
@@ -75,14 +80,6 @@ using namespace std;
 
 class ArrayBean;
 
-
-/**
-    @class Param
-    @brief interface for the Param class.
-
-
-    @author Susantha Kumara (skumara@virtusa.com)
-*/
 class Param : public IParam
 {
 	friend class SoapDeSerializer;
@@ -126,40 +123,35 @@ public: //Conversion functions
 	int serialize(IWrapperSoapSerializer& pSZ);
 
 	//Following functions are used by wrapper class methods making sure of the valid type.
-	int GetInt(int* pValue);
-    int GetUnsignedInt(unsigned int* pValue);    
-    int GetShort(short* pValue);
-    int GetUnsignedShort(unsigned short* pValue);
-    int GetByte(char* pValue);
-    int GetUnsignedByte(unsigned char* pValue);
-    int GetLong(long* pValue);
-    int GetInteger(long* pValue);
-    int GetUnsignedLong(unsigned long* pValue);
-	int GetFloat(float* pValue);
-    int GetDouble(double* pValue);
-    int GetDecimal(double* pValue);
-    int GetAnyURI(const AxisChar** pValue);
-    int GetQName(const AxisChar** pValue);
-    int GetDateTime(struct tm* pValue);
-    int GetDate(struct tm* pValue);
-    int GetTime(struct tm* pValue);
-    int GetDuration(long* pValue);
-	int GetString(const AxisChar** pValue);
-	int GetHexString(const AxisChar** pValue);
-	int GetBase64String(const AxisChar** pValue);
+	int GetInt();
+    unsigned int GetUnsignedInt();    
+    short GetShort();
+    unsigned short GetUnsignedShort();
+    char GetByte();
+    unsigned char GetUnsignedByte();
+    long GetLong();
+    long GetInteger();
+    unsigned long GetUnsignedLong();
+	float GetFloat();
+    double GetDouble();
+    double GetDecimal();
+    const AxisChar* GetAnyURI();
+    const AxisChar* GetQName();
+    struct tm GetDateTime();
+    struct tm GetDate();
+    struct tm GetTime();
+    long GetDuration();
+	const AxisChar* GetString();
+	const AxisChar* GetHexString();
+	const AxisChar* GetBase64String();
 	void setPrefix(const AxisChar* prefix);
 	void setUri(const AxisChar* uri);
-	int GetArraySize(int* pValue);
+	int GetArraySize();
 	int SetArrayElements(void* pElements);
 	int SetArrayElements(void* pObject, AXIS_DESERIALIZE_FUNCT pDZFunct, AXIS_OBJECT_DELETE_FUNCT pDelFunct, AXIS_OBJECT_SIZE_FUNCT pSizeFunct);
 	int SetUserType(void* pObject, AXIS_DESERIALIZE_FUNCT pDZFunct, AXIS_OBJECT_DELETE_FUNCT pDelFunct);
 	void SetName(const AxisChar* sName);
 	uParamValue GetValue(){ return m_Value;};
-	int GetString(string* pValue);
-    int GetAnyURI(string* pValue);
-    int GetQName(string* pValue);
-	int GetHexString(string* pValue);
-	int GetBase64String(string* pValue);
 };
 
 #endif // !defined(AFX_PARAM_H__351B13BB_5D03_40C5_93F5_56D17295A8BD__INCLUDED_)

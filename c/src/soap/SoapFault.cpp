@@ -91,35 +91,35 @@ SoapFault::~SoapFault()
 {
 	m_sFaultcode= sFaultcode;
 
-	return AXIS_SUCCESS;
+	return SUCCESS;
 }*/
 
 /*int SoapFault::setFaultstring(const string& sFaultstring)
 {
 	m_sFaultstring= sFaultstring;
 
-	return AXIS_SUCCESS;
+	return SUCCESS;
 }*/
 
 /*int SoapFault::setFaultactor(const string& sFaultactor)
 {
 	m_sFaultactor= sFaultactor;
 
-	return AXIS_SUCCESS;
+	return SUCCESS;
 }*/
 
 /*int SoapFault::setDetail(const string& sDetail)
 {
 	m_sDetail= sDetail;
 
-	return AXIS_SUCCESS;
+	return SUCCESS;
 }*/
 
 int SoapFault::serialize(SoapSerializer& pSZ)
 {
 	//written according to SOAP Version 1.1
 
-	int iStatus= AXIS_SUCCESS;
+	int iStatus= SUCCESS;
 		
 	pSZ << "<SOAP-ENV:Fault>";	
 	pSZ << "<faultcode>" << m_sFaultcode.c_str()<< "</faultcode>";
@@ -144,7 +144,7 @@ int SoapFault::serialize(string& sSerialized)
 {
 	//written according to SOAP Version 1.1
 
-	int iStatus= AXIS_SUCCESS;
+	int iStatus= SUCCESS;
 	
 	sSerialized= sSerialized+ "<SOAP-ENV:Fault>" + "\n";
 	sSerialized= sSerialized+ "<faultcode>"+ m_sFaultcode+ "</faultcode>"+ "\n";

@@ -53,9 +53,13 @@
  * <http://www.apache.org/>.
  *
  *
+ *
+ *
+ * @author Susantha Kumara (skumara@virtusa.com)
+ * @author Roshan Weerasuriya (roshan@jkcs.slt.lk, roshan@opensource.lk)
+ *
  */
- 
-// AxisUtils.h: 
+// AxisUtils.h: interface for the AxisUtils class.
 //
 //////////////////////////////////////////////////////////////////////
 
@@ -68,14 +72,6 @@
 using namespace std;
 
 #define CONVERT_BUFFER_SIZE 1024
-
-/**
-    @class AxisUtils
-    @brief interface for the AxisUtils class.
-
-    @author Susantha Kumara (skumara@virtusa.com)
-    @author Roshan Weerasuriya (roshan@jkcs.slt.lk, roshan@opensource.lk)
-*/
 
 class AxisUtils  
 {

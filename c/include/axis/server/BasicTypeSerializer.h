@@ -53,7 +53,16 @@
  * individuals on behalf of the Apache Software Foundation.  For more
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
+ *
+ *
+ *
+ *
+ * @author Susantha Kumara (skumara@virtusa.com)
+ *
  */
+// BasicTypeSerializer.h: interface for the BasicTypeSerializer class.
+//
+//////////////////////////////////////////////////////////////////////
 
 #if !defined(AFX_BASICTYPESERIALIZER_H__7ECDFED3_F3D5_48A1_A7EF_1E30B93BDB2C__INCLUDED_)
 #define AFX_BASICTYPESERIALIZER_H__7ECDFED3_F3D5_48A1_A7EF_1E30B93BDB2C__INCLUDED_
@@ -71,14 +80,6 @@ const AxisChar ENCODED_AMPERSAND_STR[]		= "&amp;";	// Encoded string for ampersa
 const AxisChar ENCODED_DBL_QUOTE_STR[]		= "&quot;";	// Encoded string for single quote character
 const AxisChar ENCODED_SGL_QUOTE_STR[]		= "&apos;";	// Encoded string for double quote character
 
-
-/**
-    @class BasicTypeSerializer
-    @brief interface for the BasicTypeSerializer class.
-
-
-    @author Susantha Kumara (skumara@virtusa.com)
-*/
 class BasicTypeSerializer
 {
 public:

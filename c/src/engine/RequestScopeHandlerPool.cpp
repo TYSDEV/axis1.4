@@ -91,7 +91,8 @@ RequestScopeHandlerPool::~RequestScopeHandlerPool()
 }
 
 int RequestScopeHandlerPool::GetInstance(BasicHandler** pHandler, int nLibId)
-{    
+{
+    AXISTRACE1("RequestScopeHandlerPool::GetInstance");
 	lock();
 	int Status;
 	if (m_Handlers.find(nLibId) != m_Handlers.end()) 
@@ -99,7 +100,7 @@ int RequestScopeHandlerPool::GetInstance(BasicHandler** pHandler, int nLibId)
 		if (m_Handlers[nLibId].empty())
 		{
 			Status = g_pHandlerLoader->CreateHandler(pHandler, nLibId);
-			if (AXIS_SUCCESS == Status)
+			if (SUCCESS == Status)
 			{
 				//this just creates the entry in m_Handlers so that next time we know that the DLL is loaded
 				m_Handlers[nLibId].clear();	
@@ -112,13 +113,13 @@ int RequestScopeHandlerPool::GetInstance(BasicHandler** pHandler, int nLibId)
 			*pHandler = m_Handlers[nLibId].front();
 			m_Handlers[nLibId].pop_front();
 			unlock();
-			return AXIS_SUCCESS;
+			return SUCCESS;
 		}
 	}
 	else //not even the handler DLL loaded
 	{
 		Status = g_pHandlerLoader->CreateHandler(pHandler, nLibId);
-		if (AXIS_SUCCESS == Status)
+		if (SUCCESS == Status)
 		{
 			//this just creates the entry in m_Handlers so that next time we know that the DLL is loaded
 			m_Handlers[nLibId].clear();	
@@ -133,5 +134,5 @@ int RequestScopeHandlerPool::PutInstance(BasicHandler* pHandler, int nLibId)
 	lock();
 	m_Handlers[nLibId].push_back(pHandler);
 	unlock();
-	return AXIS_SUCCESS;
+	return SUCCESS;
 }

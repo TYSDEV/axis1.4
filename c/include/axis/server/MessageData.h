@@ -55,9 +55,13 @@
  * <http://www.apache.org/>.
  *
  *
+ *
+ *
+ * @author Susantha Kumara (skumara@virtusa.com)
+ *
  */
 
-// MessageData.h: 
+// MessageData.h: interface for the MessageData class.
 //
 //////////////////////////////////////////////////////////////////////
 
@@ -77,13 +81,6 @@
 
 using namespace std;
 
-/**
-    @class MessageData
-    @brief interface for the MessageData class.
-
-
-    @author Susantha Kumara (skumara@virtusa.com)
-*/
 class MessageData : public IMessageData
 {
 public:

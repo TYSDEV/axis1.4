@@ -19,6 +19,10 @@
   <parameter name="allowedMethods" value="echoSimpleTypesAsStruct echoNestedStruct echoNestedArray echoStructAsSimpleTypes "/>
   <parameter name="className" value="/usr/local/apache/Axis/webservices/libinteropgroupb.so"/>
  </service>
+ <service name="WebserviceDeployer" provider="C:RPC">
+  <parameter name="className" value="C:\susantha\ws-axis\c\release\win32\cpp_deployment.dll"/>
+  <parameter name="allowedMethods" value="deploy undeploy "/>
+ </service>
  <transport name="http" >
   <requestFlow>
    <handler name="TestHandler2" type="/usr/local/apache/Axis/handlers/transport/testhandler2/libtesthandler2.so">

@@ -140,7 +140,8 @@ public class WrapHeaderWriter extends HeaderFileWriter{
 					 minfo = (MethodInfo)methods.get(i);
 					 writer.write("\tint "+minfo.getMethodname()+CUtils.WRAPPER_METHOD_APPENDER+"(IMessageData* mc);");
 					 writer.write("\n");
-			}
+				 }
+     
 		}catch(IOException e){
 			throw new WrapperFault(e);
 		}
@@ -151,7 +152,6 @@ public class WrapHeaderWriter extends HeaderFileWriter{
 	 */
 	protected void writePreprocssorStatements() throws WrapperFault {
 		try{
-			writer.write("#define USES_AXIS_C_TYPES\n\n");
 			writer.write("#include <axis/common/WrapperClassHandler.h>\n");
 			writer.write("#include <axis/common/IMessageData.h>\n");
 			writer.write("#include <axis/common/GDefine.h>\n");

@@ -52,6 +52,11 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  *
+ *
+ *
+ *
+ * @author Damitha Kumarage (damitha@opensource.lk, damitha@jkcsworld.com)
+ *
  */
  
 #if !defined(__AXIS_AXISCONFIG_H_INCLUDED__)
@@ -60,17 +65,12 @@
 #define CONFBUFFSIZE 200
 
 /**
-    @class AxisConfig
-    @brief class for taking configuration parameters.
-    
     The purpose of this class is to provide a way so that
     the server takes the configuration path where the
     axiscpp.conf lies from the environment variable AXIS_HOME.
     User has to set this variable pointing the path to axiscpp.conf file.
     This axiscpp.conf file contains all the configuration paths
     like wsdd configuration file path, axis log path etc.
-
-    @author Damitha Kumarage (damitha@opensource.lk, damitha@jkcsworld.com)
 */
 class AxisConfig
 {
@@ -79,9 +79,9 @@ class AxisConfig
         ~AxisConfig();
         char* GetWsddFilePath();
         char* GetAxisLogPath();
-        int ReadConfFile();
         
-    private:		 
+    private:		
+        int ReadConfFile();
         char m_WsddFilePath[CONFBUFFSIZE];
         char m_AxisLogPath[CONFBUFFSIZE];
         char m_sWsddFilePath[CONFBUFFSIZE];

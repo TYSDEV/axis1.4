@@ -70,7 +70,7 @@ import javax.xml.namespace.QName;
 
 import org.apache.axis.wsdl.wsdl2ws.WrapperFault;
 import org.apache.axis.wsdl.wsdl2ws.WrapperUtils;
-import org.apache.axis.wsdl.wsdl2ws.c.CUtils;
+import org.apache.axis.wsdl.wsdl2ws.cpp.CPPUtils;
 import org.apache.axis.wsdl.wsdl2ws.info.MethodInfo;
 import org.apache.axis.wsdl.wsdl2ws.info.ParameterInfo;
 import org.apache.axis.wsdl.wsdl2ws.info.Type;
@@ -136,16 +136,16 @@ public class WrapWriter extends CFileWriter{
 			writer.write("//implementation of WrapperClassHandler interface\n");
 			
 			writer.write("void "+classname+"::OnFault(IMessageData *pMsg)\n{\n}\n\n");
-			writer.write("int "+classname+"::Init()\n{\n\treturn AXIS_SUCCESS;\n}\n\n");
-			writer.write("int "+classname+"::Fini()\n{\n\treturn AXIS_SUCCESS;\n}\n\n");
+			writer.write("int "+classname+"::Init()\n{\n\treturn SUCCESS;\n}\n\n");
+			writer.write("int "+classname+"::Fini()\n{\n\treturn SUCCESS;\n}\n\n");
 			writeInvoke();
 			writer.write("\n//Methods corresponding to the web service methods\n");
 			MethodInfo minfo;
 			for (int i = 0; i < methods.size(); i++) {
-				 minfo = (MethodInfo)methods.get(i);
-				 this.writeMethodInWrapper(minfo.getMethodname(), minfo.getParameterTypes(),minfo.getReturnType());
-				 writer.write("\n");
-			 }
+					 minfo = (MethodInfo)methods.get(i);
+					 this.writeMethodInWrapper(minfo.getMethodname(), minfo.getParameterTypes(),minfo.getReturnType());
+					 writer.write("\n");
+				 }
      
 		}catch(IOException e){
 			throw new WrapperFault(e);
@@ -175,7 +175,7 @@ public class WrapWriter extends CFileWriter{
 		//msgdata.setSoapFault(new SOAPFault(new AxisFault()))
 		writer.write("\tIWrapperSoapDeSerializer *pIWSDZ = NULL;\n");
 		writer.write("\tmc->getSoapDeSerializer(&pIWSDZ);\n");
-		writer.write("\tif (!pIWSDZ) return AXIS_FAIL;\n");
+		writer.write("\tif (!pIWSDZ) return FAIL;\n");
 		writer.write("\tconst AxisChar *method = pIWSDZ->GetMethodName();\n");
 		//if no methods in the service simply return
 		if (methods.size() == 0) {
@@ -184,18 +184,18 @@ public class WrapWriter extends CFileWriter{
 		}
 		MethodInfo minfo = (MethodInfo)methods.get(0);
 		//if conditions (if parts)		
-		writer.write("\tif (0 == strcmp(method, \""+ minfo.getMethodname() + "\"))\n");
-		writer.write("\t\treturn "+minfo.getMethodname() + CUtils.WRAPPER_METHOD_APPENDER + "(mc);\n");
+		writer.write("\tif (0 == strcmp(method, \""+ minfo.getMethodname() +"\"))\n");
+		writer.write("\t\treturn "+minfo.getMethodname()+CUtils.WRAPPER_METHOD_APPENDER+"(mc);\n");
 		//(else if parts)
 		if (methods.size() > 1) {
 			for (int i = 1; i < methods.size(); i++) {
 				minfo = (MethodInfo)methods.get(i);
-				writer.write("\telse if (0 == strcmp(method, \""+ minfo.getMethodname() + "\"))\n");
-				writer.write("\t\treturn "+minfo.getMethodname() + CUtils.WRAPPER_METHOD_APPENDER + "(mc);\n");
+				writer.write("\telse if (0 == strcmp(method, \""+ minfo.getMethodname() +"\"))\n");
+				writer.write("\t\treturn "+minfo.getMethodname()+CUtils.WRAPPER_METHOD_APPENDER+"(mc);\n");
 			}
 		}
 		//(else part)
-		writer.write("\telse return AXIS_FAIL;\n");
+		writer.write("\telse return FAIL;\n");
 		//end of method
 		writer.write("}\n\n");
 	}
@@ -222,13 +222,12 @@ public class WrapWriter extends CFileWriter{
 			else{
 				outparamType = returntype.getLangName();
 			}
-			returntypeissimple = CUtils.isSimpleType(outparamType);
+			returntypeissimple = CPPUtils.isSimpleType(outparamType);
 		}
-		//create and populate variables for each parameter
 		String paraTypeName;
 		ArrayList paramsB = new ArrayList(params);
-		Iterator p =  params.iterator();
 		Type type;
+
 		writer.write("\n//forward declaration for the c method "+methodName+" \n");
 		//TODO forward declaration writing logic should be changed when arrays come into picture
 		if (returntype == null){
@@ -241,7 +240,7 @@ public class WrapWriter extends CFileWriter{
 		for (int i = 0; i < paramsB.size(); i++) {
 			if (i>0) writer.write(",");
 			paraTypeName = ((ParameterInfo)paramsB.get(i)).getLangName();
-			if((CUtils.isSimpleType(paraTypeName))){
+			if((CPPUtils.isSimpleType(paraTypeName))){
 				//for simple types	
 				writer.write(paraTypeName);
 			}else if((type = this.wscontext.getTypemap().getType(((ParameterInfo)paramsB.get(i)).getSchemaName())) != null && type.isArray()){
@@ -250,38 +249,35 @@ public class WrapWriter extends CFileWriter{
 				writer.write(paraTypeName+"*");
 			}
 		}
-		writer.write(");\n");		
+		writer.write(");\n");
 		writer.write("\n/////////////////////////////////////////////////////////////////\n");
 		writer.write("// This method wrap the service method \n");
 		writer.write("//////////////////////////////////////////////////////////////////\n");
 		//method signature
-		writer.write("int "+classname+"::" + methodName + CUtils.WRAPPER_METHOD_APPENDER + "(IMessageData* mc)\n{\n");
+		writer.write("int "+classname+"::" + methodName + CUtils.WRAPPER_METHOD_APPENDER+ "(IMessageData* mc)\n{\n");
 		writer.write("\tIWrapperSoapSerializer *pIWSSZ = NULL;\n");
 		writer.write("\tmc->getSoapSerializer(&pIWSSZ);\n");
-		writer.write("\tif (!pIWSSZ) return AXIS_FAIL;\n");
+		writer.write("\tif (!pIWSSZ) return FAIL;\n");
 		writer.write("\tIWrapperSoapDeSerializer *pIWSDZ = NULL;\n");
 		writer.write("\tmc->getSoapDeSerializer(&pIWSDZ);\n");
-		writer.write("\tif (!pIWSDZ) return AXIS_FAIL;\n");
+		writer.write("\tif (!pIWSDZ) return FAIL;\n");
 		writer.write("\tpIWSSZ->createSoapMethod(\""+methodName+"Response\", pIWSSZ->getNewNamespacePrefix(), \""+wscontext.getWrapInfo().getTargetNameSpaceOfWSDL()+"\");\n");
+		//create and populate variables for each parameter
 		for (int i = 0; i < paramsB.size(); i++) {
 			paraTypeName = ((ParameterInfo)paramsB.get(i)).getLangName();
-			if((CUtils.isSimpleType(((ParameterInfo)paramsB.get(i)).getLangName()))){
-				//for simple types
-				if ("char*".equals(paraTypeName)|| "Axis_Base64Binary".equals(paraTypeName) || "Axis_HexBinary".equals(paraTypeName)){	
-					writer.write("\t"+paraTypeName+" v"+i+" = strdup(pIWSDZ->"+CUtils.getParameterGetValueMethodName(paraTypeName)+"());\n");
-				}else{
-					writer.write("\t"+paraTypeName+" v"+i+" = pIWSDZ->"+CUtils.getParameterGetValueMethodName(paraTypeName)+"();\n");					
-				}
+			if((CPPUtils.isSimpleType(((ParameterInfo)paramsB.get(i)).getLangName()))){
+				//for simple types	
+				writer.write("\t"+paraTypeName+" v"+i+" = pIWSDZ->"+CPPUtils.getParameterGetValueMethodName(paraTypeName)+";\n");
 			}else if((type = this.wscontext.getTypemap().getType(((ParameterInfo)paramsB.get(i)).getSchemaName())) != null && type.isArray()){
 				QName qname = type.getTypNameForAttribName("item");
 				String containedType = null;
-				if (CUtils.isSimpleType(qname)){
-					containedType = CUtils.getclass4qname(qname);
+				if (CPPUtils.isSimpleType(qname)){
+					containedType = CPPUtils.getclass4qname(qname);
 					writer.write("\t"+paraTypeName+" v"+i+";\n"); 
 					writer.write("\tv"+i+".m_Size = pIWSDZ->GetArraySize();\n");
-					writer.write("\tif (v"+i+".m_Size < 1) return AXIS_FAIL;\n");
+					writer.write("\tif (v"+i+".m_Size < 1) return FAIL;\n");
 					writer.write("\tv"+i+".m_Array = new "+containedType+"[v"+i+".m_Size];\n");
-					writer.write("\tif (AXIS_SUCCESS != pIWSDZ->GetArray((Axis_Array*)(&v"+i+"), "+CUtils.getXSDTypeForBasicType(containedType)+")) return AXIS_FAIL;\n");
+					writer.write("\tif (SUCCESS != pIWSDZ->GetArray((Axis_Array*)(&v"+i+"), "+CPPUtils.getXSDTypeForBasicType(containedType)+")) return FAIL;\n");
 				}
 				else{
 					containedType = qname.getLocalPart();
@@ -296,32 +292,8 @@ public class WrapWriter extends CFileWriter{
 					"\n\t\t, Axis_TypeName_"+paraTypeName+", Axis_URI_"+paraTypeName+");\n");				
 			}
 		}
-		//if any error occured in the deserialization do not call the web service method. just return an error.
-		writer.write("\tif (AXIS_SUCCESS != pIWSDZ->GetStatus())\n\t{\n");
-		for (int i = 0; i < paramsB.size(); i++) {
-			paraTypeName = ((ParameterInfo)paramsB.get(i)).getLangName();
-			if((CUtils.isSimpleType(((ParameterInfo)paramsB.get(i)).getLangName()))){
-				//for simple types nothing is done	
-			}else if((type = this.wscontext.getTypemap().getType(((ParameterInfo)paramsB.get(i)).getSchemaName())) != null && type.isArray()){
-				QName qname = type.getTypNameForAttribName("item");
-				String containedType = null;
-				if (CUtils.isSimpleType(qname)){ //array of simple types
-					containedType = CUtils.getclass4qname(qname);
-					writer.write("\t\tdelete [] v"+i+".m_Array;\n");
-				}
-				else{
-					containedType = qname.getLocalPart();
-					writer.write("\t\tAxis_Delete_"+containedType+"(v"+i+".m_Array, true, v"+i+".m_Size);\n");
-				}
-			}else{
-				//for complex types 
-				writer.write("\t\tAxis_Delete_"+paraTypeName+"(v"+i+", false, 0);\n"); 
-			}
-		}
-
-		writer.write("\t\treturn AXIS_DESERIALIZATION_ERROR;\n\t}\n");
-
-		if(returntype != null){				
+		
+		if(returntype != null){
 			/* Invoke the service when return type not void */
 			writer.write("\t"+outparamType+((returntypeisarray || returntypeissimple)?" ":" *")+ "ret = "+methodName+"(");
 			if (0<paramsB.size()){
@@ -333,13 +305,13 @@ public class WrapWriter extends CFileWriter{
 			writer.write(");\n");
 			/* set the result */
 			if (returntypeissimple){
-				writer.write("\treturn pIWSSZ->AddOutputParam(\""+methodName+"Return\", ret, "+CUtils.getXSDTypeForBasicType(outparamType)+");\n");
+				writer.write("\treturn pIWSSZ->AddOutputParam(\""+methodName+"Return\", ret, "+CPPUtils.getXSDTypeForBasicType(outparamType)+");\n");
 			}else if(returntypeisarray){
 				QName qname = retType.getTypNameForAttribName("item");
 				String containedType = null;
-				if (CUtils.isSimpleType(qname)){
-					containedType = CUtils.getclass4qname(qname);
-					writer.write("\treturn pIWSSZ->AddOutputParam(\""+methodName+"Return\", (Axis_Array*)(&ret),"+CUtils.getXSDTypeForBasicType(containedType)+");\n");
+				if (CPPUtils.isSimpleType(qname)){
+					containedType = CPPUtils.getclass4qname(qname);
+					writer.write("\treturn pIWSSZ->AddOutputParam(\""+methodName+"Return\", (Axis_Array*)(&ret),"+CPPUtils.getXSDTypeForBasicType(containedType)+");\n");
 				}
 				else{
 					containedType = qname.getLocalPart();
@@ -353,19 +325,20 @@ public class WrapWriter extends CFileWriter{
 			}
 		}else{//method does not return anything
 			/* Invoke the service when return type is void */
-			writer.write("\t" + methodName + "(");
+			writer.write("\tpWs->" + methodName + "(");
 			if (0<paramsB.size()){
 				for (int i = 0; i <  paramsB.size() - 1; i++) {
 					writer.write("v" + i + ",");
 				}
 				writer.write("v" + ( paramsB.size() - 1));
 			}
-			writer.write(");\n");
-			writer.write("\treturn AXIS_SUCCESS;\n");
+			writer.write(")\n");
+			writer.write("\treturn SUCCESS;\n");
 		}
 		//write end of method
 		writer.write("}\n");
 	}
+		
 	/* (non-Javadoc)
 	 * @see org.apache.axis.wsdl.wsdl2ws.cpp.CPPClassWriter#writeGlobalCodes()
 	 */

@@ -55,8 +55,12 @@
  * <http://www.apache.org/>.
  *
  *
+ *
+ *
+ * @author Susantha Kumara (skumara@virtusa.com)
+ *
  */
-// TypeMapping.h: 
+// TypeMapping.h: interface for the TypeMapping class.
 //
 //////////////////////////////////////////////////////////////////////
 #ifdef WIN32
@@ -79,13 +83,6 @@ enum XSDTYPE { XSD_UNKNOWN=1, XSD_INT, XSD_FLOAT, XSD_STRING, XSD_LONG, XSD_SHOR
 				XSD_BASE64BINARY, XSD_ANYURI, XSD_QNAME, XSD_NOTATION, XSD_INTEGER, \
 				XSD_ARRAY, USER_TYPE, ACCESSOR };
 
-/**
-    @class TypeMapping
-    @brief interface for the TypeMapping class.
-
-
-    @author Susantha Kumara (skumara@virtusa.com)
-*/
 class TypeMapping  
 {
 public:

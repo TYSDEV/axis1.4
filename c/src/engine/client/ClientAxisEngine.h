@@ -7,13 +7,6 @@
 
 #include "AxisEngine.h"
 
-/**
-    @class ClientAxisEngine
-    @brief
-
-
-    @author Susantha Kumara (skumara@virtusa.com)
-*/
 class ClientAxisEngine : public AxisEngine  
 {
 public:

@@ -55,9 +55,13 @@
  * <http://www.apache.org/>.
  *
  *
+ *
+ *
+ * @author Roshan Weerasuriya (roshan@jkcsworld.com, roshan@opensource.lk)
+ *
  */
 
-// BasicNode.h: 
+// BasicNode.h: interface for the BasicNode class.
 //
 //////////////////////////////////////////////////////////////////////
 
@@ -73,13 +77,6 @@ class SoapSerializer;
 
 enum NODE_TYPE { ELEMENT_NODE=1, CHARACTER_NODE};
 
-/**
-    @class BasicNode
-    @brief interface for the BasicNode class.
-
-
-    @author Roshan Weerasuriya (roshan@jkcsworld.com, roshan@opensource.lk)
-*/
 class BasicNode
 {
 public:

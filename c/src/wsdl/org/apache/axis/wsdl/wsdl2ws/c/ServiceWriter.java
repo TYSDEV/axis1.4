@@ -114,7 +114,7 @@ public class ServiceWriter extends CFileWriter{
 		  for(int i = 0; i < methods.size(); i++){
 			  minfo = (MethodInfo)this.methods.get(i);
 
-			  if(minfo.getReturnType()==null)
+			  if(minfo.getReturnType().getLangName()==null)
 				  writer.write("void ");
 			  else {
 				String outparam = minfo.getReturnType().getLangName();
@@ -147,7 +147,7 @@ public class ServiceWriter extends CFileWriter{
 			Type atype;
 			Iterator types = this.wscontext.getTypemap().getTypes().iterator();
 			HashSet typeSet = new HashSet();
-			writer.write("#include <axis/common/AxisUserAPI.h>\n\n");
+			writer.write("#include <AxisUserAPI.h>\n\n");
 			while(types.hasNext()){
 				atype = (Type)types.next();
 				typeSet.add(atype.getLanguageSpecificName());

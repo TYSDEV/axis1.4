@@ -53,9 +53,13 @@
  * <http://www.apache.org/>.
  *
  *
+ *
+ *
+ * @author Roshan Weerasuriya (roshan@jkcs.slt.lk, roshan@opensource.lk)
+ *
  */
 
-// AxisSocketUtils.h: 
+// AxisSocketUtils.h: interface for the AxisSocketUtils class.
 //
 //////////////////////////////////////////////////////////////////////
 
@@ -66,18 +70,10 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-/**
-    @class AxisSocketUtils
-    @brief interface for the AxisSocketUtils class.
-
-    
-    @author Roshan Weerasuriya (roshan@jkcs.slt.lk, roshan@opensource.lk)
-*/
-
 class AxisSocketUtils  
 {
 public:
-	/**
+	/*
 	 *Prints the description of the related socket error
 	 */
 	static int printSocketErrorDescription();

@@ -55,22 +55,19 @@
  * <http://www.apache.org/>.
  *
  *
+ *
+ *
+ * @author Roshan Weerasuriya (roshan@jkcs.slt.lk, roshan@opensource.lk)
+ *
  */
 
-// ISoapHeader.h: 
+// ISoapHeader.h: interface for the ISoapHeader class.
 //
 //////////////////////////////////////////////////////////////////////
 
 #if !defined(AFX_ISOAPHEADER_H__1BE21FFC_8BDE_4455_A2BE_E6B2A0204899__INCLUDED_)
 #define AFX_ISOAPHEADER_H__1BE21FFC_8BDE_4455_A2BE_E6B2A0204899__INCLUDED_
 
-/**
-    @class ISoapHeader
-    @brief interface for the ISoapHeader class.
-
-
-    @author Roshan Weerasuriya (roshan@jkcs.slt.lk, roshan@opensource.lk)
-*/
 class ISoapHeader  
 {
 public:

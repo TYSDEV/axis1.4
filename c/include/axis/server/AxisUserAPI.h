@@ -53,16 +53,17 @@
  * <http://www.apache.org/>.
  *
  *
- */
- /**
+ *
+ *
  * @author Susantha Kumara (susantha@opensource.lk, skumara@virtusa.com)
  *
  */
+// AxisUserAPI.h: interface for the AxisUserAPI class.
+//
+//////////////////////////////////////////////////////////////////////
 
 #if !defined(AFX_AXISUSERAPI_H__6E27008D_DCA0_4F28_AC82_FEEBE1A1CBBB__INCLUDED_)
 #define AFX_AXISUSERAPI_H__6E27008D_DCA0_4F28_AC82_FEEBE1A1CBBB__INCLUDED_
-
-#include <time.h>
 
 typedef struct Axis_ArrayTag
 {
@@ -76,26 +77,16 @@ typedef struct tm Axis_DateTime;
 typedef double Axis_Decimal;
 typedef int Axis_Boolean;
 
-#define AXIS_OUT_PARAM 
+#define AXIS_OUT_PARAM //nothing
 
 #ifdef __cplusplus
 
 #include <string>
 using namespace std;
 
-#ifndef USES_AXIS_C_TYPES
-
 typedef string Axis_Base64Binary;
 typedef string Axis_HexBinary;
 typedef string Axis_AnyURI;
-
-#else /* C++ wrappers still uses C types */
-
-typedef char* Axis_Base64Binary;
-typedef char* Axis_HexBinary;
-typedef char* Axis_AnyURI;
-
-#endif
 
 #else
 
@@ -105,4 +96,4 @@ typedef char* Axis_AnyURI;
 
 #endif
 
-#endif /* !defined(AFX_AXISUSERAPI_H__6E27008D_DCA0_4F28_AC82_FEEBE1A1CBBB__INCLUDED_) */
+#endif // !defined(AFX_AXISUSERAPI_H__6E27008D_DCA0_4F28_AC82_FEEBE1A1CBBB__INCLUDED_)

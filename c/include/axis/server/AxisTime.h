@@ -53,8 +53,11 @@
  * <http://www.apache.org/>.
  *
  *
+ *
+ *
+ * @author Damitha Kumarage (damitha@opensource.lk, damitha@jkcsworld.com)
+ *
  */
- 
 #ifndef __AXISTIME_H_INCLUDED_
 #define __AXISTIME_H_INCLUDED_
 
@@ -75,14 +78,6 @@ typedef struct
     double secs;
 } uDuration;
 
-
-/**
-    @class AxisTime
-    @brief time manipulating helper class
-
-    
-    @author Damitha Kumarage (damitha@opensource.lk, damitha@jkcsworld.com)    
-*/
 class AxisTime
 {
     public:

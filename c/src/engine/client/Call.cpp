@@ -71,7 +71,7 @@
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-extern "C" int initialize_module(int bServer);
+extern "C" int initialize_module(int bServer, const char * wsddPath);
 
 Call::Call()
 {
@@ -81,7 +81,7 @@ Call::Call()
 	m_pIWSDZ = NULL;
 	m_Soap.so.http.ip_headercount = 0;
 	m_Soap.so.http.ip_headers = NULL;
-	initialize_module(0);
+	initialize_module(0, "");
 	m_pTransport = NULL;
 	m_nReturnType = XSD_UNKNOWN;
 	m_nArrayType = XSD_UNKNOWN;
@@ -96,7 +96,7 @@ Call::~Call()
 int Call::SetEndpointURI(const char *pchEndpointURI)
 {
 	m_Soap.so.http.uri_path = pchEndpointURI;
-	return AXIS_SUCCESS;
+	return SUCCESS;
 }
 
 void Call::SetOperation(const char *pchOperation, const char* pchNamespace)
@@ -242,7 +242,7 @@ int Call::Invoke()
 {
 	int nStatus;
 	Param *pParam = NULL;
-	if (AXIS_SUCCESS == (nStatus = m_pAxisEngine->Process(&m_Soap)))
+	if (SUCCESS == (nStatus = m_pAxisEngine->Process(&m_Soap)))
 	{
 		//Get return type if it returns
 		if (USER_TYPE == m_nReturnType)
@@ -264,39 +264,37 @@ int Call::Invoke()
 			}
 			else
 			{
-				return AXIS_FAIL;
+				return FAIL;
 			}
 			*/
 			if (!m_ReturnCplxObj.pCreFunct || !m_ReturnCplxObj.pDZFunct)
-				return AXIS_FAIL; 
+				return FAIL; 
 			m_ReturnCplxObj.pObject = m_ReturnCplxObj.pCreFunct();
 			if (!m_ReturnCplxObj.pObject)
-				return AXIS_FAIL;
+				return FAIL;
 			m_ReturnCplxObj.pDZFunct(m_ReturnCplxObj.pObject, m_pMsgData->m_pDZ);
-			return m_pIWSDZ->GetStatus();
+
 		}
 		else if (XSD_ARRAY == m_nReturnType)
 		{
 			IParam *param0 = m_pIWSDZ->GetParam(); 
 			/* now we know that this is an array. if needed we can check that too */
-			if (!m_pArray) return AXIS_FAIL; //No array expected ?
-			if (AXIS_SUCCESS != param0->GetArraySize(&(m_pArray->m_Size))) return AXIS_FAIL;
-			if (AXIS_SUCCESS == MakeArray()) //Array is allocated successfully
+			if (!m_pArray) return FAIL; //No array expected ?
+			m_pArray->m_Size = param0->GetArraySize();
+			if (SUCCESS == MakeArray()) //Array is allocated successfully
 			{
 				if (USER_TYPE == m_nArrayType)
 					param0->SetArrayElements((void*)(m_pArray->m_Array), m_ReturnCplxObj.pDZFunct, m_ReturnCplxObj.pDelFunct, m_ReturnCplxObj.pSizeFunct);
 				else
 					param0->SetArrayElements((void*)(m_pArray->m_Array));
 				m_pIWSDZ->Deserialize(param0,0);
-				return m_pIWSDZ->GetStatus();
 			}
 			else 
-				return AXIS_FAIL; //CF_ZERO_ARRAY_SIZE_ERROR
+				return FAIL; //CF_ZERO_ARRAY_SIZE_ERROR
 		}
 		else if (XSD_UNKNOWN != m_nReturnType)//basic type
 		{
 			m_pReturnValue = (Param*)m_pIWSDZ->GetParam();
-			return m_pIWSDZ->GetStatus();
 		}
 		else if (!m_OutParams.empty()) //there are out parameters
 		{
@@ -321,24 +319,24 @@ int Call::Invoke()
 					}
 					else
 					{
-						return AXIS_FAIL;
+						return FAIL;
 					}
 					*/
 					if (!pOutParam->m_OutCplxObj.pCreFunct || !pOutParam->m_OutCplxObj.pDZFunct)
-						return AXIS_FAIL; 
+						return FAIL; 
 					pOutParam->m_OutCplxObj.pObject = pOutParam->m_OutCplxObj.pCreFunct();
 					if (!pOutParam->m_OutCplxObj.pObject)
-						return AXIS_FAIL;
+						return FAIL;
 					pOutParam->m_OutCplxObj.pDZFunct(pOutParam->m_OutCplxObj.pObject, m_pMsgData->m_pDZ);
-					if (AXIS_SUCCESS != m_pIWSDZ->GetStatus()) return AXIS_FAIL;
+
 				}
 				else if (XSD_ARRAY == pOutParam->m_nOutType)
 				{
 					IParam *param0 = m_pIWSDZ->GetParam(); 
 					/* now we know that this is an array. if needed we can check that too */
-					if (!pOutParam->m_pArray) return AXIS_FAIL; //No array expected ?
-					if (AXIS_SUCCESS != param0->GetArraySize(&(m_pArray->m_Size))) return AXIS_FAIL;
-					if (pOutParam->m_pArray->m_Size < 1) return AXIS_FAIL;
+					if (!pOutParam->m_pArray) return FAIL; //No array expected ?
+					pOutParam->m_pArray->m_Size = param0->GetArraySize();
+					if (pOutParam->m_pArray->m_Size < 1) return FAIL;
 					if (USER_TYPE == pOutParam->m_nArrayType)
 					{
 						pOutParam->m_pArray->m_Array = pOutParam->m_OutCplxObj.pCreFunct(true, pOutParam->m_pArray->m_Size);
@@ -354,19 +352,17 @@ int Call::Invoke()
 						else
 							param0->SetArrayElements((void*)(pOutParam->m_pArray->m_Array));
 						m_pIWSDZ->Deserialize(param0,0);
-						if (AXIS_SUCCESS != m_pIWSDZ->GetStatus()) return AXIS_FAIL;
 					}
 					else 
-						return AXIS_FAIL; //CF_ZERO_ARRAY_SIZE_ERROR
+						return FAIL; //CF_ZERO_ARRAY_SIZE_ERROR
 				}
 				else if (XSD_UNKNOWN != pOutParam->m_nOutType)//basic type
 				{
 					pOutParam->m_pOutValue = (Param*)m_pIWSDZ->GetParam();
-					if (AXIS_SUCCESS != m_pIWSDZ->GetStatus()) return AXIS_FAIL;
 				}
 				else // this is an unexpected situation
 				{
-					return AXIS_FAIL;
+					return FAIL;
 				}			
 			}
 		}
@@ -411,11 +407,11 @@ int Call::Initialize()
 	try {
 		InitializeObjects();
 		m_Soap.sessionid = "somesessionid1234";
-		if (AXIS_SUCCESS != OpenConnection()) return AXIS_FAIL;
+		if (SUCCESS != OpenConnection()) return FAIL;
 		if (m_pAxisEngine) delete m_pAxisEngine;
 		m_pAxisEngine = new ClientAxisEngine();
-		if (!m_pAxisEngine) return AXIS_FAIL;
-		if (AXIS_SUCCESS == m_pAxisEngine->Initialize())
+		if (!m_pAxisEngine) return FAIL;
+		if (SUCCESS == m_pAxisEngine->Initialize())
 		{
 			m_pMsgData = m_pAxisEngine->GetMessageData();
 			if (m_pMsgData)
@@ -424,22 +420,22 @@ int Call::Initialize()
 				m_pMsgData->getSoapDeSerializer((IWrapperSoapDeSerializer**)(&m_pIWSDZ));
 				if (m_pIWSSZ && m_pIWSDZ)
 				{
-					return AXIS_SUCCESS;
+					return SUCCESS;
 				}
 			}
-			return AXIS_FAIL;
+			return FAIL;
 		}
-		return AXIS_FAIL;
+		return FAIL;
 	}
 	catch (ChannelException e)
 	{
 		printf(e.GetErr().c_str());
-		return AXIS_FAIL;
+		return FAIL;
 	}
 	catch (...)
 	{
 		printf("Unknown exception occured in the client");
-		return AXIS_FAIL;
+		return FAIL;
 	}
 }
 
@@ -467,7 +463,7 @@ int Call::UnInitialize()
 		m_pAxisEngine = NULL;
 	}
 	CloseConnection();
-	return AXIS_SUCCESS;
+	return SUCCESS;
 }
 
 int Call::SetProtocol(AXIS_PROTOCOL_TYPE protocol)
@@ -518,7 +514,7 @@ void Call::SetSOAPVersion(SOAP_VERSION version)
  */
 int Call::MakeArray()
 {
-	if (m_pArray->m_Size < 1) return AXIS_FAIL;
+	if (m_pArray->m_Size < 1) return FAIL;
 
 	if (USER_TYPE == m_nArrayType)
 	{
@@ -528,7 +524,7 @@ int Call::MakeArray()
 	{
 		m_pArray->m_Array = m_pIWSDZ->CreateArray(m_nArrayType, m_pArray->m_Size); 
 	}
-	return (NULL != m_pArray->m_Array)?AXIS_SUCCESS:AXIS_FAIL;
+	return (NULL != m_pArray->m_Array)?SUCCESS:FAIL;
 }
 
 Call::OutParamHolder::OutParamHolder()

@@ -55,9 +55,13 @@
  * <http://www.apache.org/>.
  *
  *
+ *
+ *
+ * @author Roshan Weerasuriya (roshan@jkcs.slt.lk, roshan@opensource.lk)
+ *
  */
 
-// IHeaderBlock.h: 
+// IHeaderBlock.h: interface for the IHeaderBlock class.
 //
 //////////////////////////////////////////////////////////////////////
 
@@ -66,13 +70,6 @@
 
 #include "../soap/BasicNode.h"
 
-/**
-    @class IHeaderBlock
-    @brief interface for the IHeaderBlock class.
-
-
-    @author Roshan Weerasuriya (roshan@jkcs.slt.lk, roshan@opensource.lk)
-*/
 class IHeaderBlock
 {
 public:

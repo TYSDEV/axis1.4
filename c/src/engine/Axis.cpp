@@ -112,13 +112,12 @@ HandlerPool* g_pHandlerPool;
 //un synchronized read-only global variables.
 WSDDDeployment* g_pWSDDDeployment;
 AxisConfig* g_pConfig;
-SoapSerializer* g_pSZ;
 
 
 extern "C" int process_request(Ax_soapstream *str)
 {
 //	AXISTRACE1("in axis.cpp");	
-	int Status = AXIS_FAIL;
+	int Status = FAIL;
 	FILE * WsddFile;
 	char ReadBuffer[BYTESTOREAD];
 	ReadBuffer[0] = '\0';
@@ -128,7 +127,7 @@ extern "C" int process_request(Ax_soapstream *str)
 	WSDDService* pService = NULL;
 
 	/* If there is no send function given in the Ax_soapstream struct */
-	if (!str->transport.pSendFunct) return AXIS_FAIL;
+	if (!str->transport.pSendFunct) return FAIL;
 
 	switch (str->trtype)
 	{
@@ -140,9 +139,10 @@ extern "C" int process_request(Ax_soapstream *str)
 				AxisEngine* engine = new ServerAxisEngine();	
 				if (engine)
 				{
-					if (AXIS_SUCCESS == engine->Initialize())
+					if (SUCCESS == engine->Initialize())
 					{
-						Status = engine->Process(str);       
+						Status = engine->Process(str);
+						AXISTRACE1("Status = engine->Process(str):status:");        
 					}
 					delete engine;
 				}
@@ -178,7 +178,7 @@ extern "C" int process_request(Ax_soapstream *str)
 						<br>\
 						</body></html>", str->str.op_stream);
 
-						return AXIS_FAIL;
+						return FAIL;
 					}
 					str->transport.pSendFunct("<html><body>\
 						<h1 align=\"center\">Welcome to Axis C++</h1>\
@@ -204,7 +204,7 @@ extern "C" int process_request(Ax_soapstream *str)
 					}
 					str->transport.pSendFunct("</tbody></table>", str->str.op_stream);
 					str->transport.pSendFunct("<br><p align=\"center\">Copyright © 2001-2003 The Apache Software Foundation<br></p></body></html>", str->str.op_stream);
-					Status = AXIS_SUCCESS;
+					Status = SUCCESS;
 				}
 				else 
 				{
@@ -213,7 +213,7 @@ extern "C" int process_request(Ax_soapstream *str)
 					if((WsddFile = fopen(sServiceName.c_str(),"r"))==NULL)
 					{
 						str->transport.pSendFunct("<h3>Url not available</h3>", str->str.op_stream);
-						Status = AXIS_SUCCESS;
+						Status = SUCCESS;
 						//handle the error
 					}
 					else
@@ -224,7 +224,7 @@ extern "C" int process_request(Ax_soapstream *str)
 							*(ReadBuffer + charcount) = '\0';
 							str->transport.pSendFunct(ReadBuffer, str->str.op_stream);
   						}
-						Status = AXIS_SUCCESS;
+						Status = SUCCESS;
 						fclose(WsddFile);
 					}
 				}
@@ -235,11 +235,11 @@ extern "C" int process_request(Ax_soapstream *str)
 			str->transport.pSendFunct("Unknown Protocol", str->str.op_stream);
 		break;
 	}
-     
+    AXISTRACE1("before return Status;"); 
 	return Status;
 }
 
-extern "C" int initialize_module(int bServer)
+extern "C" int initialize_module(int bServer, const char * wsddPath)
 {
 	//order of these initialization method invocation should not be changed
 //	AXISTRACE1("inside initialize_module\n");
@@ -254,31 +254,17 @@ extern "C" int initialize_module(int bServer)
 	ModuleInitialize();
 	if (bServer) //no client side wsdd processing at the moment
 	{
-        int status = g_pConfig->ReadConfFile();
-        if(status == AXIS_SUCCESS)
-        {
-            char* pWsddPath = g_pConfig->GetWsddFilePath();
-            if (AXIS_SUCCESS != g_pWSDDDeployment->LoadWSDD(pWsddPath)) return AXIS_FAIL;
-        }
-        else
-        {
-            AXISTRACE1("Reading from the configuration file failed. " \
-            "Check for error in the configuration file", CRITICAL);
-            /*TODO:Improve the AxisTrace so that it will log
-            these kind of messages into a log file according to the
-            critical level specified.
-            */
-            return AXIS_FAIL;
-        }
+		char* pWsddPath = g_pConfig->GetWsddFilePath();
+		if (SUCCESS != g_pWSDDDeployment->LoadWSDD(pWsddPath)) return FAIL;
 	}
-	return AXIS_SUCCESS;
+	return SUCCESS;
 }
 
 extern "C" int uninitialize_module()
 {
 	XMLPlatformUtils::Terminate();
 	ModuleUnInitialize();
-	return AXIS_SUCCESS;
+	return SUCCESS;
 }
 
 

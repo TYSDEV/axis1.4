@@ -53,8 +53,12 @@
  * <http://www.apache.org/>.
  *
  *
+ *
+ *
+ * @author Susantha Kumara (skumara@virtusa.com)
+ *
  */
-// IParam.h: 
+// IParam.h: interface for the IParam class.
 //
 //////////////////////////////////////////////////////////////////////
 
@@ -68,12 +72,6 @@
 #include <string>
 using namespace std;
 
-/**
-    @class ComplexObjectHandler
-    @brief 
-
-    @author Susantha Kumara (skumara@virtusa.com)
-*/
 class ComplexObjectHandler
 {
 public:
@@ -119,48 +117,40 @@ typedef union uParamValue
 	const AxisChar* pStrValue; 
 } uParamValue;
 
-
-/**
-    @class IParam
-    @brief interface for the IParam class.
-
-    @author Susantha Kumara (skumara@virtusa.com)
-*/
 class IParam  
 {
 public:
 	IParam(){};
 	virtual ~IParam(){};
  
-    virtual int GetInt(int* pValue) = 0;
-    virtual int GetUnsignedInt(unsigned int* pValue) = 0;
-    virtual int GetShort(short* pValue) = 0;
-    virtual int GetUnsignedShort(unsigned short* pValue) = 0;
-    virtual int GetByte(char* pValue) = 0;
-    virtual int GetUnsignedByte(unsigned char* pValue) = 0;
-    virtual int GetLong(long* pValue) = 0;
-    virtual int GetInteger(long* pValue) = 0;
-    virtual int GetUnsignedLong(unsigned long* pValue) = 0;
-	virtual int GetFloat(float* pValue) = 0;
-    virtual int GetDouble(double* pValue) = 0;
-    virtual int GetDecimal(double* pValue) = 0;
-	virtual int GetString(const AxisChar** pValue) = 0;
-    virtual int GetAnyURI(const AxisChar** pValue) = 0;
-    virtual int GetQName(const AxisChar** pValue) = 0;
-	virtual int GetHexString(const AxisChar** pValue) = 0;
-	virtual int GetBase64String(const AxisChar** pValue) = 0;
+    virtual int GetInt() = 0;
+    virtual unsigned int GetUnsignedInt() = 0;
+    virtual short GetShort() = 0;
+    virtual unsigned short GetUnsignedShort() = 0;
+    virtual char GetByte() = 0;
+    virtual unsigned char GetUnsignedByte() = 0;
+    virtual long GetLong() = 0;
+    virtual long GetInteger() = 0;
+    virtual unsigned long GetUnsignedLong() = 0;
+	virtual float GetFloat() = 0;
+    virtual double GetDouble() = 0;
+    virtual double GetDecimal() = 0;
+	virtual const AxisChar* GetString() = 0;
+    virtual const AxisChar* GetAnyURI() = 0;
+    virtual const AxisChar* GetQName() = 0;
+	virtual const AxisChar* GetHexString() = 0;
+	virtual const AxisChar* GetBase64String() = 0;
 	virtual const AxisString& GetTypeName() = 0;
-    /**return a tm struct which contain year-month-date-hour-
+    /*return a tm struct which contain year-month-date-hour-
       minute-second*/
-
-    virtual int GetDateTime(struct tm* pValue) = 0;
-    virtual int GetDate(struct tm* pValue) = 0;
-    virtual int GetTime(struct tm* pValue) = 0;
-    /**return a tm struct which contain years-months-dates-hours-
+    virtual struct tm GetDateTime() = 0;
+    virtual struct tm GetDate() = 0;
+    virtual struct tm GetTime() = 0;
+    /*return a tm struct which contain years-months-dates-hours-
       minutes-seconds which represents a duration*/
-    virtual int GetDuration(long* pValue) = 0;
+    virtual long GetDuration() = 0;
 
-    virtual int GetArraySize(int* pValue)= 0;
+    virtual int GetArraySize()= 0;
 	virtual int SetArrayElements(void* pElements)= 0;
 	virtual int SetArrayElements(void* pObject, AXIS_DESERIALIZE_FUNCT pDZFunct, AXIS_OBJECT_DELETE_FUNCT pDelFunct, AXIS_OBJECT_SIZE_FUNCT pSizeFunct)=0;
 	virtual int SetUserType(void* pObject, AXIS_DESERIALIZE_FUNCT pDZFunct, AXIS_OBJECT_DELETE_FUNCT pDelFunct)=0;

@@ -116,7 +116,7 @@ Attribute::Attribute(const AxisChar* localname, const AxisChar* prefix, const Ax
  */
 int Attribute::serialize(SoapSerializer& pSZ) const
 {	
-	int intStatus= AXIS_FAIL;
+	int intStatus= FAIL;
 
 	if (isSerializable()) {		
 		pSZ<< " ";
@@ -127,7 +127,7 @@ int Attribute::serialize(SoapSerializer& pSZ) const
 
 		pSZ<< m_localname.c_str() << "=\"" << m_value.c_str() << "\"";
 
-		intStatus= AXIS_SUCCESS;
+		intStatus= SUCCESS;
 	}
 
 	return intStatus;	
@@ -137,7 +137,7 @@ int Attribute::serialize(SoapSerializer& pSZ) const
 commented on 10Jul2003 3.30 pm
 int Attribute::serialize(string& sSerialized)
 {	
-	int intStatus= AXIS_FAIL;
+	int intStatus= FAIL;
 
 	if (isSerializable()) {
 		sSerialized+= " ";
@@ -149,7 +149,7 @@ int Attribute::serialize(string& sSerialized)
 		sSerialized= sSerialized + m_localname +
 			"=\""+ m_value+ "\"";
 
-		intStatus= AXIS_SUCCESS;
+		intStatus= SUCCESS;
 	}
 
 	return intStatus;	

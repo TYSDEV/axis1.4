@@ -195,7 +195,7 @@ int ArrayBean::GetArrayBlockSize(list<int>::iterator it)
 int ArrayBean::DeSerialize(IWrapperSoapDeSerializer *pDZ)
 {
 	Param* p;
-	if ((XSD_UNKNOWN == m_type) ||(0==m_size.size())||(!m_value.sta)) return AXIS_FAIL;
+	if ((XSD_UNKNOWN == m_type) ||(0==m_size.size())||(!m_value.sta)) return FAIL;
 	switch (m_type)
 	{
 	case XSD_BYTE:
@@ -207,8 +207,8 @@ int ArrayBean::DeSerialize(IWrapperSoapDeSerializer *pDZ)
 			for (int ix=0;ix<blocksize;ix++)
 			{
 				p = (Param*)pDZ->GetParam();
-				if (!p) return AXIS_FAIL;
-				if(AXIS_SUCCESS != p->GetByte(&a[ix])) return AXIS_FAIL;
+				if (!p) return FAIL;
+				a[ix] = p->GetByte();
 			}		
 		}
 		break;
@@ -221,8 +221,8 @@ int ArrayBean::DeSerialize(IWrapperSoapDeSerializer *pDZ)
 			for (int ix=0;ix<blocksize;ix++)
 			{
 				p = (Param*)pDZ->GetParam();
-				if (!p) return AXIS_FAIL;
-				if(AXIS_SUCCESS != p->GetShort(&a[ix])) return AXIS_FAIL;
+				if (!p) return FAIL;
+				a[ix] = p->GetShort();
 			}		
 		}
 		break;
@@ -237,8 +237,8 @@ int ArrayBean::DeSerialize(IWrapperSoapDeSerializer *pDZ)
 			for (int ix=0;ix<blocksize;ix++)
 			{
 				p = (Param*)pDZ->GetParam();
-				if (!p) return AXIS_FAIL;
-				if(AXIS_SUCCESS != p->GetLong(&a[ix])) return AXIS_FAIL;
+				if (!p) return FAIL;
+				a[ix] = p->GetLong();
 			}		
 		}
 		break;
@@ -251,8 +251,8 @@ int ArrayBean::DeSerialize(IWrapperSoapDeSerializer *pDZ)
 			for (int ix=0;ix<blocksize;ix++)
 			{
 				p = (Param*)pDZ->GetParam();
-				if (!p) return AXIS_FAIL;
-				if(AXIS_SUCCESS != p->GetDouble(&a[ix])) return AXIS_FAIL;
+				if (!p) return FAIL;
+				a[ix] = p->GetDouble();
 			}		
 		}
 		break;
@@ -271,8 +271,8 @@ int ArrayBean::DeSerialize(IWrapperSoapDeSerializer *pDZ)
 			for (int ix=0;ix<blocksize;ix++)
 			{
 				p = (Param*)pDZ->GetParam();
-				if (!p) return AXIS_FAIL;
-				if(AXIS_SUCCESS != p->GetDate(&a[ix])) return AXIS_FAIL;
+				if (!p) return FAIL;
+				a[ix] = p->GetDate();
 			}		
 		}
 		break;	
@@ -286,8 +286,8 @@ int ArrayBean::DeSerialize(IWrapperSoapDeSerializer *pDZ)
 			for (int ix=0;ix<blocksize;ix++)
 			{
 				p = (Param*)pDZ->GetParam();
-				if (!p) return AXIS_FAIL;
-				if(AXIS_SUCCESS != p->GetInt(&a[ix])) return AXIS_FAIL;
+				if (!p) return FAIL;
+				a[ix] = p->GetInt();
 			}
 		}
 		break;
@@ -299,8 +299,8 @@ int ArrayBean::DeSerialize(IWrapperSoapDeSerializer *pDZ)
 			for (int ix=0;ix<blocksize;ix++)
 			{
 				p = (Param*)pDZ->GetParam();
-				if (!p) return AXIS_FAIL;
-				if(AXIS_SUCCESS != p->GetFloat(&a[ix])) return AXIS_FAIL;
+				if (!p) return FAIL;
+				a[ix] = p->GetFloat();
 			}
 		}
 		break;
@@ -312,15 +312,13 @@ int ArrayBean::DeSerialize(IWrapperSoapDeSerializer *pDZ)
 	case XSD_NOTATION:			
 		{
 			AxisString* a = (AxisString*)m_value.sta;
-			const AxisChar* pch;
 			list<int>::iterator it = m_size.begin();
 			int blocksize = GetArrayBlockSize(it);
 			for (int ix=0;ix<blocksize;ix++)
 			{
 				p = (Param*)pDZ->GetParam();
-				if (!p) return AXIS_FAIL;
-				if(AXIS_SUCCESS != p->GetString(&pch)) return AXIS_FAIL;
-				if (pch) a[ix] = pch;
+				if (!p) return FAIL;
+				a[ix] = p->GetString();
 			}
 		}
 		break;
@@ -342,7 +340,7 @@ int ArrayBean::DeSerialize(IWrapperSoapDeSerializer *pDZ)
 		break;
 	default:;
 	}
-	return AXIS_SUCCESS;
+	return SUCCESS;
 }
 
 int ArrayBean::Serialize(IWrapperSoapSerializer& pSZ)
@@ -481,7 +479,7 @@ int ArrayBean::Serialize(IWrapperSoapSerializer& pSZ)
 		break;
 	default:;
 	}
-	return AXIS_SUCCESS;
+	return SUCCESS;
 }
 
 void ArrayBean::AddDimension(int nDim)

@@ -53,6 +53,10 @@
  * <http://www.apache.org/>.
  *
  *
+ *
+ *
+ * @author Damitha Kumarage (damitha@opensource.lk, damitha@jkcsworld.com)
+ *
  */
  
 #ifndef __AXISEXCEPTION_H_INCLUDED_
@@ -77,13 +81,6 @@ using namespace std;
 #define AXIS_CATCH(X) 
 #define AXIS_ENDCATCH
 #endif
-
-/**
-    @class  AxisException
-    @brief  Class for exception handling.
-
-    @author Damitha Kumarage (damitha@opensource.lk, damitha@jkcsworld.com)
-*/
 
 class AxisException :public exception
 {

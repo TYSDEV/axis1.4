@@ -53,8 +53,11 @@
  * <http://www.apache.org/>.
  *
  *
+ *
+ *
+ * @author Damitha Kumarage (damitha@opensource.lk, damitha@jkcsworld.com)
+ *
  */
- 
 
 #ifndef __AXISLOG_H_INCLUDED_
 #define __AXISLOG_H_INCLUDED_
@@ -66,46 +69,38 @@
 
 #define __AXISTRACE__
 #if defined(__AXISTRACE__)
-  #define AXISTRACE1(X, Y) tracer.logaxis(X,Y,__FILE__,__LINE__);
-  #define AXISTRACE2(X,Y, Z) tracer.logaxis(X,Y,Z,__FILE__,__LINE__);
+  #define AXISTRACE1(X) tracer.trace(X,__FILE__,__LINE__);
+  #define AXISTRACE2(X,Y) tracer.trace(X,Y,__FILE__,__LINE__);
   #define AXISTRACE3(X) tracer.trace(X);
-  
 #endif
 #if !defined(__AXISTRACE__)
-  #define AXISTRACE1(X,Y) "";
-  #define AXISTRACE2(X,Y,Z) "";
-  #define AXISTRACE3(X,Y) "";
+  #define AXISTRACE1(X) "";
+  #define AXISTRACE2(X,Y) "";
+  #define AXISTRACE3(X) "";
 #endif
 
 //extern unsigned char chEBuf[1024];
 using namespace std;
-
 /**
-    @class AxisTrace
-    @brief This is class is used to log messages when AXISTRACE is defined.
-
-    
-    @author Damitha Kumarage (damitha@opensource.lk, damitha@jkcsworld.com)
+This is class is used to log messages when AXISTRACE is defined.
 */
-
 class AxisTrace
 {
 public:
     AxisTrace();
 	virtual ~AxisTrace();
-    int logaxis(const char* sLog, int level, char* arg2, int arg3);
-    int logaxis(const char* sLog1, const char* sLog2, int level, char* arg3, int arg4);
+    int trace(const char* sLog, char* arg2, int arg3);
+    int trace(const char* sLog1, const char* sLog2, char* arg3, int arg4);
 	/**
 	 * Writes the given string to the standard console.
 	 * @param pchLog The given string which will be printed to the standard console.
-	 * @return The status which indicates whether the operation is success (AXIS_SUCCESS) or not (AXIS_FAIL).
+	 * @return The status which indicates whether the operation is success (SUCCESS) or not (FAIL).
 	 */
 	int trace(const char* pchLog);
     int GetConfPath();
   
 private:
     char strLine[4];
-    char* strLevel;
     char* m_sFileName;
     FILE* fileTrace;
     FILE* ConfFile; 

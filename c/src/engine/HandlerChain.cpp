@@ -67,7 +67,6 @@
 
 #include <axis/engine/HandlerChain.h>
 #include <axis/common/AxisTrace.h>
-#include <axis/common/GDefine.h>
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -85,22 +84,25 @@ HandlerChain::~HandlerChain()
 
 int HandlerChain::Invoke(IMessageData* pMsg)
 {
+	AXISTRACE1("HandlerChain::Invoke(IMessageData* pMsg)");
 	m_itCurrHandler = m_HandlerList.begin();
 	while (m_itCurrHandler != m_HandlerList.end())
-	{        
-		if (AXIS_SUCCESS == (*m_itCurrHandler).m_pHandler->Invoke(pMsg))
-		{            
+	{
+        AXISTRACE1("before handler invoke");
+		if (SUCCESS == (*m_itCurrHandler).m_pHandler->Invoke(pMsg))
+		{
+            AXISTRACE1("handler invoked");
 			m_itCurrHandler++;
 		}
 		else
 		{
-            AXISTRACE1("handler invoke not successful", WARN);
+            AXISTRACE1("handler invoke not successful");
 			OnFault(pMsg);
-			return AXIS_FAIL;
+			return FAIL;
 		}
 	}
-	
-	return AXIS_SUCCESS;
+	AXISTRACE1("HandlerChain::Invoke end");
+	return SUCCESS;
 }
 
 void HandlerChain::OnFault(IMessageData* pMsg)
@@ -119,18 +121,18 @@ int HandlerChain::AddHandler(Handler* pHandler, int nScope, int nLibId)
 	item.m_nScope = nScope;
 	item.m_nLibId = nLibId;
 	m_HandlerList.push_back(item);
-    
-	return AXIS_SUCCESS;
+    AXISTRACE1("andlerChain::AddHandler SUCCESS");
+	return SUCCESS;
 }
 
 int HandlerChain::Init()
 {
 	m_HandlerList.clear();
-	return AXIS_SUCCESS;
+	return SUCCESS;
 }
 
 int HandlerChain::Fini()
 {
 	m_HandlerList.clear();
-	return AXIS_SUCCESS;	
+	return SUCCESS;	
 }

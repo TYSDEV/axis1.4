@@ -55,8 +55,12 @@
  * <http://www.apache.org/>.
  *
  *
+ *
+ *
+ * @author Roshan Weerasuriya (roshan@jkcs.slt.lk, roshan@opensource.lk)
+ *
  */
-// IMessageData.h: 
+// IMessageData.h: interface for the IMessageData class.
 //
 //////////////////////////////////////////////////////////////////////
 
@@ -74,12 +78,6 @@ class IHandlerSoapSerializer;
 class IWrapperSoapSerializer;
 class IDeployerUtils;
 
-/**
-    @class IMessageData
-    @brief interface for the IMessageData class.
-
-    @author Roshan Weerasuriya (roshan@jkcs.slt.lk, roshan@opensource.lk)
-*/
 class IMessageData
 {
 	friend class CPP_DeploymentWrapper;

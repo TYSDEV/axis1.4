@@ -171,7 +171,7 @@ public class BeanParamWriter extends ParamCPPFileWriter{
 			}
 		}
 		writer.write("\n\tpSZ << \"</\" << Axis_TypeName_"+classname+" << \">\";\n");
-		writer.write("\treturn AXIS_SUCCESS;\n");
+		writer.write("\treturn SUCCESS;\n");
 		writer.write("}\n\n");
 	
 	}
@@ -190,7 +190,7 @@ public class BeanParamWriter extends ParamCPPFileWriter{
 		for(int i = 0; i< attribs.length;i++){
 			if(CPPUtils.isSimpleType(attribs[i][1])){
 				//if symple type
-				writer.write("\tparam->"+attribs[i][0]+" = pIWSDZ->"+CPPUtils.getParameterGetValueMethodName(attribs[i][1])+"();\n");
+				writer.write("\tparam->"+attribs[i][0]+" = pIWSDZ->"+CPPUtils.getParameterGetValueMethodName(attribs[i][1])+";\n");
 			}else if((t = wscontext.getTypemap().getType(new QName(attribs[i][2],attribs[i][3])))!= null && t.isArray()){
 				//if Array
 				QName qname = t.getTypNameForAttribName("item");
@@ -198,9 +198,9 @@ public class BeanParamWriter extends ParamCPPFileWriter{
 				if (CPPUtils.isSimpleType(qname)){
 					arrayType = CPPUtils.getclass4qname(qname);
 					writer.write("\tparam->"+attribs[i][0]+".m_Size = pIWSDZ->GetArraySize();\n");
-					writer.write("\tif (param->"+attribs[i][0]+".m_Size < 1) return AXIS_FAIL;\n");
+					writer.write("\tif (param->"+attribs[i][0]+".m_Size < 1) return FAIL;\n");
 					writer.write("\tparam->"+attribs[i][0]+".m_Array = new "+arrayType+"[param->"+attribs[i][0]+".m_Size];\n");
-					writer.write("\tif (AXIS_SUCCESS != pIWSDZ->GetArray((Axis_Array*)(&param->"+attribs[i][0]+"), "+CPPUtils.getXSDTypeForBasicType(arrayType)+")) return AXIS_FAIL;\n");
+					writer.write("\tif (SUCCESS != pIWSDZ->GetArray((Axis_Array*)(&param->"+attribs[i][0]+"), "+CPPUtils.getXSDTypeForBasicType(arrayType)+")) return FAIL;\n");
 				}
 				else{
 					arrayType = qname.getLocalPart();
@@ -215,7 +215,7 @@ public class BeanParamWriter extends ParamCPPFileWriter{
 					"\n\t\t, Axis_TypeName_"+attribs[i][1]+", Axis_URI_"+attribs[i][1]+");\n");				
 			}		
 		}
-		writer.write("\treturn pIWSDZ->GetStatus();\n");
+		writer.write("\treturn SUCCESS;\n");
 		writer.write("}\n");
 	}
 	
@@ -234,9 +234,7 @@ public class BeanParamWriter extends ParamCPPFileWriter{
 		writer.write("{\n");
 		writer.write("\tif (bArray)\n");
 		writer.write("\t{\n");
-		//destructors have been written to do the following in C++. So commented following code segment
-		/* 
-	 	boolean hasComplexType = false;
+		boolean hasComplexType = false;
 		for(int i = 0; i< attribs.length;i++){
 			if(!CPPUtils.isSimpleType(attribs[i][1])){
 				hasComplexType = true; break;
@@ -269,13 +267,10 @@ public class BeanParamWriter extends ParamCPPFileWriter{
 			writer.write("\t\t\tpTemp++;\n");
 			writer.write("\t\t}\n");
 		}
-		*/
 		writer.write("\t\tdelete [] param;\n");
 		writer.write("\t}\n");
 		writer.write("\telse\n");
 		writer.write("\t{\n");
-		//destructors has been written to do the following in C++. So commented following code segment		
-		/*
 		writer.write("\t\t//delete any pointer members or array members of this struct here\n");
 		for(int i = 1; i< attribs.length;i++){
 			if(!CPPUtils.isSimpleType(attribs[i][1])){
@@ -295,53 +290,9 @@ public class BeanParamWriter extends ParamCPPFileWriter{
 					writer.write("\t\tAxis_Delete_"+attribs[i][1]+"(param->"+attribs[i][0]+");\n");
 				}
 			}
-		}
-		*/			
+		}			
 		writer.write("\t\tdelete param;\n");
 		writer.write("\t}\n");
-		writer.write("}\n\n");
+		writer.write("}\n");
 	}	
-	protected void writeConstructors()throws WrapperFault{
-		try{
-			writer.write("/////////////////////////////////////////////////////////////////////////////\n");
-			writer.write("// Default constructor of class "+classname+"\n");
-			writer.write("//////////////////////////////////////////////////////////////////////\n");
-			writer.write(classname+"::"+classname+"()\n{\n");
-			for(int i = 1; i< attribs.length;i++){
-				if(!CPPUtils.isSimpleType(attribs[i][1])){
-					Type memtype = wscontext.getTypemap().getType(type.getTypNameForAttribName(attribs[i][0]));
-					if (memtype.isArray()){
-						writer.write("\t"+attribs[i][0]+".m_Array = NULL;\n");
-						writer.write("\t"+attribs[i][0]+".m_Size = 0;\n");
-					}else{
-						writer.write("\t"+attribs[i][0]+" = NULL;\n");
-					}
-				}
-			}
-			writer.write("}\n\n");			
-		}catch(IOException e){
-			throw new WrapperFault(e);
-		}
-	}
-	protected void writeDistructors() throws WrapperFault {
-		try{
-			writer.write("/////////////////////////////////////////////////////////////////////////////\n");
-			writer.write("// Destructor of class "+classname+"\n");
-			writer.write("//////////////////////////////////////////////////////////////////////\n");
-			writer.write(classname+"::~"+classname+"()\n{\n");
-			for(int i = 1; i< attribs.length;i++){
-				if(!CPPUtils.isSimpleType(attribs[i][1])){
-					Type memtype = wscontext.getTypemap().getType(type.getTypNameForAttribName(attribs[i][0]));
-					if (memtype.isArray()){
-						writer.write("\tdelete [] "+attribs[i][0]+".m_Array;\n");
-					}else{
-						writer.write("\tdelete "+attribs[i][0]+";\n");
-					}
-				}
-			}
-			writer.write("}\n\n");			
-		}catch(IOException e){
-			throw new WrapperFault(e);
-		}	
-	}
 }
