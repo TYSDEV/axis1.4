@@ -19,7 +19,7 @@ See http://xml.apache.org/forrest/linking.html for more info
  <introduction label="Introduction" href="index.html"/>
  <news label="News" href="news.html"/>
 <!-- <faq label="FAQ" href="faq.html"/>-->
- <wiki label="FAQ/Wiki" href="http://nagoya.apache.org/wiki/apachewiki.cgi?AxisProjectPages"/>
+ <wiki label="FAQ/Wiki" href="http://wiki.apache.org/ws/FrontPage/Axis"/>
  <getinvolved label="Get Involved">
   <overview label="Overview" href="overview.html"/>
   <cvs label="CVS Repository" href="cvs.html"/>
