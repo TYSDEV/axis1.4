@@ -112,6 +112,7 @@ HandlerPool* g_pHandlerPool;
 //un synchronized read-only global variables.
 WSDDDeployment* g_pWSDDDeployment;
 AxisConfig* g_pConfig;
+SoapSerializer* g_pSZ;
 
 
 extern "C" int process_request(Ax_soapstream *str)
@@ -141,8 +142,7 @@ extern "C" int process_request(Ax_soapstream *str)
 				{
 					if (SUCCESS == engine->Initialize())
 					{
-						Status = engine->Process(str);
-						AXISTRACE1("Status = engine->Process(str):status:");        
+						Status = engine->Process(str);       
 					}
 					delete engine;
 				}
@@ -235,7 +235,7 @@ extern "C" int process_request(Ax_soapstream *str)
 			str->transport.pSendFunct("Unknown Protocol", str->str.op_stream);
 		break;
 	}
-    AXISTRACE1("before return Status;"); 
+     
 	return Status;
 }
 
@@ -254,8 +254,22 @@ extern "C" int initialize_module(int bServer, const char * wsddPath)
 	ModuleInitialize();
 	if (bServer) //no client side wsdd processing at the moment
 	{
-		char* pWsddPath = g_pConfig->GetWsddFilePath();
-		if (SUCCESS != g_pWSDDDeployment->LoadWSDD(pWsddPath)) return FAIL;
+        int status = g_pConfig->ReadConfFile();
+        if(status == SUCCESS)
+        {
+            char* pWsddPath = g_pConfig->GetWsddFilePath();
+            if (SUCCESS != g_pWSDDDeployment->LoadWSDD(pWsddPath)) return FAIL;
+        }
+        else
+        {
+            AXISTRACE1("Reading from the configuration file failed. " \
+            "Check for error in the configuration file", CRITICAL);
+            /*TODO:Improve the AxisTrace so that it will log
+            these kind of messages into a log file according to the
+            critical level specified.
+            */
+            return FAIL;
+        }
 	}
 	return SUCCESS;
 }

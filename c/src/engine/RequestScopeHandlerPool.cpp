@@ -91,8 +91,7 @@ RequestScopeHandlerPool::~RequestScopeHandlerPool()
 }
 
 int RequestScopeHandlerPool::GetInstance(BasicHandler** pHandler, int nLibId)
-{
-    AXISTRACE1("RequestScopeHandlerPool::GetInstance");
+{    
 	lock();
 	int Status;
 	if (m_Handlers.find(nLibId) != m_Handlers.end()) 

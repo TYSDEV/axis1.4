@@ -98,8 +98,7 @@ SessionScopeHandlerPool::~SessionScopeHandlerPool()
 }
 
 int SessionScopeHandlerPool::GetInstance(string& sSessionId, BasicHandler** pHandler, int nLibId)
-{
-    AXISTRACE1("SessionScopeHandlerPool::GetInstance");
+{    
 	lock();
 	int Status;
 	if (m_Handlers.find(nLibId) != m_Handlers.end()) 
