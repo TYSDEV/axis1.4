@@ -119,7 +119,7 @@ public class SOAPFaultDetailsBuilder extends SOAPHandler implements Callback
         Service service = (Service) msgContext.getProperty(Call.WSDL_SERVICE);
         if (service != null) {
             Service.FaultInfo info = service.getFaultInfoForQName(qn);
-            if (info.cls != null) {
+            if (info != null && info.cls != null) {
                 // Set the class
                 builder.setFaultClass(info.cls);
                 // register callback for the data, use the xmlType from fault info
