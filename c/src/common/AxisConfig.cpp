@@ -98,11 +98,11 @@ int AxisConfig::ReadConfFile()
              
 	sConfPath = getenv("AXIS_HOME");
 	if (!sConfPath)
-        return FAIL;
+        return AXIS_FAIL;
 	strcpy(sNewConfPath, sConfPath);
     strcat(sNewConfPath, "/axiscpp.conf");
     if ((fileConfig = fopen(sNewConfPath, "rt")) == NULL)
-		return FAIL;
+		return AXIS_FAIL;
 
     while(fgets(line, CONFBUFFSIZE, fileConfig) != NULL)
     {
@@ -133,7 +133,7 @@ int AxisConfig::ReadConfFile()
         if(strcmp(key, "AXISLOGPATH") == 0)
             strcpy(m_sAxisLogPath, value);
     }
-    return SUCCESS;
+    return AXIS_SUCCESS;
 }
 
 char* AxisConfig::GetWsddFilePath()

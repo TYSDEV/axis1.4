@@ -120,7 +120,7 @@ int SessionScopeHandlerPool::GetInstance(string& sSessionId, BasicHandler** pHan
 					*pHandler = (*pSesHandlers)[SESSIONLESSHANDLERS].front();
 					(*pSesHandlers)[SESSIONLESSHANDLERS].pop_front();
 					unlock();
-					return SUCCESS;
+					return AXIS_SUCCESS;
 				}
 			}
 			else
@@ -128,7 +128,7 @@ int SessionScopeHandlerPool::GetInstance(string& sSessionId, BasicHandler** pHan
 				*pHandler = HandlerList.front();
 				HandlerList.pop_front();
 				unlock();
-				return SUCCESS;
+				return AXIS_SUCCESS;
 			}
 			unlock();
 			return g_pHandlerLoader->CreateHandler(pHandler, nLibId);
@@ -146,14 +146,14 @@ int SessionScopeHandlerPool::GetInstance(string& sSessionId, BasicHandler** pHan
 				*pHandler = (*pSesHandlers)[SESSIONLESSHANDLERS].front();
 				(*pSesHandlers)[SESSIONLESSHANDLERS].pop_front();
 				unlock();
-				return SUCCESS;
+				return AXIS_SUCCESS;
 			}
 		}
 	}
 	else //not even the handler DLL loaded
 	{
 		Status = g_pHandlerLoader->CreateHandler(pHandler, nLibId);
-		if (SUCCESS == Status)
+		if (AXIS_SUCCESS == Status)
 		{
 			//this just creates the entry in m_Handlers so that next time we know that the DLL is loaded
 			SessionHandlers* pNewSH = new SessionHandlers;
@@ -182,7 +182,7 @@ int SessionScopeHandlerPool::PutInstance(string& sSessionId, BasicHandler* pHand
 	list<BasicHandler*> &HandlerList = ((*pSesHandlers)[sSessionId]);
 	HandlerList.push_back(pHandler);
 	unlock();
-	return SUCCESS;
+	return AXIS_SUCCESS;
 }
 
 void SessionScopeHandlerPool::EndSession(string& sSessionId)
