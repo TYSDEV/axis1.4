@@ -17,14 +17,14 @@ package org.apache.geronimo.ews.ws4j2ee.context.webservices.server;
 
 /**
  * @author Chathura Herath
- *
  */
-public class WSCFException extends Exception{
-    
-	public WSCFException(Exception e){
-		super(e);
-	}
-	public WSCFException(String message){
-		super(message);
-	}
+public class WSCFException extends Exception {
+
+    public WSCFException(Exception e) {
+        super(e);
+    }
+
+    public WSCFException(String message) {
+        super(message);
+    }
 }

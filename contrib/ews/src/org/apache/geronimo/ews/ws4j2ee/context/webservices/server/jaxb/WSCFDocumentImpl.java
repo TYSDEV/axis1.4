@@ -15,40 +15,36 @@
  */
 package org.apache.geronimo.ews.ws4j2ee.context.webservices.server.jaxb;
 
-import java.io.InputStream;
-
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
-
 import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.AsbtractWSCFDocument;
 import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.WSCFException;
 import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.interfaces.WSCFConstants;
 import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.interfaces.WSCFDocument;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
+import java.io.InputStream;
+
 /**
- * This will encapsulate the webservices.xml document and this is the start of the 
- * parsing tree.This will be used to support the the methods of the WSCFContext. The 
+ * This will encapsulate the webservices.xml document and this is the start of the
+ * parsing tree.This will be used to support the the methods of the WSCFContext. The
  * class tree and the Interface tree will strat from here and there will be sufficient
  * functionality provided by each class to expose the information and to further
- * drill down the element tree. 
- * 
+ * drill down the element tree.
  */
-public class WSCFDocumentImpl extends AsbtractWSCFDocument implements WSCFConstants, WSCFDocument{
-	public WSCFDocumentImpl(InputStream in)throws WSCFException{
-		try{
-			JAXBContext jc    
-                = JAXBContext.newInstance(
-                        "org.apache.geronimo.ews.ws4j2ee.context.webservices.server.jaxb");
-			// create an Unmarshaller
-			Unmarshaller unmarshaller = jc.createUnmarshaller();
+public class WSCFDocumentImpl extends AsbtractWSCFDocument implements WSCFConstants, WSCFDocument {
+    public WSCFDocumentImpl(InputStream in) throws WSCFException {
+        try {
+            JAXBContext jc
+                    = JAXBContext.newInstance("org.apache.geronimo.ews.ws4j2ee.context.webservices.server.jaxb");
+            // create an Unmarshaller
+            Unmarshaller unmarshaller = jc.createUnmarshaller();
 	
-			// unmarshal a FooBar instance document into a tree of Java content
-			// objects composed of classes from the example package.
-			this.webservices = new WSCFWebservicesImpl((Webservices)unmarshaller.unmarshal(in));
-		} catch( JAXBException je ) {
-			throw new WSCFException(je);
-		} 
-		
-	}
+            // unmarshal a FooBar instance document into a tree of Java content
+            // objects composed of classes from the example package.
+            this.webservices = new WSCFWebservicesImpl((Webservices) unmarshaller.unmarshal(in));
+        } catch (JAXBException je) {
+            throw new WSCFException(je);
+        }
+    }
 }

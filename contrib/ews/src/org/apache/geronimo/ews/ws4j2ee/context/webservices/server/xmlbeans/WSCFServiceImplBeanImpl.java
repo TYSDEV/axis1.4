@@ -15,38 +15,37 @@
  */
 package org.apache.geronimo.ews.ws4j2ee.context.webservices.server.xmlbeans;
 
+import com.sun.java.xml.ns.j2Ee.ServiceImplBeanType;
 import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.AbstractWSCFServiceImplBean;
 import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.interfaces.WSCFServiceImplBean;
 
-import com.sun.java.xml.ns.j2Ee.ServiceImplBeanType;
-
 /**
- * This encapsulates the Service Implementation bean element whih is a level 3 elemet. This is the concrete implementation of teh 
+ * This encapsulates the Service Implementation bean element whih is a level 3 elemet. This is the concrete implementation of teh
  * WSCFServiceImplBean
- *
  */
 public class WSCFServiceImplBeanImpl extends AbstractWSCFServiceImplBean implements WSCFServiceImplBean {
-	public WSCFServiceImplBeanImpl(ServiceImplBeanType implbean){
-		if(null == implbean){return;}
-		this.ejblink = XMLBeansUtils.getStringValue(implbean.getEjbLink());
-		this.servletlink = XMLBeansUtils.getStringValue(implbean.getServletLink());	
-		
-	}
-	
+    public WSCFServiceImplBeanImpl(ServiceImplBeanType implbean) {
+        if (null == implbean) {
+            return;
+        }
+        this.ejblink = XMLBeansUtils.getStringValue(implbean.getEjbLink());
+        this.servletlink = XMLBeansUtils.getStringValue(implbean.getServletLink());
+    }
 
-	/**
-	 * Gets the ejblink elemet of the service implementation bean element
-	 * @return ejb link
-	 */
-	public String getEjblink() {
-		return ejblink;
-	}
+    /**
+     * Gets the ejblink elemet of the service implementation bean element
+     *
+     * @return ejb link
+     */
+    public String getEjblink() {
+        return ejblink;
+    }
 
-	/**
-	 * @return
-	 */
-	public String getServletlink() {
-		return servletlink;
-	}
+    /**
+     * @return
+     */
+    public String getServletlink() {
+        return servletlink;
+    }
 
 }

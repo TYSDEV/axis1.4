@@ -15,20 +15,19 @@
  */
 package org.apache.geronimo.ews.ws4j2ee.context.webservices.server.xmlbeans;
 
+import com.sun.java.xml.ns.j2Ee.XsdQNameType;
 import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.AbstractWSCFSOAPHeader;
 import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.interfaces.WSCFSOAPHeader;
-
-import com.sun.java.xml.ns.j2Ee.XsdQNameType;
 
 /**
  * This encapsulates the soap header of the handler element. The information about this element can be accessed uaing the interface published.
  * Basically this is  a Qname
  */
 public class WSCFSOAPHeaderImpl extends AbstractWSCFSOAPHeader implements WSCFSOAPHeader {
-	public WSCFSOAPHeaderImpl(XsdQNameType header){
-		if(null != header.getQNameValue()){	
-			this.localpart = header.getQNameValue().getLocalPart();
-			this.namespaceURI = header.getQNameValue().getNamespaceURI();
-		}
-	}
+    public WSCFSOAPHeaderImpl(XsdQNameType header) {
+        if (null != header.getQNameValue()) {
+            this.localpart = header.getQNameValue().getLocalPart();
+            this.namespaceURI = header.getQNameValue().getNamespaceURI();
+        }
+    }
 }

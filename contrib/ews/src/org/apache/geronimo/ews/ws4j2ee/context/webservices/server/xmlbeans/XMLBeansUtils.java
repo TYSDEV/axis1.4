@@ -15,39 +15,40 @@
  */
 package org.apache.geronimo.ews.ws4j2ee.context.webservices.server.xmlbeans;
 
-
 import com.sun.java.xml.ns.j2Ee.XsdStringType;
 
 /**
  * @author Srinath Perera(hemapani@opensource.lk)
  */
 public class XMLBeansUtils {
-    public static String getStringValue(XsdStringType[] invalue){
-        if(invalue.length > 0){
+    public static String getStringValue(XsdStringType[] invalue) {
+        if (invalue.length > 0) {
             return invalue[0].getStringValue();
-        }else{
-            return null;
-        }
-    }
-    public static String getStringValue(com.sun.java.xml.ns.j2Ee.String[] invalue){
-        if(invalue.length > 0){
-            return invalue[0].getStringValue();
-        }else{
+        } else {
             return null;
         }
     }
 
-    public static String getStringValue(com.sun.java.xml.ns.j2Ee.String invalue){
-        if(invalue != null){
-            return invalue.getStringValue();
-        }else{
+    public static String getStringValue(com.sun.java.xml.ns.j2Ee.String[] invalue) {
+        if (invalue.length > 0) {
+            return invalue[0].getStringValue();
+        } else {
             return null;
         }
     }
-    public static String getStringValue(XsdStringType invalue){
-        if(invalue != null){
+
+    public static String getStringValue(com.sun.java.xml.ns.j2Ee.String invalue) {
+        if (invalue != null) {
             return invalue.getStringValue();
-        }else{
+        } else {
+            return null;
+        }
+    }
+
+    public static String getStringValue(XsdStringType invalue) {
+        if (invalue != null) {
+            return invalue.getStringValue();
+        } else {
             return null;
         }
     }

@@ -16,27 +16,17 @@
 
 package org.apache.geronimo.ews.ws4j2ee.context.impl;
 
-import java.util.ArrayList;
-import java.util.Vector;
-
 import org.apache.geronimo.ews.ws4j2ee.context.InputOutputFile;
 import org.apache.geronimo.ews.ws4j2ee.context.MiscInfo;
 import org.apache.geronimo.ews.ws4j2ee.context.SEIOperation;
-import org
-    .apache
-    .geronimo
-    .ews
-    .ws4j2ee
-    .context
-    .webservices
-    .server
-    .interfaces
-    .WSCFHandler;
+import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.interfaces.WSCFHandler;
 import org.apache.geronimo.ews.ws4j2ee.toWs.GenerationConstants;
 
+import java.util.ArrayList;
+
 /**
- * @see org.apache.geronimo.ews.ws4j2ee.context.MiscInfo
  * @author Srinath Perera(hemapani@opensource.lk)
+ * @see org.apache.geronimo.ews.ws4j2ee.context.MiscInfo
  */
 public class MiscInfoImpl implements MiscInfo {
     private ClassLoader classloader;
@@ -63,6 +53,7 @@ public class MiscInfoImpl implements MiscInfo {
     private boolean compile = true;
 
     private WSCFHandler[] handlers;
+
     public MiscInfoImpl() {
         operations = new ArrayList();
         targetJ2EEContainer = GenerationConstants.JBOSS_CONTAINER;
@@ -81,9 +72,8 @@ public class MiscInfoImpl implements MiscInfo {
     }
 
     /**
-     * @return 
+     * @return
      */
-
     /* (non-Javadoc)
      * @see org.apache.geronimo.ews.ws4j2ee.context.MiscInfo#getSEIOperations()
      */
@@ -99,84 +89,84 @@ public class MiscInfoImpl implements MiscInfo {
     }
 
     /**
-     * @return 
+     * @return
      */
     public boolean isVerbose() {
         return verbose;
     }
 
     /**
-     * @return 
+     * @return
      */
     public String getWsConfFileLocation() {
         return wsConfFileLocation;
     }
 
     /**
-     * @param b 
+     * @param b
      */
     public void setVerbose(boolean b) {
         verbose = b;
     }
 
     /**
-     * @param string 
+     * @param string
      */
     public void setWsConfFileLocation(String string) {
         wsConfFileLocation = string;
     }
 
     /**
-     * @return 
+     * @return
      */
     public String getJ2eeComponetLink() {
         return j2eelink;
     }
 
     /**
-     * @param string 
+     * @param string
      */
     public void setJ2eeComponetLink(String string) {
         j2eelink = string;
     }
 
     /**
-     * @return 
+     * @return
      */
     public InputOutputFile getJaxrpcfile() {
         return jaxrpcfile;
     }
 
     /**
-     * @return 
+     * @return
      */
     public InputOutputFile getWsdlFile() {
         return wsdlFile;
     }
 
     /**
-     * @param string 
+     * @param string
      */
     public void setJaxrpcfile(InputOutputFile string) {
         jaxrpcfile = string;
     }
 
     /**
-     * @param string 
+     * @param string
      */
     public void setWsdlFile(InputOutputFile string) {
         wsdlFile = string;
     }
 
     /**
-     * @return 
+     * @return
      */
     public String getJaxrpcSEI() {
         return seiname;
     }
 
     /**
-     * @param string 
+     * @param string
      */
     public void setJaxrpcSEI(String string) {
         seiname = string;
@@ -293,6 +283,7 @@ public class MiscInfoImpl implements MiscInfo {
     public void setClassPathElements(ArrayList classpathelements) {
         this.classpathelements = classpathelements;
     }
+
     /**
      * @return
      */

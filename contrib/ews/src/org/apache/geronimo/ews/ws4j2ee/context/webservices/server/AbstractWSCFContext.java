@@ -25,81 +25,79 @@ import org.apache.geronimo.ews.ws4j2ee.toWs.GenerationFault;
 /**
  * @author hemapani@opensource.lk
  */
-public abstract class AbstractWSCFContext implements WSCFContext{
-	protected WSCFWebserviceDescription wscfdWsDesxription;
-	protected WSCFPortComponent wscfport;
+public abstract class AbstractWSCFContext implements WSCFContext {
+    protected WSCFWebserviceDescription wscfdWsDesxription;
+    protected WSCFPortComponent wscfport;
     /**
      * This reference will be the pointer to the element tree.
      */
     protected WSCFDocument document;
 
+    /**
+     * @return
+     */
+    public WSCFWebserviceDescription getWscfdWsDesxription() {
+        return wscfdWsDesxription;
+    }
 
-	/**
-	 * @return 
-	 */
-	public WSCFWebserviceDescription getWscfdWsDesxription() {
-		return wscfdWsDesxription;
-	}
+    /**
+     * @return
+     */
+    public WSCFPortComponent getWscfport() {
+        return wscfport;
+    }
 
-	/**
-	 * @return 
-	 */
-	public WSCFPortComponent getWscfport() {
-		return wscfport;
-	}
+    /**
+     * @param description
+     */
+    public void setWscfdWsDescription(WSCFWebserviceDescription description) {
+        wscfdWsDesxription = description;
+    }
 
-	/**
-	 * @param description 
-	 */
-	public void setWscfdWsDescription(WSCFWebserviceDescription description) {
-		wscfdWsDesxription = description;
-	}
+    /**
+     * @param component
+     */
+    public void setWscfport(WSCFPortComponent component) {
+        wscfport = component;
+    }
 
-	/**
-	 * @param component 
-	 */
-	public void setWscfport(WSCFPortComponent component) {
-		wscfport = component;
-	}
-    
     /**
      * Interface support method. This will get the description element of the webservices.xml
      */
-    public String getDescription(){
+    public String getDescription() {
         return this.document.getWebservices().getDescription();
     }
-    
+
     /**
      * Interface support method. This will get the display name element of the webservices.xml
      */
-    public String getDisplayName(){
+    public String getDisplayName() {
         return this.document.getWebservices().getDisplayName();
     }
-    
+
     /**
      * Interface support method. This will get the small icon element of the webservices.xml
      */
-    public String getSmallIcon(){
+    public String getSmallIcon() {
         return this.document.getWebservices().getSmallIcon();
     }
-    
+
     /**
      * Interface support method. This will get the large icon element of the webservices.xml
      */
-    public String getLargeIcon(){
+    public String getLargeIcon() {
         return this.document.getWebservices().getLargeIcon();
     }
-    
+
     /**
      * Interface support method. This will get the webservice description elements of the webservices.xml as an array.
      */
-    public WSCFWebserviceDescription[] getWebServicesDescription(){
+    public WSCFWebserviceDescription[] getWebServicesDescription() {
         return this.document.getWebservices().getWebServiceDescriptions();
     }
+
     public void serialize(java.io.Writer out) throws GenerationFault {
-          throw new UnsupportedOperationException();
-      }
-
-
+        throw new UnsupportedOperationException();
+    }
 
 }

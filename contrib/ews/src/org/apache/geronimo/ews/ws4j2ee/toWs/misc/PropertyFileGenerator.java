@@ -16,32 +16,34 @@
 
 package org.apache.geronimo.ews.ws4j2ee.toWs.misc;
 
-import java.io.FileOutputStream;
-import java.util.Properties;
-
 import org.apache.geronimo.ews.ws4j2ee.context.J2EEWebServiceContext;
 import org.apache.geronimo.ews.ws4j2ee.toWs.GenerationFault;
 import org.apache.geronimo.ews.ws4j2ee.toWs.Generator;
 
+import java.io.FileOutputStream;
+import java.util.Properties;
+
 /**
  * @author hemapani@opensource.lk
  */
-public class PropertyFileGenerator implements Generator{
+public class PropertyFileGenerator implements Generator {
     private J2EEWebServiceContext context;
-    public PropertyFileGenerator(J2EEWebServiceContext context){
+
+    public PropertyFileGenerator(J2EEWebServiceContext context) {
         this.context = context;
     }
+
     public void generate() throws GenerationFault {
         try {
             Properties p = new Properties();
-            String wsclass = context.getWSDLContext().gettargetBinding().getName()+"Impl";
-            p.setProperty("impl",wsclass);
-            FileOutputStream out = new FileOutputStream(context.getMiscInfo().getOutPutPath()+"/ws.properties");
-            p.store(out,"ws poperties");
+            String wsclass = context.getWSDLContext().gettargetBinding().getName() + "Impl";
+            p.setProperty("impl", wsclass);
+            FileOutputStream out = new FileOutputStream(context.getMiscInfo().getOutPutPath() + "/ws.properties");
+            p.store(out, "ws poperties");
             out.close();
         } catch (Exception e) {
             throw GenerationFault.createGenerationFault(e);
-        } 
+        }
     }
 
 }

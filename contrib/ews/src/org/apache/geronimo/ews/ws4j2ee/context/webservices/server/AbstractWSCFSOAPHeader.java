@@ -22,18 +22,18 @@ import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.interfaces.WSC
  * Basically this is  a Qname
  */
 public abstract class AbstractWSCFSOAPHeader extends WSCFElement implements WSCFSOAPHeader {
+
+    /**
+     * SOAP header namespace
+     */
+    protected String namespaceURI;
+
+    /**
+     * Soap Header local part
+     */
+    protected String localpart;
 	
-	/**
-	 * SOAP header namespace
-	 */
-	protected String namespaceURI;
-	
-	/**
-	 * Soap Header local part
-	 */
-	protected String localpart;
-	
-	//////////////////////////////////jaxb interfacing block ///////////////////////////////
+    //////////////////////////////////jaxb interfacing block ///////////////////////////////
 //	
 //	protected XsdQNameType jaxbSoapHeader;
 //	
@@ -66,21 +66,23 @@ public abstract class AbstractWSCFSOAPHeader extends WSCFElement implements WSCF
 //  		if(null != element){this.localpart = element.getChildNodes().item(0).toString();}
 //	}
 	
-	/**
-	 * gets the local part of the soap header
-	 * @return local part
-	 */
-	public String getLocalpart() {
-		return localpart;
-	}
+    /**
+     * gets the local part of the soap header
+     *
+     * @return local part
+     */
+    public String getLocalpart() {
+        return localpart;
+    }
 
-	/**
-	 * Gets teh namespace of the SOAP header
-	 * @return namespace
-	 */
-	public String getNamespaceURI() {
-		return namespaceURI;
-	}
+    /**
+     * Gets teh namespace of the SOAP header
+     *
+     * @return namespace
+     */
+    public String getNamespaceURI() {
+        return namespaceURI;
+    }
 
 //	/**
 //	 * @return

@@ -39,7 +39,7 @@ import java.util.Vector;
 /**
  * This is Wsdl2java's service implementation writer.
  * It writes the <serviceName>Locator.java file.
- * 
+ *
  * @author Ias (iasandcb@tmax.co.kr)
  * @deprecated no more used by J2eeGeneratorFactory
  */
@@ -99,14 +99,12 @@ public class J2eeServiceImplWriter extends J2eeClassWriter {
                 throw new IOException(Messages.getMessage("emitFailNoBinding01",
                         new String[]{p.getName()}));
             }
-
             BindingEntry bEntry =
                     symbolTable.getBindingEntry(binding.getQName());
             if (bEntry == null) {
                 throw new IOException(Messages.getMessage("emitFailNoBindingEntry01",
                         new String[]{binding.getQName().toString()}));
             }
-
             PortTypeEntry ptEntry = symbolTable.getPortTypeEntry(binding.getPortType().getQName());
             if (ptEntry == null) {
                 throw new IOException(Messages.getMessage("emitFailNoPortType01",
@@ -130,7 +128,6 @@ public class J2eeServiceImplWriter extends J2eeClassWriter {
                 portName = Utils.xmlNameToJavaClass(portName);
             }
             String stubClass = bEntry.getName() + "Stub";
-
             String bindingType = (String) bEntry.getDynamicVar(J2eeBindingWriter.INTERFACE_NAME);
 
             // getPort(Class) must return a stub for an interface.  Collect all
@@ -186,7 +183,6 @@ public class J2eeServiceImplWriter extends J2eeClassWriter {
         pw.println("        return " + portName + "_address;");
         pw.println("    }");
         pw.println();
-
     } // writeAddressInfo
 
     /**
@@ -286,7 +282,6 @@ public class J2eeServiceImplWriter extends J2eeClassWriter {
         }
         pw.println("    }");
         pw.println();
-
     } // writeGetPortClass
 
     /**
@@ -320,7 +315,6 @@ public class J2eeServiceImplWriter extends J2eeClassWriter {
         */
         pw.println("        throw new " + javax.xml.rpc.ServiceException.class.getName() + "(\""
                 + "Invalid QName" + "\");");
-
         pw.println("        }");
         pw.println("    }");
         pw.println();

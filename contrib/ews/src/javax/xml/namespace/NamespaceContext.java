@@ -65,7 +65,7 @@ package javax.xml.namespace;
  * URI's of referenced data types, and element or attribute names, which
  * are typically given as qualified names, including a prefix and a local
  * name.</p>
- * 
+ *
  * @author JSR-31
  * @since JAXB 1.0
  */
@@ -87,7 +87,7 @@ public interface NamespaceContext {
      * <tr><th>Any other prefix</th><td>The namespace URI currently mapped to the
      * prefix or null, if no such mapping is established.</td></tr>
      * </table></p>
-     * 
+     *
      * @param pPrefix The prefix being looked up in the list of mappings.
      * @return The Namespace URI to which the input prefix is currently mapped
      *         or null, if there is no such mapping.
@@ -110,7 +110,7 @@ public interface NamespaceContext {
      * <tr><th>{@link javax.xml.XMLConstants#XMLNS_ATTRIBUTE_NS_URI} ("http://www.w3.org/2000/xmlns/")</th>
      * <td>{@link javax.xml.XMLConstants#XMLNS_ATTRIBUTE}</td></tr>
      * </table></p>
-     * 
+     *
      * @param pNamespaceURI The namespace URI being looked up in the list of mappings.
      * @return A prefix currently mapped to the given namespace URI or null, if there
      *         is no such mapping
@@ -132,7 +132,7 @@ public interface NamespaceContext {
      * <tr><th>{@link javax.xml.XMLConstants#XMLNS_ATTRIBUTE_NS_URI} ("http://www.w3.org/2000/xmlns/")</th>
      * <td>Collection with a single element: {@link javax.xml.XMLConstants#XMLNS_ATTRIBUTE}</td></tr>
      * </table></p>
-     * 
+     *
      * @param pNamespaceURI The namespace URI being looked up in the list of
      *                      mappings or null, if there is no such mapping.
      * @return An unmodifiable {@link java.util.Iterator}: Using it's

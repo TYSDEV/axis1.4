@@ -33,7 +33,7 @@ import java.util.Map;
 
 /**
  * This is Wsdl2java's service writer.  It writes the <serviceName>.java file.
- * 
+ *
  * @author Ias (iasandcb@tmax.co.kr)
  * @deprecated no more used by J2eeGeneratorFactory
  */
@@ -85,14 +85,12 @@ public class J2eeServiceIfaceWriter extends J2eeClassWriter {
                 throw new IOException(Messages.getMessage("emitFailNoBinding01",
                         new String[]{p.getName()}));
             }
-
             BindingEntry bEntry =
                     symbolTable.getBindingEntry(binding.getQName());
             if (bEntry == null) {
                 throw new IOException(Messages.getMessage("emitFailNoBindingEntry01",
                         new String[]{binding.getQName().toString()}));
             }
-
             PortTypeEntry ptEntry = symbolTable.getPortTypeEntry(binding.getPortType().getQName());
             if (ptEntry == null) {
                 throw new IOException(Messages.getMessage("emitFailNoPortType01",

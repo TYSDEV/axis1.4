@@ -16,62 +16,63 @@
 
 package org.apache.geronimo.ews.ws4j2ee.context.wsdl.impl;
 
-import javax.wsdl.Port;
-
 import org.apache.axis.wsdl.symbolTable.BindingEntry;
 import org.apache.axis.wsdl.symbolTable.PortTypeEntry;
 import org.apache.axis.wsdl.symbolTable.ServiceEntry;
 import org.apache.geronimo.ews.ws4j2ee.context.wsdl.WSDLContext;
 import org.apache.geronimo.ews.ws4j2ee.toWs.UnrecoverableGenerationFault;
 
+import javax.wsdl.Port;
+
 /**
  * @author hemapani@opensource.lk
  */
-public abstract class AbstractWSDLContext implements WSDLContext{
-	private ServiceEntry service;
-	private BindingEntry binding;
-	private PortTypeEntry portType;
-	private Port port;
-	
-	public BindingEntry gettargetBinding() {
-		return binding;
-	}
+public abstract class AbstractWSDLContext implements WSDLContext {
+    private ServiceEntry service;
+    private BindingEntry binding;
+    private PortTypeEntry portType;
+    private Port port;
 
-	public PortTypeEntry getTargetPortType() {
-		return portType;
-	}
+    public BindingEntry gettargetBinding() {
+        return binding;
+    }
 
-	public ServiceEntry gettargetService() {
-		return service;
-	}
+    public PortTypeEntry getTargetPortType() {
+        return portType;
+    }
 
-	public void settargetBinding(BindingEntry binding) {
-		this.binding = binding;
-	}
+    public ServiceEntry gettargetService() {
+        return service;
+    }
 
-	public void setTargetPortType(PortTypeEntry port) {
-		this.portType = port;
-	}
+    public void settargetBinding(BindingEntry binding) {
+        this.binding = binding;
+    }
 
-	public void settargetService(ServiceEntry service) {
-		this.service = service;
-	}
-	
-	public Port getTargetPort() {
-		   return port;
-	   }
+    public void setTargetPortType(PortTypeEntry port) {
+        this.portType = port;
+    }
 
-   public void setTargetPort(Port port) {
-	   this.port = port;
-   }
+    public void settargetService(ServiceEntry service) {
+        this.service = service;
+    }
+
+    public Port getTargetPort() {
+        return port;
+    }
+
+    public void setTargetPort(Port port) {
+        this.port = port;
+    }
+
     /* (non-Javadoc)
      * @see org.apache.geronimo.ews.ws4j2ee.context.wsdl.WSDLContext#validate()
      */
     public void validate() {
-		if (portType == null || binding == null
-		 ) {
-			throw new UnrecoverableGenerationFault("validation of MiscInfo failed");
-		}
+        if (portType == null || binding == null
+        ) {
+            throw new UnrecoverableGenerationFault("validation of MiscInfo failed");
+        }
     }
 
 }

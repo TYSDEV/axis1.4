@@ -28,150 +28,85 @@
 
  */
 
-
-
 package org.apache.geronimo.ews.ws4j2ee.utils;
-
-
-
-import java.io.File;
-
-import java.io.FileInputStream;
-
-import java.io.FileNotFoundException;
-
-import java.io.FileOutputStream;
-
-import java.io.IOException;
-
-import java.util.Properties;
-
-
 
 import org.apache.geronimo.ews.ws4j2ee.toWs.GenerationConstants;
 
-
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.Properties;
 
 /**
-
  * @author hemapani@opensource.lk
-
  */
 
 public class PropertyStore {
 
-	private Properties properties;
+    private Properties properties;
 
-	private File file;
+    private File file;
 
-	public PropertyStore() throws Exception {
-
-		File baseDir = new File(".");
-
-		String path = baseDir.getCanonicalPath();
-
-		if(path.endsWith("geronimo")
-
-			||path.endsWith("geronimo\\")
-			||path.endsWith("geronimo/")
-			||path.endsWith("trunk")
-			||path.endsWith("trunk\\")
-
-			||path.endsWith("trunk/")){
-
-			path = new File("./modules/axis/").getAbsolutePath();
-
-		}
-
-		file = new File(path,"target/"+GenerationConstants.WS4J2EE_PROPERTY_FILE);
-
-		
-
-		file.getParentFile().mkdirs();
-
-		FileInputStream in = null;
-
-		System.out.println(file.getAbsolutePath() + " created .. ");
-
-        try {
-
-            properties = new Properties();
-
-            if(file.exists()){
-
-            	in = new FileInputStream(file);
-
-            	properties.load(in);
-
-            }
-
-        } catch (FileNotFoundException e) {
-
-        } catch (IOException e) {
-
-        }finally{
-
-			try{
-
-				if(in != null){
-
-					in.close();
-
-				}
-
-			}catch(Exception e){}
-
-
-
+    public PropertyStore() throws Exception {
+        File baseDir = new File(".");
+        String path = baseDir.getCanonicalPath();
+        if (path.endsWith("geronimo")
+                || path.endsWith("geronimo\\")
+                || path.endsWith("geronimo/")
+                || path.endsWith("trunk")
+                || path.endsWith("trunk\\")
+                || path.endsWith("trunk/")) {
+            path = new File("./modules/axis/").getAbsolutePath();
         }
+        file = new File(path, "target/" + GenerationConstants.WS4J2EE_PROPERTY_FILE);
+        file.getParentFile().mkdirs();
+        FileInputStream in = null;
+        System.out.println(file.getAbsolutePath() + " created .. ");
+        try {
+            properties = new Properties();
+            if (file.exists()) {
+                in = new FileInputStream(file);
+                properties.load(in);
+            }
+        } catch (FileNotFoundException e) {
+        } catch (IOException e) {
+        } finally {
+            try {
+                if (in != null) {
+                    in.close();
+                }
+            } catch (Exception e) {
+            }
+        }
+    }
 
-	}
+    public void store(String repository) {
+        properties.setProperty(GenerationConstants.MAVEN_LOCAL_REPOSITARY, repository);
+        FileOutputStream out = null;
+        try {
+            out = new FileOutputStream(file);
+            properties.store(out, "repository Location");
+        } catch (FileNotFoundException e) {
+        } catch (IOException e) {
+        } finally {
+            try {
+                if (out != null) {
+                    out.close();
+                }
+            } catch (Exception e) {
+            }
+        }
+    }
 
-	public void store(String repository){
-
-		properties.setProperty(GenerationConstants.MAVEN_LOCAL_REPOSITARY,repository);
-
-		FileOutputStream out = null;
-
-		try {
-
-				out = new FileOutputStream(file);
-
-			properties.store(out,"repository Location");
-
-		} catch (FileNotFoundException e) {
-
-		} catch (IOException e) {
-
-		}finally{
-
-			try{
-
-				if(out != null){
-
-					out.close();
-
-				}
-
-			}catch(Exception e){}
-
-		}
-
-	}
-
-	
-
-	public static void main(String[] args){
-
-		try{
-
-			PropertyStore store = new PropertyStore();
-
-			store.store(args[0]);
-
-		}catch(Exception e){}
-
-	}
+    public static void main(String[] args) {
+        try {
+            PropertyStore store = new PropertyStore();
+            store.store(args[0]);
+        } catch (Exception e) {
+        }
+    }
 
 }
 

@@ -20,6 +20,7 @@ package org.apache.geronimo.ews.ws4j2ee.context.j2eeDD;
  * @author hemapani@opensource.lk
  */
 public interface WebContext {
-	public String getServletClass();
-	public String getServletName();
+    public String getServletClass();
+
+    public String getServletName();
 }

@@ -36,7 +36,7 @@ import java.util.List;
 /**
  * This is Wsdl2java's implementation template writer.  It writes the <BindingName>Impl.java
  * file which contains the <bindingName>Impl class.
- * 
+ *
  * @author Ias (iasandcb@tmax.co.kr)
  */
 public class J2eeImplWriter extends JavaClassWriter {
@@ -82,7 +82,7 @@ public class J2eeImplWriter extends JavaClassWriter {
 
     /**
      * Returns the appropriate implements text
-     * 
+     *
      * @return " implements <classes>"
      */
     protected String getImplementsText() {
@@ -123,7 +123,6 @@ public class J2eeImplWriter extends JavaClassWriter {
         if (parms.returnParam != null) {
             TypeEntry returnType = parms.returnParam.getType();
             pw.print("        return ");
-
             if (Utils.isPrimitiveType(returnType)) {
                 String returnString = returnType.getName();
                 if ("boolean".equals(returnString)) {

@@ -23,26 +23,25 @@ import org.apache.geronimo.ews.ws4j2ee.toWs.JavaInterfaceWriter;
 /**
  * This class can be used to write the appropriate EJB Home interface
  * class for the given port type.
- * 
+ *
  * @author Rajith Priyanga
  * @author Srinath Perera
  * @date Nov 26, 2003
  */
 public class EJBHomeWriter extends JavaInterfaceWriter {
-	private String name;
-	protected EJBContext ejbcontext;
-	
+    private String name;
+    protected EJBContext ejbcontext;
 
-	/**
-	 * Constructs a EJBHomeWriter.
-	 * 
-	 * @param portType The port type which contains the details.
-	 * @throws GenerationFault 
-	 */
-	public EJBHomeWriter(J2EEWebServiceContext context,EJBContext ejbcontext) throws GenerationFault {
-		super(context, ejbcontext.getEjbhomeInterface());
-		this.ejbcontext =  ejbcontext;
-	}
+    /**
+     * Constructs a EJBHomeWriter.
+     *
+     * @param portType The port type which contains the details.
+     * @throws GenerationFault
+     */
+    public EJBHomeWriter(J2EEWebServiceContext context, EJBContext ejbcontext) throws GenerationFault {
+        super(context, ejbcontext.getEjbhomeInterface());
+        this.ejbcontext = ejbcontext;
+    }
 //TODO
 //	/**
 //	 * Returns the complete file name of the source code file which is
@@ -57,15 +56,15 @@ public class EJBHomeWriter extends JavaInterfaceWriter {
 //		return outdir + name.replace('.', '/') + ".java";
 //	}
 
-	protected void writeAttributes() throws GenerationFault {
-	}
+    protected void writeAttributes() throws GenerationFault {
+    }
 
-	protected void writeMethods() throws GenerationFault {
-		out.write("\tpublic " + ejbcontext.getEjbRemoteInterface() + " create()throws java.rmi.RemoteException,javax.ejb.CreateException;\n");
-	}
+    protected void writeMethods() throws GenerationFault {
+        out.write("\tpublic " + ejbcontext.getEjbRemoteInterface() + " create()throws java.rmi.RemoteException,javax.ejb.CreateException;\n");
+    }
 
-	protected String getExtendsPart() {
-		return " extends javax.ejb.EJBHome";
-	}
+    protected String getExtendsPart() {
+        return " extends javax.ejb.EJBHome";
+    }
 
 }

@@ -21,16 +21,16 @@ import org.apache.axis.MessageContext;
 import org.apache.axis.providers.java.RPCProvider;
 
 /**
- * register the MessageContext in the jax-rpc runtime of the JSR109 
+ * register the MessageContext in the jax-rpc runtime of the JSR109
+ *
  * @author Srinath Perera(hemapani@opensource.lk)
  */
 public class J2EEProvider extends RPCProvider {
-    protected Object makeNewServiceObject(
-        MessageContext msgContext,
-        String clsName)
-        throws Exception {
+    protected Object makeNewServiceObject(MessageContext msgContext,
+                                          String clsName)
+            throws Exception {
         ContextAccssible webservice =
-            (ContextAccssible) super.makeNewServiceObject(msgContext, clsName);
+                (ContextAccssible) super.makeNewServiceObject(msgContext, clsName);
         webservice.setMessageContext(msgContext);
         System.out.println("message Context set");
         return webservice;

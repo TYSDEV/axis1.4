@@ -16,44 +16,42 @@
 
 package org.apache.geronimo.ews.ws4j2ee.utils;
 
-import java.io.IOException;
-import java.io.InputStream;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-
 import org.apache.geronimo.ews.ws4j2ee.toWs.GenerationFault;
 import org.w3c.dom.Document;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import java.io.IOException;
+import java.io.InputStream;
+
 /**
  * @author hemapani@opensource.lk
  */
 public class EWSUtils {
-    public static Document createDocument(InputStream in)throws GenerationFault{
+    public static Document createDocument(InputStream in) throws GenerationFault {
         try {
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
             dbf.setNamespaceAware(true);
             dbf.setValidating(false);
             dbf.setExpandEntityReferences(false);
             DocumentBuilder db = dbf.newDocumentBuilder();
-            
             EntityResolver er = new EntityResolver() {
-                public InputSource resolveEntity(
-                    String publicId,
-                    String systemId)
-                    throws SAXException, IOException {
-                        InputStream is = null;
-                        if("http://java.sun.com/dtd/ejb-jar_2_0.dtd".equalsIgnoreCase(systemId)){
-                            return getInputSource(EWSUtils.class.getClassLoader().getResourceAsStream("ejb-jar_2_0.dtd"));
-                        }else if("http://java.sun.com/dtd/web-app_2_3.dtd".equalsIgnoreCase(systemId))
-                            return getInputSource(EWSUtils.class.getClassLoader().getResourceAsStream("web-app_2_3.dtd"));
+                public InputSource resolveEntity(String publicId,
+                                                 String systemId)
+                        throws SAXException, IOException {
+                    InputStream is = null;
+                    if ("http://java.sun.com/dtd/ejb-jar_2_0.dtd".equalsIgnoreCase(systemId)) {
+                        return getInputSource(EWSUtils.class.getClassLoader().getResourceAsStream("ejb-jar_2_0.dtd"));
+                    } else if ("http://java.sun.com/dtd/web-app_2_3.dtd".equalsIgnoreCase(systemId))
+                        return getInputSource(EWSUtils.class.getClassLoader().getResourceAsStream("web-app_2_3.dtd"));
                     return null;
                 }
-                private InputSource getInputSource(InputStream is)throws IOException{
-                    if(is == null)
+
+                private InputSource getInputSource(InputStream is) throws IOException {
+                    if (is == null)
                         throw new IOException("error at the project set up can not find entity");
                     return new InputSource(is);
                 }
@@ -62,6 +60,6 @@ public class EWSUtils {
             return db.parse(in);
         } catch (Exception e) {
             throw GenerationFault.createGenerationFault(e);
-        } 
+        }
     }
 }

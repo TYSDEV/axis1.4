@@ -20,20 +20,20 @@ import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.interfaces.WSC
 import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.interfaces.WSCFWebservices;
 
 /**
- * This will encapsulate the webservices.xml document and this is the start of the 
- * parsing tree.This will be used to support the the methods of the WSCFContext. The 
+ * This will encapsulate the webservices.xml document and this is the start of the
+ * parsing tree.This will be used to support the the methods of the WSCFContext. The
  * class tree and the Interface tree will strat from here and there will be sufficient
  * functionality provided by each class to expose the information and to further
- * drill down the element tree. 
- * 
+ * drill down the element tree.
  */
-public abstract class AsbtractWSCFDocument implements WSCFConstants, WSCFDocument{
+public abstract class AsbtractWSCFDocument implements WSCFConstants, WSCFDocument {
 
-	/**
-	 * Will keep a reference to the webservices element which is the document element in the webservices.xml
-	 * @see org.apache.x.ws4j2ee.context.webservices.interfaces.WSCFWebservices
-	 */
-	protected WSCFWebservices webservices;
+    /**
+     * Will keep a reference to the webservices element which is the document element in the webservices.xml
+     *
+     * @see org.apache.x.ws4j2ee.context.webservices.interfaces.WSCFWebservices
+     */
+    protected WSCFWebservices webservices;
 
 //
 ///////////////////////////////////The jaxb delegation block////////////////////////////////////////////////
@@ -77,15 +77,16 @@ public abstract class AsbtractWSCFDocument implements WSCFConstants, WSCFDocumen
 //		
 //		
 //	}
-	/**
-	 * Getter fo the Webservices element which is the document element of the 
-	 * webservices.xml
-	 * @return The Webservices object.
-	 * @see org.apache.x.ws4j2ee.context.webservices.interfaces.WSCFWebservices
-	 */
-	public WSCFWebservices getWebservices() {
-		return webservices;
-	}
+    /**
+     * Getter fo the Webservices element which is the document element of the
+     * webservices.xml
+     *
+     * @return The Webservices object.
+     * @see org.apache.x.ws4j2ee.context.webservices.interfaces.WSCFWebservices
+     */
+    public WSCFWebservices getWebservices() {
+        return webservices;
+    }
 
 ///**
 // * @return

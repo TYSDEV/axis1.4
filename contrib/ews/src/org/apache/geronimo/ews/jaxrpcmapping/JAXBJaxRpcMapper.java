@@ -15,6 +15,9 @@
  */
 package org.apache.geronimo.ews.jaxrpcmapping;
 
+import com.sun.java.xml.ns.j2Ee.FullyQualifiedClassType;
+import com.sun.java.xml.ns.j2Ee.PackageMappingType;
+import com.sun.java.xml.ns.j2Ee.XsdAnyURIType;
 import org.apache.axis.wsdl.symbolTable.BindingEntry;
 import org.apache.axis.wsdl.symbolTable.PortTypeEntry;
 import org.apache.axis.wsdl.symbolTable.ServiceEntry;
@@ -28,10 +31,6 @@ import org.apache.geronimo.ews.jaxrpcmapping.descriptor.ServiceEndpointMethodMap
 import org.apache.geronimo.ews.jaxrpcmapping.descriptor.ServiceInterfaceMappingType;
 import org.apache.geronimo.ews.jaxrpcmapping.descriptor.WsdlReturnValueMappingType;
 import org.apache.geronimo.ews.jaxrpcmapping.descriptor.XsdQNameType;
-
-import com.sun.java.xml.ns.j2Ee.FullyQualifiedClassType;
-import com.sun.java.xml.ns.j2Ee.PackageMappingType;
-import com.sun.java.xml.ns.j2Ee.XsdAnyURIType;
 
 import javax.wsdl.Binding;
 import javax.wsdl.Operation;
@@ -114,14 +113,14 @@ public class JAXBJaxRpcMapper implements JaxRpcMapper {
                 String localPart = typeQName.getLocalPart();
                 String revisitedTypeQName = typeQName.getNamespaceURI() + ":" + localPart;
                 if (mappedAnonymousTypeName.equals(revisitedTypeQName)) {
-                	//TODO this is a quick fix there should be a better way to do this 
+                    //TODO this is a quick fix there should be a better way to do this 
                     return J2eeUtils.jni2javaName(typeMapping.getJavaType().getValue());
                 }
             } else {
                 QName typeName = rootType.getValue();
                 if (typeQName.equals(typeName)) {
                     String className = typeMapping.getJavaType().getValue();
-					//TODO this is a quick fix there should be a better way to do this
+                    //TODO this is a quick fix there should be a better way to do this
                     return J2eeUtils.jni2javaName(className);
                 }
             }
@@ -212,10 +211,10 @@ public class JAXBJaxRpcMapper implements JaxRpcMapper {
     }
 
     /**
-     * @param entry     
-     * @param operation 
-     * @param i         
-     * @return 
+     * @param entry
+     * @param operation
+     * @param i
+     * @return
      */
     public String getJavaMethodParamType(BindingEntry bEntry, Operation operation, int position) {
         if (mapping == null) {
@@ -248,7 +247,7 @@ public class JAXBJaxRpcMapper implements JaxRpcMapper {
                             MethodParamPartsMappingType paramPart =
                                     (MethodParamPartsMappingType) l.next();
                             if (paramPart.getParamPosition().getValue().intValue() == position) {
-								//TODO this is a quick fix there should be a better way to do this
+                                //TODO this is a quick fix there should be a better way to do this
                                 return J2eeUtils.jni2javaName(paramPart.getParamType().getValue());
                             }
                         }
@@ -260,9 +259,9 @@ public class JAXBJaxRpcMapper implements JaxRpcMapper {
     }
 
     /**
-     * @param entry     
-     * @param operation 
-     * @return 
+     * @param entry
+     * @param operation
+     * @return
      */
     public String getJavaMethodReturnType(BindingEntry bEntry, Operation operation) {
         if (mapping == null) {
@@ -293,7 +292,7 @@ public class JAXBJaxRpcMapper implements JaxRpcMapper {
                         WsdlReturnValueMappingType returnValueMapping =
                                 methodMapping.getWsdlReturnValueMapping();
                         if (returnValueMapping != null) {
-							//TODO this is a quick fix there should be a better way to do this
+                            //TODO this is a quick fix there should be a better way to do this
                             return J2eeUtils.jni2javaName(returnValueMapping.getMethodReturnValue().getValue());
                         }
                     }
@@ -304,9 +303,9 @@ public class JAXBJaxRpcMapper implements JaxRpcMapper {
     }
 
     /**
-     * @param entry     
-     * @param operation 
-     * @return 
+     * @param entry
+     * @param operation
+     * @return
      */
     public String getJavaMethodName(BindingEntry bEntry, Operation operation) {
         if (mapping == null) {
@@ -341,19 +340,19 @@ public class JAXBJaxRpcMapper implements JaxRpcMapper {
         }
         return null;
     }
-    public int getPackageMappingCount(){
+
+    public int getPackageMappingCount() {
         List list = mapping.getPackageMapping();
         return list.size();
     }
 
-
-    public String getPackageMappingClassName(int index){
+    public String getPackageMappingClassName(int index) {
         PackageMappingType pack = (PackageMappingType) mapping.getPackageMapping().get(index);
-       FullyQualifiedClassType qPack = pack.getPackageType();
+        FullyQualifiedClassType qPack = pack.getPackageType();
         return qPack.getStringValue();
     }
 
-    public String getPackageMappingURI(int index){
+    public String getPackageMappingURI(int index) {
         PackageMappingType pack = (PackageMappingType) mapping.getPackageMapping().get(index);
         XsdAnyURIType namespace = pack.getNamespaceURI();
         return namespace.getStringValue();

@@ -16,10 +16,10 @@
 
 package org.apache.geronimo.ews.ws4j2ee.module;
 
-import java.io.File;
-
 import org.apache.geronimo.ews.ws4j2ee.toWs.GenerationFault;
 import org.apache.geronimo.ews.ws4j2ee.toWs.UnrecoverableGenerationFault;
+
+import java.io.File;
 
 /**
  * @author Srinath Perera(hemapani@opensource.lk)
@@ -27,41 +27,37 @@ import org.apache.geronimo.ews.ws4j2ee.toWs.UnrecoverableGenerationFault;
 public class ModuleFactory {
 
     /**
-     * @param path - path to the package
+     * @param path        - path to the package
      * @param firstmodule - is it the first module or a module inside other module
      * @return
      * @throws GenerationFault
      */
-    
-	public static Module createPackageModule(
-			String path)throws UnrecoverableGenerationFault{
-		return createPackageModule(path,Thread.currentThread().getContextClassLoader());
-	}
-			
-			
-    public static Module createPackageModule(
-        String path,
-    	ClassLoader parentCL)throws UnrecoverableGenerationFault{
+    public static Module createPackageModule(String path) throws UnrecoverableGenerationFault {
+        return createPackageModule(path, Thread.currentThread().getContextClassLoader());
+    }
+
+    public static Module createPackageModule(String path,
+                                             ClassLoader parentCL) throws UnrecoverableGenerationFault {
         try {
             if (path != null) {
-            	File file = new File(path);
-                if(!file.exists())
-                    throw new UnrecoverableGenerationFault("file not found "+file.getAbsolutePath());
-            	if(file.isDirectory()){
-            		return new DirModule(path,parentCL);
-            	}else if (path.endsWith(".jar") || path.endsWith(".JAR"))
-                    return new JarModule(path,parentCL);
+                File file = new File(path);
+                if (!file.exists())
+                    throw new UnrecoverableGenerationFault("file not found " + file.getAbsolutePath());
+                if (file.isDirectory()) {
+                    return new DirModule(path, parentCL);
+                } else if (path.endsWith(".jar") || path.endsWith(".JAR"))
+                    return new JarModule(path, parentCL);
                 else if (path.endsWith(".war") || path.endsWith(".WAR"))
                     return new WARModule(path, parentCL);
                 else if (path.endsWith(".ear") || path.endsWith(".EAR"))
                     return new EARModule(path);
-                else if(path.endsWith(".xml"))
-					return new DirModule(new File(path));
+                else if (path.endsWith(".xml"))
+                    return new DirModule(new File(path));
                 else
-					throw new UnrecoverableGenerationFault("unknown type of file");
+                    throw new UnrecoverableGenerationFault("unknown type of file");
             }
         } catch (GenerationFault e) {
-            throw new UnrecoverableGenerationFault(path + " not found ",e);
+            throw new UnrecoverableGenerationFault(path + " not found ", e);
         }
         throw new UnrecoverableGenerationFault("path is null");
     }

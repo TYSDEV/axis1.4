@@ -16,6 +16,8 @@
 
 package org.apache.geronimo.ews.ws4j2ee.module;
 
+import org.apache.geronimo.ews.ws4j2ee.toWs.GenerationFault;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -25,89 +27,86 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 
-import org.apache.geronimo.ews.ws4j2ee.toWs.GenerationFault;
-
 /**
  * @author Srinath Perera(hemapani@opensource.lk)
  */
-public class DirModule implements Module{
-	protected InputStream wscfFile;
-	protected InputStream webddfile;
-	protected InputStream ejbJarfile;
-	private String location;
-	private ClassLoader parentCL;
+public class DirModule implements Module {
+    protected InputStream wscfFile;
+    protected InputStream webddfile;
+    protected InputStream ejbJarfile;
+    private String location;
+    private ClassLoader parentCL;
 
     /**
      * @param jarFile
      * @throws GenerationFault
      */
-    public DirModule(String location,ClassLoader parentCL)
-        throws GenerationFault {
+    public DirModule(String location, ClassLoader parentCL)
+            throws GenerationFault {
         File file = null;
         this.parentCL = parentCL;
-        this.location = location; 
+        this.location = location;
         try {
-            file = new File(location+ "/WEB-INF/webservices.xml");
-            if(file.exists()){
-            	wscfFile = new FileInputStream(file);
-            }else{
-            	file = new File(location+ "/META-INF/webservices.xml");
-            	if(file.exists()){
-            		wscfFile = new FileInputStream(file);        	
-            	}else{
-            		wscfFile = new FileInputStream(new File(location+ "/webservices.xml"));			
-            	}
+            file = new File(location + "/WEB-INF/webservices.xml");
+            if (file.exists()) {
+                wscfFile = new FileInputStream(file);
+            } else {
+                file = new File(location + "/META-INF/webservices.xml");
+                if (file.exists()) {
+                    wscfFile = new FileInputStream(file);
+                } else {
+                    wscfFile = new FileInputStream(new File(location + "/webservices.xml"));
+                }
             }
-			findDDs();
+            findDDs();
         } catch (FileNotFoundException e) {
-			throw GenerationFault.createGenerationFault(e);
-        }	
+            throw GenerationFault.createGenerationFault(e);
+        }
     }
-    
-	/**
-	 * @param jarFile
-	 * @throws GenerationFault
-	 */
-	public DirModule(File wscfDDFile)
-		throws GenerationFault {
-		try{
-			wscfFile = new FileInputStream(wscfDDFile);
-			File parent = wscfDDFile.getParentFile();
-			String parentName = parent.getAbsolutePath();
-			if(parentName.endsWith("WEB-INF")
-				||parentName.endsWith("WEB-INF/")
-				||parentName.endsWith("WEB-INF")
-				||parentName.endsWith("META-INF/")){
-				this.location = parent.getParentFile().getAbsolutePath();
-			}else{
-				this.location = parent.getAbsolutePath();
-			}
-			findDDs();
-		} catch (FileNotFoundException e) {
-			throw GenerationFault.createGenerationFault(e);
-		}	
-	}            
-            
-	public void findDDs()throws GenerationFault {
-		try{	
-            File file = new File(location+ "/META-INF/ejb-jar.xml");
-            if(file.exists()){
-            	ejbJarfile = new FileInputStream(file);
-            }else{
-            	file = new File(location+ "/ejb-jar.xml");
-            	if(file.exists()){
-            		ejbJarfile = new FileInputStream(file);        	
-            	}
+
+    /**
+     * @param jarFile
+     * @throws GenerationFault
+     */
+    public DirModule(File wscfDDFile)
+            throws GenerationFault {
+        try {
+            wscfFile = new FileInputStream(wscfDDFile);
+            File parent = wscfDDFile.getParentFile();
+            String parentName = parent.getAbsolutePath();
+            if (parentName.endsWith("WEB-INF")
+                    || parentName.endsWith("WEB-INF/")
+                    || parentName.endsWith("WEB-INF")
+                    || parentName.endsWith("META-INF/")) {
+                this.location = parent.getParentFile().getAbsolutePath();
+            } else {
+                this.location = parent.getAbsolutePath();
             }
-            
-            file = new File(location+ "WEB-INF/web.xml");
-            if(file.exists()){
-            	webddfile = new FileInputStream(file);
-            }else{
-            	file = new File(location+ "/web.xml");
-            	if(file.exists()){
-            		webddfile = new FileInputStream(file);        	
-            	}
+            findDDs();
+        } catch (FileNotFoundException e) {
+            throw GenerationFault.createGenerationFault(e);
+        }
+    }
+
+    public void findDDs() throws GenerationFault {
+        try {
+            File file = new File(location + "/META-INF/ejb-jar.xml");
+            if (file.exists()) {
+                ejbJarfile = new FileInputStream(file);
+            } else {
+                file = new File(location + "/ejb-jar.xml");
+                if (file.exists()) {
+                    ejbJarfile = new FileInputStream(file);
+                }
+            }
+            file = new File(location + "WEB-INF/web.xml");
+            if (file.exists()) {
+                webddfile = new FileInputStream(file);
+            } else {
+                file = new File(location + "/web.xml");
+                if (file.exists()) {
+                    webddfile = new FileInputStream(file);
+                }
             }
             if (wscfFile == null)
                 throw new GenerationFault("wscf file must not be null");
@@ -119,15 +118,16 @@ public class DirModule implements Module{
     public ClassLoader getClassLoaderWithPackageLoaded() throws GenerationFault {
         try {
             File file = new File(location);
-            return new URLClassLoader(new URL[]{file.toURL()},parentCL);
+            return new URLClassLoader(new URL[]{file.toURL()}, parentCL);
         } catch (MalformedURLException e) {
-			throw GenerationFault.createGenerationFault(e);
+            throw GenerationFault.createGenerationFault(e);
         }
     }
+
     public ArrayList getClassPathElements() throws GenerationFault {
         ArrayList elements = new ArrayList();
-		elements.add(new File(location));
-		return elements;
+        elements.add(new File(location));
+        return elements;
     }
 
     public InputStream getEjbJarfile() throws GenerationFault {
@@ -143,12 +143,11 @@ public class DirModule implements Module{
     }
 
     public void setEjbJarfile(InputStream stream) throws GenerationFault {
-		this.ejbJarfile = stream;
-
+        this.ejbJarfile = stream;
     }
 
     public void setWebddfile(InputStream stream) throws GenerationFault {
-		this.webddfile = stream;
+        this.webddfile = stream;
     }
 
     public void setWscfFile(InputStream stream) throws GenerationFault {
@@ -158,14 +157,14 @@ public class DirModule implements Module{
     /* (non-Javadoc)
      * @see org.apache.geronimo.ews.ws4j2ee.utils.packager.load.PackageModule#findFileInModule(java.lang.String)
      */
-    public InputStream findFileInModule(String path)throws GenerationFault  {
-    	try {
-            File file = new File(location + "/"+path);
-            if(file.exists())
-            	new FileInputStream(file);
+    public InputStream findFileInModule(String path) throws GenerationFault {
+        try {
+            File file = new File(location + "/" + path);
+            if (file.exists())
+                new FileInputStream(file);
             return null;
         } catch (FileNotFoundException e) {
-			throw GenerationFault.createGenerationFault(e);
+            throw GenerationFault.createGenerationFault(e);
         }
     }
 

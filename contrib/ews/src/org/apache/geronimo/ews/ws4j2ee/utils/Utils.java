@@ -16,27 +16,6 @@
 
 package org.apache.geronimo.ews.ws4j2ee.utils;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Method;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.ArrayList;
-import java.util.Stack;
-import java.util.StringTokenizer;
-
-import javax.xml.namespace.QName;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParserFactory;
-
 import org.apache.axis.Constants;
 import org.apache.axis.encoding.Base64;
 import org.apache.axis.utils.ClassUtils;
@@ -54,6 +33,26 @@ import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+
+import javax.xml.namespace.QName;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParserFactory;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Method;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.ArrayList;
+import java.util.Stack;
+import java.util.StringTokenizer;
 
 /**
  * This class was taken from the axis XMLUtils. It should be properly adopted if to be used permanantly
@@ -80,9 +79,8 @@ public class Utils {
 
     /**
      * Encode a string appropriately for XML.
-     * <p/>
      * Lifted from ApacheSOAP 2.2 (org.apache.soap.Utils)
-     * 
+     *
      * @param orig the String to encode
      * @return a String in which XML special chars are repalced by entities
      */
@@ -90,13 +88,11 @@ public class Utils {
         if (orig == null) {
             return "";
         }
-
         char[] chars = orig.toCharArray();
 
         // if the string doesn't have any of the magic characters, leave
         // it alone.
         boolean needsEncoding = false;
-
         search:
         for (int i = 0; i < chars.length; i++) {
             switch (chars[i]) {
@@ -109,9 +105,7 @@ public class Utils {
                     break search;
             }
         }
-
         if (!needsEncoding) return orig;
-
         StringBuffer strBuf = new StringBuffer();
         for (int i = 0; i < chars.length; i++) {
             switch (chars[i]) {
@@ -143,13 +137,12 @@ public class Utils {
                     }
             }
         }
-
         return strBuf.toString();
     }
 
     /**
      * Initialize the SAX parser factory.
-     * 
+     *
      * @param factoryClassName The (optional) class name of the desired
      *                         SAXParserFactory implementation. Will be
      *                         assigned to the system property
@@ -269,7 +262,7 @@ public class Utils {
 
     /**
      * Get a new Document read from the input source
-     * 
+     *
      * @return Document
      * @throws ParserConfigurationException if construction problems occur
      * @throws SAXException                 if the document has xml sax problems
@@ -288,7 +281,7 @@ public class Utils {
 
     /**
      * Get a new Document read from the input stream
-     * 
+     *
      * @return Document
      * @throws ParserConfigurationException if construction problems occur
      * @throws SAXException                 if the document has xml sax problems
@@ -301,7 +294,7 @@ public class Utils {
 
     /**
      * Get a new Document read from the indicated uri
-     * 
+     *
      * @return Document
      * @throws ParserConfigurationException if construction problems occur
      * @throws SAXException                 if the document has xml sax problems
@@ -317,7 +310,7 @@ public class Utils {
     /**
      * Create a new document from the given URI, use the username and password
      * if the URI requires authentication.
-     * 
+     *
      * @param uri      the resource to get
      * @param username basic auth username
      * @param password basic auth password
@@ -440,8 +433,8 @@ public class Utils {
      * get the inner XML inside an element as a string. This is done by
      * converting the XML to its string representation, then extracting the
      * subset between beginning and end tags.
-     * 
-     * @param element 
+     *
+     * @param element
      * @return textual body of the element, or null for no inner body
      */
 //    public static String getInnerXMLString(Element element) {
@@ -454,7 +447,6 @@ public class Utils {
 //        else
 //            return null;
 //    }
-
     public static String getPrefix(String uri, Node e) {
         while (e != null && (e.getNodeType() == Element.ELEMENT_NODE)) {
             NamedNodeMap attrs = e.getAttributes();
@@ -484,13 +476,12 @@ public class Utils {
     /**
      * Return a QName when passed a string like "foo:bar" by mapping
      * the "foo" prefix to a namespace in the context of the given Node.
-     * 
+     *
      * @return a QName generated from the given string representation
      */
     public static QName getQNameFromString(String str, Node e) {
         if (str == null || e == null)
             return null;
-
         int idx = str.indexOf(':');
         if (idx > -1) {
             String prefix = str.substring(0, idx);
@@ -527,7 +518,7 @@ public class Utils {
      * Concat all the text and cdata node children of this elem and return
      * the resulting text.
      * (by Matt Duftler)
-     * 
+     *
      * @param parentEl the element whose cdata/text node values are to
      *                 be combined.
      * @return the concatanated string.
@@ -539,7 +530,6 @@ public class Utils {
         Node tempNode = parentEl.getFirstChild();
         StringBuffer strBuf = new StringBuffer();
         CharacterData charData;
-
         while (tempNode != null) {
             switch (tempNode.getNodeType()) {
                 case Node.TEXT_NODE:
@@ -595,7 +585,7 @@ public class Utils {
      * Utility to get the bytes uri.
      * Does NOT handle authenticated URLs,
      * use getInputSourceFromURI(uri, username, password)
-     * 
+     *
      * @param uri the resource to get
      * @see #getInputSourceFromURI(String uri, String username, String password)
      */
@@ -636,14 +626,12 @@ public class Utils {
 
     /**
      * Utility to get the bytes at a protected uri
-     * <p/>
      * This will retrieve the URL if a username and password are provided.
      * The java.net.URL class does not do Basic Authentication, so we have to
      * do it manually in this routine.
-     * <p/>
      * If no username is provided, we create an InputSource from the uri
      * and let the InputSource go fetch the contents.
-     * 
+     *
      * @param uri      the resource to get
      * @param username basic auth username
      * @param password basic auth password
@@ -670,7 +658,6 @@ public class Utils {
         if (!wsdlurl.getProtocol().startsWith("http")) {
             return new InputSource(uri);
         }
-
         URLConnection connection = wsdlurl.openConnection();
         // Does this work for https???
         if (!(connection instanceof HttpURLConnection)) {
@@ -694,15 +681,12 @@ public class Utils {
         } else if (username != null) {
             auth = (password == null) ? username : username + ":" + password;
         }
-
         if (auth != null) {
             uconn.setRequestProperty("Authorization",
                     "Basic " +
                     base64encode(auth.getBytes(charEncoding)));
         }
-
         uconn.connect();
-
         return new InputSource(uconn.getInputStream());
     }
 
@@ -716,7 +700,7 @@ public class Utils {
 
     /**
      * Find a Node with a given QName
-     * 
+     *
      * @param node parent node
      * @param name QName of the child we need to find
      * @return child node
@@ -749,228 +733,229 @@ public class Utils {
             return "";
     }
 
-    public static String getAbsolutePath(String path, String confFileLocation)throws GenerationFault {
-		if(path != null){
-			if (path.indexOf(":/") > -1 || path.indexOf(":\\") > -1||path.startsWith("/"))
-				return path;
-			return confFileLocation + "/" + path;
-		}else{
-			throw new GenerationFault("the path can not be null");
-		}
-
+    public static String getAbsolutePath(String path, String confFileLocation) throws GenerationFault {
+        if (path != null) {
+            if (path.indexOf(":/") > -1 || path.indexOf(":\\") > -1 || path.startsWith("/"))
+                return path;
+            return confFileLocation + "/" + path;
+        } else {
+            throw new GenerationFault("the path can not be null");
+        }
     }
-    
-    public static String firstCharacterToLowerCase(String name){
-    	char[] charName = name.toCharArray();
-    	if(charName.length > 0)
-    		charName[0] = Character.toLowerCase(charName[0]); 
-    	return new String(charName); 	
+
+    public static String firstCharacterToLowerCase(String name) {
+        char[] charName = name.toCharArray();
+        if (charName.length > 0)
+            charName[0] = Character.toLowerCase(charName[0]);
+        return new String(charName);
     }
-	public static String firstCharacterToUpperCase(String name){
-			char[] charName = name.toCharArray();
-			if(charName.length > 0)
-				charName[0] = Character.toUpperCase(charName[0]); 
-			return new String(charName); 	
-	}
-	
-	public static String qName2JavaName(QName qname){
-		return org.apache.axis.wsdl.toJava.Utils.makePackageName(qname.getNamespaceURI())
-			+"."+firstCharacterToUpperCase(JavaUtils.xmlNameToJava(qname.getLocalPart()));
-	}
-	public static Method getJavaMethod(String className,String methodName) throws J2EEFault{
-		String primKey = null;
-		Class sei ;
-		try {
-			sei = ClassUtils.forName(className);
-	
-			java.lang.reflect.Method callMethod = null;
-			Method[] methods = sei.getMethods();
-		
-			for(int i=0;i<methods.length;i++){
-				if(methods[i].getName().equals(methodName)){
-					callMethod = methods[i];
-				}
-			}
-			if(callMethod == null)
-				throw new org.apache.geronimo.ews.ws4j2ee.toWs.UnrecoverableGenerationFault("Method "+methodName+" not found in the class"+ className );
-				return callMethod;
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-			throw new J2EEFault(e);
-		}				
-	}
-	
-	public static Object createParameter(Object obj){
-		return obj;
-	}
-	public static Object createParameter(int in){
-			return new Integer(in);
-	}
-	public static Object createParameter(long in){
-				return new Long(in);
-	}
-	public static Object createParameter(float in){
-				return new Float(in);
-	}
-	public static Object createParameter(byte in){
-				return new Byte(in);
-	}
-	public static Object createParameter(short in){
-				return new Short(in);
-	}
-	public static Object createParameter(boolean in){
-				return new Boolean(in);
-	}
-	public static Object createParameter(double in){
-				return new Double(in);
-	}
-	
-	public static String getParameter(String type,String name){
-		if("int".equals(type)){
-			return "new Integer("+name+")";
-		}else if("float".equals(type)){
-			return "new Float("+name+")";
-		}else if("double".equals(type)){
-			return "new Double("+name+")";
-		}else if("short".equals(type)){
-			return "new Short("+name+")";
-		}else if("boolean".equals(type)){
-			return "new Boolean("+name+")";
-		}else if("byte".equals(type)){
-			return "new Byte("+name+")";
-		}else if("long".equals(type)){
-			return "new Long("+name+")";
-		}else if("char".equals(type)){
-			return "new Character("+name+")";
-		}else{
-			return name;
-		}
-	}
-	
-	public static String getReturnCode(String type,String name){
-		if("java.lang.Integer".equals(type)||"int".equals(type)){
-			return "((java.lang.Integer)"+name+").intValue()";
-		}else if("java.lang.Float".equals(type)||"float".equals(type)){
-			return "((java.lang.Float)"+name+").floatValue()";
-		}else if("java.lang.Double".equals(type)||"double".equals(type)){
-			return "((java.lang.Double)"+name+").doubleValue()";
-		}else if("java.lang.Short".equals(type)||"short".equals(type)){
-			return "((java.lang.Short)"+name+").shortValue()";
-		}else if("java.lang.Boolean".equals(type)||"boolean".equals(type)){
-			return "((java.lang.Boolean)"+name+").booleanValue()";
-		}else if("java.lang.Byte".equals(type)||"byte".equals(type)){
-			return "((java.lang.Byte)"+name+").byteValue()";
-		}else if("java.lang.Long".equals(type)||"long".equals(type)){
-			return "((java.lang.Long)"+name+").longValue()";
-		}else if("java.lang.Character".equals(type)||"char".equals(type)){
-			return "((java.lang.Character)"+name+").charValue()";
-		}else{
-			return "("+type+")"+name;
-		}
-	}
-	
-	public static String getRootDirOfFile(String file){
-		int index = file.lastIndexOf('/');
-		if(index < 0)
-			index = file.lastIndexOf('\\');
-		if(index>-1){
-			return file.substring(0, index);		
-		}else{
-			return file;
-		}	
 
-	}
-	/**
-	 * @deprecated
-	 * @param returnType
-	 * @return
-	 */
-	
-	public static String jni2javaName(String returnType){
-		if(returnType == null)
-			return null;
-		if(!returnType.startsWith("[")){
-			return returnType;		
-		}else{
-			returnType = returnType.substring(1);
-		}
-			
-		String end = "[]";	
-		while(returnType.startsWith("[")){
-			end = end + "[]";
-			returnType = returnType.substring(1);
-		}	
-		
-		if(returnType.startsWith("B")){
-			returnType = "byte";
-		}else if(returnType.startsWith("I")){
-			returnType = "int";
-		}else if(returnType.startsWith("D")){
-			returnType = "double";
-		}else if(returnType.startsWith("J")){
-			returnType = "long";
-		}else if(returnType.startsWith("Z")){
-			returnType = "boolean";
-		}else if(returnType.startsWith("F")){
-			returnType = "float";
-		}else if(returnType.startsWith("S")){
-			returnType = "short";
-		}else if(returnType.startsWith("L")){
-			int index = returnType.indexOf(";@");
-			returnType.substring(1,index);
-		}
-		return returnType + end;
-	}
-	
-	public static String getElementValue(NodeList nodesin){
-		if(nodesin == null || nodesin.getLength() < 1)
-			return null;
-		Node node = nodesin.item(0);	
-		NodeList nodes = node.getChildNodes();
-		for(int i = 0;i<nodes.getLength();i++){
-			Node temp = nodes.item(i);
-			if(temp instanceof Text){
-				return ((Text)temp).getNodeValue();
-			}
-		}
-		return null;
-	}
+    public static String firstCharacterToUpperCase(String name) {
+        char[] charName = name.toCharArray();
+        if (charName.length > 0)
+            charName[0] = Character.toUpperCase(charName[0]);
+        return new String(charName);
+    }
 
-	public static String javapkgToURI(String pkg){
-		StringTokenizer tok = new StringTokenizer(pkg,".");
-		ArrayList tokens = new ArrayList();
-		while(tok.hasMoreElements()){
-			tokens.add(tok.nextToken());
-		}
-		int size = tokens.size();
-		if( size > 0){
-			StringBuffer uribuf = new StringBuffer();
-			uribuf.append("http://");
-			uribuf.append((String)tokens.get(size -1));
-			for(int i = size -2;i>=0;i--){
-				uribuf.append(".");
-				uribuf.append((String)tokens.get(i));
-			}
-			return uribuf.toString();
-		}else{
-			return pkg;
-		}
-	}
-	
-	public static String getFileNamefromClass(J2EEWebServiceContext j2eewscontext,String qulifiedName) {
-		String outdir = j2eewscontext.getMiscInfo().getOutPutPath();
-		if (!outdir.endsWith("/"))
-			outdir = outdir + "/";
-			return outdir + qulifiedName.replace('.', '/') + ".java";
-	}
-	
-	public static void prepareTheDir(String fileName){
-		File file = new File(fileName);
-		File parent = file.getParentFile();
-		parent.mkdirs();
-	}
-	
+    public static String qName2JavaName(QName qname) {
+        return org.apache.axis.wsdl.toJava.Utils.makePackageName(qname.getNamespaceURI())
+                + "." + firstCharacterToUpperCase(JavaUtils.xmlNameToJava(qname.getLocalPart()));
+    }
 
+    public static Method getJavaMethod(String className, String methodName) throws J2EEFault {
+        String primKey = null;
+        Class sei;
+        try {
+            sei = ClassUtils.forName(className);
+            java.lang.reflect.Method callMethod = null;
+            Method[] methods = sei.getMethods();
+            for (int i = 0; i < methods.length; i++) {
+                if (methods[i].getName().equals(methodName)) {
+                    callMethod = methods[i];
+                }
+            }
+            if (callMethod == null)
+                throw new org.apache.geronimo.ews.ws4j2ee.toWs.UnrecoverableGenerationFault("Method " + methodName + " not found in the class" + className);
+            return callMethod;
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+            throw new J2EEFault(e);
+        }
+    }
+
+    public static Object createParameter(Object obj) {
+        return obj;
+    }
+
+    public static Object createParameter(int in) {
+        return new Integer(in);
+    }
+
+    public static Object createParameter(long in) {
+        return new Long(in);
+    }
+
+    public static Object createParameter(float in) {
+        return new Float(in);
+    }
+
+    public static Object createParameter(byte in) {
+        return new Byte(in);
+    }
+
+    public static Object createParameter(short in) {
+        return new Short(in);
+    }
+
+    public static Object createParameter(boolean in) {
+        return new Boolean(in);
+    }
+
+    public static Object createParameter(double in) {
+        return new Double(in);
+    }
+
+    public static String getParameter(String type, String name) {
+        if ("int".equals(type)) {
+            return "new Integer(" + name + ")";
+        } else if ("float".equals(type)) {
+            return "new Float(" + name + ")";
+        } else if ("double".equals(type)) {
+            return "new Double(" + name + ")";
+        } else if ("short".equals(type)) {
+            return "new Short(" + name + ")";
+        } else if ("boolean".equals(type)) {
+            return "new Boolean(" + name + ")";
+        } else if ("byte".equals(type)) {
+            return "new Byte(" + name + ")";
+        } else if ("long".equals(type)) {
+            return "new Long(" + name + ")";
+        } else if ("char".equals(type)) {
+            return "new Character(" + name + ")";
+        } else {
+            return name;
+        }
+    }
+
+    public static String getReturnCode(String type, String name) {
+        if ("java.lang.Integer".equals(type) || "int".equals(type)) {
+            return "((java.lang.Integer)" + name + ").intValue()";
+        } else if ("java.lang.Float".equals(type) || "float".equals(type)) {
+            return "((java.lang.Float)" + name + ").floatValue()";
+        } else if ("java.lang.Double".equals(type) || "double".equals(type)) {
+            return "((java.lang.Double)" + name + ").doubleValue()";
+        } else if ("java.lang.Short".equals(type) || "short".equals(type)) {
+            return "((java.lang.Short)" + name + ").shortValue()";
+        } else if ("java.lang.Boolean".equals(type) || "boolean".equals(type)) {
+            return "((java.lang.Boolean)" + name + ").booleanValue()";
+        } else if ("java.lang.Byte".equals(type) || "byte".equals(type)) {
+            return "((java.lang.Byte)" + name + ").byteValue()";
+        } else if ("java.lang.Long".equals(type) || "long".equals(type)) {
+            return "((java.lang.Long)" + name + ").longValue()";
+        } else if ("java.lang.Character".equals(type) || "char".equals(type)) {
+            return "((java.lang.Character)" + name + ").charValue()";
+        } else {
+            return "(" + type + ")" + name;
+        }
+    }
+
+    public static String getRootDirOfFile(String file) {
+        int index = file.lastIndexOf('/');
+        if (index < 0)
+            index = file.lastIndexOf('\\');
+        if (index > -1) {
+            return file.substring(0, index);
+        } else {
+            return file;
+        }
+    }
+
+    /**
+     * @param returnType
+     * @return
+     * @deprecated
+     */
+    public static String jni2javaName(String returnType) {
+        if (returnType == null)
+            return null;
+        if (!returnType.startsWith("[")) {
+            return returnType;
+        } else {
+            returnType = returnType.substring(1);
+        }
+        String end = "[]";
+        while (returnType.startsWith("[")) {
+            end = end + "[]";
+            returnType = returnType.substring(1);
+        }
+        if (returnType.startsWith("B")) {
+            returnType = "byte";
+        } else if (returnType.startsWith("I")) {
+            returnType = "int";
+        } else if (returnType.startsWith("D")) {
+            returnType = "double";
+        } else if (returnType.startsWith("J")) {
+            returnType = "long";
+        } else if (returnType.startsWith("Z")) {
+            returnType = "boolean";
+        } else if (returnType.startsWith("F")) {
+            returnType = "float";
+        } else if (returnType.startsWith("S")) {
+            returnType = "short";
+        } else if (returnType.startsWith("L")) {
+            int index = returnType.indexOf(";@");
+            returnType.substring(1, index);
+        }
+        return returnType + end;
+    }
+
+    public static String getElementValue(NodeList nodesin) {
+        if (nodesin == null || nodesin.getLength() < 1)
+            return null;
+        Node node = nodesin.item(0);
+        NodeList nodes = node.getChildNodes();
+        for (int i = 0; i < nodes.getLength(); i++) {
+            Node temp = nodes.item(i);
+            if (temp instanceof Text) {
+                return ((Text) temp).getNodeValue();
+            }
+        }
+        return null;
+    }
+
+    public static String javapkgToURI(String pkg) {
+        StringTokenizer tok = new StringTokenizer(pkg, ".");
+        ArrayList tokens = new ArrayList();
+        while (tok.hasMoreElements()) {
+            tokens.add(tok.nextToken());
+        }
+        int size = tokens.size();
+        if (size > 0) {
+            StringBuffer uribuf = new StringBuffer();
+            uribuf.append("http://");
+            uribuf.append((String) tokens.get(size - 1));
+            for (int i = size - 2; i >= 0; i--) {
+                uribuf.append(".");
+                uribuf.append((String) tokens.get(i));
+            }
+            return uribuf.toString();
+        } else {
+            return pkg;
+        }
+    }
+
+    public static String getFileNamefromClass(J2EEWebServiceContext j2eewscontext, String qulifiedName) {
+        String outdir = j2eewscontext.getMiscInfo().getOutPutPath();
+        if (!outdir.endsWith("/"))
+            outdir = outdir + "/";
+        return outdir + qulifiedName.replace('.', '/') + ".java";
+    }
+
+    public static void prepareTheDir(String fileName) {
+        File file = new File(fileName);
+        File parent = file.getParentFile();
+        parent.mkdirs();
+    }
 
 }
 

@@ -33,10 +33,9 @@ public class WebContainerDDGenerator implements Generator {
             LogFactory.getLog(JaxrpcMapperGenerator.class.getName());
 
     public WebContainerDDGenerator(J2EEWebServiceContext j2eewscontext) throws GenerationFault {
-        
     }
 
     public void generate() throws GenerationFault {
-    	System.out.println("code to generatre web.xml");
+        System.out.println("code to generatre web.xml");
     }
 }

@@ -22,26 +22,27 @@ import org.apache.geronimo.ews.ws4j2ee.context.j2eeDD.EJBContext;
  * @author hemapani@opensource.lk
  */
 public class EJBDDContextImpl implements EJBContext {
-	private String ejbName;
-	private String implBean;
-	private String ejbhomeInterface;
-	private String ejbRemoteInterface;
-	private String ejbLocalHomeInterfce;
-	private String ejbLocalInterface;
-	
-	public EJBDDContextImpl(String ejbName,
-							String implBean,
-							String ejbhomeInterface,
-							String ejbRemoteInterface,
-							String ejbLocalHomeInterfce,
-							String ejbLocalInterface){
-		this.ejbName = ejbName;
-		this.implBean = implBean;
-		this.ejbhomeInterface = ejbhomeInterface;
-		this.ejbRemoteInterface = ejbRemoteInterface;
-		this.ejbLocalHomeInterfce = ejbLocalHomeInterfce;
-		this.ejbLocalInterface = ejbLocalInterface;
-	}
+    private String ejbName;
+    private String implBean;
+    private String ejbhomeInterface;
+    private String ejbRemoteInterface;
+    private String ejbLocalHomeInterfce;
+    private String ejbLocalInterface;
+
+    public EJBDDContextImpl(String ejbName,
+                            String implBean,
+                            String ejbhomeInterface,
+                            String ejbRemoteInterface,
+                            String ejbLocalHomeInterfce,
+                            String ejbLocalInterface) {
+        this.ejbName = ejbName;
+        this.implBean = implBean;
+        this.ejbhomeInterface = ejbhomeInterface;
+        this.ejbRemoteInterface = ejbRemoteInterface;
+        this.ejbLocalHomeInterfce = ejbLocalHomeInterfce;
+        this.ejbLocalInterface = ejbLocalInterface;
+    }
+
     /**
      * @return
      */
@@ -76,6 +77,7 @@ public class EJBDDContextImpl implements EJBContext {
     public String getImplBean() {
         return implBean;
     }
+
     /**
      * @return
      */

@@ -24,7 +24,7 @@ import java.io.PrintWriter;
 
 /**
  * This is Wsdl2java's Holder Writer.  It writes the <typeName>Holder.java file.
- * 
+ *
  * @author Ias (iasandcb@tmax.co.kr)
  * @deprecated no more used by J2eeGeneratorFactory
  */

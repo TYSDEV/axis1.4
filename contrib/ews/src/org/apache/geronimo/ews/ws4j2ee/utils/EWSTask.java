@@ -16,11 +16,6 @@
 
 package org.apache.geronimo.ews.ws4j2ee.utils;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
-
 import org.apache.geronimo.ews.ws4j2ee.toWs.GenerationConstants;
 import org.apache.geronimo.ews.ws4j2ee.toWs.Ws4J2ee;
 import org.apache.tools.ant.AntClassLoader;
@@ -29,49 +24,49 @@ import org.apache.tools.ant.Location;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.types.Path;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+
 /**
  * @author hemapani@opensource.lk
  */
-public class EWSTask extends Task{
-	private String outDir = ".";
-	private String module = null;
-	private Path classpath;
+public class EWSTask extends Task {
+    private String outDir = ".";
+    private String module = null;
+    private Path classpath;
     private File root;
     private boolean compile = false;
     private String implStyle = GenerationConstants.USE_INTERNALS;
-    private String j2eeContainer =  GenerationConstants.GERONIMO_CONTAINER;
-    
-    
+    private String j2eeContainer = GenerationConstants.GERONIMO_CONTAINER;
+
     public void execute() throws BuildException {
-        try{
-            if(module == null){
+        try {
+            if (module == null) {
                 throw new BuildException("the module name not specifed");
             }
             root = project.getBaseDir();
-            File moduleFile = new File(root,module);
-            File outDirFile = new File(root,outDir);
-            
-            AntClassLoader cl = new AntClassLoader(
-                                getClass().getClassLoader(),
-                                project,
-                                classpath,
-                                true);
+            File moduleFile = new File(root, module);
+            File outDirFile = new File(root, outDir);
+            AntClassLoader cl = new AntClassLoader(getClass().getClassLoader(),
+                    project,
+                    classpath,
+                    true);
             Thread.currentThread().setContextClassLoader(cl);
-
-            AntDeployContext deployContext 
-                = new AntDeployContext(moduleFile.getAbsolutePath(),
-                                outDirFile.getAbsolutePath(),cl,implStyle,j2eeContainer);
-                 
-           Ws4J2ee ws4j2ee = new Ws4J2ee(deployContext,null);
-           ws4j2ee.generate();
-        }catch(Throwable e){
+            AntDeployContext deployContext
+                    = new AntDeployContext(moduleFile.getAbsolutePath(),
+                            outDirFile.getAbsolutePath(), cl, implStyle, j2eeContainer);
+            Ws4J2ee ws4j2ee = new Ws4J2ee(deployContext, null);
+            ws4j2ee.generate();
+        } catch (Throwable e) {
             try {
-                File errorDump = new File(root,"ews.log");
+                File errorDump = new File(root, "ews.log");
                 PrintWriter pw = new PrintWriter(new FileWriter(errorDump));
                 e.printStackTrace(pw);
                 pw.close();
                 System.out.println(classpath);
-                System.out.println("ERROR .. dump to "+errorDump.getAbsolutePath());
+                System.out.println("ERROR .. dump to " + errorDump.getAbsolutePath());
             } catch (IOException e1) {
             }
             throw new BuildException(e);
@@ -139,12 +134,14 @@ public class EWSTask extends Task{
     public void setOutDir(String string) {
         outDir = string;
     }
+
     public Path createClasspath() {
-      if (classpath == null) {
-        classpath = new Path(project);
-      }
-      return classpath.createPath();
+        if (classpath == null) {
+            classpath = new Path(project);
+        }
+        return classpath.createPath();
     }
+
     /**
      * @return
      */

@@ -18,23 +18,22 @@ package org.apache.geronimo.ews.ws4j2ee.context.webservices.server;
 import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.interfaces.WSCFServiceImplBean;
 
 /**
- * This encapsulates the Service Implementation bean element whih is a level 3 elemet. This is the concrete implementation of teh 
+ * This encapsulates the Service Implementation bean element whih is a level 3 elemet. This is the concrete implementation of teh
  * WSCFServiceImplBean
- *
  */
 public abstract class AbstractWSCFServiceImplBean extends WSCFElement implements WSCFServiceImplBean {
-	
-	/**
-	 * Service Implementation bean ejblink
-	 */
-	protected String ejblink;
-	
-	protected String servletlink;
+
+    /**
+     * Service Implementation bean ejblink
+     */
+    protected String ejblink;
+
+    protected String servletlink;
 	
 		
 		
 		
-	//////////////////////////////jaxb interfacing block////////////////////////////////
+    //////////////////////////////jaxb interfacing block////////////////////////////////
 	
 //	protected ServiceImplBeanType jaxbServiceImplBean;
 //	
@@ -70,13 +69,14 @@ public abstract class AbstractWSCFServiceImplBean extends WSCFElement implements
 //		if(null != element){this.ejblink = element.getChildNodes().item(0).toString();}
 //	}
 
-	/**
-	 * Gets the ejblink elemet of the service implementation bean element
-	 * @return ejb link
-	 */
-	public String getEjblink() {
-		return ejblink;
-	}
+    /**
+     * Gets the ejblink elemet of the service implementation bean element
+     *
+     * @return ejb link
+     */
+    public String getEjblink() {
+        return ejblink;
+    }
 
 //	/**
 //	 * @return
@@ -85,11 +85,11 @@ public abstract class AbstractWSCFServiceImplBean extends WSCFElement implements
 //		return jaxbServiceImplBean;
 //	}
 
-	/**
-	 * @return
-	 */
-	public String getServletlink() {
-		return servletlink;
-	}
+    /**
+     * @return
+     */
+    public String getServletlink() {
+        return servletlink;
+    }
 
 }

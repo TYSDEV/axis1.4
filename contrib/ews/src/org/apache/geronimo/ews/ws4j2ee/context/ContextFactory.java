@@ -23,13 +23,14 @@ import org.apache.geronimo.ews.ws4j2ee.context.wsdl.WSDLContext;
 /**
  * <p>This class decouple the concreate implementations of the
  * class from the rest of the code</p>
+ *
  * @author Srinath Perera(hemapani@opensource.lk)
  */
 public interface ContextFactory {
-    
+
     public WSDLContext createWSDLContext(Object info);
 
-	public JaxRpcMapperContext createJaxRpcMapperContext(JaxRpcMapper mapper,J2eeEmitter emitter);
+    public JaxRpcMapperContext createJaxRpcMapperContext(JaxRpcMapper mapper, J2eeEmitter emitter);
 
 //    public WSCFContext createWSCFContext(InputStream in)throws GenerationFault;
 

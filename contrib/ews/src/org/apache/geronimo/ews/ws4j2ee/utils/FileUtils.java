@@ -15,6 +15,8 @@
  */
 package org.apache.geronimo.ews.ws4j2ee.utils;
 
+import org.apache.geronimo.ews.ws4j2ee.toWs.GenerationFault;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -26,66 +28,57 @@ import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import org.apache.geronimo.ews.ws4j2ee.toWs.GenerationFault;
-
 /**
  * @author Srinath Perera (hemapani@opensource.lk)
  */
 public class FileUtils {
-    public static void copyFile(InputStream in, OutputStream out) throws GenerationFault{
-        try{
-           
+    public static void copyFile(InputStream in, OutputStream out) throws GenerationFault {
+        try {
             byte[] buf = new byte[1024];
             int val = in.read(buf);
-            while(val > 0){
-                out.write(buf,0,val);
+            while (val > 0) {
+                out.write(buf, 0, val);
                 val = in.read(buf);
             }
             out.close();
             in.close();
-        }catch(Exception e){
-                throw GenerationFault.createGenerationFault(e);
+        } catch (Exception e) {
+            throw GenerationFault.createGenerationFault(e);
         }
     }
-    
-    public static int configCount = 0; 
+
+    public static int configCount = 0;
     private JarFile ajar;
     private static byte[] data = new byte[10 * 1024];
     private String dir;
-    
 
-    public static ArrayList uncompressWar(File outDir, File WarFile)throws IOException{
+    public static ArrayList uncompressWar(File outDir, File WarFile) throws IOException {
         ArrayList urls = new ArrayList();
-        
         ZipFile zippedWar = new ZipFile(WarFile);
         Enumeration enties = zippedWar.entries();
-        
-        File classesDir = new File(outDir,"WEB-INF/classes");
+        File classesDir = new File(outDir, "WEB-INF/classes");
         classesDir.mkdirs();
         urls.add(classesDir);
-        
-        while(enties.hasMoreElements()){
-            ZipEntry entry = (ZipEntry)enties.nextElement();
-            if(entry.isDirectory()){
-                
-            }else{
-                if(entry.getName().startsWith("WEB-INF/classes")){
-                    File out = new File(outDir,entry.getName());
+        while (enties.hasMoreElements()) {
+            ZipEntry entry = (ZipEntry) enties.nextElement();
+            if (entry.isDirectory()) {
+            } else {
+                if (entry.getName().startsWith("WEB-INF/classes")) {
+                    File out = new File(outDir, entry.getName());
                     out.getParentFile().mkdirs();
-                    uncompressFile(zippedWar.getInputStream(entry),out);
+                    uncompressFile(zippedWar.getInputStream(entry), out);
                 }
-                if(entry.getName().startsWith("WEB-INF/lib")){
-                    File outJar = new File(outDir,entry.getName());
-                    uncompressFile(zippedWar.getInputStream(entry),outJar);
+                if (entry.getName().startsWith("WEB-INF/lib")) {
+                    File outJar = new File(outDir, entry.getName());
+                    uncompressFile(zippedWar.getInputStream(entry), outJar);
                     urls.add(outJar);
                 }
-            
             }
         }
         return urls;
     }
-    
-    public static void uncompressFile(InputStream is,File outFile) throws IOException{
+
+    public static void uncompressFile(InputStream is, File outFile) throws IOException {
         outFile.getParentFile().mkdirs();
         OutputStream os = new FileOutputStream(outFile);
         int val = 1;

@@ -23,37 +23,35 @@ import org.apache.geronimo.ews.ws4j2ee.toWs.JavaInterfaceWriter;
 /**
  * This class can be used to write the appropriate EJB LocalHome interface
  * class for the given port type.
- * 
+ *
  * @author Rajith Priyanga
  * @author Srinath Perera
  * @date Nov 26, 2003
  */
 public class EJBLocalHomeWriter extends JavaInterfaceWriter {
-	private String name;
-	protected EJBContext ejbcontext;
-		
+    private String name;
+    protected EJBContext ejbcontext;
 
-	/**
-	 * Constructs a EJBLocalHomeWriter.
-	 * 
-	 * @param portType The port type which contains the details.
-	 * @throws GenerationFault 
-	 */
-	public EJBLocalHomeWriter(J2EEWebServiceContext context,EJBContext ejbcontext) throws GenerationFault {
-		super(context, ejbcontext.getEjbLocalHomeInterfce());
-		this.ejbcontext = ejbcontext;
-	}
+    /**
+     * Constructs a EJBLocalHomeWriter.
+     *
+     * @param portType The port type which contains the details.
+     * @throws GenerationFault
+     */
+    public EJBLocalHomeWriter(J2EEWebServiceContext context, EJBContext ejbcontext) throws GenerationFault {
+        super(context, ejbcontext.getEjbLocalHomeInterfce());
+        this.ejbcontext = ejbcontext;
+    }
 
+    protected void writeAttributes() throws GenerationFault {
+    }
 
-	protected void writeAttributes() throws GenerationFault {
-	}
+    protected void writeMethods() throws GenerationFault {
+        out.write("\tpublic " + ejbcontext.getEjbLocalInterface() + " create()throws javax.ejb.CreateException;\n");
+    }
 
-	protected void writeMethods() throws GenerationFault {
-		out.write("\tpublic " + ejbcontext.getEjbLocalInterface() + " create()throws javax.ejb.CreateException;\n");
-	}
-
-	protected String getExtendsPart() {
-		return " extends javax.ejb.EJBLocalHome ";
-	}
+    protected String getExtendsPart() {
+        return " extends javax.ejb.EJBLocalHome ";
+    }
 
 }

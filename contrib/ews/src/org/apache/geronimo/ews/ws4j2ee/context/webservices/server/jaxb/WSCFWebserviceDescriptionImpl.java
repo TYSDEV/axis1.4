@@ -23,39 +23,33 @@ import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.interfaces.WSC
 /**
  * This represents a level 1 element in the Element tree :webservice-description. This is the concrete implementation of the
  * WSCFWebServiceDescription interface
- *
  */
-public class WSCFWebserviceDescriptionImpl extends AbstractWSCFWebserviceDescription implements WSCFWebserviceDescription{
-	public WSCFWebserviceDescriptionImpl(WebserviceDescriptionType jaxbWebserviesDescription) throws WSCFException{
-		///////////////assigning the values //////////////
-		if(null != jaxbWebserviesDescription.getDescription())
-  			this.description =jaxbWebserviesDescription.getDescription().getValue();
-		
-		if(null != jaxbWebserviesDescription.getDisplayName())			
-  			this.displayName =jaxbWebserviesDescription.getDisplayName().getValue();
-  		
-  		if(null != jaxbWebserviesDescription.getIcon()){
-  			if(null != (PathType)(jaxbWebserviesDescription.getIcon()).getSmallIcon())
-  				this.smallIcon =((PathType)(jaxbWebserviesDescription.getIcon()).getSmallIcon()).getValue();
-  				
-  			if(null != (PathType)(jaxbWebserviesDescription.getIcon()).getLargeIcon())
-  				this.largeIcon =((PathType)(jaxbWebserviesDescription.getIcon()).getLargeIcon()).getValue();
-  		}
-  		
-  		if(null != jaxbWebserviesDescription.getWebserviceDescriptionName())
-  			this.webserviceDescriptionName = jaxbWebserviesDescription.getWebserviceDescriptionName().getValue();
-  		
-  		if(null != jaxbWebserviesDescription.getWsdlFile())
-  			this.wsdlFile = ((PathType)jaxbWebserviesDescription.getWsdlFile()).getValue();
-  		
-  		if(null != jaxbWebserviesDescription.getJaxrpcMappingFile())
-  			this.jaxrpcMappingFile = ((PathType)jaxbWebserviesDescription.getJaxrpcMappingFile()).getValue();
-  		
-  		java.util.List list = jaxbWebserviesDescription.getPortComponent();
-  		if (0 == list.size()){throw new WSCFException("At least one port-component element should exist in the "+this.description+" webservices element.");}
-  		for(int i=0; i < list.size(); i++){
-	  		WSCFPortComponent portComponent = new WSCFPortComponentImpl(((PortComponentType)list.get(i)));
-	  		this.portComponent.put(portComponent.getPortComponentName(), portComponent);
-		}
-	}
+public class WSCFWebserviceDescriptionImpl extends AbstractWSCFWebserviceDescription implements WSCFWebserviceDescription {
+    public WSCFWebserviceDescriptionImpl(WebserviceDescriptionType jaxbWebserviesDescription) throws WSCFException {
+        ///////////////assigning the values //////////////
+        if (null != jaxbWebserviesDescription.getDescription())
+            this.description = jaxbWebserviesDescription.getDescription().getValue();
+        if (null != jaxbWebserviesDescription.getDisplayName())
+            this.displayName = jaxbWebserviesDescription.getDisplayName().getValue();
+        if (null != jaxbWebserviesDescription.getIcon()) {
+            if (null != (PathType) (jaxbWebserviesDescription.getIcon()).getSmallIcon())
+                this.smallIcon = ((PathType) (jaxbWebserviesDescription.getIcon()).getSmallIcon()).getValue();
+            if (null != (PathType) (jaxbWebserviesDescription.getIcon()).getLargeIcon())
+                this.largeIcon = ((PathType) (jaxbWebserviesDescription.getIcon()).getLargeIcon()).getValue();
+        }
+        if (null != jaxbWebserviesDescription.getWebserviceDescriptionName())
+            this.webserviceDescriptionName = jaxbWebserviesDescription.getWebserviceDescriptionName().getValue();
+        if (null != jaxbWebserviesDescription.getWsdlFile())
+            this.wsdlFile = ((PathType) jaxbWebserviesDescription.getWsdlFile()).getValue();
+        if (null != jaxbWebserviesDescription.getJaxrpcMappingFile())
+            this.jaxrpcMappingFile = ((PathType) jaxbWebserviesDescription.getJaxrpcMappingFile()).getValue();
+        java.util.List list = jaxbWebserviesDescription.getPortComponent();
+        if (0 == list.size()) {
+            throw new WSCFException("At least one port-component element should exist in the " + this.description + " webservices element.");
+        }
+        for (int i = 0; i < list.size(); i++) {
+            WSCFPortComponent portComponent = new WSCFPortComponentImpl(((PortComponentType) list.get(i)));
+            this.portComponent.put(portComponent.getPortComponentName(), portComponent);
+        }
+    }
 }

@@ -22,12 +22,19 @@ import org.apache.geronimo.ews.ws4j2ee.module.Module;
  * @author hemapani@opensource.lk
  */
 public interface Ws4J2eeDeployContext {
-	public int getMode();
-	public String getWsdlImplFilename();
-	public Module getModule();
-	public String getModuleLocation();
-	public String getContanier();
-	public String getImplStyle();
-	public String getOutPutLocation();
+    public int getMode();
+
+    public String getWsdlImplFilename();
+
+    public Module getModule();
+
+    public String getModuleLocation();
+
+    public String getContanier();
+
+    public String getImplStyle();
+
+    public String getOutPutLocation();
+
     public boolean isCompile();
 }

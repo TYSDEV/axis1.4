@@ -21,27 +21,6 @@ package org.apache.geronimo.ews.jaxrpcmapping;
  *
  */
 
-import java.io.IOException;
-import java.lang.reflect.Constructor;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Vector;
-
-import javax.wsdl.Binding;
-import javax.wsdl.Definition;
-import javax.wsdl.Fault;
-import javax.wsdl.Message;
-import javax.wsdl.Operation;
-import javax.wsdl.OperationType;
-import javax.wsdl.Port;
-import javax.wsdl.PortType;
-import javax.wsdl.Service;
-import javax.xml.namespace.QName;
-import javax.xml.rpc.holders.BooleanHolder;
-
 import org.apache.axis.encoding.DefaultTypeMappingImpl;
 import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.utils.JavaUtils;
@@ -75,10 +54,29 @@ import org.apache.axis.wsdl.toJava.JavaTypeWriter;
 import org.apache.axis.wsdl.toJava.JavaUndeployWriter;
 import org.apache.axis.wsdl.toJava.Utils;
 
+import javax.wsdl.Binding;
+import javax.wsdl.Definition;
+import javax.wsdl.Fault;
+import javax.wsdl.Message;
+import javax.wsdl.Operation;
+import javax.wsdl.OperationType;
+import javax.wsdl.Port;
+import javax.wsdl.PortType;
+import javax.wsdl.Service;
+import javax.xml.namespace.QName;
+import javax.xml.rpc.holders.BooleanHolder;
+import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Vector;
 
 /**
  * This is WsdlToJ2ee's implementation of the GeneratorFactory
- * 
+ *
  * @author Ias (iasandcb@tmax.co.kr)
  */
 
@@ -87,15 +85,14 @@ public class J2eeGeneratorFactory implements GeneratorFactory {
     protected SymbolTable symbolTable;
 
     private JaxRpcMapper mapper;
-    
-	/**
-	 * Default constructor.  Note that this class is unusable until setEmitter
-	 * is called.
-	 */
 
-	public J2eeGeneratorFactory() {
-		addGenerators();
-	} // ctor
+    /**
+     * Default constructor.  Note that this class is unusable until setEmitter
+     * is called.
+     */
+    public J2eeGeneratorFactory() {
+        addGenerators();
+    } // ctor
 
     public J2eeGeneratorFactory(J2eeEmitter emitter) {
         this.emitter = emitter;
@@ -143,7 +140,7 @@ public class J2eeGeneratorFactory implements GeneratorFactory {
 
     protected void addDefinitionGenerators() {
         addGenerator(Definition.class, JavaDefinitionWriter.class); // for faults
-		addGenerator(Definition.class, JavaDeployWriter.class); // for deploy.wsdd
+        addGenerator(Definition.class, JavaDeployWriter.class); // for deploy.wsdd
         addGenerator(Definition.class, JavaUndeployWriter.class); // for undeploy.wsdd
     } // addDefinitionGenerators
 
@@ -197,7 +194,7 @@ public class J2eeGeneratorFactory implements GeneratorFactory {
 
     public Generator getGenerator(Binding binding, SymbolTable symbolTable) {
 //        Generator writer = new JavaBindingWriter(emitter, binding, symbolTable);
-		Generator writer = new J2eeBindingWriter(emitter, binding, symbolTable);
+        Generator writer = new J2eeBindingWriter(emitter, binding, symbolTable);
         BindingEntry bEntry = symbolTable.getBindingEntry(binding.getQName());
         bindingWriters.addStuff(writer, bEntry, symbolTable);
         return bindingWriters;
@@ -324,7 +321,7 @@ public class J2eeGeneratorFactory implements GeneratorFactory {
 
                 // Use the type or the referenced type's QName to generate the java name.
                 if (entry instanceof TypeEntry) {
-                    uniqueNum = javifyTypeEntryName(symbolTable, (TypeEntry) entry, anonQNames, uniqueNum);      
+                    uniqueNum = javifyTypeEntryName(symbolTable, (TypeEntry) entry, anonQNames, uniqueNum);
                 }
                 // If it is not a type, then use this entry's QName to 
                 // generate its name.
@@ -335,28 +332,27 @@ public class J2eeGeneratorFactory implements GeneratorFactory {
         }
     } // javifyNames
 
-    /** Refactored to call recursively for JAX-RPC 1.1 spec 4.2.5. */
-    protected int javifyTypeEntryName(SymbolTable symbolTable, TypeEntry entry, HashMap anonQNames, int uniqueNum) {        
+    /**
+     * Refactored to call recursively for JAX-RPC 1.1 spec 4.2.5.
+     */
+    protected int javifyTypeEntryName(SymbolTable symbolTable, TypeEntry entry, HashMap anonQNames, int uniqueNum) {
         TypeEntry tEntry = (TypeEntry) entry;
         String dims = tEntry.getDimensions();
         TypeEntry refType = tEntry.getRefType();
-        while (refType != null) {           
+        while (refType != null) {
             tEntry = refType;
             dims += tEntry.getDimensions();
             refType = tEntry.getRefType();
         }
-        
-        TypeEntry te = tEntry;      
-        while (te != null) {    
+        TypeEntry te = tEntry;
+        while (te != null) {
             TypeEntry base = SchemaUtils.getBaseType(te, symbolTable);
-            if (base == null) 
+            if (base == null)
                 break;
-            
             uniqueNum = javifyTypeEntryName(symbolTable, base, anonQNames, uniqueNum);
-            
             if (Utils.getEnumerationBaseAndValues(te.getNode(), symbolTable) == null
-                    &&SchemaUtils.getContainedAttributeTypes(te.getNode(), symbolTable) == null) {
-                if (base.isSimpleType()) { 
+                    && SchemaUtils.getContainedAttributeTypes(te.getNode(), symbolTable) == null) {
+                if (base.isSimpleType()) {
                     // Case 1:
                     // <simpleType name="mySimpleStringType">
                     //   <restriction base="xs:string">
@@ -366,7 +362,6 @@ public class J2eeGeneratorFactory implements GeneratorFactory {
                     te.setName(base.getName());
                     te.setRefType(base);
                 }
-                
                 if (base.isBaseType()) {
                     // Case 2:
                     // <simpleType name="FooString">
@@ -378,11 +373,9 @@ public class J2eeGeneratorFactory implements GeneratorFactory {
                     te.setRefType(base);
                 }
             }
-            
-            if (!te.isSimpleType()) 
+            if (!te.isSimpleType())
                 break;
-
-            te = base;          
+            te = base;
         }
 
         // Need to javify the ref'd TypeEntry if it was not
@@ -398,7 +391,6 @@ public class J2eeGeneratorFactory implements GeneratorFactory {
             if (itemType != null) {
                 typeQName = itemType;
             }
-            
             if (typeQName.getLocalPart().
                     indexOf(SymbolTable.ANON_TOKEN) >= 0) {
                 // This is an anonymous type name.
@@ -422,15 +414,11 @@ public class J2eeGeneratorFactory implements GeneratorFactory {
                 // non-anonymous types
                 StringBuffer sb = new StringBuffer(localName);
                 int aidx = -1;
-
-                while ((aidx = sb.toString().indexOf(
-                        SymbolTable.ANON_TOKEN)) > -1) {
-                    sb.replace(
-                            aidx,
+                while ((aidx = sb.toString().indexOf(SymbolTable.ANON_TOKEN)) > -1) {
+                    sb.replace(aidx,
                             aidx + SymbolTable.ANON_TOKEN.length(),
                             "_");
                 }
-
                 localName = sb.toString();
                 typeQName = new QName(typeQName.getNamespaceURI(),
                         localName);
@@ -441,14 +429,12 @@ public class J2eeGeneratorFactory implements GeneratorFactory {
                 // there will be a  collision.
                 // In both cases, mangle the name.
                 symbolTable.getType(typeQName);
-
                 if (anonQNames.get(typeQName) != null) {
                     localName += "Type" + uniqueNum++;
                     typeQName =
-                    new QName(typeQName.getNamespaceURI(),
-                            localName);
+                            new QName(typeQName.getNamespaceURI(),
+                                    localName);
                 }
-
                 anonQNames.put(typeQName, typeQName);
             }
             // Now set the name with the constructed qname
@@ -466,7 +452,6 @@ public class J2eeGeneratorFactory implements GeneratorFactory {
                     elem.setName(varName);
                 }
             }
-            
             Vector attributes = tEntry.getContainedAttributes();
             if (attributes != null) {
                 for (int i = 0; i < attributes.size(); i++) {
@@ -479,7 +464,6 @@ public class J2eeGeneratorFactory implements GeneratorFactory {
         // Set the entry with the same name as the ref'd entry
         // but add the appropriate amount of dimensions
         entry.setName(tEntry.getName() + dims);
-        
         return uniqueNum;
     }
 
@@ -493,7 +477,7 @@ public class J2eeGeneratorFactory implements GeneratorFactory {
      * all MessageEntries for faults are tagged with the
      * EXCEPTION_CLASS_NAME variable, which indicates the java exception
      * class name.
-     * 
+     *
      * @param symbolTable SymbolTable
      */
     private void setFaultContext(SymbolTable symbolTable) {
@@ -525,14 +509,13 @@ public class J2eeGeneratorFactory implements GeneratorFactory {
      * Helper routine for the setFaultContext method above.
      * Examines the indicated fault and sets COMPLEX_TYPE_FAULT
      * EXCEPTION_DATA_TYPE and EXCEPTION_CLASS_NAME as appropriate.
-     * 
+     *
      * @param fault       FaultInfo to analyze
      * @param symbolTable SymbolTable
      */
     private void setFaultContext(FaultInfo fault,
                                  SymbolTable symbolTable) {
         QName faultXmlType = null;
-
         Vector parts = new Vector();
         // Get the parts of the fault's message.
         // An IOException is thrown if the parts cannot be
@@ -624,7 +607,6 @@ public class J2eeGeneratorFactory implements GeneratorFactory {
             }
             me.setDynamicVar(JavaGeneratorFactory.EXCEPTION_CLASS_NAME,
                     exceptionClassName);
-
         }
     }
 
@@ -638,7 +620,6 @@ public class J2eeGeneratorFactory implements GeneratorFactory {
                     // The SEI (Service Endpoint Interface) name
                     // is always the portType name.
                     BindingEntry bEntry = (BindingEntry) entry;
-
                     PortTypeEntry ptEntry = symbolTable.getPortTypeEntry(bEntry.getBinding().getPortType().getQName());
                     String seiName = mapper.getServiceEndpointInterfaceName(ptEntry, bEntry);
                     if (seiName == null) {
@@ -656,19 +637,16 @@ public class J2eeGeneratorFactory implements GeneratorFactory {
                     // get ports
                     Map portMap = service.getPorts();
                     Iterator portIterator = portMap.values().iterator();
-
                     while (portIterator.hasNext()) {
                         Port p = (Port) portIterator.next();
-
                         Binding binding = p.getBinding();
                         BindingEntry bEntry =
-                            symbolTable.getBindingEntry(binding.getQName());
+                                symbolTable.getBindingEntry(binding.getQName());
 
                         // If this isn't a SOAP binding, skip it
                         if (bEntry.getBindingType() != BindingEntry.TYPE_SOAP) {
                             continue;
                         }
-
                         String portName = mapper.getPortName(p);
                         if (portName == null) {
                             portName = p.getName();
@@ -685,10 +663,8 @@ public class J2eeGeneratorFactory implements GeneratorFactory {
      * Definition, force their names to be suffixed with _PortType and _Service, respectively.
      */
     protected void resolveNameClashes(SymbolTable symbolTable) {
-
         // Keep a list of anonymous types so we don't try to resolve them twice.
         HashSet anonTypes = new HashSet();
-
         Iterator it = symbolTable.getHashMap().values().iterator();
         while (it.hasNext()) {
             Vector v = new Vector((Vector) it.next());  // New vector we can temporarily add to it
@@ -702,7 +678,6 @@ public class J2eeGeneratorFactory implements GeneratorFactory {
                     index++;
                 }
             }
-
             if (v.size() > 1) {
                 boolean resolve = true;
                 // Common Special Case:
@@ -743,7 +718,6 @@ public class J2eeGeneratorFactory implements GeneratorFactory {
                         } else if (name.equals(entry.getName())) {
                             resolve = true;  // Need to do resolution
                         }
-
                     }
                 }
 
@@ -870,13 +844,11 @@ public class J2eeGeneratorFactory implements GeneratorFactory {
      * or that binding's portType.
      */
     protected void ignoreNonSOAPBindings(SymbolTable symbolTable) {
-
         // Look at all uses of the portTypes.  If none of the portType's bindings are of type
         // TYPE_SOAP, then turn off that portType's isReferenced flag.
 
         Vector unusedPortTypes = new Vector();
         Vector usedPortTypes = new Vector();
-
         Iterator it = symbolTable.getHashMap().values().iterator();
         while (it.hasNext()) {
             Vector v = (Vector) it.next();
@@ -888,7 +860,6 @@ public class J2eeGeneratorFactory implements GeneratorFactory {
                     PortType portType = binding.getPortType();
                     PortTypeEntry ptEntry =
                             symbolTable.getPortTypeEntry(portType.getQName());
-
                     if (bEntry.getBindingType() == BindingEntry.TYPE_SOAP) {
                         // If a binding is of type TYPE_SOAP, then mark its portType used
                         // (ie., add it to the usedPortTypes list.  If the portType was
@@ -975,24 +946,19 @@ public class J2eeGeneratorFactory implements GeneratorFactory {
      */
     private String constructSignature(Parameters parms, String opName) {
         String name = Utils.xmlNameToJava(opName);
-
         String ret = "void";
         if (parms != null && parms.returnParam != null) {
             ret = Utils.getParameterTypeName(parms.returnParam);
         }
         String signature = "    public " + ret + " " + name + "(";
-
         boolean needComma = false;
-
         for (int i = 0; parms != null && i < parms.list.size(); ++i) {
             Parameter p = (Parameter) parms.list.get(i);
-
             if (needComma) {
                 signature = signature + ", ";
             } else {
                 needComma = true;
             }
-
             String javifiedName = Utils.xmlNameToJava(p.getName());
             if (p.getMode() == Parameter.IN) {
                 signature = signature + Utils.getParameterTypeName(p) + " " + javifiedName;

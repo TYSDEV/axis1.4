@@ -1,4 +1,3 @@
-
 /*
  * Copyright 2001-2004 The Apache Software Foundation.
  * 
@@ -28,15 +27,15 @@ import java.util.Vector;
  * This is Wsdl2java's Complex Fault Writer.
  * It generates bean-like class for complexTypes used
  * in a operation fault message.
- * 
+ *
  * @author Ias (iasandcb@tmax.co.kr)
  * @deprecated no more used by J2eeGeneratorFactory
  */
 public class J2eeBeanFaultWriter extends J2eeBeanWriter {
     /**
      * Constructor.
-     * 
-     * @param emitter    
+     *
+     * @param emitter
      * @param type       The type representing this class
      * @param elements   Vector containing the Type and name of each property
      * @param extendType The type representing the extended class (or null)
@@ -67,7 +66,7 @@ public class J2eeBeanFaultWriter extends J2eeBeanWriter {
 
     /**
      * Returns the appropriate extends text
-     * 
+     *
      * @return "" or " extends <class> "
      */
     protected String getExtendsText() {
@@ -83,7 +82,6 @@ public class J2eeBeanFaultWriter extends J2eeBeanWriter {
 
     /**
      * Write the Exception serialization code
-     * <p/>
      * NOTE: This function is written in JavaFaultWriter.java also.
      */
     protected void writeFileFooter(PrintWriter pw) throws IOException {
@@ -101,7 +99,6 @@ public class J2eeBeanFaultWriter extends J2eeBeanWriter {
         pw.println("    public void writeDetails(javax.xml.namespace.QName qname, org.apache.axis.encoding.SerializationContext context) throws java.io.IOException {");
         pw.println("        context.serialize(qname, null, this);");
         pw.println("    }");
-
         super.writeFileFooter(pw);
     } // writeFileFooter
 } // class JavaBeanFaultWriter

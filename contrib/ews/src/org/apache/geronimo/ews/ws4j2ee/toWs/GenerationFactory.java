@@ -24,34 +24,43 @@ import org.apache.geronimo.ews.ws4j2ee.context.j2eeDD.EJBContext;
  * @author hemapani@opensource.lk
  */
 public interface GenerationFactory {
-    public Writer createEJBWriter(
-        J2EEWebServiceContext j2eewscontext,
-        EJBContext ejbcontext,
-        int writerType)
-        throws GenerationFault;
+    public Writer createEJBWriter(J2EEWebServiceContext j2eewscontext,
+                                  EJBContext ejbcontext,
+                                  int writerType)
+            throws GenerationFault;
+
     public Generator createEJBGenerator(J2EEWebServiceContext j2eewscontext)
-        throws GenerationFault;
+            throws GenerationFault;
+
     public Generator createWrapperWsGenerator(J2EEWebServiceContext j2eewscontext)
-        throws GenerationFault;
+            throws GenerationFault;
+
     public Generator createClientSideWsGenerator(J2EEWebServiceContext j2eewscontext)
-        throws GenerationFault;
-	public Generator createWSDLGenerator(
-		J2EEWebServiceContext wscontext,
-		Emitter emitter,
-		Ws4J2eeDeployContext clparser)throws GenerationFault;
+            throws GenerationFault;
+
+    public Generator createWSDLGenerator(J2EEWebServiceContext wscontext,
+                                         Emitter emitter,
+                                         Ws4J2eeDeployContext clparser) throws GenerationFault;
+
     public Generator createServerSideWsGenerator(J2EEWebServiceContext j2eewscontext)
-        throws GenerationFault;
+            throws GenerationFault;
+
     public Generator createHandlerGenerator(J2EEWebServiceContext j2eewscontext)
-        throws GenerationFault;
+            throws GenerationFault;
+
     public Generator createJaxrpcMapperGenerator(J2EEWebServiceContext j2eewscontext)
-        throws GenerationFault;
+            throws GenerationFault;
+
     public Generator createContainerSpecificDDGenerator(J2EEWebServiceContext j2eewscontext)
-        throws GenerationFault;
+            throws GenerationFault;
+
     public Generator createBuildFileGenerator(J2EEWebServiceContext j2eewscontext)
-        throws GenerationFault;
+            throws GenerationFault;
+
     public Generator createWebContainerDDGenerator(J2EEWebServiceContext j2eewscontext)
-        throws GenerationFault;
+            throws GenerationFault;
+
     public Generator createPropertyFileGenerator(J2EEWebServiceContext j2eewscontext)
-        throws GenerationFault; 
+            throws GenerationFault;
 
 }
