@@ -65,7 +65,7 @@ import javax.servlet.ServletContext;
 import org.apache.axis.ConfigurationException;
 import org.apache.axis.EngineConfiguration;
 import org.apache.axis.EngineConfigurationFactory;
-import org.apache.axis.AxisEngine;
+import org.apache.axis.server.AxisServer;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.ClassUtils;
@@ -168,24 +168,35 @@ public class EngineConfigurationFactoryServlet
         FileProvider config = null;
 
         String realWebInfPath = ctx.getRealPath(appWebInfPath);
-        if (realWebInfPath == null) {
-            File configFile = new File(realWebInfPath, SERVER_CONFIG_FILE);
-            if (!configFile.exists()) {
-                InputStream is = ctx.getResourceAsStream(appWebInfPath + "/" + SERVER_CONFIG_FILE);
-                if (is != null) {
-                    // FileProvider assumes responsibility for 'is':
-                    // do NOT call is.close().
-                    config = new FileProvider(is);
-                }
-    
-                if (config == null) {
-                    log.error(Messages.getMessage("servletEngineWebInfError01",
-                                                   configFile.toString()));
-                }
+
+        /**
+         * If path/file doesn't exist, it may still be accessible
+         * as a resource-stream (i.e. it may be packaged in a JAR
+         * or WAR file).
+         */
+        if (realWebInfPath == null  ||
+            !(new File(realWebInfPath, SERVER_CONFIG_FILE)).exists())
+        {
+            String name = appWebInfPath + "/" + SERVER_CONFIG_FILE;
+            InputStream is = ctx.getResourceAsStream(name);
+            if (is != null) {
+                // FileProvider assumes responsibility for 'is':
+                // do NOT call is.close().
+                config = new FileProvider(is);
+            }
+
+            if (config == null) {
+                log.error(Messages.getMessage("servletEngineWebInfError01",
+                                               name));
             }
         }
         
-        if (config == null) {
+        /**
+         * Couldn't get data  OR  file does exist.
+         * If we have a path, then attempt to either open
+         * the existing file, or create an (empty) file.
+         */
+        if (config == null  &&  realWebInfPath != null) {
             try {
                 config = new FileProvider(realWebInfPath, SERVER_CONFIG_FILE);
             } catch (ConfigurationException e) {
@@ -193,10 +204,13 @@ public class EngineConfigurationFactoryServlet
             }
         }
 
+        /**
+         * Fall back to config file packaged with AxisEngine
+         */
         if (config == null) {
             log.warn(Messages.getMessage("servletEngineWebInfWarn00"));
             try {
-                InputStream is = ClassUtils.getResourceAsStream(AxisEngine.class, SERVER_CONFIG_FILE);
+                InputStream is = ClassUtils.getResourceAsStream(AxisServer.class, SERVER_CONFIG_FILE);
                 config = new FileProvider(is);
             } catch (Exception e) {
                 log.error(Messages.getMessage("servletEngineWebInfError02"), e);
