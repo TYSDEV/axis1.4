@@ -71,14 +71,12 @@ import javax.wsdl.PortType;
 import javax.wsdl.BindingFault;
 import javax.wsdl.Binding;
 import javax.wsdl.BindingOperation;
-import javax.xml.namespace.QName;
 
 import org.apache.axis.wsdl.gen.Generator;
 
 import org.apache.axis.wsdl.symbolTable.SymbolTable;
 import org.apache.axis.wsdl.symbolTable.MessageEntry;
 import org.apache.axis.utils.Messages;
-import org.apache.axis.Message;
 
 /**
  * This is Wsdl2java's Definition Writer.  
