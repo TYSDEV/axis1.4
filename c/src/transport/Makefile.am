@@ -1,1 +1,0 @@
-SUBDIRS = axis axis2 @LIBWWWBUILD@
