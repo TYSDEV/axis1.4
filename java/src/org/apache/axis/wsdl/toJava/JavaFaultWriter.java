@@ -109,11 +109,26 @@ public class JavaFaultWriter extends JavaClassWriter {
     protected void writeFileBody(PrintWriter pw) throws IOException {
         Vector params = new Vector();
 
-        // XXX  Have to get use information (literal/encoded) for fault from
-        // XXX  BindingEntry, which we don't have the QName for
+        String faultNamespace = "";
+        boolean literal = false;
+        // Have to get namespace and use information (literal/encoded) 
+        // for fault from Binding.
+        if (bindingFault != null) {
+            List extList = bindingFault.getExtensibilityElements();
+            for (Iterator iterator = extList.iterator(); iterator.hasNext();) {
+                Object o = (Object) iterator.next();
+                if (o instanceof SOAPFault) {
+                    SOAPFault sf = (SOAPFault) o;
+                    faultNamespace = sf.getNamespaceURI();
+                    if ("literal".equalsIgnoreCase(sf.getUse())) {
+                        literal = true;
+                    }
+                }
+            }
+        }
         symbolTable.getParametersFromParts(params, 
                                 fault.getMessage().getOrderedParts(null), 
-                                false, 
+                                literal, 
                                 fault.getName(), 
                                 null);
 
@@ -161,19 +176,8 @@ public class JavaFaultWriter extends JavaClassWriter {
         // Note that bindingFault can be null if this fault is never referenced
         // in a binding (WSDL2Java --all switch).
 
-        // We do the same thing in JavaStubWriter.java
-        String namespace = "";
-        if (bindingFault != null) {
-            List extList = bindingFault.getExtensibilityElements();
-            for (Iterator iterator = extList.iterator(); iterator.hasNext();) {
-                Object o = (Object) iterator.next();
-                if (o instanceof SOAPFault) {
-                    SOAPFault sf = (SOAPFault) o;
-                    namespace = sf.getNamespaceURI();
-                }
-            }
-        }
         // method that serializes exception data (writeDetail)
+        // NOTE: This function is also written in JavaBeanFaultWriter.java
         pw.println();
         pw.println("    /**");
         pw.println("     * Writes the exception data to the faultDetails");
@@ -182,7 +186,7 @@ public class JavaFaultWriter extends JavaClassWriter {
         for (int i = 0; i < params.size(); i++) {
             Parameter param = (Parameter)params.get(i);
             String variable = param.getName();
-            QName qname = new QName(namespace, param.getQName().getLocalPart());
+            QName qname = new QName(faultNamespace, param.getQName().getLocalPart());
             pw.println("        javax.xml.namespace.QName qname = " + Utils.getNewQName(qname) + ";");
             pw.println("        context.serialize(qname, null, " + Utils.wrapPrimitiveType(param.getType(), variable) + ");");
         }
