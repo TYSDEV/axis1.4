@@ -239,13 +239,14 @@ $AXISCPP_DEPLOY/conf/server.wsdd file. </p> <br>
 that as well.
 </p>
 
-<h2>11. Simple axis server installation. </h2>
+<h2>11. Simple axis server installation </h2>
 
 <p>1. Build the source distribution as mentioned above.</p>
 
 <p>2. Make sure that you have set the  <b>AXISCPP_DEPLOY</b>  environment variable to point to your deployment folder as mentioned above </p>
 
-<p>3.Copy  <b> $AXISCPP_DEPLOY/etc/axiscpp.conf_linux</b>  to  <b>$AXISCPP_DEPLOY/etc/axiscpp.conf </b> and make sure that the contents of that  file match your system settings </p>
+<p>3.Copy  <b> $AXISCPP_DEPLOY/etc/axiscpp.conf_linux</b>  to  <b>$AXISCPP_DEPLOY/etc/axiscpp.conf </b> <p>
+<p>and make sure that the contents of that  file match your system settings </p>
 
 <p>4. Run simple axis server in  <b> $AXISCPP_DEPLOY/bin </b> <br>
 Synopsis: simple_axis_server server-port Where server-port is the port on which you would like the server to listen for
