@@ -529,7 +529,8 @@ public class ArrayDeserializer extends DeserializerImpl
                // We must ignore exceptions from convert for Arrays with null - why?
            }
         }     
-         super.valueComplete();
+        
+        super.valueComplete();
     }
 
     /**
