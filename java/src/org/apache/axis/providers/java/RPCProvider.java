@@ -322,57 +322,55 @@ public class RPCProvider extends JavaProvider
         resBody.setEncodingStyle(msgContext.getEncodingStyle());
 
         try {
-        // Return first
-        if ( operation.getMethod().getReturnType() != Void.TYPE ) {
-            QName returnQName = operation.getReturnQName();
-            if (returnQName == null) {
-                returnQName = new QName("", methodName + "Return");
-            }
+            // Return first
+            if ( operation.getMethod().getReturnType() != Void.TYPE ) {
+                QName returnQName = operation.getReturnQName();
+                if (returnQName == null) {
+                    returnQName = new QName("", methodName + "Return");
+                }
 
-            // For SOAP 1.2, add a result
-            if (msgContext.getSOAPConstants() == SOAPConstants.SOAP12_CONSTANTS)
-            {
-                RPCParam result = new RPCParam
-                   (Constants.QNAME_RPC_RESULT, returnQName.getLocalPart());
+                // For SOAP 1.2, add a result
+                if (msgContext.getSOAPConstants() ==
+                        SOAPConstants.SOAP12_CONSTANTS)
+                {
+                    RPCParam result = new RPCParam
+                      (Constants.QNAME_RPC_RESULT, returnQName.getLocalPart());
+                    if (!operation.isReturnHeader()) {
+                        resBody.addParam(result);
+                    } else {
+                        resEnv.addHeader(new RPCHeaderParam(result));
+                    }
+
+                }
+
+                RPCParam param = new RPCParam(returnQName, objRes);
+                param.setParamDesc(operation.getReturnParamDesc());
                 if (!operation.isReturnHeader()) {
-                    resBody.addParam(result);
-                } else {
-                    resEnv.addHeader(new RPCHeaderParam(result));
-                }
-
-            }
-
-            RPCParam param = new RPCParam(returnQName, objRes);
-            param.setParamDesc(operation.getReturnParamDesc());
-            if (!operation.isReturnHeader()) {
-                resBody.addParam(param);
-            } else { 
-                resEnv.addHeader(new RPCHeaderParam(param));
-            }
-                
-        }
-
-        // Then any other out params
-        if (!outs.isEmpty()) {
-            for (Iterator i = outs.iterator(); i.hasNext();) {
-                // We know this has a holder, so just unwrap the value
-                RPCParam param = (RPCParam) i.next();
-                Holder holder = (Holder)param.getValue();
-                Object value = JavaUtils.getHolderValue(holder);
-                ParameterDesc paramDesc = param.getParamDesc();
-
-                param.setValue(value);
-                if (paramDesc != null &&
-                    paramDesc.isOutHeader()) {
-                    resEnv.addHeader(new RPCHeaderParam(param));
-                } else {
                     resBody.addParam(param);
+                } else { 
+                    resEnv.addHeader(new RPCHeaderParam(param));
+                }
+
+            }
+
+            // Then any other out params
+            if (!outs.isEmpty()) {
+                for (Iterator i = outs.iterator(); i.hasNext();) {
+                    // We know this has a holder, so just unwrap the value
+                    RPCParam param = (RPCParam) i.next();
+                    Holder holder = (Holder)param.getValue();
+                    Object value = JavaUtils.getHolderValue(holder);
+                    ParameterDesc paramDesc = param.getParamDesc();
+
+                    param.setValue(value);
+                    if (paramDesc != null && paramDesc.isOutHeader()) {
+                        resEnv.addHeader(new RPCHeaderParam(param));
+                    } else {
+                        resBody.addParam(param);
+                    }
                 }
             }
-        }
-
         } catch (Exception e) {
-            System.out.println(e);
             throw e;
         }
 
