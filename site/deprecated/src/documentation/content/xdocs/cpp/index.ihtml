@@ -1,18 +1,20 @@
 <html>
 <head>
   <meta http-equiv="Content-Type" content="text/html">
-  <title>Axis C++ 1.4 Alpha is Available!</title>
+  <title>Axis C++ 1.4 Final is Available!</title>
 </head>
 
 <body>
-<h1>Axis C++ 1.4 Alpha </h1>
+<h1>Axis C++ 1.4 Final </h1>
 
 <p><a href="download.html">Download Axis C++</a></p>
 <br>
 
 <p>
-<h1>Key features of Axis C++ 1.4 Alpha </h1> </p>
-<p><b>SSL Implementation</b> </p> <br> <br>
+<h1>Key features of Axis C++ 1.4 Final </h1> </p>
+<p><b>SSL Implementation</b> <br> <br>
+An Axis C++ SSL secure client can access web services hosted on a secure web service.<br>
+The SSL implementation for the client in Axis C++ uses the openssl opensource library. </p> <br> <br> 
 <p><b>Cookie based session support for the client side.</b> <br> <br>
 Client is capable of tracking 'Set-Cookie' HTTP header sent with the service response and set the 'Cookie' HTTP header in the outgoing requests accordingly. </p> <br> <br>
 <p><b>SOAP header based session support for the client side.</b> <br> <br>
@@ -49,7 +51,11 @@ Added support to store complex objects in MessageData.
 <br> <br> </p>
 <p><b>Added the facility to set a new SOAP body to the DeSerializer from a Handler</b> <br><br>
 Once a Handler gets access to the SOAP body it is the duty of the Handler to reset the new SOAP body through the SoapDeSerializer's "setNewSoapBody" method. <br> <br> </p>
-<p>Added a transport that supports IPV6. <br> <br> </p> 
+<p><b>Added a transport that supports IPV6.</b> <br> <br> 
+This supports IPV6 protocol.The standard API for IPV6 is used in the IPV6 transport implementation. This transport is capable of working with both IPV6 and IPV4.
+</p> 
+
+<p><b>Keep Alive support for transport </b> <br> <br> </p>
 <br>
  <p>We hope you will enjoy using Axis C++. <br> <br>
  Numerous efforts are currently underway to improve Axis C++ as a whole. Please have a look at the <a href="http://wiki.apache.org/ws/FrontPage/AxisC_2b_2b">TODO page </a> to learn about 1.4 final and 1.5 plans for Axis C++. <br> <br>
