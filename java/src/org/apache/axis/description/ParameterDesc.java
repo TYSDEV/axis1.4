@@ -98,6 +98,10 @@ public class ParameterDesc implements Serializable {
     /** MIME type for this parameter, if there is one */
     private String mimeType = null;
 
+    /** Indicates whether input/output values are stored in the header */
+    private boolean inHeader = false;
+    private boolean outHeader = false;
+
     public ParameterDesc() {
     }
 
@@ -279,6 +283,22 @@ public class ParameterDesc implements Serializable {
      */
     public void setIsReturn(boolean value) {
         isReturn = value;
+    }
+
+    public void setInHeader(boolean value) {
+        this.inHeader = value;
+    }
+
+    public boolean isInHeader() {
+        return this.inHeader;
+    }
+
+    public void setOutHeader(boolean value) {
+        this.outHeader = value;
+    }
+
+    public boolean isOutHeader() {
+        return this.outHeader;
     }
 
     private void writeObject(ObjectOutputStream out)
