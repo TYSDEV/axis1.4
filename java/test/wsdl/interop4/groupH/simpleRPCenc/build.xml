@@ -55,18 +55,16 @@ Copyright:
 
     <mkdir dir="${build.dest}"/>
 
-<!--    <copy file="SoapInteropImport1BindingImpl.java" overwrite="true"-->
-<!--          todir="${root.dir}/build/work/test/wsdl/interop3/${testname}"/>-->
-<!---->
-
+    <copy file="SimpleRpcEncBindingImpl.java" overwrite="true"
+          todir="${root.dir}/build/work/test/wsdl/interop4/groupH/${testname}"/>
     <copy file="SimpleRpcEncServiceTestCase.java"
          todir="${root.dir}/build/work/test/wsdl/interop4/groupH/${testname}"/>
 
-    <!-- compile the skeletons -->
+    <!-- compile the code -->
     <javac srcdir="${build.dir}/work"
       destdir="${build.dest}" debug="on">
       <classpath refid="classpath" />
-      <include name="test/wsdl/interop4/groupH/simpleRPCenc/*.java" />
+      <include name="test/wsdl/interop4/groupH/simpleRPCenc/groupH/*.java" />
     </javac>
   </target>
 
