@@ -98,7 +98,6 @@ public class ModulePackager {
             ZipEntry entry = new ZipEntry(entryName);
 
             InputStream instream = (InputStream)entries.get(entryName);
-            System.out.println(entry.getName());
             jarFile.putNextEntry(entry);
             int anz;
             while ((anz = instream.read(buf)) != -1) {
