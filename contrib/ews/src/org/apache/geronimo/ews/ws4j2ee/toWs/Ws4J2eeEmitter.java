@@ -90,7 +90,13 @@ public class Ws4J2eeEmitter {
 		Generator buildFileGen =
 		factory.getGenerationFactory().createBuildFileGenerator(
 				wscontext);
-		buildFileGen.generate();
+        if(buildFileGen != null)  
+		  buildFileGen.generate();
+        Generator propertyFileGen =
+                factory.getGenerationFactory().createPropertyFileGenerator(
+                        wscontext);
+        if(propertyFileGen!= null)       
+            propertyFileGen.generate();                
 	}
 	
 	public void executeAnt()throws GenerationFault{

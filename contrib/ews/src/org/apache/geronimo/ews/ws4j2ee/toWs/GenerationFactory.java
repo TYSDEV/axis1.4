@@ -51,5 +51,7 @@ public interface GenerationFactory {
         throws GenerationFault;
     public Generator createWebContainerDDGenerator(J2EEWebServiceContext j2eewscontext)
         throws GenerationFault;
+    public Generator createPropertyFileGenerator(J2EEWebServiceContext j2eewscontext)
+        throws GenerationFault; 
 
 }

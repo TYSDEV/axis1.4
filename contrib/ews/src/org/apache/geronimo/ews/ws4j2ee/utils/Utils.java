@@ -820,7 +820,7 @@ public class Utils {
 		String primKey = null;
 		Class sei ;
 		try {
-			sei = Class.forName(className,true,ClassUtils.getDefaultClassLoader());
+			sei = ClassUtils.forName(className);
 	
 			java.lang.reflect.Method callMethod = null;
 			Method[] methods = sei.getMethods();
@@ -1012,3 +1012,4 @@ public class Utils {
 
 
 }
+
