@@ -115,7 +115,7 @@ typedef union
  *Function pointer definitions for trasport layer
  */
 typedef int (*AXIS_SEND_SEND_BYTES)(const char*, const void*);
-typedef int (*AXIS_GET_BYTES)(char*, int, int*, const void*);
+typedef int (*AXIS_GET_BYTES)(const char**, int*, const void*);
 typedef int (*AXIS_SEND_TRANSPORT_INFORMATION)(void*); /*Ax_soapstream*/
 typedef int (*AXIS_GET_TRANSPORT_INFORMATION)(void*);/*Ax_soapstream*/
 
@@ -143,6 +143,8 @@ typedef struct
 int set_header(Ax_soapstream* soap, char * pchkey, char * pchvalue);
 const char* get_header(const Ax_soapstream* soap, const char* pchkey);
 const char* get_service_from_uri(const Ax_soapstream* soap);
+void remove_headers(Ax_soapstream* soap);
+
 
 /*This function is implemented in axis*/
 /*int initialize_process();*/
@@ -159,7 +161,7 @@ extern "C"
 	int uninitialize_module();
 
 	/*This function is implemented in axis*/
-	int initialize_module(int bServer, const char * wsddPath);
+	int initialize_module(int bServer);
 
 	/*This function is implemented in axis*/
 	int process_request(Ax_soapstream* str);

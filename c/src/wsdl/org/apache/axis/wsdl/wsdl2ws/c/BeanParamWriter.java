@@ -58,7 +58,7 @@
  * @author Susantha Kumara(susantha@opensource.lk, skumara@virtusa.com)
  */
 
-package org.apache.axis.wsdl.wsdl2ws.cpp;
+package org.apache.axis.wsdl.wsdl2ws.c;
 
 import java.io.IOException;
 import java.util.HashSet;
@@ -67,6 +67,7 @@ import java.util.Iterator;
 import javax.xml.namespace.QName;
 
 import org.apache.axis.wsdl.wsdl2ws.WrapperFault;
+import org.apache.axis.wsdl.wsdl2ws.cpp.CPPUtils;
 import org.apache.axis.wsdl.wsdl2ws.info.Type;
 import org.apache.axis.wsdl.wsdl2ws.info.WebServiceContext;
 
@@ -75,7 +76,7 @@ import org.apache.axis.wsdl.wsdl2ws.info.WebServiceContext;
  * @author hemapani
  */
 
-public class BeanParamWriter extends ParamCPPFileWriter{
+public class BeanParamWriter extends ParamCFileWriter{
 	public BeanParamWriter(WebServiceContext wscontext,Type type)throws WrapperFault{
 		super(wscontext,type);
 	}
@@ -84,133 +85,146 @@ public class BeanParamWriter extends ParamCPPFileWriter{
 	 */
 	protected void writeGlobalCodes()throws WrapperFault{
 		try{
-		HashSet typeSet = new HashSet();
-		String typeName;
-		for(int i = 0; i< attribs.length;i++){
-			if(!CPPUtils.isSimpleType(attribs[i][1])){
-				Type memtype = wscontext.getTypemap().getType(type.getTypNameForAttribName(attribs[i][0]));
-				if (memtype.isArray()){
-					QName qname = memtype.getTypNameForAttribName("item");
-					if (CPPUtils.isSimpleType(qname)) continue; //no wrapper methods for basic types
-					typeName = qname.getLocalPart();
-				}else{
-					typeName = attribs[i][1];
-				}	
-				typeSet.add(typeName);
+			HashSet typeSet = new HashSet();
+			String typeName;
+			for(int i = 0; i< attribs.length;i++){
+				if(!CPPUtils.isSimpleType(attribs[i][1])){
+					Type memtype = wscontext.getTypemap().getType(type.getTypNameForAttribName(attribs[i][0]));
+					if (memtype.isArray()){
+						QName qname = memtype.getTypNameForAttribName("item");
+						if (CPPUtils.isSimpleType(qname)) continue; //no wrapper methods for basic types
+						typeName = qname.getLocalPart();
+					}else{
+						typeName = attribs[i][1];
+					}	
+					typeSet.add(typeName);
+				}
 			}
-		}
-		Iterator itr = typeSet.iterator();
-		while(itr.hasNext())
-		{
-			typeName = itr.next().toString();
-			writer.write("extern int Axis_DeSerialize_"+typeName+"("+typeName+"* param, IWrapperSoapDeSerializer *pDZ);\n");
-			writer.write("extern void* Axis_Create_"+typeName+"(bool bArray = false, int nSize=0);\n");
-			writer.write("extern void Axis_Delete_"+typeName+"("+typeName+"* param, bool bArray = false, int nSize=0);\n");
-			writer.write("extern int Axis_Serialize_"+typeName+"("+typeName+"* param, IWrapperSoapSerializer& pSZ, bool bArray = false);\n");
-			writer.write("extern int Axis_GetSize_"+typeName+"();\n\n");			
-		}
-		writeSerializeGlobalMethod();
-		writeDeSerializeGlobalMethod();
-		writeCreateGlobalMethod();
-		writeDeleteGlobalMethod();
-		writeGetSizeGlobalMethod();
+			Iterator itr = typeSet.iterator();
+			while(itr.hasNext())
+			{
+				typeName = itr.next().toString();
+				writer.write("extern int Axis_DeSerialize_"+typeName+"("+typeName+"* param, IWrapperSoapDeSerializer *pDZ);\n");
+				writer.write("extern void* Axis_Create_"+typeName+"(bool bArray, int nSize);\n");
+				writer.write("extern void Axis_Delete_"+typeName+"("+typeName+"* param, bool bArray, int nSize);\n");
+				writer.write("extern int Axis_Serialize_"+typeName+"("+typeName+"* param, IWrapperSoapSerializer* pSZ, bool bArray);\n");
+				writer.write("extern int Axis_GetSize_"+typeName+"();\n\n");			
+			}
+			writeSerializeGlobalMethod();
+			writeDeSerializeGlobalMethod();
+			writeCreateGlobalMethod();
+			writeDeleteGlobalMethod();
+			writeGetSizeGlobalMethod();
 		}catch(IOException e){
 			throw new WrapperFault(e);
 		}
 	}
 	private void writeGetSizeGlobalMethod() throws IOException{
-		writer.write("/*\n");
+		writer.write("/**\n");
 		writer.write(" * This static method gives the size of "+classname+" type of object\n");
 		writer.write(" */\n");
 		writer.write("int Axis_GetSize_"+classname+"()\n{\n\treturn sizeof("+classname+");\n}\n");
 	}
 	private void writeSerializeGlobalMethod()throws IOException{
 		Type t;
-		writer.write("/*\n");
+		writer.write("/**\n");
 		writer.write(" * This static method serialize a "+classname+" type of object\n");
 		writer.write(" */\n");
 		
-		writer.write("int Axis_Serialize_"+classname+"("+classname+"* param, IWrapperSoapSerializer* pSZ, bool bArray = false)\n{\n");
+		writer.write("int Axis_Serialize_"+classname+"("+classname+"* param, IWrapperSoapSerializer* pSZ, bool bArray)\n{\n");
 		if (attribs.length == 0) {
 			 //nothing to print if this is simple type we have inbuild types
 			 System.out.println("possible error calss with no attributes....................");
 			 return;
 		 }
+		writer.write("\tIWrapperSoapSerializerX* pSZX = pSZ->__vfptr;\n");
+		writer.write("\tconst AxisChar* sPrefix;\n");
 		writer.write("\tif (bArray)\n");
 		writer.write("\t{\n");
-		writer.write("\t\tpSZ->Serialize(\"<\", Axis_TypeName_"+classname+", \">\", NULL);\n");
+		writer.write("\t\tpSZX->Serialize(pSZ, \"<\", Axis_TypeName_"+classname+", \">\", NULL);\n");
 		writer.write("\t}\n");
 		writer.write("\telse\n");
 		writer.write("\t{\n");
-		writer.write("\t\tconst AxisChar* sPrefix = pSZ.getNewNamespacePrefix();\n");
-		writer.write("\t\tpSZ->Serialize(\"<\", Axis_TypeName_"+classname+", \" xsi:type=\\\"\", sPrefix, \":\",\n"); 
+		writer.write("\t\tsPrefix = pSZX->getNewNamespacePrefix(pSZ);\n");
+		writer.write("\t\tpSZX->Serialize(pSZ, \"<\", Axis_TypeName_"+classname+", \" xsi:type=\\\"\", sPrefix, \":\",\n"); 
 		writer.write("\t\t\tAxis_TypeName_"+classname+", \"\\\" xmlns:\", sPrefix, \"=\\\"\",\n"); 
 		writer.write("\t\t\tAxis_URI_"+classname+", \"\\\">\", NULL);\n");
 		writer.write("\t}\n\n");
 		for(int i = 0; i< attribs.length;i++){
 			if(CPPUtils.isSimpleType(attribs[i][1])){
 				//if simple type
-				writer.write("\tpSZ->Serialize(pSZ->SerializeBasicType(\""+attribs[i][0]+"\", param->"+attribs[i][0]+", "+ CPPUtils.getXSDTypeForBasicType(attribs[i][1])+"), NULL);\n");
+				writer.write("\tpSZX->SerializeBasicType(pSZ, \""+attribs[i][0]+"\", (void*)&(param->"+attribs[i][0]+"), "+ CPPUtils.getXSDTypeForBasicType(attribs[i][1])+");\n");
 			}else if((t = wscontext.getTypemap().getType(new QName(attribs[i][2],attribs[i][3])))!= null && t.isArray()){
 				//if Array
 				QName qname = t.getTypNameForAttribName("item");
 				String arrayType = null;
 				if (CPPUtils.isSimpleType(qname)){
 					arrayType = CPPUtils.getclass4qname(qname);
-					writer.write("\tpSZ->SerializeArray((Axis_Array*)(&param->"+attribs[i][0]+"),"+CPPUtils.getXSDTypeForBasicType(arrayType)+", \""+attribs[i][0]+"\");\n"); 
+					writer.write("\tpSZX->SerializeBasicArray(pSZ, (Axis_Array*)(&param->"+attribs[i][0]+"),"+CPPUtils.getXSDTypeForBasicType(arrayType)+", \""+attribs[i][0]+"\");\n"); 
 				}
 				else{
 					arrayType = qname.getLocalPart();
-					writer.write("\tpSZ->SerializeArray((Axis_Array*)(&param->"+attribs[i][0]+"),\n"); 
+					writer.write("\tpSZX->SerializeCmplxArray(pSZ, (Axis_Array*)(&param->"+attribs[i][0]+"),\n"); 
 					writer.write("\t\t(void*) Axis_Serialize_"+arrayType+", (void*) Axis_Delete_"+arrayType+", (void*) Axis_GetSize_"+arrayType+",\n"); 
 					writer.write("\t\tAxis_TypeName_"+arrayType+", Axis_URI_"+arrayType+", \""+attribs[i][0]+"\");\n");
 				}
 			}else{
 				//if complex type
-				writer.write("\tAxis_Serialize_"+attribs[i][1]+"(param->"+attribs[i][0]+", pSZ);\n");
+				writer.write("\tAxis_Serialize_"+attribs[i][1]+"(param->"+attribs[i][0]+", pSZ, false);\n");
 			}
 		}
-		writer.write("\n\tpSZ->Serialize(\"</\", Axis_TypeName_"+classname+", \">\", NULL);\n");
+		writer.write("\n\tpSZX->Serialize(pSZ, \"</\", Axis_TypeName_"+classname+", \">\", NULL);\n");
 		writer.write("\treturn AXIS_SUCCESS;\n");
 		writer.write("}\n\n");
 	
 	}
 	private void writeDeSerializeGlobalMethod()throws IOException{	
 		Type t;
-		writer.write("/*\n");
+		writer.write("/**\n");
 		writer.write(" * This static method deserialize a "+classname+" type of object\n");
 		writer.write(" */\n");
 		
-		writer.write("int Axis_DeSerialize_"+classname+"("+classname+"* param, IWrapperSoapDeSerializer *pIWSDZ)\n{\n");
+		writer.write("int Axis_DeSerialize_"+classname+"("+classname+"* param, IWrapperSoapDeSerializer *pDZ)\n{\n");
 		if (attribs.length == 0) {
 			 //nothing to print if this is simple type we have inbuild types
 			 System.out.println("possible error calss with no attributes....................");
 			 return;
-		 }
+		}
+		writer.write("\tIWrapperSoapDeSerializerX* pDZX = pDZ->__vfptr;\n");
+		boolean aretherearrayattribs = false;
+		for(int i = 0; i< attribs.length;i++){
+			if((t = wscontext.getTypemap().getType(new QName(attribs[i][2],attribs[i][3])))!= null && t.isArray()){
+				aretherearrayattribs = true; break;
+			}
+		}
+		if (aretherearrayattribs){
+			writer.write("\tAxis_Array array;\n");	
+		}
 		for(int i = 0; i< attribs.length;i++){
 			if(CPPUtils.isSimpleType(attribs[i][1])){
 				//if symple type
-				writer.write("\tparam->"+attribs[i][0]+" = pIWSDZ->"+CPPUtils.getParameterGetValueMethodName(attribs[i][1])+";\n");
+				writer.write("\tparam->"+attribs[i][0]+" = pDZX->"+CPPUtils.getParameterGetValueMethodName(attribs[i][1])+"(pDZ);\n");
 			}else if((t = wscontext.getTypemap().getType(new QName(attribs[i][2],attribs[i][3])))!= null && t.isArray()){
 				//if Array
 				QName qname = t.getTypNameForAttribName("item");
-				String arrayType = null;
+				String containedType = null;
 				if (CPPUtils.isSimpleType(qname)){
-					arrayType = CPPUtils.getclass4qname(qname);
-					writer.write("\tparam->"+attribs[i][0]+".m_Size = pIWSDZ->GetArraySize();\n");
+					containedType = CPPUtils.getclass4qname(qname);
+					writer.write("\tarray = pDZX->GetBasicArray(pDZ, "+CPPUtils.getXSDTypeForBasicType(containedType)+");\n");
+					writer.write("\tmemcpy(&(param->"+attribs[i][0]+"), &array, sizeof(Axis_Array));\n");
 					writer.write("\tif (param->"+attribs[i][0]+".m_Size < 1) return AXIS_FAIL;\n");
-					writer.write("\tparam->"+attribs[i][0]+".m_Array = new "+arrayType+"[param->"+attribs[i][0]+".m_Size];\n");
-					writer.write("\tif (AXIS_SUCCESS != pIWSDZ->GetArray((Axis_Array*)(&param->"+attribs[i][0]+"), "+CPPUtils.getXSDTypeForBasicType(arrayType)+")) return AXIS_FAIL;\n");
 				}
 				else{
-					arrayType = qname.getLocalPart();
-					writer.write("\tparam->"+attribs[i][0]+" = ("+attribs[i][1]+"&)pIWSDZ->GetArray((void*)Axis_DeSerialize_"+arrayType+ 
-						"\n\t\t, (void*)Axis_Create_"+arrayType+", (void*)Axis_Delete_"+arrayType+
-						"\n\t\t, (void*)Axis_GetSize_"+arrayType+", Axis_TypeName_"+arrayType+", Axis_URI_"+arrayType+");\n");
+					containedType = qname.getLocalPart();
+					writer.write("\tarray = pDZX->GetCmplxArray(pDZ, (void*)Axis_DeSerialize_"+containedType+ 
+						"\n\t\t, (void*)Axis_Create_"+containedType+", (void*)Axis_Delete_"+containedType+
+						"\n\t\t, (void*)Axis_GetSize_"+containedType+", Axis_TypeName_"+containedType+", Axis_URI_"+containedType+");\n");
+					writer.write("\tmemcpy(&(param->"+attribs[i][0]+"), &array, sizeof(Axis_Array));\n");
+					writer.write("\tif (param->"+attribs[i][0]+".m_Size < 1) return AXIS_FAIL;\n");
 				}
 			}else{
 				//if complex type
-				writer.write("\tparam->"+attribs[i][0]+" = ("+attribs[i][1]+"*)pIWSDZ->GetObject((void*)Axis_DeSerialize_"+attribs[i][1]+
+				writer.write("\tparam->"+attribs[i][0]+" = ("+attribs[i][1]+"*)pDZX->GetObject(pDZ, (void*)Axis_DeSerialize_"+attribs[i][1]+
 					"\n\t\t, (void*)Axis_Create_"+attribs[i][1]+", (void*)Axis_Delete_"+attribs[i][1]+
 					"\n\t\t, Axis_TypeName_"+attribs[i][1]+", Axis_URI_"+attribs[i][1]+");\n");				
 			}		
@@ -220,30 +234,34 @@ public class BeanParamWriter extends ParamCPPFileWriter{
 	}
 	
 	private void writeCreateGlobalMethod()throws IOException{
-		writer.write("void* Axis_Create_"+classname+"(bool bArray = false, int nSize=0)\n{\n");
-		writer.write("\tif (bArray && (nSize > 0))\n\t\treturn new "+classname+"[nSize];\n");
-		writer.write("\telse\n\t\treturn new "+classname+";\n}\n\n");	
+		writer.write("void* Axis_Create_"+classname+"(bool bArray, int nSize)\n{\n");
+		writer.write("\tif (bArray && (nSize > 0))\n\t\treturn malloc(sizeof("+classname+")*nSize);\n");
+		writer.write("\telse\n\t\treturn malloc(sizeof("+classname+"));\n}\n\n");	
 	}
 	
 	private void writeDeleteGlobalMethod()throws IOException{
-		writer.write("/*\n");
+		writer.write("/**\n");
 		writer.write(" * This static method delete a "+classname+" type of object\n");
 		writer.write(" */\n");
 		
-		writer.write("void Axis_Delete_"+classname+"("+classname+"* param, bool bArray = false, int nSize=0)\n");
+		writer.write("void Axis_Delete_"+classname+"("+classname+"* param, bool bArray, int nSize)\n");
 		writer.write("{\n");
-		writer.write("\tif (bArray)\n");
-		writer.write("\t{\n");
-		boolean hasComplexType = false;
+		boolean hasComplexTypeOrArray = false;
 		for(int i = 0; i< attribs.length;i++){
 			if(!CPPUtils.isSimpleType(attribs[i][1])){
-				hasComplexType = true; break;
+				hasComplexTypeOrArray = true; break;
 			}
+		}
+		if (hasComplexTypeOrArray){
+			writer.write("\tint x;\n");
+			writer.write("\t"+classname+"* pTemp;\n");	
 		}			
-		if (hasComplexType){ 
+		writer.write("\tif (bArray)\n");
+		writer.write("\t{\n");
+		if (hasComplexTypeOrArray){ 
 			writer.write("\t\t/*delete any pointer members or array members of this struct here*/\n");
-			writer.write("\t\t"+classname+"* pTemp = param;\n");
-			writer.write("\t\tfor (int x=0; x<nSize; x++)\n");
+			writer.write("\t\tpTemp = param;\n");
+			writer.write("\t\tfor (x=0; x<nSize; x++)\n");
 			writer.write("\t\t{\n");
 			for(int i = 0; i< attribs.length;i++){
 				if(!CPPUtils.isSimpleType(attribs[i][1])){ //this can be either an array or complex type
@@ -253,21 +271,21 @@ public class BeanParamWriter extends ParamCPPFileWriter{
 						String containedType = null;
 						if (CPPUtils.isSimpleType(qname)){
 							containedType = CPPUtils.getclass4qname(qname);
-							writer.write("\t\t\tdelete [] (("+containedType+"*)pTemp->"+attribs[i][0]+".m_Array);\n");
+							writer.write("\t\t\tfree(pTemp->"+attribs[i][0]+".m_Array);\n");
 						}
 						else{
 							containedType = qname.getLocalPart();
 							writer.write("\t\t\tAxis_Delete_"+containedType+"(pTemp->"+attribs[i][0]+".m_Array, true, pTemp->"+attribs[i][0]+".m_Size);\n");
 						}
 					}else{
-						writer.write("\t\t\tAxis_Delete_"+attribs[i][1]+"(pTemp->"+attribs[i][0]+");\n");
+						writer.write("\t\t\tAxis_Delete_"+attribs[i][1]+"(pTemp->"+attribs[i][0]+", false, 0);\n");
 					}
 				}
 			}			
 			writer.write("\t\t\tpTemp++;\n");
 			writer.write("\t\t}\n");
 		}
-		writer.write("\t\tdelete [] param;\n");
+		writer.write("\t\tfree(param);\n");
 		writer.write("\t}\n");
 		writer.write("\telse\n");
 		writer.write("\t{\n");
@@ -280,18 +298,18 @@ public class BeanParamWriter extends ParamCPPFileWriter{
 					String containedType = null;
 					if (CPPUtils.isSimpleType(qname)){
 						containedType = CPPUtils.getclass4qname(qname);
-						writer.write("\t\tdelete [] (("+containedType+"*)param->"+attribs[i][0]+".m_Array);\n");
+						writer.write("\t\tfree(param->"+attribs[i][0]+".m_Array);\n");
 					}
 					else{
 						containedType = qname.getLocalPart();
 						writer.write("\t\tAxis_Delete_"+containedType+"(param->"+attribs[i][0]+".m_Array, true, param->"+attribs[i][0]+".m_Size);\n");
 					}
 				}else{
-					writer.write("\t\tAxis_Delete_"+attribs[i][1]+"(param->"+attribs[i][0]+");\n");
+					writer.write("\t\tAxis_Delete_"+attribs[i][1]+"(param->"+attribs[i][0]+", false, 0);\n");
 				}
 			}
 		}			
-		writer.write("\t\tdelete param;\n");
+		writer.write("\t\tfree(param);\n");
 		writer.write("\t}\n");
 		writer.write("}\n");
 	}	

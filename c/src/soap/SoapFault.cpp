@@ -91,49 +91,49 @@ SoapFault::~SoapFault()
 {
 	m_sFaultcode= sFaultcode;
 
-	return SUCCESS;
+	return AXIS_SUCCESS;
 }*/
 
 /*int SoapFault::setFaultstring(const string& sFaultstring)
 {
 	m_sFaultstring= sFaultstring;
 
-	return SUCCESS;
+	return AXIS_SUCCESS;
 }*/
 
 /*int SoapFault::setFaultactor(const string& sFaultactor)
 {
 	m_sFaultactor= sFaultactor;
 
-	return SUCCESS;
+	return AXIS_SUCCESS;
 }*/
 
 /*int SoapFault::setDetail(const string& sDetail)
 {
 	m_sDetail= sDetail;
 
-	return SUCCESS;
+	return AXIS_SUCCESS;
 }*/
 
 int SoapFault::serialize(SoapSerializer& pSZ)
 {
 	//written according to SOAP Version 1.1
 
-	int iStatus= SUCCESS;
+	int iStatus= AXIS_SUCCESS;
 		
-	pSZ << "<SOAP-ENV:Fault>";	
-	pSZ << "<faultcode>" << m_sFaultcode.c_str()<< "</faultcode>";
-	pSZ << "<faultstring>"<<m_sFaultstring.c_str()<<"</faultstring>";
+	pSZ.Serialize("<SOAP-ENV:Fault>", NULL);	
+	pSZ.Serialize("<faultcode>", m_sFaultcode.c_str(), "</faultcode>", NULL);
+	pSZ.Serialize("<faultstring>", m_sFaultstring.c_str(), "</faultstring>", NULL);
 
 	if(!m_sFaultactor.empty()) {		
-		pSZ<< "<faultactor>"<< m_sFaultactor.c_str() <<"</faultactor>";
+		pSZ.Serialize("<faultactor>", m_sFaultactor.c_str(), "</faultactor>", NULL);
 	}
 
 	if(!m_sDetail.empty()) {		
-		pSZ<< "<detail>" << m_sDetail.c_str() <<"</detail>";
+		pSZ.Serialize("<detail>", m_sDetail.c_str(), "</detail>", NULL);
 	}
 	
-	pSZ<< "</SOAP-ENV:Fault>";
+	pSZ.Serialize("</SOAP-ENV:Fault>", NULL);
 
 	return iStatus;
 }
@@ -144,7 +144,7 @@ int SoapFault::serialize(string& sSerialized)
 {
 	//written according to SOAP Version 1.1
 
-	int iStatus= SUCCESS;
+	int iStatus= AXIS_SUCCESS;
 	
 	sSerialized= sSerialized+ "<SOAP-ENV:Fault>" + "\n";
 	sSerialized= sSerialized+ "<faultcode>"+ m_sFaultcode+ "</faultcode>"+ "\n";
