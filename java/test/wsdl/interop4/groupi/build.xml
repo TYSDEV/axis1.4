@@ -42,6 +42,12 @@ Copyright:
         &targets;
   <property name="root.dir" value="../../../.."/>
 
+    <target name="clean">
+        <echo message="Removing ${build.dir}/classes/${componentName} and ${build.dir}/work/${componentName}" />
+        <delete dir="${build.dir}/classes/${componentName}"/>
+        <delete dir="${build.dir}/work/${componentName}"/>
+    </target>
+
   <target name="compile">
     <property name="testname" value="groupi"/>
 
