@@ -89,7 +89,7 @@ int send_transport_information(Ax_soapstream* hdr)
 //Call initialize_module() [of Packet.h] from within this method
 void module_init(server_rec *svr_rec, apr_pool_t* p)
 {
-	initialize_module(1, "");
+	initialize_module(1);
 }
 
 int send_response_bytes(char* res, void* opstream)
