@@ -422,7 +422,7 @@
 <p>Let's take a look at a sample InteropBase service client that will call methods of a InteropBase service deployed on Axis C++. You can find the <strong>InteropBase.wsdl</strong> for this example at</p>
 
 <p>
-<strong>$AXISCPP_HOME/src/server/samples/interoptests/base</strong>
+<strong>$AXISCPP_HOME/samples/interoptests/base</strong>
 </p>
 <p>When starting with the valid WSDL file to use Axis C++ you have to get started with the tool called WSDL2Ws which is written in Java. source for WSDL2Ws tool is in</p>
 <p>
@@ -497,12 +497,12 @@
 </div>
 <p>We use the sample at</p>
 <p>
-<strong>$AXISCPP_HOME/src/server/samples/interoptests/base.</strong>
+<strong>$AXISCPP_HOME/samples/interoptests/base.</strong>
 </p>
 <p>We use this sample to demonstrate the generation of serverside skeletons and how to deploy a web service using it.</p>
 <p>Inside this folder you will find InteropBase.wsdl file using which we generate skeleton and Wrappers. Here is the command line arguments to generate the skeleton.</p>
 <p>
-<strong>cd $AXISCPP_HOME/server/samples/interoptests/base</strong>
+<strong>cd $AXISCPP_HOME/samples/interoptests/base</strong>
 
 </p>
 <p>
@@ -808,7 +808,7 @@
 <p>Note that inside $AXIS_HOME directory there is a file called axiscpp.conf. Make sure that it has read permissions. This file contains key, value pairs of paths used by the Axis Soap Engine. You can change the WSDDFILEPATH and AXISLOGPATH inside this file according to your choice.</p>
 <p>Type the Following Command to build the service(You can always use makefiles instead of the following commands to build.)</p>
 <p>
-<strong>cd $AXISCPP_HOME/src/server/samples/introptests/base</strong>
+<strong>cd $AXISCPP_HOME/samples/introptests/base</strong>
 </p>
 
 <p>
@@ -869,7 +869,7 @@
 <p>WSDL2Ws tools will generate the stubs for the client side. You will have C++ Client class and header file.</p>
 
 <p>
-<strong>cd $AXISCPP_HOME/src/client/samples/interoptests/base</strong>
+<strong>cd $AXISCPP_HOME/samples/interoptests/base</strong>
 </p>
 <p>
 <strong>$ java org.apache.axis.wsdl.wsdl2ws.WSDL2Ws InteropBase.wsdl -lc++ -sclient</strong>
@@ -1323,7 +1323,7 @@
 <p>This will automatically create <strong>libaxiscpp_client.so</strong> and copy it to the <strong>$AXISCPP_HOME/lib/axis</strong> (as configured in runconfig script)</p>
 <p>Now</p>
 <p>
-<strong>cd $AXISCPP_HOME/src/client/samples/interoptests/base</strong>
+<strong>cd $AXISCPP_HOME/samples/interoptests/base</strong>
 
 </p>
 <p>
@@ -1776,7 +1776,7 @@
 </p>
 <p>Type the Following Command to build the service(You can always use makefiles instead of the following commands to build.)</p>
 <p>
-<strong>cd $AXISCPP_HOME/src/server/samples/introptest/base</strong>
+<strong>cd $AXISCPP_HOME/samples/introptest/base</strong>
 </p>
 <p>
 <strong>$ g++ -DHAVE_CONFIG_H -I. -I. -I.. -I$AXISCPP_HOME/include -Wshadow -Wall<br>
