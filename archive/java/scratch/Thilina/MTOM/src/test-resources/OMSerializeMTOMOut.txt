@@ -1,17 +1,17 @@
 MIME-Version: 1.0
 Content-Type: multipart/Related; 
-	boundary="----=_Part_0_2771331.1110371552187"
+	boundary="----=_Part_0_5525185.1110549010843"
 
-------=_Part_0_2771331.1110371552187
+------=_Part_0_5525185.1110549010843
 Content-Type: application/xop+xml
 Content-Transfer-Encoding: 8bit
 Content-ID: <http://example.org/my.hsh>
 
-<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope"><soap:Body><m:data xmlns:m="http://www.example.org/stuff"><m:name m:contentType="text/plain"><xop:Include xmlns:xop="http://www.w3.org/2004/08/xop/Include" href="cid:http://example.org/my.hsh1085540439"></xop:Include></m:name></m:data></soap:Body></soap:Envelope>
-------=_Part_0_2771331.1110371552187
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"><soap:Body><m:data xmlns:m="http://www.example.org/stuff"><m:name m:contentType="text/plain"><xop:Include xmlns:xop="http://www.w3.org/2004/08/xop/Include" href="cid:http://example.org/my.hsh1110549010656"></xop:Include></m:name></m:data></soap:Body></soap:Envelope>
+------=_Part_0_5525185.1110549010843
 Content-Type: text/plain; charset=Cp1252
 Content-Transfer-Encoding: binary
-Content-ID: <http://example.org/my.hsh1085540439>
+Content-ID: <http://example.org/my.hsh1110549010656>
 
 Programming Project
-------=_Part_0_2771331.1110371552187--
+------=_Part_0_5525185.1110549010843--
