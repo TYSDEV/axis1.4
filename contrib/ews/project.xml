@@ -175,13 +175,17 @@
 	 </sourceModifications>
 
     <unitTestSourceDirectory>test</unitTestSourceDirectory>
+    
+    
 
     <unitTest>
-      <includes>
-        <include>**/*Test.java</include>
-		<exclude>**/*WebApplicationTest.java</exclude> 
-		<exclude>**/*MapperTest.java</exclude> 
-      </includes>
+	  <includes>
+	    <include>**/*Test.java</include>
+	  </includes>
+	    <excludes>
+			<exclude>**/WebApplicationTest.java</exclude> 
+			<exclude>**/*MapperTest.java</exclude> 
+		</excludes>
     </unitTest>
 
     <resources>
@@ -215,91 +219,6 @@
     <!-- ============ -->
 
     <dependencies>
-		<!-- 	
-        <dependency>
-            <groupId>jaxb-ri</groupId>
-            <artifactId>jaxb-api</artifactId>
-            <version>SNAPSHOT</version>
-            <properties>
-                <module>true</module>
-            </properties>
-        </dependency>
-        <dependency>
-            <groupId>jaxb-ri</groupId>
-            <artifactId>jaxb-impl</artifactId>
-            <version>SNAPSHOT</version>
-            <properties>
-                <module>true</module>
-            </properties>
-        </dependency>
-        <dependency>
-            <groupId>jaxb-ri</groupId>
-            <artifactId>jaxb-libs</artifactId>
-            <version>SNAPSHOT</version>
-            <properties>
-                <module>true</module>
-            </properties>
-        </dependency>
-        <dependency>
-            <groupId>jaxb-ri</groupId>
-            <artifactId>jaxb-xjc</artifactId>
-            <version>SNAPSHOT</version>
-            <properties>
-                <module>true</module>
-            </properties>
-        </dependency>
-        <dependency>
-            <groupId>jaxb-ri</groupId>
-            <artifactId>namespace</artifactId>
-            <version>SNAPSHOT</version>
-            <properties>
-                <module>true</module>
-            </properties>
-        </dependency>
-        <dependency>
-            <groupId>jaxb-ri</groupId>
-            <artifactId>relaxngDatatype</artifactId>
-            <version>SNAPSHOT</version>
-            <properties>
-                <module>true</module>
-            </properties>
-        </dependency>
-        <dependency>
-            <groupId>jaxb-ri</groupId>
-            <artifactId>xsdlib</artifactId>
-            <version>SNAPSHOT</version>
-            <properties>
-                <module>true</module>
-            </properties>
-        </dependency>
-        -->
-		<!--
-        <dependency>
-            <groupId>sec</groupId>
-            <artifactId>wss4j</artifactId>
-            <version>SNAPSHOT</version>
-            <properties>
-                <module>true</module>
-            </properties>
-        </dependency>
-		
-        <dependency>
-            <groupId>sec</groupId>
-            <artifactId>xmlsec</artifactId>
-            <version>SNAPSHOT</version>
-            <properties>
-                <module>true</module>
-            </properties>
-        </dependency>
-        <dependency>
-            <groupId>sec</groupId>
-            <artifactId>opensaml</artifactId>
-            <version>DEV</version>
-            <properties>
-                <module>true</module>
-            </properties>
-        </dependency>
-		-->
         <dependency>
             <groupId>geronimo-spec</groupId>
             <artifactId>geronimo-spec-ejb</artifactId>
@@ -316,56 +235,6 @@
                 <module>true</module>
             </properties>
         </dependency>
-<!--                
-		<dependency>
-            <groupId>geronimo</groupId>
-            <artifactId>geronimo-core</artifactId>
-            <version>1.0-M1</version>
-            <properties>
-                <module>true</module>
-            </properties>
-        </dependency>
-        <dependency>
-            <groupId>geronimo</groupId>
-            <artifactId>geronimo-kernel</artifactId>
-            <version>1.0-M1</version>
-            <properties>
-                <module>true</module>
-            </properties>
-        </dependency>
-        <dependency>
-            <groupId>geronimo</groupId>
-            <artifactId>geronimo-deployment</artifactId>
-            <version>1.0-M1</version>
-            <properties>
-                <module>true</module>
-            </properties>
-        </dependency>
-        <dependency>
-            <groupId>dom4j</groupId>
-            <artifactId>dom4j</artifactId>
-            <version>1.4</version>
-            <properties>
-                <module>true</module>
-            </properties>
-        </dependency>
-        <dependency>
-            <groupId>xerces</groupId>
-            <artifactId>xercesImpl</artifactId>
-            <version>2.6.0</version>
-            <properties>
-                <module>true</module>
-            </properties>
-        </dependency>
-        <dependency>
-            <groupId>xerces</groupId>
-            <artifactId>xmlParserAPIs</artifactId>
-            <version>2.2.1</version>
-            <properties>
-                <module>true</module>
-            </properties>
-        </dependency>
-        -->
         <!-- Module Dependencies -->
         <dependency>
             <groupId>axis</groupId>
@@ -424,16 +293,7 @@
                 <module>true</module>
             </properties>
         </dependency>
-<!--
-        <dependency>
-            <groupId>openejb</groupId>
-            <artifactId>openejb-core-2.0</artifactId>
-            <version>SNAPSHOT</version>
-            <properties>
-                <module>true</module>
-            </properties>
-        </dependency>
--->        
+
         <dependency>
             <groupId>xmlbeans</groupId>
             <artifactId>xbean-apache-1.0</artifactId>
@@ -442,6 +302,37 @@
                 <module>true</module>
             </properties>
         </dependency>
+        
+        <!-- Uncomment to enable the security -->
+		<!-- 
+		
+        <dependency>
+            <groupId>sec</groupId>
+            <artifactId>wss4j</artifactId>
+            <version>SNAPSHOT</version>
+            <properties>
+                <module>true</module>
+            </properties>
+        </dependency>
+		
+        <dependency>
+            <groupId>sec</groupId>
+            <artifactId>xmlsec</artifactId>
+            <version>SNAPSHOT</version>
+            <properties>
+                <module>true</module>
+            </properties>
+        </dependency>
+        <dependency>
+            <groupId>sec</groupId>
+            <artifactId>opensaml</artifactId>
+            <version>DEV</version>
+            <properties>
+                <module>true</module>
+            </properties>
+        </dependency>
+		-->
+        
 
     </dependencies>
 </project>
