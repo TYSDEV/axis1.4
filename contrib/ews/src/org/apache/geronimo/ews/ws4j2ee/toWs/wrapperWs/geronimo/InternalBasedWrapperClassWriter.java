@@ -174,11 +174,11 @@ public class InternalBasedWrapperClassWriter extends JavaClassWriter {
             out.write("};\n");
             if (!"void".equals(returnType)) {
                 out.write(
-					"\t\t\treturn "
-						+ Utils.getReturnCode(returnType, "AxisGeronimoUtils.invokeEJB(\""
+                    "\t\t\treturn "
+                        + Utils.getReturnCode(returnType, "AxisGeronimoUtils.invokeEJB(\""
                         + ejbName
                         + "\",methodName,classes,arguments)")
-						+ ";\n");
+                        + ";\n");
             } else {
                 out.write(
                     "\t\t\tAxisGeronimoUtils.invokeEJB(\""
@@ -192,8 +192,9 @@ public class InternalBasedWrapperClassWriter extends JavaClassWriter {
      * @see org.apache.geronimo.ews.ws4j2ee.toWs.JavaClassWriter#writeImportStatements()
      */
     protected void writeImportStatements() throws GenerationFault {
-		out.write("import org.apache.geronimo.axis.AxisGeronimoUtils;\n");
-		out.write("import org.apache.geronimo.ews.ws4j2ee.utils.Utils;\n");
+        out.write("import org.apache.geronimo.axis.AxisGeronimoUtils;\n");
+        out.write("import org.apache.geronimo.ews.ws4j2ee.utils.Utils;\n");
     }
 
 }
+

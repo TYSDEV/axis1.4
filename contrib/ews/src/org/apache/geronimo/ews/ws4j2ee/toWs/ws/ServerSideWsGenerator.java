@@ -107,8 +107,11 @@ public class ServerSideWsGenerator implements Generator {
             String wsdlfile =
                 j2eewscontext.getMiscInfo().getWsdlFile().fileName();
 			
-            J2eeEmitter j2ee = new J2eeEmitter(true,
-            	!j2eewscontext.getMiscInfo().isSEIExists(),j2eewscontext);
+//            J2eeEmitter j2ee = new J2eeEmitter(true,
+//            	!j2eewscontext.getMiscInfo().isSEIExists(),j2eewscontext);
+            J2eeGeneratorFactory genFac = new J2eeGeneratorFactory();
+            J2eeEmitter j2ee = new J2eeEmitter(j2eewscontext,genFac);
+            
 
             if (j2eewscontext.getMiscInfo().isVerbose()) {
                 log.info("wsdl file = " + wsdlfile);
@@ -120,7 +123,7 @@ public class ServerSideWsGenerator implements Generator {
             j2ee.setOutputDir(j2eewscontext.getMiscInfo().getOutPutPath());
             j2ee.setServerSide(true);
             j2ee.setVerbose(j2eewscontext.getMiscInfo().isVerbose());
-			j2ee.setUsedbyws4j2ee(true);
+			//j2ee.setUsedbyws4j2ee(true);
             j2ee.setHelperWanted(true);
             
             j2ee.runServerSide(wsdlfile);

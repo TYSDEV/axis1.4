@@ -179,7 +179,7 @@ public class J2eeGeneratorFactory implements GeneratorFactory {
 
     protected void addDefinitionGenerators() {
         addGenerator(Definition.class, JavaDefinitionWriter.class); // for faults
-		addGenerator(Definition.class, getDeployerWriterClass()); // for deploy.wsdd
+		addGenerator(Definition.class, JavaDeployWriter.class); // for deploy.wsdd
         addGenerator(Definition.class, JavaUndeployWriter.class); // for undeploy.wsdd
     } // addDefinitionGenerators
 
@@ -1122,15 +1122,15 @@ public class J2eeGeneratorFactory implements GeneratorFactory {
         }
         return btm;
     }
-    private Class getDeployerWriterClass(){
-    	try{
-            if(emitter.isUsedbyws4j2ee()){
-            	return Class.forName("org.apache.geronimo.ews.ws4j2ee.toWs.ws.J2eeDeployWriter");
-            }else 
-            	return  JavaDeployWriter.class;
-        } catch (Exception e) {
-        	e.printStackTrace();
-            throw new RuntimeException(e);
-        }
-    }
+//    private Class getDeployerWriterClass(){
+//    	try{
+//            if(emitter.isUsedbyws4j2ee()){
+//            	return Class.forName("org.apache.geronimo.ews.ws4j2ee.toWs.ws.J2eeDeployWriter");
+//            }else 
+//            	return  JavaDeployWriter.class;
+//        } catch (Exception e) {
+//        	e.printStackTrace();
+//            throw new RuntimeException(e);
+//        }
+//    }
 }

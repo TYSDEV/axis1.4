@@ -105,11 +105,13 @@ public class J2eeBindingWriter implements Generator {
                                                PortTypeEntry ptEntry,
                                                BindingEntry bEntry,
                                                SymbolTable st) {
-		if(emitter.isSeiNeeded()){
-			return new J2eeInterfaceWriter(emitter, ptEntry, bEntry, st);
-		}else{                                        
-			return null;        	
-		}	
+//TODO                                                   
+//		if(emitter.isSeiNeeded()){
+//			return new J2eeInterfaceWriter(emitter, ptEntry, bEntry, st);
+//		}else{                                        
+//			return null;        	
+//		}	
+        return new J2eeInterfaceWriter(emitter, ptEntry, bEntry, st);
     }
 
     /**
@@ -136,11 +138,12 @@ public class J2eeBindingWriter implements Generator {
     protected Generator getJavaImplWriter(J2eeEmitter emitter,
                                           BindingEntry bEntry,
                                           SymbolTable st) {
-		if(emitter.isUsedbyws4j2ee()){
-			return null;		
-		}else{
-			return new J2eeImplWriter(emitter, bEntry, st);		
-		}
+//		if(emitter.isUsedbyws4j2ee()){
+//			return null;		
+//		}else{
+//			return new J2eeImplWriter(emitter, bEntry, st);		
+//		}
+        return new J2eeImplWriter(emitter, bEntry, st); 
     }
 
     /**
