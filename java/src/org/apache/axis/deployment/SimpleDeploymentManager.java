@@ -56,6 +56,7 @@ package org.apache.axis.deployment;
 
 import org.apache.axis.Constants;
 import org.apache.axis.Handler;
+import org.apache.axis.SimpleTargetedChain;
 import org.apache.axis.InternalException;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.providers.java.RPCProvider;
@@ -513,6 +514,32 @@ public class SimpleDeploymentManager
         throws DeploymentException
     {
         undeployService(new QName("", key));
+    }
+
+    /**
+     * Deploy a Transport
+     */
+    public void deployTransport(String key, SimpleTargetedChain transport)
+        throws DeploymentException
+    {
+        transport.setName(key);
+        WSDDTransport wt = new WSDDTransport();
+        wt.setName(key);
+        wt.setOptionsHashtable(transport.getOptions());
+        // !!! Request flow?
+        // !!! Response flow?
+        wt.setPivotQName(new QName(WSDDConstants.WSDD_JAVA,
+                                   transport.getPivotHandler().getClass().getName()));
+        deployTransport(wt);
+    }
+
+    /**
+     * Undeploy (remove) a client Transport
+     */
+    public void undeployTransport(String key)
+        throws DeploymentException
+    {
+        undeployTransport(new QName("", key));
     }
 
     /**
