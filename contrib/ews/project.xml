@@ -415,14 +415,6 @@
                 <module>true</module>
             </properties>
         </dependency>
-        <dependency>
-            <groupId>ews</groupId>
-            <artifactId>ews-xmlbeans</artifactId>
-            <version>DEV</version>
-            <properties>
-                <module>true</module>
-            </properties>
-        </dependency>
 
     </dependencies>
 </project>
