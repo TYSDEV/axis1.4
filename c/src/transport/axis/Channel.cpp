@@ -241,10 +241,12 @@ const Channel& Channel::operator >> (std::string& msg)
 		throw ChannelException("Input streaming error on undefined channel; please open the channel first");
 	}
 
+	int nToRead;
 	int nByteRecv = 0;
-	const int BUF_SIZE = 4096;
+	const int BUF_SIZE = 64;
 	char buf[BUF_SIZE];
 	
+	// read socket until we reach to the body
 	do	// Manage multiple chuncks of the message
 	{
 		if ((nByteRecv = recv(m_Sock, (char *) &buf, BUF_SIZE - 1, 0)) == SOCKET_ERROR)
@@ -253,22 +255,48 @@ const Channel& Channel::operator >> (std::string& msg)
 			CloseChannel();
 			throw ChannelException("Input streaming error on Channel while getting data");
 		}
-
+		
 		if(nByteRecv)
 		{
-			buf[nByteRecv + 1] = '\0';	// got a part of the message, so add it to form 
+			buf[nByteRecv] = '\0';	// got a part of the message, so add it to form 
 			msg += buf;					// the whole message
 
-			//Validate according to the transport; check whether we are in a position to return.
-			if (!m_pTransportHandler->GetStatus(msg)) 
-				break;
+		}
+		else
+			return *this;
+
+	 }
+	 while (msg.find("\r\n\r\n") == std::string::npos);
+	 if (!m_pTransportHandler->GetStatus(msg)) 
+	 {
+		 msg = "";
+		 return *this;
+	 }
+
+	nToRead = m_pTransportHandler->m_Length - m_pTransportHandler->m_PayLoad.length();
+
+	do	// Manage multiple chuncks of the message
+	{
+		if ((nByteRecv = recv(m_Sock, (char *) &buf, BUF_SIZE - 1, 0)) == SOCKET_ERROR)
+		{
+			Error("Channel error while getting data.");
+			CloseChannel();
+			throw ChannelException("Input streaming error on Channel while getting data");
+		}
+		
+		if(nByteRecv)
+		{
+			nToRead -= nByteRecv;
+			buf[nByteRecv] = '\0';	// got a part of the message, so add it to form 
+			m_pTransportHandler->m_PayLoad += buf;					// the whole message
+
 		}
 		else
 			break; // we have the whole message or an error has occured
 	 }
-	 while (true);
-
-	 return *this;
+	 while (nToRead > 0);
+	//Validate according to the transport; check whether we are in a position to return.
+	return *this;
 }
 
 /**

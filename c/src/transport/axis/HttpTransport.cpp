@@ -313,8 +313,7 @@ void HttpTransport::GetPayLoad(const std::string& p_HttpPacket, std::string::siz
 {
 	std::string::size_type pos, nxtpos;
 	std::string strLine;
-	int len=0;
-
+	m_Length=0;
 	// process rest of the HTTP packet
 	while (true)
 	{
@@ -328,7 +327,7 @@ void HttpTransport::GetPayLoad(const std::string& p_HttpPacket, std::string::siz
 
 		// Get the payload size from the header.
 		if((pos = strLine.find("Content-Length:")) != std::string::npos) 
-			len = atoi(strLine.substr(pos + strlen("Content-Length: ")).c_str());
+			m_Length = atoi(strLine.substr(pos + strlen("Content-Length: ")).c_str());
 	}
 
 	m_PayLoad = p_HttpPacket.substr(offset);
@@ -340,13 +339,11 @@ void HttpTransport::GetPayLoad(const std::string& p_HttpPacket, std::string::siz
 		//nxtpos = m_PayLoad.find("1df");
 		//if(std::string::npos != nxtpos && '\n' == m_PayLoad[nxtpos+4])
 		{
-			m_bStatus = false; // we have the payload
 			// Extract the SOAP message
 			m_PayLoad = m_PayLoad.substr(m_PayLoad.find('<'));
-			m_PayLoad = m_PayLoad.substr(0, m_PayLoad.rfind('>') + 1);
+		//	m_PayLoad = m_PayLoad.substr(0, m_PayLoad.rfind('>') + 1);
 		}
 	}
-
 #ifdef _DEBUG
 	std::cout << "Payload:\n" << m_PayLoad << std::endl;
 #endif
