@@ -52,7 +52,7 @@ Once a Handler gets access to the SOAP body it is the duty of the Handler to res
 <p>Added a transport that supports IPV6. <br> <br> </p> 
 <br>
  <p>We hope you will enjoy using Axis C++. <br> <br>
- Numerous efforts are currently underway to improve Axis C++ as a whole. Please have a look at the <a href="http://nagoya.apache.org/wiki/apachewiki.cgi?AxisCpp_TODO">TODO page </a> to learn about 1.4 final and 1.5 plans for Axis C++. <br> <br>
+ Numerous efforts are currently underway to improve Axis C++ as a whole. Please have a look at the <a href="http://wiki.apache.org/ws/FrontPage/AxisC_2b_2b">TODO page </a> to learn about 1.4 final and 1.5 plans for Axis C++. <br> <br>
 We value your feed back very much. </p> <br> 
 <p>Please report any bugs in <a href="http://nagoya.apache.org/jira/secure/Dashboard.jspa">Jira</a> and feel free to let us know your thoughts and/or problems in <a href="mailto:axis-c-user@ws.apache.org">axis-c-user@ws.apache.org</a> <br> <br>
 We welcome you to contribute to Axis C++ and  please join the  discussions in <a href="mailto:axis-c-dev@ws.apache.org">axis-c-dev@ws.apache.org</a>
