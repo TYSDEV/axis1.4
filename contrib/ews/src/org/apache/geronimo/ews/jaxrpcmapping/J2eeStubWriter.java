@@ -100,7 +100,6 @@ import java.util.Vector;
  * file which contains the <bindingName>Stub class.
  * 
  * @author Ias (iasandcb@tmax.co.kr)
- * @deprecated no more used by J2eeGeneratorFactory
  */
 public class J2eeStubWriter extends JavaClassWriter {
     private BindingEntry bEntry;

@@ -77,7 +77,6 @@ import java.util.List;
  * file which contains the <bindingName>Impl class.
  * 
  * @author Ias (iasandcb@tmax.co.kr)
- * @deprecated no more used by J2eeGeneratorFactory
  */
 public class J2eeImplWriter extends JavaClassWriter {
     protected Binding binding;
