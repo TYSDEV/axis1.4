@@ -159,15 +159,9 @@ public class JavaFaultWriter extends JavaClassWriter {
             pw.println("    }");
         }
 
-        // PROBLEM: we need to have the Exception class serialize itself
-        // with the correct namespace, which can change depending on which
-        // operation the exception is thrown from.  This event seems unlikely
-        // so for the time being we will use the namespace from the first
-        // binding operation we find, which is passed in as construction time
-        // Note that bindingFault can be null if this fault is never referenced
-        // in a binding (WSDL2Java --all switch).
-
-        // method that serializes exception data (writeDetail)
+        // Method that serializes exception data (writeDetail)
+        // The QName of the element is passed in by the runtime and is found
+        // via the fault meta-data in the WSDD.
         // NOTE: This function is also written in JavaBeanFaultWriter.java
         pw.println();
         pw.println("    /**");
