@@ -21,9 +21,10 @@
 
 #include "SoapKeywordMapping.h"
 #include <axis/server/Attribute.h>
-#include "../common/AxisUtils.h"
+//#include "../common/AxisUtils.h"
 
-map<int, SoapKeywordStruct> SoapKeywordMapping::m_Map;
+//map<int, SoapKeywordStruct> SoapKeywordMapping::m_Map;
+SoapKeywordStruct SoapKeywordMapping::m_Map[VERSION_LAST];
 volatile bool SoapKeywordMapping::m_bInit = false;
 
 #define __TRC(X) AxisUtils::ToAxisXMLCh(X)
@@ -35,7 +36,7 @@ SoapKeywordMapping::SoapKeywordMapping()
 
 SoapKeywordMapping::~SoapKeywordMapping()
 {
-
+//    m_Map.clear();
 }
 
 void SoapKeywordMapping::Initialize()
@@ -44,9 +45,9 @@ void SoapKeywordMapping::Initialize()
     {
         for (int sv = SOAP_VER_1_1; sv < VERSION_LAST; sv++)
         {
-            m_Map[sv].pchNamespaceUri = 
+            m_Map[sv].pchNamespaceUri =
                 __TRC(gs_SoapEnvVersionsStruct[sv].pchNamespaceUri);
-            m_Map[sv].pchPrefix = 
+            m_Map[sv].pchPrefix =                                                 
                 __TRC(gs_SoapEnvVersionsStruct[sv].pchPrefix);
             for (int sw = SKW_ENVELOPE; sw < SOAP_WORDS_LAST; sw++)
             {
@@ -69,6 +70,21 @@ void SoapKeywordMapping::Initialize()
         m_Map[SOAP_VER_1_2].pXsd = new Attribute("xsd","xmlns","",
             "http://www.w3.org/2001/XMLSchema");
         m_bInit = true;
+    }
+}
+
+void SoapKeywordMapping::uninitialize()
+{
+    if (m_bInit)
+    {
+        /* soap 1.1 envelop attributes */
+        delete m_Map[SOAP_VER_1_1].pEnv;
+        delete m_Map[SOAP_VER_1_1].pXsi;
+        delete m_Map[SOAP_VER_1_1].pXsd;
+        delete m_Map[SOAP_VER_1_2].pEnv;
+        delete m_Map[SOAP_VER_1_2].pXsi;
+        delete m_Map[SOAP_VER_1_2].pXsd;
+        m_bInit = false;
     }
 }
 

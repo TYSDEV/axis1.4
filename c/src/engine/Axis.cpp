@@ -189,6 +189,8 @@ extern "C" int process_request (Ax_soapstream* stream)
                 else
                 {
                     sServiceName = g_pConfig->GetAxisHomePath ();
+                    if(sServiceName.empty())
+			return AXIS_FAIL;
                     sServiceName += WSDLDIRECTORY + sUriWOAxis + ".wsdl";
                     // Check whether wsdl file is available
                     if ((WsddFile = fopen (sServiceName.c_str (), "r")) == NULL)
@@ -255,6 +257,8 @@ extern "C" int initialize_module (int bServer)
         if (status == AXIS_SUCCESS)
         {
             char *pWsddPath = g_pConfig->GetWsddFilePath ();
+	    if(!pWsddPath)
+                return AXIS_FAIL;
 #if defined(__AXISTRACE__)
             status = g_pAT->openFile ();
             if (status == AXIS_FAIL)
@@ -267,12 +271,6 @@ extern "C" int initialize_module (int bServer)
         }
         else
         {
-            AXISTRACE1 ("Reading from the configuration file failed. " \
-                "Check for error in the configuration file", CRITICAL);
-            /* TODO:Improve the AxisTrace so that it will log
-	     * these kind of messages into a log file according to the
-	     * critical level specified.
-	     */
             return AXIS_FAIL;
         }
 
@@ -296,18 +294,12 @@ extern "C" int initialize_module (int bServer)
 	     * have CLIENTWSDDFILEPATH entry in axiscpp.conf 
 	     */
             if (!pClientWsddPath)
-                return status;
+                return AXIS_FAIL;
             if (AXIS_SUCCESS != g_pWSDDDeployment->LoadWSDD (pClientWsddPath))
                 return AXIS_FAIL;
         }
         else
         {
-            AXISTRACE1 ("Reading from the configuration file failed. " \
-                "Check for error in the configuration file", CRITICAL);
-            /* TODO:Improve the AxisTrace so that it will log these kind of 
-	     * messages into a log file according to the critical level 
-	     * specified.
-             */
             return AXIS_FAIL;
         }
     }
@@ -316,8 +308,11 @@ extern "C" int initialize_module (int bServer)
 
 extern "C" int uninitialize_module ()
 {
-    // XMLPlatformUtils::Terminate();
+#ifdef USE_XERCES_PARSER
+    XMLPlatformUtils::Terminate ();
+#endif
     ModuleUnInitialize ();
+    SoapKeywordMapping::uninitialize ();
     return AXIS_SUCCESS;
 }
 
