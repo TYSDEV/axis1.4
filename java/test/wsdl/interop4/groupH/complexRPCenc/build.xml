@@ -63,7 +63,7 @@ Copyright (c) 2002-2003 Apache Software Foundation.
         
         <copy file="ComplexRpcEncBindingImpl.java" overwrite="true"
             todir="${root.dir}/build/work/test/wsdl/interop4/groupH/${testname}"/>
-        <copy file="ComplexRpcEncServiceTestCase.java"
+        <copy file="ComplexRpcEncServiceTestCase.java" overwrite="true"
             todir="${root.dir}/build/work/test/wsdl/interop4/groupH/${testname}"/>
         
         <!-- compile the code -->

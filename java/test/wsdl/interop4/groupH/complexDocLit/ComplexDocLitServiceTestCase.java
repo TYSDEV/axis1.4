@@ -7,9 +7,27 @@
 
 package test.wsdl.interop4.groupH.complexDocLit;
 
+import java.net.URL;
+
 public class ComplexDocLitServiceTestCase extends junit.framework.TestCase {
-    public ComplexDocLitServiceTestCase(java.lang.String name) {
+
+    public static URL url = null;
+    
+    public static void main(String[] args) throws Exception {
+        if (args.length == 1) {
+            url = new URL(args[0]);
+        } else {
+            url = new URL(new ComplexDocLitServiceLocator().getComplexDocLitPortAddress());
+        }
+        junit.textui.TestRunner.run(new junit.framework.TestSuite(ComplexDocLitServiceTestCase.class));
+    } // main
+    
+
+    public ComplexDocLitServiceTestCase(java.lang.String name) throws Exception {
         super(name);
+        if (url == null) {
+            url = new URL(new ComplexDocLitServiceLocator().getComplexDocLitPortAddress());
+        }
     }
     public void test1ComplexDocLitPortEchoSOAPStructFault() throws Exception {
         ComplexDocLitPortType binding;

@@ -7,9 +7,27 @@
 
 package test.wsdl.interop4.groupH.complexRPCenc;
 
+import java.net.URL;
+
 public class ComplexRpcEncServiceTestCase extends junit.framework.TestCase {
-    public ComplexRpcEncServiceTestCase(java.lang.String name) {
+    
+    public static URL url = null;
+    
+    public static void main(String[] args) throws Exception {
+        if (args.length == 1) {
+            url = new URL(args[0]);
+        } else {
+            url = new URL(new ComplexRpcEncServiceLocator().getComplexRpcEncPortAddress());
+        }
+        junit.textui.TestRunner.run(new junit.framework.TestSuite(ComplexRpcEncServiceTestCase.class));
+    } // main
+    
+    
+    public ComplexRpcEncServiceTestCase(java.lang.String name) throws Exception {
         super(name);
+        if (url == null) {
+            url = new URL(new ComplexRpcEncServiceLocator().getComplexRpcEncPortAddress());
+        }
     }
     public void test1ComplexRpcEncPortEchoSOAPStructFault() throws Exception {
         test.wsdl.interop4.groupH.complexRPCenc.ComplexRpcEncPortType binding;

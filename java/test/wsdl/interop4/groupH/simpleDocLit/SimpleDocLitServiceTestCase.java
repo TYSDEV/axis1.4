@@ -7,10 +7,28 @@
 
 package test.wsdl.interop4.groupH.simpleDocLit;
 
+import java.net.URL;
+
 public class SimpleDocLitServiceTestCase extends junit.framework.TestCase {
-    public SimpleDocLitServiceTestCase(java.lang.String name) {
+    
+    public static URL url = null;
+    
+    public static void main(String[] args) throws Exception {
+        if (args.length == 1) {
+            url = new URL(args[0]);
+        } else {
+            url = new URL(new SimpleDocLitServiceLocator().getSimpleDocLitPortAddress());
+        }
+        junit.textui.TestRunner.run(new junit.framework.TestSuite(SimpleDocLitServiceTestCase.class));
+    } // main
+    
+    public SimpleDocLitServiceTestCase(java.lang.String name) throws Exception {
         super(name);
+        if (url == null) {
+            url = new URL(new SimpleDocLitServiceLocator().getSimpleDocLitPortAddress());
+        }
     }
+
     public void test1SimpleDocLitPortEchoEmptyFault() throws Exception {
         SimpleDocLitPortType binding;
         try {
