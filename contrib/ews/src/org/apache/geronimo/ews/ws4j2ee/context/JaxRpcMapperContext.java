@@ -26,7 +26,7 @@ import javax.xml.namespace.QName;
 import org.apache.axis.wsdl.symbolTable.BindingEntry;
 import org.apache.axis.wsdl.symbolTable.PortTypeEntry;
 import org.apache.axis.wsdl.symbolTable.ServiceEntry;
-import org.apache.geronimo.ews.jaxrpcmapping.descriptor.JavaWsdlMapping;
+
 import org.apache.geronimo.ews.ws4j2ee.toWs.GenerationFault;
 
 /**
