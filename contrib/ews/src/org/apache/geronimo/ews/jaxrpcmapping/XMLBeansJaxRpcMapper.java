@@ -19,16 +19,11 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Iterator;
-import java.util.List;
 
 import javax.wsdl.Binding;
 import javax.wsdl.Operation;
 import javax.wsdl.Port;
 import javax.wsdl.PortType;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
 import javax.xml.namespace.QName;
 
 import org.apache.axis.wsdl.symbolTable.BindingEntry;
@@ -36,7 +31,6 @@ import org.apache.axis.wsdl.symbolTable.PortTypeEntry;
 import org.apache.axis.wsdl.symbolTable.ServiceEntry;
 import org.apache.geronimo.ews.ws4j2ee.toWs.GenerationFault;
 import org.apache.xmlbeans.XmlException;
-
 
 import com.sun.java.xml.ns.j2Ee.ExceptionMappingType;
 import com.sun.java.xml.ns.j2Ee.JavaWsdlMappingDocument;

@@ -28,7 +28,6 @@ import org.apache.geronimo.ews.ws4j2ee.context.webservices.client.interfaces.Ser
 import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.interfaces.WSCFContext;
 import org.apache.geronimo.ews.ws4j2ee.context.wsdl.WSDLContext;
 import org.apache.geronimo.ews.ws4j2ee.parsers.DomEJBDDParser;
-import org.apache.geronimo.ews.ws4j2ee.parsers.EJBDDParser;
 import org.apache.geronimo.ews.ws4j2ee.toWs.Ws4J2eeFactory;
 
 /**
@@ -77,17 +76,17 @@ public class EJBDDTest extends AbstractTestCase{
         super(testName);
     }
 
-	public void testMathSample() throws Exception{
-		try{
-		   EJBDDParser pars = new EJBDDParser(con);
-		   pars.parse(new FileInputStream(
-		   	getTestFile(testDir+"testData/math/ejb-jar.xml")));
-		   //Assert.assertEquals(con.getMiscInfo().getEjbName(),"MathFace"); 
-		}catch(Exception e){
-			e.printStackTrace();
-			throw e;
-		}
-	}
+//	public void testMathSample() throws Exception{
+//		try{
+//		   EJBDDParser pars = new EJBDDParser(con);
+//		   pars.parse(new FileInputStream(
+//		   	getTestFile(testDir+"testData/math/ejb-jar.xml")));
+//		   //Assert.assertEquals(con.getMiscInfo().getEjbName(),"MathFace"); 
+//		}catch(Exception e){
+//			e.printStackTrace();
+//			throw e;
+//		}
+//	}
     public void testMathSampleWithDOM() throws Exception{
         try{
             DomEJBDDParser pars = new DomEJBDDParser(con);
