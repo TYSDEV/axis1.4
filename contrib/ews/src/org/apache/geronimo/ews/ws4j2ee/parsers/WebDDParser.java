@@ -58,11 +58,13 @@ public class WebDDParser {
         Document doc = EWSUtils.createDocument(inputStream);
         Element root = doc.getDocumentElement();
         NodeList sevlele = root.getElementsByTagName("servlet");
+        
+        String j2eeLink = j2eewscontext.getMiscInfo().getJ2eeComponetLink();
         int count = 0;
         while (count < sevlele.getLength()) {
             Element serv = (Element) sevlele.item(count);
             servletName = Utils.getElementValue(serv.getElementsByTagName("servlet-name"));
-            if (servletName.equals(j2eewscontext.getMiscInfo().getJ2eeComponetLink())) {
+            if (servletName.equals(j2eeLink)) {
                 servletClass = Utils.getElementValue(serv.getElementsByTagName("servlet-class"));
                 context = new WebDDContextImpl(servletClass, servletName);
                 return;
