@@ -64,7 +64,6 @@ import org.apache.axis.Constants;
 import org.apache.axis.MessageContext;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.description.ServiceDesc;
-import org.apache.axis.description.JavaServiceDesc;
 import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.handlers.BasicHandler;
 import org.apache.axis.handlers.soap.SOAPService;
@@ -149,7 +148,6 @@ public abstract class BasicProvider extends BasicHandler {
         /* Find the service we're invoking so we can grab it's options */
         /***************************************************************/
         SOAPService service = msgContext.getService();
-        
         ServiceDesc serviceDesc = service.getInitializedServiceDesc(msgContext);
 
         // Calculate the appropriate namespaces for the WSDL we're going
@@ -227,10 +225,7 @@ public abstract class BasicProvider extends BasicHandler {
             emitter.setStyle(serviceDesc.getStyle());
             emitter.setUse(serviceDesc.getUse());
 
-            if (serviceDesc instanceof ServiceDesc) {
-                emitter.setClsSmart(((JavaServiceDesc)serviceDesc).getImplClass(),
-                                    locationUrl);
-            }
+            emitter.setClsSmart(serviceDesc.getImplClass(), locationUrl);
 
             // If a wsdl target namespace was provided, use the targetNamespace.
             // Otherwise use the interfaceNamespace constructed above.

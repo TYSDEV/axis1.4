@@ -54,12 +54,15 @@
  */
 package org.apache.axis.utils.cache;
 
-import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.axis.utils.ClassUtils;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.HashMap;
+import java.lang.reflect.Method;
 
 /**
  * A cache for methods.

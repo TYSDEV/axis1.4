@@ -115,7 +115,7 @@ public class RunAxisFunctionalTestsTask extends Task
         // try a ping for the TCP server
         while (true) {
             try {
-                Thread.sleep(500);
+                Thread.currentThread().sleep(500);
             } catch (InterruptedException ex) {
             }
             try {
@@ -158,7 +158,7 @@ public class RunAxisFunctionalTestsTask extends Task
                 try {
                     HttpURLConnection connection = (HttpURLConnection)url.openConnection();
                     connection.connect();
-                    readFully(connection);
+                    this.readFully(connection);
                     connection.disconnect();
                 } catch (IOException e) {
                     // Server is not running. Make this task a no-op.

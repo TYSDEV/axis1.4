@@ -156,12 +156,6 @@ public class TypeMappingImpl implements TypeMapping
         namespaces  = new ArrayList();
     }
 
-    private static boolean isArray(Class clazz)
-    {
-        return clazz.isArray() || java.util.Collection.class.isAssignableFrom(clazz);
-    }
-
-
     /**
      * setDelegate sets the new Delegate TypeMapping
      */
@@ -344,7 +338,7 @@ public class TypeMappingImpl implements TypeMapping
         // we've got an array, in which case make sure we get the
         // ArraySerializer.
         if (sf == null) {
-            if (isArray(javaType)) {
+            if (javaType.isArray()) {
                 pair = (Pair) qName2Pair.get(Constants.SOAP_ARRAY);
             } else {
                 pair = (Pair) class2Pair.get(pair.javaType);
@@ -403,7 +397,7 @@ public class TypeMappingImpl implements TypeMapping
         // another pair.  For some xmlTypes (like SOAP_ARRAY)
         // all of the possible javaTypes are not registered.
         if (sf == null) {
-            if (isArray(javaType)) {
+            if (javaType.isArray()) {
                 pair = (Pair) qName2Pair.get(pair.xmlType);
             } else {
                 pair = (Pair) class2Pair.get(pair.javaType);
@@ -571,7 +565,9 @@ public class TypeMappingImpl implements TypeMapping
         }
         
         // Can only detect arrays via code
-        if (xmlType == null && isArray(javaType)) {
+        if (xmlType == null && (javaType.isArray() ||
+            javaType == List.class ||
+            List.class.isAssignableFrom(javaType))) {
 
             // get the registered array if any
             pair = (Pair) class2Pair.get(Object[].class);

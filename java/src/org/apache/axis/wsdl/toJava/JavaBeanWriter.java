@@ -267,7 +267,8 @@ public class JavaBeanWriter extends JavaClassWriter {
                     variableName = Constants.ANYCONTENT;
                     isAny = true;
                 } else {
-                    String elemName = Utils.getLastLocalPart(elem.getName().getLocalPart());
+                    String elemName = elem.getName().getLocalPart();
+
                     variableName = Utils.xmlNameToJava(elemName);
                 }
 
@@ -296,9 +297,8 @@ public class JavaBeanWriter extends JavaClassWriter {
                 TypeEntry attr = (TypeEntry) attributes.get(i);
                 String typeName = attr.getName();
                 QName xmlName = (QName) attributes.get(i + 1);
-                String attrName = Utils.getLastLocalPart(xmlName.getLocalPart());
                 String variableName =
-                        Utils.xmlNameToJava(attrName);
+                        Utils.xmlNameToJava(xmlName.getLocalPart());
 
                 names.add(typeName);
                 names.add(variableName);
@@ -486,8 +486,10 @@ public class JavaBeanWriter extends JavaClassWriter {
             if (attributes != null) {
                 for (int j = 0; j < attributes.size(); j += 2) {
                     paramTypes.add(((TypeEntry) attributes.get(j)).getName());
-                    String name = Utils.getLastLocalPart(
-                            ((QName) attributes.get(j + 1)).getLocalPart());
+
+                    String name =
+                            ((QName) attributes.get(j + 1)).getLocalPart();
+
                     paramNames.add(mangle + Utils.xmlNameToJava(name));
                 }
             }
@@ -500,11 +502,11 @@ public class JavaBeanWriter extends JavaClassWriter {
             if (elements != null) {
                 for (int j = 0; j < elements.size(); j++) {
                     ElementDecl elem = (ElementDecl) elements.get(j);
-                    String name = Utils.getLastLocalPart(elem.getName().getLocalPart());
+
                     paramTypes.add(elem.getType().getName());
                     paramNames.add(
                             mangle
-                            + Utils.xmlNameToJava(name));
+                            + Utils.xmlNameToJava(elem.getName().getLocalPart()));
                 }
             }
         }
@@ -770,7 +772,7 @@ public class JavaBeanWriter extends JavaClassWriter {
 
             if (enableSetters) {
                 if (isUnion()) {
-                    pw.println("    public void set" + capName + "(" + typeName
+                    pw.println("    public void setValue(" + typeName
                             + " value) {");
                     writeSimpleTypeSetter(typeName);
                 } else {

@@ -7,7 +7,7 @@ import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
 import org.apache.axis.configuration.SimpleProvider;
 import org.apache.axis.description.OperationDesc;
-import org.apache.axis.description.JavaServiceDesc;
+import org.apache.axis.description.ServiceDesc;
 import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.encoding.ser.BeanDeserializerFactory;
@@ -72,7 +72,7 @@ public class TestSerializedRPC extends TestCase {
                 tmr.getOrMakeTypeMapping(Constants.URI_DEFAULT_SOAP_ENC);
         tm.register(javaType, xmlType, sf, df);
 
-        JavaServiceDesc desc = new JavaServiceDesc();
+        ServiceDesc desc = new ServiceDesc();
         desc.loadServiceDescByIntrospection(Service.class, tm);
         reverse.setServiceDescription(desc);
 

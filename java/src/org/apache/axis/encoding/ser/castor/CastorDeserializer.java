@@ -55,8 +55,6 @@
 
 package org.apache.axis.encoding.ser.castor;
 
-import javax.xml.namespace.QName;
-
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.Deserializer;
 import org.apache.axis.encoding.DeserializerImpl;
@@ -66,6 +64,9 @@ import org.exolab.castor.xml.MarshalException;
 import org.exolab.castor.xml.Unmarshaller;
 import org.exolab.castor.xml.ValidationException;
 import org.xml.sax.SAXException;
+
+import javax.xml.namespace.QName;
+import java.util.ArrayList;
 
 /**
  * Castor deserializer

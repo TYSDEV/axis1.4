@@ -246,6 +246,7 @@ public class Call implements javax.xml.rpc.Call {
      * If true, the code will throw a fault if there is no
      * response message from the server.  Otherwise, the
      * invoke method will return a null.
+     * @todo: stevel: why is this a static? Surely it should be a property.
      */
     public static final boolean FAULT_ON_NO_RESPONSE = false;
 
@@ -1383,7 +1384,7 @@ public class Call implements javax.xml.rpc.Call {
         for (Iterator faultIt = faults.iterator(); faultIt.hasNext();) {
             FaultInfo info = (FaultInfo) faultIt.next();
             QName qname = info.getQName();
-            info.getMessage();
+            javax.wsdl.Message message = info.getMessage();
 
             // if no parts in fault, skip it!
             if (qname == null) {
@@ -1818,7 +1819,9 @@ public class Call implements javax.xml.rpc.Call {
             }
 
             entLog.debug(Messages.getMessage("toAxisFault00"), exp);
-            throw AxisFault.makeFault(exp);
+            //TODO: stevel: we could chain this instead of losing the exception info
+            throw new AxisFault(
+                    Messages.getMessage("errorInvoking00", "\n" + exp) );
         }
     }
 
@@ -2653,6 +2656,7 @@ public class Call implements javax.xml.rpc.Call {
         Message resMsg = msgContext.getResponseMessage();
 
         if (resMsg == null) {
+            //TODO: stevel: this is a constant. it is always true. so why the condition?
           if (FAULT_ON_NO_RESPONSE) {
             throw new AxisFault(Messages.getMessage("nullResponse00"));
           } else {

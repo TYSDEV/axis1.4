@@ -58,6 +58,7 @@ package org.apache.axis.encoding.ser;
 import org.apache.axis.Constants;
 import org.apache.axis.encoding.Serializer;
 import org.apache.axis.encoding.SerializerFactory;
+import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.Messages;
 
 import javax.xml.namespace.QName;
@@ -67,6 +68,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Iterator;
 import java.util.Vector;
+import java.io.Serializable;
 
 /**
  * Base class for Axis Serialization Factory classes for code reuse
@@ -92,15 +94,8 @@ public abstract class BaseSerializerFactory extends BaseFactory
      * Sharing is only valid for xml primitives.
      */
     public BaseSerializerFactory(Class serClass) {
-        if (!Serializer.class.isAssignableFrom(serClass)) {
-            throw new ClassCastException(
-                    Messages.getMessage("BadImplementation00",
-                            serClass.getName(),
-                            Serializer.class.getName()));
-        }
         this.serClass = serClass;
     }
-
     public BaseSerializerFactory(Class serClass,
                                  QName xmlType, Class javaType) {
         this(serClass);

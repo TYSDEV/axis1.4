@@ -86,7 +86,6 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
@@ -231,6 +230,8 @@ public class JavaDeployWriter extends JavaWriter {
             PrintWriter pw, Binding binding, boolean hasLiteral, boolean hasMIME, Use use)
             throws IOException {
 
+        Vector types = symbolTable.getTypes();
+
         pw.println();
 
         if (hasMIME) {
@@ -244,10 +245,8 @@ public class JavaDeployWriter extends JavaWriter {
                     use.getEncoding());
         }
 
-        Map types = symbolTable.getTypeIndex();
-        Collection typeCollection = types.values();
-        for (Iterator i = typeCollection.iterator(); i.hasNext(); ) {
-            TypeEntry type = (TypeEntry) i.next();
+        for (int i = 0; i < types.size(); ++i) {
+            TypeEntry type = (TypeEntry) types.elementAt(i);
 
             // Note this same check is repeated in JavaStubWriter.
             boolean process = true;
@@ -554,7 +553,7 @@ public class JavaDeployWriter extends JavaWriter {
 
         if (returnQName != null) {
             pw.print(" returnQName=\""
-                    + Utils.genQNameAttributeStringWithLastLocalPart(returnQName, "retNS")
+                    + Utils.genQNameAttributeString(returnQName, "retNS")
                     + "\"");
         }
 
@@ -586,7 +585,7 @@ public class JavaDeployWriter extends JavaWriter {
                 pw.print(" name=\"" + param.getName() + "\"");
             } else {
                 pw.print(" qname=\""
-                        + Utils.genQNameAttributeStringWithLastLocalPart(paramQName, "pns")
+                        + Utils.genQNameAttributeString(paramQName, "pns")
                         + "\"");
             }
 

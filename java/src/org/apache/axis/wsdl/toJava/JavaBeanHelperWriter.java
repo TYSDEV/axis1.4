@@ -312,7 +312,7 @@ public class JavaBeanHelperWriter extends JavaClassWriter {
                 for (int i = 0; i < attributes.size(); i += 2) {
                     TypeEntry te = (TypeEntry) attributes.get(i);
                     QName attrName = (QName) attributes.get(i + 1);
-                    String attrLocalName = Utils.getLastLocalPart(attrName.getLocalPart());
+                    String attrLocalName = attrName.getLocalPart();
                     String fieldName =
                             Utils.xmlNameToJava(attrLocalName);
 
@@ -333,7 +333,7 @@ public class JavaBeanHelperWriter extends JavaClassWriter {
                     pw.println("        attrField.setFieldName(\"" + fieldName
                             + "\");");
                     pw.println("        attrField.setXmlName("
-                            + Utils.getNewQNameWithLastLocalPart(attrName) + ");");
+                            + Utils.getNewQName(attrName) + ");");
 
                     if (attrXmlType != null) {
                         pw.println("        attrField.setXmlType("
@@ -355,7 +355,7 @@ public class JavaBeanHelperWriter extends JavaClassWriter {
                         continue;
                     }
 
-                    String elemLocalName = Utils.getLastLocalPart(elem.getName().getLocalPart());
+                    String elemLocalName = elem.getName().getLocalPart();
                     String fieldName = Utils.xmlNameToJava(elemLocalName);
 
                     fieldName = getAsFieldName(fieldName);
@@ -397,7 +397,7 @@ public class JavaBeanHelperWriter extends JavaClassWriter {
                     pw.println("        elemField.setFieldName(\"" + fieldName
                             + "\");");
                     pw.println("        elemField.setXmlName("
-                            + Utils.getNewQNameWithLastLocalPart(xmlName) + ");");
+                            + Utils.getNewQName(xmlName) + ");");
 
                     if (xmlType != null) {
                         pw.println("        elemField.setXmlType("

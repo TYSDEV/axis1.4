@@ -56,14 +56,9 @@
 package org.apache.axis.components.image;
 
 import org.apache.axis.utils.Messages;
-import org.apache.axis.utils.IOUtils;
 import sun.awt.image.codec.JPEGImageEncoderImpl;
 
-import java.awt.Component;
-import java.awt.Graphics;
-import java.awt.Image;
-import java.awt.MediaTracker;
-import java.awt.Toolkit;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
@@ -80,7 +75,7 @@ public class JDK13IO extends Component implements ImageIO {
      * @param mimeType the mime-type of the format to save the image
      * @param image the image to save
      * @param os the stream to write to
-     * @exception Exception if an error prevents image encoding
+     * @exception JimiException if an error prevents image encoding
      */
     public void saveImage(String mimeType, Image image, OutputStream os)
             throws Exception {
@@ -120,7 +115,7 @@ public class JDK13IO extends Component implements ImageIO {
         }
         else {
             byte[] bytes = new byte[in.available()];
-            IOUtils.readFully(in,bytes);
+            in.read(bytes);
             return Toolkit.getDefaultToolkit().createImage(bytes);
         }
     } // loadImage

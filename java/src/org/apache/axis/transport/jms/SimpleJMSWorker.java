@@ -118,7 +118,7 @@ public class SimpleJMSWorker implements Runnable
         }
 
         // create the msg and context and invoke the server
-        AxisServer server = SimpleJMSListener.getAxisServer();
+        AxisServer server = listener.getAxisServer();
         Message msg = new Message(in);
         MessageContext  msgContext = new MessageContext(server);
         msgContext.setRequestMessage( msg );
@@ -154,7 +154,7 @@ public class SimpleJMSWorker implements Runnable
             e.printStackTrace();
         }
 
-        if (msgContext.getProperty(MessageContext.QUIT_REQUESTED) != null)
+        if (msgContext.getProperty(msgContext.QUIT_REQUESTED) != null)
             // why then, quit!
             try {listener.shutdown();} catch (Exception e) {}
     }

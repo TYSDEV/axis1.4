@@ -66,7 +66,6 @@ import org.apache.axis.Version;
 import org.apache.axis.description.FaultDesc;
 import org.apache.axis.description.OperationDesc;
 import org.apache.axis.description.ParameterDesc;
-import org.apache.axis.description.JavaServiceDesc;
 import org.apache.axis.description.ServiceDesc;
 import org.apache.axis.encoding.DefaultTypeMappingImpl;
 import org.apache.axis.encoding.TypeMapping;
@@ -229,7 +228,7 @@ public class Emitter {
     private ServiceDesc serviceDesc;
 
     /** Field serviceDesc2 */
-    private JavaServiceDesc serviceDesc2;
+    private ServiceDesc serviceDesc2;
 
     /** Field soapAction */
     private String soapAction = "DEFAULT";
@@ -581,24 +580,28 @@ public class Emitter {
             }
         }
 
+        // Get a default TM if not specified.
+        if (defaultTM == null) {
+            defaultTM = DefaultTypeMappingImpl.getSingleton();
+        }
+
         // Set up a ServiceDesc to use to introspect the Service
         if (serviceDesc == null) {
-            JavaServiceDesc javaServiceDesc = new JavaServiceDesc();
-            serviceDesc = javaServiceDesc;
+            serviceDesc = new ServiceDesc();
 
-            javaServiceDesc.setImplClass(cls);
+            serviceDesc.setImplClass(cls);
 
             // Set the typeMapping to the one provided.
             // If not available use the default TM
             if (tm != null) {
                 serviceDesc.setTypeMapping(tm);
             } else {
-                serviceDesc.setTypeMapping(getDefaultTypeMapping());
+                serviceDesc.setTypeMapping(defaultTM);
             }
 
-            javaServiceDesc.setStopClasses(stopClasses);
+            serviceDesc.setStopClasses(stopClasses);
             serviceDesc.setAllowedMethods(allowedMethods);
-            javaServiceDesc.setDisallowedMethods(disallowedMethods);
+            serviceDesc.setDisallowedMethods(disallowedMethods);
             serviceDesc.setStyle(style);
 
             // If the class passed in is a portType,
@@ -607,7 +610,7 @@ public class Emitter {
             // a serviceDesc2 is built to get the method parameter names.
             if ((implCls != null) && (implCls != cls)
                     && (serviceDesc2 == null)) {
-                serviceDesc2 = new JavaServiceDesc();
+                serviceDesc2 = new ServiceDesc();
 
                 serviceDesc2.setImplClass(implCls);
 
@@ -616,7 +619,7 @@ public class Emitter {
                 if (tm != null) {
                     serviceDesc2.setTypeMapping(tm);
                 } else {
-                    serviceDesc2.setTypeMapping(getDefaultTypeMapping());
+                    serviceDesc2.setTypeMapping(defaultTM);
                 }
 
                 serviceDesc2.setStopClasses(stopClasses);
@@ -768,7 +771,7 @@ public class Emitter {
             throws IOException, WSDLException, SAXException,
             ParserConfigurationException {
 
-        types = new Types(def, tm, getDefaultTypeMapping(), namespaces, intfNS, stopClasses,
+        types = new Types(def, tm, defaultTM, namespaces, intfNS, stopClasses,
                 serviceDesc);
 
         if (inputWSDL != null) {
@@ -2333,9 +2336,6 @@ public class Emitter {
      * @return the default <code>TypeMapping</code> used by the service
      */
     public TypeMapping getDefaultTypeMapping() {
-        if (defaultTM == null) {
-            defaultTM = DefaultTypeMappingImpl.getSingleton();
-        }
         return defaultTM;
     }
 

@@ -55,13 +55,6 @@
 
 package org.apache.axis.providers.java;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.StringTokenizer;
-
-import javax.xml.rpc.holders.IntHolder;
-import javax.xml.rpc.server.ServiceLifecycle;
-
 import org.apache.axis.AxisEngine;
 import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
@@ -69,7 +62,8 @@ import org.apache.axis.Handler;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
 import org.apache.axis.components.logger.LogFactory;
-import org.apache.axis.description.JavaServiceDesc;
+import org.apache.axis.description.ServiceDesc;
+import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.enum.Scope;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.message.SOAPEnvelope;
@@ -79,10 +73,17 @@ import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.cache.ClassCache;
 import org.apache.axis.utils.cache.JavaClass;
+import org.apache.axis.wsdl.fromJava.Emitter;
 import org.apache.commons.logging.Log;
+import org.w3c.dom.Document;
+
 import javax.xml.rpc.holders.IntHolder;
 import javax.xml.rpc.server.ServiceLifecycle;
 import org.xml.sax.SAXException;
+
+import java.util.ArrayList;
+import java.util.StringTokenizer;
+import java.io.Serializable;
 
 /**
  * Base class for Java dispatching.  Fetches various fields out of envelope,
@@ -151,9 +152,8 @@ public abstract class JavaProvider extends BasicProvider
                 return getSessionServiceObject(appSession, serviceName,
                                                msgContext, clsName);
             } else {
-                // was no application session - log an error and 
-                // treat as request scope
-                log.error(Messages.getMessage("noAppSession"));
+                // was no application session, sigh, treat as request scope
+                // FIXME : Should we bomb in this case?
                 scopeHolder.value = Scope.DEFAULT.getValue();
                 return getNewServiceObject(msgContext, clsName);
             }
@@ -464,7 +464,7 @@ public abstract class JavaProvider extends BasicProvider
             throw new AxisFault(Messages.getMessage("noServiceClass"));
         }
         Class cls = getServiceClass(clsName, service, msgContext);
-        JavaServiceDesc serviceDescription = (JavaServiceDesc)service.getServiceDescription();
+        ServiceDesc serviceDescription = service.getServiceDescription();
 
         // And the allowed methods, if necessary
         if (serviceDescription.getAllowedMethods() == null && service != null) {

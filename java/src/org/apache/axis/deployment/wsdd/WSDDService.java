@@ -64,7 +64,6 @@ import org.apache.axis.Handler;
 import org.apache.axis.MessageContext;
 import org.apache.axis.attachments.Attachments;
 import org.apache.axis.attachments.AttachmentsImpl;
-import org.apache.axis.description.JavaServiceDesc;
 import org.apache.axis.description.ServiceDesc;
 import org.apache.axis.encoding.DeserializerFactory;
 import org.apache.axis.encoding.SerializationContext;
@@ -126,7 +125,7 @@ public class WSDDService
 //    private HandlerInfoChainFactory _hiChainFactory;
 	private WSDDJAXRPCHandlerInfoChain _wsddHIchain;
 
-    JavaServiceDesc desc = new JavaServiceDesc();
+    ServiceDesc desc = new ServiceDesc();
 
     /**
      * Is streaming (i.e. NO high-fidelity recording, deserialize on the fly)

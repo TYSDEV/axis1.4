@@ -54,11 +54,13 @@
  */
 package org.apache.axis.encoding.ser;
 
-import java.lang.reflect.Method;
+import org.apache.axis.utils.ClassUtils;
+import org.apache.axis.utils.cache.MethodCache;
 
 import javax.xml.namespace.QName;
-
-import org.apache.axis.utils.cache.MethodCache;
+import java.util.Map;
+import java.util.HashMap;
+import java.lang.reflect.Method;
 
 /**
  * Base Factory for BaseDeserializerFactory and BaseSerializerFactory.

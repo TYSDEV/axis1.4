@@ -181,6 +181,8 @@ public abstract class TypeEntry extends SymTabEntry implements Serializable {
             isBaseType = (refType.isBaseType && refType.dims.equals("")
                     && dims.equals(""));
         }
+
+        // System.out.println(toString());
     }
 
     /**
@@ -198,6 +200,8 @@ public abstract class TypeEntry extends SymTabEntry implements Serializable {
         undefined = false;
         dims = "";
         isBaseType = false;
+
+        // System.out.println(toString());
     }
 
     /**
@@ -213,6 +217,8 @@ public abstract class TypeEntry extends SymTabEntry implements Serializable {
         undefined = false;
         dims = "";
         isBaseType = true;
+
+        // System.out.println(toString());
     }
 
     /**

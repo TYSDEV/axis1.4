@@ -382,28 +382,6 @@ public class ArraySerializer implements Serializer
 
     public String getMechanismType() { return Constants.AXIS_SAX; }
 
-    private static boolean isArray(Class clazz)
-    {
-        return clazz.isArray() || java.util.Collection.class.isAssignableFrom(clazz);
-    }
-
-    private static Class getComponentType(Class clazz)
-    {
-        if (clazz.isArray())
-        {
-            return clazz.getComponentType();
-        }
-        else if (java.util.Collection.class.isAssignableFrom(clazz))
-        {
-            return Object.class;
-        }
-        else
-        {
-            return null;
-        }
-    }
-
-
     /**
      * Return XML schema for the specified type, suitable for insertion into
      * the &lt;types&gt; element of a WSDL document, or underneath an
@@ -419,13 +397,13 @@ public class ArraySerializer implements Serializer
         // If an array the component type should be processed first
         String componentTypeName = null;
         Class componentType = null;
-        if (isArray(javaType)) {
+        if (javaType.isArray()) {
             String dimString = "[]";
-            componentType = getComponentType(javaType);
-            if (isArray(componentType)) {
-                while (isArray(componentType)) {
+            componentType = javaType.getComponentType();
+            if (componentType.isArray()) {
+                while (componentType.isArray()) {
                     dimString += "[]";
-                    componentType = getComponentType(componentType);
+                    componentType = componentType.getComponentType();
                 }
             } else {
                 types.writeType(componentType,null);

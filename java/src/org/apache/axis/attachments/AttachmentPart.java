@@ -60,7 +60,6 @@ import org.apache.axis.components.image.ImageIOFactory;
 import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.SessionUtils;
-import org.apache.axis.utils.IOUtils;
 import org.apache.commons.logging.Log;
 
 import javax.activation.DataHandler;
@@ -117,11 +116,6 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart
         datahandler = dh;
         if(dh != null) {
             setMimeHeader(HTTPConstants.HEADER_CONTENT_TYPE, dh.getContentType());
-	    javax.activation.DataSource ds = dh.getDataSource();
-	    if (ds instanceof ManagedMemoryDataSource) {
-		extractFilename((ManagedMemoryDataSource)ds); //and get the filename if appropriate
-
-	    }
         }
     }
 
@@ -402,7 +396,7 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart
         if (ds.getContentType().equals("text/plain")) {
             try {
                 byte[] bytes = new byte[is.available()];
-                IOUtils.readFully(is, bytes);
+                is.read(bytes);
                 return new String(bytes);
             } catch (java.io.IOException io) {
                 log.error(Messages.getMessage("javaIOException00"), io);
@@ -442,17 +436,13 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart
      * @see #getContent() getContent()
      */
     public void setContent(Object object, String contentType) {
-        ManagedMemoryDataSource source = null;
         if (object instanceof String) {
             try {
                 String s = (String) object;
                 java.io.ByteArrayInputStream bais =
                         new java.io.ByteArrayInputStream(s.getBytes());
-                source = new ManagedMemoryDataSource(bais,
-                        ManagedMemoryDataSource.MAX_MEMORY_DISK_CACHED,
-                        contentType, true);
-                extractFilename(source);
-                datahandler = new DataHandler(source);
+                datahandler = new DataHandler(new ManagedMemoryDataSource(bais,
+                        ManagedMemoryDataSource.MAX_MEMORY_DISK_CACHED, contentType, true));
                 contentObject = object;
                 return;
             } catch (java.io.IOException io) {
@@ -461,19 +451,17 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart
                         Messages.getMessage("illegalArgumentException00"));
             }
         } else if (object instanceof java.io.InputStream) {
-            try {
-                source = new ManagedMemoryDataSource((java.io.InputStream) object,
-                        ManagedMemoryDataSource.MAX_MEMORY_DISK_CACHED,
-                        contentType, true);
-                extractFilename(source);
-                datahandler = new DataHandler(source);
-                contentObject = object;
-                return;
-            } catch (java.io.IOException io) {
-                log.error(Messages.getMessage("javaIOException00"), io);
-                throw new java.lang.IllegalArgumentException(Messages.getMessage
-                        ("illegalArgumentException00"));
-            }
+                try {
+                    ManagedMemoryDataSource source = new ManagedMemoryDataSource((java.io.InputStream)object,
+                                                ManagedMemoryDataSource.MAX_MEMORY_DISK_CACHED, contentType, true);
+                    datahandler = new DataHandler(source);
+                    contentObject = object;
+                    return;
+                } catch (java.io.IOException io) {
+                    log.error(Messages.getMessage("javaIOException00"), io);
+                    throw new java.lang.IllegalArgumentException(
+                            Messages.getMessage("illegalArgumentException00"));
+                }
         } else {
             throw new java.lang.IllegalArgumentException(
                     Messages.getMessage("illegalArgumentException00"));
@@ -578,21 +566,16 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart
      * is no longer completely usable, at this point
      */
     public synchronized void dispose() {
-        if (attachmentFile != null) {
-            javax.activation.DataSource ds = datahandler.getDataSource();
-            if (ds instanceof ManagedMemoryDataSource) {
-                ((ManagedMemoryDataSource) ds).delete(); //and delete the file
-            } else {
-                File f = new File(attachmentFile);
-                //no need to check for existence here.
-                f.delete();
-            }
+        if(attachmentFile!=null) {
+            File f=new File(attachmentFile);
+            //no need to check for existence here.
+            f.delete();
             //set the filename to null to stop repeated use
             setAttachmentFile(null);
         }
         //clean up the datahandler, as it will have been
         //invalidated if it was bound to a file; if it wasnt
         //we get to release memory anyway
-        datahandler = null;
+        datahandler=null;
     }
 }

@@ -253,11 +253,11 @@ public class JavaSkelWriter extends JavaClassWriter {
                     retName = parameters.returnParam.getQName();
                     retType = Utils.getXSIType(parameters.returnParam);
                 }
-                
+
                 String returnStr;
 
                 if (retName != null) {
-                    returnStr = Utils.getNewQNameWithLastLocalPart(retName);
+                    returnStr = Utils.getNewQName(retName);
                 } else {
                     returnStr = "null";
                 }

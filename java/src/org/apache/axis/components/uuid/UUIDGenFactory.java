@@ -61,8 +61,9 @@
  */
 package org.apache.axis.components.uuid;
 
-import org.apache.axis.AxisProperties;
+import org.apache.axis.i18n.Messages;
 import org.apache.axis.components.logger.LogFactory;
+import org.apache.axis.AxisProperties;
 import org.apache.commons.logging.Log;
 
 /**

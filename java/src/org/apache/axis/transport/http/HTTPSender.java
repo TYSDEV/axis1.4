@@ -58,7 +58,6 @@ import org.apache.axis.AxisFault;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
 import org.apache.axis.Constants;
-import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.components.net.BooleanHolder;
 import org.apache.axis.components.net.SocketFactory;
@@ -629,8 +628,6 @@ public class HTTPSender extends BasicHandler {
                 ? null
                 : contentType.trim();
         if ((returnCode > 199) && (returnCode < 300)) {
-            if (returnCode == 202)
-                return inp;
             // SOAP return is OK - so fall through
         } else if (msgContext.getSOAPConstants() ==
                 SOAPConstants.SOAP12_CONSTANTS) {
@@ -689,14 +686,9 @@ public class HTTPSender extends BasicHandler {
             inp = new ChunkedInputStream(inp);
         }
 
-        boolean oneWay = msgContext.isPropertyTrue("OneWay");
-        if (oneWay) {
-            outMsg = new Message(new SOAPEnvelope());
-        } else {
-            outMsg = new Message( new SocketInputStream(inp, sock), false,
-                              contentType, contentLocation);
-        }
 
+        outMsg = new Message( new SocketInputStream(inp, sock), false,
+                              contentType, contentLocation);
         outMsg.setMessageType(Message.RESPONSE);
         msgContext.setResponseMessage(outMsg);
         if (log.isDebugEnabled()) {

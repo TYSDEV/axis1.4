@@ -63,7 +63,6 @@ import org.apache.axis.MessageContext;
 import org.apache.axis.SimpleTargetedChain;
 import org.apache.axis.attachments.Attachments;
 import org.apache.axis.components.logger.LogFactory;
-import org.apache.axis.description.JavaServiceDesc;
 import org.apache.axis.description.ServiceDesc;
 import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.enum.Style;
@@ -134,7 +133,7 @@ public class SOAPService extends SimpleTargetedChain
      * Our ServiceDescription.  Holds pretty much all the interesting
      * metadata about this service.
      */
-    private ServiceDesc serviceDescription = new JavaServiceDesc();
+    private ServiceDesc serviceDescription = new ServiceDesc();
     private AxisEngine engine;
 
     /**
@@ -189,10 +188,12 @@ public class SOAPService extends SimpleTargetedChain
     public ArrayList getActors() {
         ArrayList acts = (ArrayList)actors.clone();  // ??? cache this?
 
+        // TODO: a SOAPService should always be associated with an engine,
+        // so this should never be null.... check all paths to ensure that
+        // constraint is true.
         if (engine != null) {
             acts.addAll(engine.getActorURIs());
         }
-
         return acts;
     }
     
@@ -365,7 +366,7 @@ public class SOAPService extends SimpleTargetedChain
                                                      MessageContext msgContext)
             throws AxisFault {
 
-        if (!serviceDescription.isInitialized()) {
+        if (serviceDescription.getImplClass() == null) {
 
             // Let the provider do the work of filling in the service
             // descriptor.  This is so that it can decide itself how best
@@ -381,7 +382,7 @@ public class SOAPService extends SimpleTargetedChain
         return serviceDescription;
     }
 
-    public void setServiceDescription(JavaServiceDesc serviceDescription) {
+    public void setServiceDescription(ServiceDesc serviceDescription) {
         if (serviceDescription == null) {
             // FIXME: Throw NPE?
             return;
