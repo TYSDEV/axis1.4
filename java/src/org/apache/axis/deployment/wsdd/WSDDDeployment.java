@@ -567,7 +567,10 @@ public class WSDDDeployment
                 serviceDescs.add(service.getServiceDesc());
             } catch (WSDDNonFatalException ex) {
                 // If it's non-fatal, just keep on going
-                log.debug("Ingoring non-fatal exception: ", ex);
+                ex.printStackTrace();
+            } catch (WSDDException ex) {
+                // otherwise throw it upwards
+                throw ex;
             }
         }
         return serviceDescs.iterator();

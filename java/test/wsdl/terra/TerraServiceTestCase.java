@@ -7,10 +7,6 @@
 
 package test.wsdl.terra;
 
-import org.apache.axis.AxisFault;
-
-import java.net.ConnectException;
-
 public class TerraServiceTestCase extends junit.framework.TestCase {
     public TerraServiceTestCase(java.lang.String name) {
         super(name);
@@ -43,14 +39,6 @@ public class TerraServiceTestCase extends junit.framework.TestCase {
             }
         }
         catch (java.rmi.RemoteException re) {
-            if (re instanceof AxisFault) {
-                AxisFault fault = (AxisFault) re;
-                if (fault.detail instanceof ConnectException ||
-                    fault.getFaultCode().getLocalPart().equals("HTTP")) {
-                    System.err.println("TerraService HTTP error: " + fault);
-                    return;
-                }
-            }
             throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re);
         }
     }

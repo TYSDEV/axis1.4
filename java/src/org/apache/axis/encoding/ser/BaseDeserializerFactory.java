@@ -90,17 +90,13 @@ public abstract class BaseDeserializerFactory
      */
     public BaseDeserializerFactory(Class deserClass) {
         this.deserClass = deserClass;
-        this.mechanisms = new Vector();
-        this.mechanisms.add(Constants.AXIS_SAX);
     }
     public BaseDeserializerFactory(Class deserClass,
                                    QName xmlType,
                                    Class javaType) {
-        this(deserClass);
+        this.deserClass = deserClass;
         this.xmlType = xmlType;
         this.javaType = javaType;
-        this.deserClassConstructor = getConstructor(deserClass); 
-        this.getDeserializer = getDeserializerMethod(javaType);    
     }
 
     public javax.xml.rpc.encoding.Deserializer
@@ -136,6 +132,9 @@ public abstract class BaseDeserializerFactory
      */
     protected Deserializer getGeneralPurpose(String mechanismType) {
         if (javaType != null && xmlType != null) {
+            if (deserClassConstructor == null) {
+                deserClassConstructor = getConstructor(deserClass); 
+            }
             if (deserClassConstructor != null) {
                 try {
                     return (Deserializer) 
@@ -166,6 +165,9 @@ public abstract class BaseDeserializerFactory
      */
     protected Deserializer getSpecialized(String mechanismType) {
         if (javaType != null && xmlType != null) {
+            if (getDeserializer == null) {
+                getDeserializer = getDeserializerMethod(javaType);    
+            }
             if (getDeserializer != null) {
                 try {
                     return (Deserializer) 
@@ -214,6 +216,10 @@ public abstract class BaseDeserializerFactory
      * @return List of unique identifiers for the supported XML processing mechanism types
      */
     public Iterator getSupportedMechanismTypes() {
+        if (mechanisms == null) {
+            mechanisms = new Vector();
+            mechanisms.add(Constants.AXIS_SAX);
+        }
         return mechanisms.iterator();
     }
 

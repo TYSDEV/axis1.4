@@ -56,6 +56,7 @@
 package org.apache.axis.message;
 
 import org.apache.axis.AxisFault;
+import org.apache.axis.Constants;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
 import org.apache.axis.description.OperationDesc;
@@ -64,6 +65,7 @@ import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.enum.Style;
 import org.apache.axis.handlers.soap.SOAPService;
+import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.wsdl.toJava.Utils;
 import org.xml.sax.Attributes;

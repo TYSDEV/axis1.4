@@ -56,7 +56,6 @@ package org.apache.axis.description;
 
 import org.apache.axis.AxisServiceConfig;
 import org.apache.axis.InternalException;
-import org.apache.axis.Constants;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPBodyElement;
 import org.apache.axis.components.logger.LogFactory;
@@ -432,9 +431,7 @@ public class ServiceDesc {
 
         if (overloads == null) {
             // Nothing specifically matching this QName.
-            if (((style == Style.RPC) || ((style==Style.MESSAGE) && 
-                                          (getDefaultNamespace() == null))) &&
-                    (name2OperationsMap != null)) {
+            if ((style == Style.RPC) && (name2OperationsMap != null)) {
                 // Try ignoring the namespace....?
                 overloads = (ArrayList)name2OperationsMap.get(qname.getLocalPart());
             }
@@ -579,7 +576,6 @@ public class ServiceDesc {
 
                 if (style == Style.MESSAGE) {
                     int messageOperType = checkMessageMethod(method);
-                    if(messageOperType == OperationDesc.MSG_METHOD_NONCONFORMING) continue;
                     if (messageOperType == -1) {
                         throw new InternalException("Couldn't match method to any of the allowable message-style patterns!");
                     }
@@ -703,10 +699,9 @@ public class ServiceDesc {
                 return OperationDesc.MSG_METHOD_SOAPENVELOPE;
             }
         }
-        if( null != allowedMethods && !allowedMethods.isEmpty() )
-          throw new InternalException (Messages.getMessage("badMsgMethodParams",
+
+        throw new InternalException (Messages.getMessage("badMsgMethodParams",
                                                          method.getName()));
-        return    OperationDesc.MSG_METHOD_NONCONFORMING;                                              
     }
 
     /**
@@ -848,13 +843,6 @@ public class ServiceDesc {
      */
     private void getSyncedOperationsForName(Class implClass, String methodName)
     {
-        // If we're a Skeleton deployment, skip the statics.
-        if (isSkeletonClass) {
-            if (methodName.equals("getOperationDescByName") ||
-                methodName.equals("getOperationDescs"))
-                return;
-        }
-        
         // If we have no implementation class, don't worry about it (we're
         // probably on the client)
         if (implClass == null)
@@ -951,13 +939,6 @@ public class ServiceDesc {
      */
     private void createOperationsForName(Class implClass, String methodName)
     {
-        // If we're a Skeleton deployment, skip the statics.
-        if (isSkeletonClass) {
-            if (methodName.equals("getOperationDescByName") ||
-                methodName.equals("getOperationDescs"))
-                return;
-        }
-        
         Method [] methods = implClass.getDeclaredMethods();
 
         for (int i = 0; i < methods.length; i++) {
@@ -1037,13 +1018,10 @@ public class ServiceDesc {
         // appropriately.
         if (style == Style.MESSAGE) {
             int messageOperType = checkMessageMethod(method);
-            if(messageOperType == OperationDesc.MSG_METHOD_NONCONFORMING) return;
             if (messageOperType == -1) {
                 throw new InternalException("Couldn't match method to any of the allowable message-style patterns!");
             }
             operation.setMessageOperationStyle(messageOperType);
-            operation.setReturnClass(Object.class);
-            operation.setReturnType(Constants.XSD_ANYTYPE);
         } else {
             // For other styles, continue here.
             Class retClass = method.getReturnType();

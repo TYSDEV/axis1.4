@@ -56,22 +56,17 @@
 package org.apache.axis.configuration;
 
 import java.lang.reflect.Method;
-import java.lang.reflect.InvocationTargetException;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 
 import org.apache.axis.EngineConfigurationFactory;
 import org.apache.axis.components.logger.LogFactory;
-import org.apache.axis.discovery.DiscoverConstNames;
-import org.apache.axis.discovery.DiscoverOldNamesInManagedProperties;
 import org.apache.axis.utils.Messages;
 import org.apache.commons.discovery.ResourceClassIterator;
 import org.apache.commons.discovery.ResourceNameIterator;
 import org.apache.commons.discovery.resource.ClassLoaders;
 import org.apache.commons.discovery.resource.classes.DiscoverClasses;
-import org.apache.commons.discovery.resource.names.DiscoverNamesInManagedProperties;
 import org.apache.commons.discovery.resource.names.DiscoverServiceNames;
-import org.apache.commons.discovery.resource.names.NameDiscoverers;
 import org.apache.commons.discovery.tools.ClassUtils;
 import org.apache.commons.logging.Log;
 
@@ -151,39 +146,43 @@ public class EngineConfigurationFactoryFinder
                         ClassLoaders loaders =
                             ClassLoaders.getAppLoaders(mySpi, myFactory, true);
                 
-                        NameDiscoverers nameDiscoverers = new NameDiscoverers();
-                        nameDiscoverers.addResourceNameDiscover(new DiscoverOldNamesInManagedProperties());
-                        nameDiscoverers.addResourceNameDiscover(new DiscoverNamesInManagedProperties());
-                        nameDiscoverers.addResourceNameDiscover(new DiscoverServiceNames(loaders));
-                        nameDiscoverers.addResourceNameDiscover(new DiscoverConstNames(
-                            new String[] {
-                                "org.apache.axis.configuration.EngineConfigurationFactoryServlet",
-                                "org.apache.axis.configuration.EngineConfigurationFactoryDefault",
-                                })
-                            );
-                            
-                        ResourceNameIterator it = nameDiscoverers.findResourceNames(mySpi.getName());
+                        ResourceNameIterator it =
+                            new DiscoverServiceNames(loaders).findResourceNames(mySpi.getName());
                 
                         ResourceClassIterator services =
                             new DiscoverClasses(loaders).findResourceClasses(it);
                 
                         EngineConfigurationFactory factory = null;
-
                         while (factory == null  &&  services.hasNext()) {
                             Class service = services.nextResourceClass().loadClass();
                 
-                            /* service == null
-                             * if class resource wasn't loadable
-                             */
-                            if (service != null) {
-                                factory = newFactory(service, newFactoryParamTypes, params);
+                            factory = newFactory(service, newFactoryParamTypes, params);
+                        }
+                
+                        if (factory == null) {
+                            try {
+                                factory = EngineConfigurationFactoryServlet.newFactory(obj);
+                            } catch (RuntimeException e) {
+                                log.warn(Messages.getMessage("engineConfigInvokeNewFactory",
+                                                              EngineConfigurationFactoryServlet.class.getName(),
+                                                              requiredMethod), e);
+                            }
+                
+                            if (factory == null) {
+                                try {
+                                    // should NEVER return null.
+                                    factory = EngineConfigurationFactoryDefault.newFactory(obj);
+                                } catch (RuntimeException e) {
+                                    log.warn(Messages.getMessage("engineConfigInvokeNewFactory",
+                                                                  EngineConfigurationFactoryDefault.class.getName(),
+                                                                  requiredMethod), e);
+                                }
                             }
                         }
                 
                         if (factory != null) {
-                            if(log.isDebugEnabled()) {
+                            if(log.isDebugEnabled())
                                 log.debug(Messages.getMessage("engineFactory", factory.getClass().getName()));
-                            }
                         } else {
                             log.error(Messages.getMessage("engineConfigFactoryMissing"));
                             // we should be throwing an exception here,
@@ -225,16 +224,6 @@ public class EngineConfigurationFactoryFinder
         } else {
             try {
                 return (EngineConfigurationFactory)method.invoke(null, param);
-            } catch (InvocationTargetException e) {
-                if (e.getTargetException() instanceof java.lang.NoClassDefFoundError) {
-                    log.debug(Messages.getMessage("engineConfigInvokeNewFactory",
-                                                  service.getName(),
-                                                  requiredMethod), e);
-                } else {
-                    log.warn(Messages.getMessage("engineConfigInvokeNewFactory",
-                                                  service.getName(),
-                                                  requiredMethod), e);
-                }
             } catch (Exception e) {
                 log.warn(Messages.getMessage("engineConfigInvokeNewFactory",
                                               service.getName(),

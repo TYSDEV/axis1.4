@@ -660,13 +660,4 @@ public class WSDDService
         }
         return (TypeMapping) tmr.getTypeMapping(encodingStyle);
     }
-
- 
-     public WSDDJAXRPCHandlerInfoChain getHandlerInfoChain() {
-         return _wsddHIchain;
-     }
- 
-     public void setHandlerInfoChain(WSDDJAXRPCHandlerInfoChain hichain) {
-         _wsddHIchain = hichain;
-     }
 }

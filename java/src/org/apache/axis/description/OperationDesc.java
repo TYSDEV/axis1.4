@@ -85,8 +85,6 @@ public class OperationDesc {
     // public Document method(Document)
     public static final int MSG_METHOD_DOCUMENT = 4;
 
-    public static final int MSG_METHOD_NONCONFORMING = -4;
-
     protected static Log log =
         LogFactory.getLog(OperationDesc.class.getName());
 

@@ -58,6 +58,7 @@ package org.apache.axis.encoding;
 import org.apache.axis.Constants;
 import org.apache.axis.encoding.ser.BeanSerializerFactory;
 import org.apache.axis.encoding.ser.BeanDeserializerFactory;
+import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.Messages;
 
@@ -244,32 +245,19 @@ public class TypeMappingImpl implements TypeMapping
                          javax.xml.rpc.encoding.SerializerFactory sf,
                          javax.xml.rpc.encoding.DeserializerFactory dsf)
         throws JAXRPCException {
-        // At least a serializer or deserializer factory must be specified.
-        if (sf == null && dsf == null) {
-            throw new JAXRPCException(Messages.getMessage("badSerFac"));
-        }
 
-        internalRegister(javaType, xmlType, sf, dsf);
-    }
-
-    /**
-     * Internal version of register(), which allows null factories.
-     *
-     * @param javaType
-     * @param xmlType
-     * @param sf
-     * @param dsf
-     * @throws JAXRPCException
-     */
-    protected void internalRegister(Class javaType, QName xmlType,
-                         javax.xml.rpc.encoding.SerializerFactory sf,
-                         javax.xml.rpc.encoding.DeserializerFactory dsf)
-            throws JAXRPCException {
         // Both javaType and xmlType must be specified.
         if (javaType == null || xmlType == null) {
             throw new JAXRPCException(
                     Messages.getMessage(javaType == null ?
                                          "badJavaType" : "badXmlType"));
+        }
+
+        // At least a serializer or deserializer factory must be specified.
+        if (sf == null && dsf == null) {
+            throw new JAXRPCException(
+                    Messages.getMessage(sf == null ?
+                                         "badSerFac" : "badDeserFac"));
         }
 
         //REMOVED_FOR_TCK
@@ -290,10 +278,8 @@ public class TypeMappingImpl implements TypeMapping
         if ((sf != null) || (class2Pair.get(javaType) == null))
             class2Pair.put(javaType, pair);
 
-        if (sf != null)
-            pair2SF.put(pair, sf);
-        if (dsf != null)
-            pair2DF.put(pair, dsf);
+        pair2SF.put(pair, sf);
+        pair2DF.put(pair, dsf);
     }
 
     /**
@@ -556,8 +542,8 @@ public class TypeMappingImpl implements TypeMapping
     public QName getTypeQName(Class javaType) {
         //log.debug("getTypeQName javaType =" + javaType);
         if (javaType == null)
-            return null;
-        
+        return null;
+
         QName xmlType = null;
         Pair pair = (Pair) class2Pair.get(javaType);
         if (pair == null && delegate != null) {
@@ -588,9 +574,6 @@ public class TypeMappingImpl implements TypeMapping
      * @return javaType class or type
      */
     public Class getClassForQName(QName xmlType) {
-        if (xmlType == null)
-            return null;
-        
         //log.debug("getClassForQName xmlType =" + xmlType);
         Class javaType = null;
         Pair pair = (Pair) qName2Pair.get(xmlType);

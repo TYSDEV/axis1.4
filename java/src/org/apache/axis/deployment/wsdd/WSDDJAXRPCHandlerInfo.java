@@ -153,7 +153,7 @@ public class WSDDJAXRPCHandlerInfo
     }
     
     public void setHandlerMap(Map map) {
-        _map = map;
+        // Add parameters to Parameters Table here
     }
     
     public QName[] getHeaders() {

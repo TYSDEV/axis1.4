@@ -213,17 +213,12 @@ public class RPCHandler extends SOAPHandler
             //         by position if we've already looked something up
             //         by name?  I think so...
             if (paramDesc == null) {
-                if (isResponse) {
-                    paramDesc = operation.getReturnParamDesc();
-                }
-                else {
-                    paramDesc = operation.getParameter(params.size() - 1);
-                }
+                paramDesc = operation.getParameter(params.size() - 1);
             }
             
             
             if (paramDesc == null) {
-                throw new SAXException(Messages.getMessage("noParmDesc"));
+                throw new SAXException("operation description is missing parameter description!");
             }
             destClass = paramDesc.getJavaType();
             

@@ -58,6 +58,7 @@ import org.apache.axis.utils.CLArgsParser;
 import org.apache.axis.utils.CLOption;
 import org.apache.axis.utils.CLOptionDescriptor;
 import org.apache.axis.utils.CLUtil;
+import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
 
 import org.apache.axis.wsdl.fromJava.Emitter;
@@ -379,8 +380,6 @@ public class Java2WSDL {
                     emitter.setMode(Emitter.MODE_DOCUMENT);
                 } else if (value.equalsIgnoreCase("RPC")) {
                     emitter.setMode(Emitter.MODE_RPC);
-                } else if (value.equalsIgnoreCase("WRAPPED")) {
-                    emitter.setMode(Emitter.MODE_DOC_WRAPPED);
                 } else {
                     System.out.println(Messages.getMessage("j2woptBadStyle00"));
                 }

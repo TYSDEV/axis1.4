@@ -51,7 +51,7 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-package org.apache.axis.tools.ant.wsdl;
+package test.wsdl;
 
 import org.apache.axis.wsdl.fromJava.Emitter;
 
@@ -66,10 +66,9 @@ import java.io.StringWriter;
 import java.io.PrintWriter;
 
 /**
- * Generates a WSDL description from a Java class.
+ * Simple Ant task for running Java2Wsdl utility. 
  *
  * @author Rich Scheuerle (scheu@us.ibm.com)
- * @ant.task category="axis"
  */
 public class Java2WsdlAntTask extends Task
 {

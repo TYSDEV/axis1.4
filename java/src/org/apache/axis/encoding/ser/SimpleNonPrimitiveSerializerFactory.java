@@ -52,40 +52,34 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-package test.soap;
 
-import org.apache.axis.handlers.BasicHandler;
-import org.apache.axis.MessageContext;
-import org.apache.axis.AxisFault;
-import org.apache.axis.message.SOAPEnvelope;
-import org.apache.axis.message.SOAPHeaderElement;
+package org.apache.axis.encoding.ser;
 
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+
+import javax.xml.namespace.QName;
+
+import java.io.IOException;
+
+import org.apache.axis.encoding.Serializer;
+import org.apache.axis.encoding.SerializerFactory;
+import org.apache.axis.encoding.SerializationContext;
+import org.apache.axis.encoding.Deserializer;
+import org.apache.axis.encoding.DeserializerFactory;
+import org.apache.axis.encoding.DeserializationContext;
+import org.apache.axis.encoding.Deserializer;
 /**
- * This is a test Handler which interacts with the TestService below in
- * order to test header processing.  This one runs before the TestHandler,
- * so when the TestHandler throws an Exception (triggered by a particular
- * header being sent from TestOnFaultHeaders), the onFault() method gets
- * called.  In there, we get the response message and add a header to it.
- * This header gets picked up by the client, who checks that it looks right
- * and has successfully propagated from here to the top of the call stack.
- * 
- * @author Glen Daniels (gdaniels@apache.org) 
- */ 
-public class TestFaultHandler extends BasicHandler {
-    public void invoke(MessageContext msgContext) throws AxisFault {
-    }
-
-    public void onFault(MessageContext msgContext) {
-        try {
-            SOAPEnvelope env = msgContext.getResponseMessage().getSOAPEnvelope();
-            SOAPHeaderElement header = new SOAPHeaderElement(
-                    TestOnFaultHeaders.TRIGGER_NS,
-                    TestOnFaultHeaders.RESP_NAME,
-                    "here's the value"
-            );
-            env.addHeader(header);
-        } catch (Exception e) {
-            throw new RuntimeException("Exception during onFault processing");
-        }
+ * SerializerFactory for simple items that could be multi-refed (i.e. java.lang.Integer)
+ *
+ * @author Rich Scheuerle <scheu@us.ibm.com>
+ */
+public class SimpleNonPrimitiveSerializerFactory extends BaseSerializerFactory {
+    /**
+     * Note that the factory is constructed with the QName and xmlType.  This is important
+     * to allow distinction between primitive values and java.lang wrappers.
+     **/
+    public SimpleNonPrimitiveSerializerFactory(Class javaType, QName xmlType) {
+        super(SimpleSerializer.class, false, xmlType, javaType);  
     }
 }

@@ -175,18 +175,8 @@ public class AxisServlet extends AxisServletBase {
             JavaUtils.isTrueExplicitly(getOption(context, INIT_PROPERTY_ENABLE_LIST, null));
 
         jwsClassDir = getOption(context, INIT_PROPERTY_JWS_CLASS_DIR, null);
-
-        /**
-         * There are DEFINITATE problems here if
-         * getHomeDir and/or getDefaultJWSClassDir return null
-         * (as they could with WebLogic).
-         * This needs to be reexamined in the future, but this
-         * should fix any NPE's in the mean time.
-         */
         if (jwsClassDir != null) {
-            if (getHomeDir() != null) {
-                jwsClassDir = getHomeDir() + jwsClassDir;
-            }
+            jwsClassDir = getHomeDir()+ jwsClassDir;
         } else {
             jwsClassDir = getDefaultJWSClassDir();
         }
@@ -629,7 +619,6 @@ public class AxisServlet extends AxisServletBase {
         }
 
         Message responseMsg = null;
-        String  contentType = null;
 
         try {
             AxisEngine engine = getEngine();
@@ -705,7 +694,6 @@ public class AxisServlet extends AxisServletBase {
                 }
 
                 responseMsg = msgContext.getResponseMessage();
-                contentType = responseMsg.getContentType(msgContext.getSOAPConstants()); 
             } catch (AxisFault e) {
                 log.error(Messages.getMessage("exception00"), e);
                 // It's been suggested that a lack of SOAPAction
@@ -715,24 +703,15 @@ public class AxisServlet extends AxisServletBase {
                   res.setHeader("WWW-Authenticate","Basic realm=\"AXIS\"");
                   // TODO: less generic realm choice?
                 res.setStatus(status);
-                responseMsg = msgContext.getResponseMessage();
-                if (responseMsg == null)
-                    responseMsg = new Message(e);
-                contentType = responseMsg.getContentType(msgContext.getSOAPConstants()); 
+                responseMsg = new Message(e);
             } catch (Exception e) {
                 log.error(Messages.getMessage("exception00"), e);
                 res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                responseMsg = msgContext.getResponseMessage();
-                if (responseMsg == null)
-                    responseMsg = new Message(AxisFault.makeFault(e));
-                contentType = responseMsg.getContentType(msgContext.getSOAPConstants()); 
+                responseMsg = new Message(AxisFault.makeFault(e));
             }
         } catch (AxisFault fault) {
             log.error(Messages.getMessage("axisFault00"), fault);
-            responseMsg = msgContext.getResponseMessage();
-            if (responseMsg == null)
-                responseMsg = new Message(fault);
-            contentType = responseMsg.getContentType(msgContext.getSOAPConstants()); 
+            responseMsg = new Message(fault);
         }
         if( tlog.isDebugEnabled() ) {
             t3=System.currentTimeMillis();
@@ -741,7 +720,7 @@ public class AxisServlet extends AxisServletBase {
         /* Send response back along the wire...  */
         /***********************************/
         if (responseMsg != null)
-            sendResponse(getProtocolVersion(req), contentType,
+            sendResponse(getProtocolVersion(req), msgContext.getSOAPConstants(),
                          res, responseMsg);
 
         if (isDebug) {
@@ -788,7 +767,7 @@ public class AxisServlet extends AxisServletBase {
      * @throws IOException if the response stream can not be written to
      */
     private void sendResponse(final String clientVersion, 
-            String contentType,
+            SOAPConstants soapConstants,
             HttpServletResponse res, Message responseMsg)
         throws AxisFault, IOException
     {
@@ -801,13 +780,13 @@ public class AxisServlet extends AxisServletBase {
         } else {
             if(isDebug) {
                 log.debug("Returned Content-Type:" +
-                    contentType);
+                    responseMsg.getContentType(soapConstants));
                 // log.debug("Returned Content-Length:" +
                 //          responseMsg.getContentLength());
             }
 
             try {
-                res.setContentType(contentType);
+                res.setContentType(responseMsg.getContentType(soapConstants));
 
                 /* My understand of Content-Length
                  * HTTP 1.0
@@ -853,16 +832,16 @@ public class AxisServlet extends AxisServletBase {
                       req.getHeader( HTTPConstants.HEADER_CONTENT_TYPE));
             log.debug("HEADER_CONTENT_LOCATION:" +
                       req.getHeader( HTTPConstants.HEADER_CONTENT_LOCATION));
-            log.debug("Constants.MC_HOME_DIR:" + String.valueOf(getHomeDir()));
+            log.debug("Constants.MC_HOME_DIR:" +
+                      getHomeDir());
             log.debug("Constants.MC_RELATIVE_PATH:"+req.getServletPath());
-            
-            log.debug("HTTPConstants.MC_HTTP_SERVLETLOCATION:"+ String.valueOf(getWebInfPath()));
+            log.debug("HTTPConstants.MC_HTTP_SERVLETLOCATION:"+ getWebInfPath() );
             log.debug("HTTPConstants.MC_HTTP_SERVLETPATHINFO:" +
                       req.getPathInfo() );
             log.debug("HTTPConstants.HEADER_AUTHORIZATION:" +
                       req.getHeader(HTTPConstants.HEADER_AUTHORIZATION));
             log.debug("Constants.MC_REMOTE_ADDR:"+req.getRemoteAddr());
-            log.debug("configPath:" + String.valueOf(getWebInfPath()));
+            log.debug("configPath:" + getWebInfPath());
         }
 
         /* Set the Transport */
@@ -887,7 +866,11 @@ public class AxisServlet extends AxisServletBase {
         msgContext.setProperty(Constants.MC_REMOTE_ADDR, req.getRemoteAddr());
 
         // Set up a javax.xml.rpc.server.ServletEndpointContext
-        ServletEndpointContextImpl sec = new ServletEndpointContextImpl();
+        ServletEndpointContextImpl sec =
+                new ServletEndpointContextImpl(new AxisHttpSession(req),
+                                               msgContext,
+                                               req.getUserPrincipal(),
+                                               getServletConfig().getServletContext());
 
         msgContext.setProperty(Constants.MC_SERVLET_ENDPOINT_CONTEXT, sec);
         /* Save the real path */
@@ -948,9 +931,7 @@ public class AxisServlet extends AxisServletBase {
      * @return directory for JWS files
      */
     protected String getDefaultJWSClassDir() {
-        return (getWebInfPath() == null)
-               ? null  // ??? what is a good FINAL default for WebLogic?
-               : getWebInfPath() + File.separator +  "jwsClasses";
+        return getWebInfPath() + File.separator +  "jwsClasses";
     }
 
     /**

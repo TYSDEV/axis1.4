@@ -70,6 +70,7 @@ import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.providers.BasicProvider;
 import org.apache.axis.utils.ClassUtils;
+import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.cache.ClassCache;
 import org.apache.axis.utils.cache.JavaClass;
@@ -251,42 +252,44 @@ public abstract class JavaProvider extends BasicProvider
                 null, null);
         }
 
-        IntHolder scope   = new IntHolder();
-        Object serviceObject = null;
-
         try {
-            serviceObject = getServiceObject(msgContext, service, clsName, scope);
-    
-            Message        resMsg  = msgContext.getResponseMessage();
-            SOAPEnvelope   resEnv;
-
-            // If we didn't have a response message, make sure we set one up
-            if (resMsg == null) {
-                resEnv  = new SOAPEnvelope(msgContext.getSOAPConstants());
-
-                resMsg = new Message(resEnv);
-                msgContext.setResponseMessage( resMsg );
-            } else {
-                resEnv  = (SOAPEnvelope)resMsg.getSOAPEnvelope();
-            }
+            IntHolder scope   = new IntHolder();
+            Object obj        = getServiceObject(msgContext,
+                                                 service,
+                                                 clsName,
+                                                 scope);
 
             Message        reqMsg  = msgContext.getRequestMessage();
             SOAPEnvelope   reqEnv  = (SOAPEnvelope)reqMsg.getSOAPEnvelope();
+            Message        resMsg  = msgContext.getResponseMessage();
+            SOAPEnvelope   resEnv  = (resMsg == null) ?
+                                     new SOAPEnvelope(msgContext.
+                                                        getSOAPConstants()) :
+                                     (SOAPEnvelope)resMsg.getSOAPEnvelope();
 
-            processMessage(msgContext, reqEnv, resEnv, serviceObject);
+            // If we didn't have a response message, make sure we set one up
+            if (resMsg == null) {
+                resMsg = new Message(resEnv);
+                msgContext.setResponseMessage( resMsg );
+            }
+
+            try {
+                processMessage(msgContext, reqEnv,
+                               resEnv, obj);
+            } catch (Exception exp) {
+                throw exp;
+            } finally {
+                // If this is a request scoped service object which implements
+                // ServiceLifecycle, let it know that it's being destroyed now.
+                if (scope.value == Scope.REQUEST.getValue() &&
+                        obj instanceof ServiceLifecycle) {
+                    ((ServiceLifecycle)obj).destroy();
+                }
+            }
         }
         catch( Exception exp ) {
             entLog.debug( Messages.getMessage("toAxisFault00"), exp);
             throw AxisFault.makeFault(exp);
-        } finally {
-            // If this is a request scoped service object which implements
-            // ServiceLifecycle, let it know that it's being destroyed now.
-            if (serviceObject != null  &&
-                scope.value == Scope.REQUEST.getValue() &&
-                serviceObject instanceof ServiceLifecycle)
-            {
-                ((ServiceLifecycle)serviceObject).destroy();
-            }
         }
 
         if (log.isDebugEnabled())
@@ -374,14 +377,9 @@ public abstract class JavaProvider extends BasicProvider
             String alias = (String)service.getOption("alias");
             if(alias != null) emitter.setServiceElementName(alias);
 
-            Style style = serviceDesc.getStyle();
-            if (style == Style.RPC) {
-                emitter.setMode(Emitter.MODE_RPC);
-            } else if (style == Style.DOCUMENT) {
-                emitter.setMode(Emitter.MODE_DOCUMENT);
-            } else if (style == Style.WRAPPED) {
-                emitter.setMode(Emitter.MODE_DOC_WRAPPED);
-            }
+            emitter.setMode( (service.getStyle() == Style.RPC)
+                             ? Emitter.MODE_RPC
+                             : Emitter.MODE_DOCUMENT);
 
             emitter.setClsSmart(serviceDesc.getImplClass(), locationUrl);
 

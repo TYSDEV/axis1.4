@@ -34,9 +34,7 @@ Copyright:
 
 <project default="compile">
 <property name="axis.home" location="../.." />
-<property name="componentName" value="samples/userguide" />
-
-
+<property name="componentName" value="test/wsdl" />
         &properties;
         &paths;
         &taskdefs;
@@ -48,24 +46,22 @@ Copyright:
 <target name="copy" depends="setenv"/>
 
 <target name="compile" depends="copy">
-  <javac srcdir="." destdir="${build.dest}" debug="${debug}" fork="${javac.fork}">
+  <echo message="Compiling test.wsdl"/>
+<!--
+  <javac srcdir="${axis.home}" destdir="${build.dest}" debug="${debug}" fork="${javac.fork}">
     <classpath>
         <path refid="classpath"/>
     </classpath>
-    <include name="samples/userguide/**/*.java"/>
-    <exclude name="samples/userguide/example6/Main.java" />
-    <exclude name="samples/userguide/example6/*Impl.java" />
-    <exclude name="samples/userguide/example6/*TestCase.java" />
-    <exclude name="samples/userguide/example2/Calculator.java"/>
-    <exclude name="samples/**/*SMTP*.java" unless="smtp.present" />
-    <exclude name="**/old/**/*.java" />
+    <include name="test/wsdl/*.java"/>
+    <include name="test/wsdl/**/*.java"/>
+    <exclude name="test/wsdl/*/*.java" />
+    <exclude name="test/wsdl/interop3/groupE/**/*.java" />
+    <exclude name="test/wsdl/interop3/**/*.java" />
+    <exclude name="test/wsdl/Wsdl2javaTestSuite.java" unless="servlet.present"/>
   </javac>
+-->
 </target>
 
-<target name="deploy"/>
-
-<target name="run"/>
-
-<target name="undeploy"/>
+<target name="run" />
 
 </project>

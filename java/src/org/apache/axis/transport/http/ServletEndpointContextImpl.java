@@ -54,37 +54,42 @@
  */
 package org.apache.axis.transport.http;
 
-import java.security.Principal;
-
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import javax.xml.rpc.handler.MessageContext;
 import javax.xml.rpc.server.ServletEndpointContext;
+import javax.xml.rpc.handler.MessageContext;
+import javax.servlet.http.HttpSession;
+import javax.servlet.ServletContext;
+import java.security.Principal;
 
 public class ServletEndpointContextImpl implements ServletEndpointContext {
     
+    private AxisHttpSession httpSession;
+    private MessageContext msgContext ;
+    private ServletContext servletContext;
+    private Principal principal;
+    
     public HttpSession getHttpSession() {
-        HttpServletRequest srvreq = (HttpServletRequest) 
-                getMessageContext().getProperty(HTTPConstants.MC_HTTP_SERVLETREQUEST);
-        return (srvreq == null)  ? null : srvreq.getSession();
+        return httpSession.getRep();
     }
 
     public MessageContext getMessageContext() {
-        return org.apache.axis.MessageContext.getCurrentContext();
+        return msgContext;
     }
 
     public ServletContext getServletContext() {
-        HttpServlet srv = (HttpServlet)
-                getMessageContext().getProperty(HTTPConstants.MC_HTTP_SERVLET);
-        return (srv == null) ? null : srv.getServletContext();
+        return servletContext;
     }
 
     public Principal getUserPrincipal() {
-        HttpServletRequest srvreq = (HttpServletRequest)
-                getMessageContext().getProperty(HTTPConstants.MC_HTTP_SERVLETREQUEST);
+        return principal;
+    }
 
-        return (srvreq == null) ? null : srvreq.getUserPrincipal();
+    /**
+     * Full constructor
+     */ 
+    public ServletEndpointContextImpl(AxisHttpSession httpSession, MessageContext msgContext, Principal principal, ServletContext servletContext) {
+        this.httpSession = httpSession;
+        this.msgContext = msgContext;
+        this.principal = principal;
+        this.servletContext = servletContext;
     }
 }

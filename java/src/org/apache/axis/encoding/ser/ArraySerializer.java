@@ -223,10 +223,12 @@ public class ArraySerializer implements Serializer
         // actual schema array or for a maxOccurs usage.
         // For the maxOccurs case, the currentXMLType of the context is
         // the same as the componentQName.
-        boolean maxOccursUsage = !context.getMessageContext().isEncoded() &&
-                                          componentQName.equals(context.getCurrentXMLType());
+        boolean maxOccursUsage = componentQName.equals(context.getCurrentXMLType());
 
-        if (!maxOccursUsage) {
+        // Are we encoded?
+        boolean isEncoded = context.getMessageContext().isEncoded();
+
+        if (isEncoded && !maxOccursUsage) {
             AttributesImpl attrs;
             if (attributes == null) {
                 attrs = new AttributesImpl();

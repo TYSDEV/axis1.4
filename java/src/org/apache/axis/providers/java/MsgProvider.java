@@ -104,12 +104,6 @@ public class MsgProvider extends JavaProvider {
         throws Exception
     {
         OperationDesc operation = msgContext.getOperation();
-        if (operation == null) {
-            throw new AxisFault(Messages.getMessage("noOperationForQName",
-                                                    reqEnv.getFirstBody().
-                                                        getQName().toString()));
-        }
-        
         Method method = operation.getMethod();
 
         int methodType = operation.getMessageOperationStyle();
