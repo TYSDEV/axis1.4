@@ -166,6 +166,9 @@ public class WSDDConstants
     public static final String ATTR_RETQNAME = "returnQName";
     public static final String ATTR_RETTYPE = "returnType";
     public static final String ATTR_MODE = "mode";
+    public static final String ATTR_INHEADER = "inHeader";
+    public static final String ATTR_OUTHEADER = "outHeader";
+    public static final String ATTR_RETHEADER = "returnHeader";
     public static final String ATTR_STYLE = "style";
     public static final String ATTR_STREAMING = "streaming";
     public static final String ATTR_ATTACHMENT_FORMAT = "attachment";
