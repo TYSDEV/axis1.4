@@ -74,6 +74,7 @@
 WSDDHandler::WSDDHandler()
 {
   m_Option = new map<string, string>;
+  m_nLibId = 0;
 }
 
 WSDDHandler::~WSDDHandler()
@@ -86,10 +87,19 @@ void WSDDHandler::SetLibName(string& sLibName)
 	m_sLibName = sLibName;
 }
 
+int WSDDHandler::GetLibID()
+{
+	return m_nLibId;
+}
 
 string& WSDDHandler::GetLibName()
 {
 	return m_sLibName;
+}
+
+int WSDDHandler::GetScope()
+{
+	return m_nScope;
 }
 
 string WSDDHandler::GetOption(string sArg)
