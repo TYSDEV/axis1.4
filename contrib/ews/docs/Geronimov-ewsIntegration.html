@@ -1,9 +1,12 @@
 <html>
+<title>Geronimo – EWS Integration</title>
+ <link rel="stylesheet" type="text/css" href="ews.css"> 
+</head>
 <body>
-<h1>Geronimo – JSR-109 Service Impl Integration</h1>
+<h1>Geronimo – EWS Integration</h1>
 <p>Here I am trying to extend the Proposal by Luis and Jeremy  <a href="Geronimov-axisIntegration.html">Geronimov Axis Integration</a>.</p>
 <p>The geronimo – JSR-109 Service Impl integration basically consists in the definition of a deployment architecture that defines the way how web services are implemented in Geronimo server and a set of interfaces that will be used by classes responsible for the ws's deployment.</p>
-<image src="../images/ews-GerInt.gif"/>
+<image src="./images/ews-GerInt.gif"/>
 <h2>How a web service request is served</h2>
 <ol>
 <li>A servlet listener that will wait for soap calls. This servlet provide by Axis will act as a JAX-RPC handler and will be in charge to dispatch request either to POJOs or EJBs. </li>
