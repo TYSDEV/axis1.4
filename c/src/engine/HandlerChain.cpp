@@ -67,6 +67,7 @@
 
 #include <axis/engine/HandlerChain.h>
 #include <axis/common/AxisTrace.h>
+#include <axis/common/GDefine.h>
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -84,24 +85,21 @@ HandlerChain::~HandlerChain()
 
 int HandlerChain::Invoke(IMessageData* pMsg)
 {
-	AXISTRACE1("HandlerChain::Invoke(IMessageData* pMsg)");
 	m_itCurrHandler = m_HandlerList.begin();
 	while (m_itCurrHandler != m_HandlerList.end())
-	{
-        AXISTRACE1("before handler invoke");
+	{        
 		if (SUCCESS == (*m_itCurrHandler).m_pHandler->Invoke(pMsg))
-		{
-            AXISTRACE1("handler invoked");
+		{            
 			m_itCurrHandler++;
 		}
 		else
 		{
-            AXISTRACE1("handler invoke not successful");
+            AXISTRACE1("handler invoke not successful", WARN);
 			OnFault(pMsg);
 			return FAIL;
 		}
 	}
-	AXISTRACE1("HandlerChain::Invoke end");
+	
 	return SUCCESS;
 }
 
@@ -121,7 +119,7 @@ int HandlerChain::AddHandler(Handler* pHandler, int nScope, int nLibId)
 	item.m_nScope = nScope;
 	item.m_nLibId = nLibId;
 	m_HandlerList.push_back(item);
-    AXISTRACE1("andlerChain::AddHandler SUCCESS");
+    
 	return SUCCESS;
 }
 

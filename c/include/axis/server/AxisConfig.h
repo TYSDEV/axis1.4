@@ -79,9 +79,9 @@ class AxisConfig
         ~AxisConfig();
         char* GetWsddFilePath();
         char* GetAxisLogPath();
-        
-    private:		
         int ReadConfFile();
+        
+    private:		 
         char m_WsddFilePath[CONFBUFFSIZE];
         char m_AxisLogPath[CONFBUFFSIZE];
         char m_sWsddFilePath[CONFBUFFSIZE];

@@ -111,13 +111,11 @@ int HandlerLoader::DeleteHandler(BasicHandler* pHandler, int nLibId)
 }
 
 int HandlerLoader::LoadLib(HandlerInformation* pHandlerInfo)
-{
-	AXISTRACE2("in HandlerLoader::LoadLib(), Lib is :", pHandlerInfo->m_sLib.c_str());
+{	
 #ifdef WIN32
 	pHandlerInfo->m_Handler = LoadLibrary(pHandlerInfo->m_sLib.c_str());
 #else //Linux
-	pHandlerInfo->m_Handler = dlopen(pHandlerInfo->m_sLib.c_str(), pHandlerInfo->m_nLoadOptions);
-	AXISTRACE1("after m_Handler = dlopen(pHandlerInfo->m_sLib.c_str(), pHandlerInfo->m_nLoadOptions);");  
+	pHandlerInfo->m_Handler = dlopen(pHandlerInfo->m_sLib.c_str(), pHandlerInfo->m_nLoadOptions);	
 #endif
 	return (pHandlerInfo->m_Handler != 0)?SUCCESS:FAIL;
 }
@@ -133,8 +131,7 @@ int HandlerLoader::UnloadLib(HandlerInformation* pHandlerInfo)
 }
 
 int HandlerLoader::CreateHandler(BasicHandler** pHandler, int nLibId)
-{
-	AXISTRACE1("inside CreateHandler\n");
+{	
 	lock();
 	*pHandler = NULL;
 	HandlerInformation* pHandlerInfo = NULL;
@@ -163,32 +160,31 @@ int HandlerLoader::CreateHandler(BasicHandler** pHandler, int nLibId)
 				UnloadLib(pHandlerInfo);
 				delete pHandlerInfo;
 				unlock();
+                AXISTRACE1("Library loading failed", CRITICAL);
 				return LOADLIBRARY_FAILED;
 			}
 			else //success
-			{
-                AXISTRACE1("handler create success");
+			{                
 				m_HandlerInfoList[nLibId] = pHandlerInfo;
 			}
 		}
 		else 
 		{
 			unlock();
+            AXISTRACE1("Library loading failed", CRITICAL);
 			return LOADLIBRARY_FAILED;
 		}
 	}
 	
 	pHandlerInfo = m_HandlerInfoList[nLibId];
 	BasicHandler* pBH = NULL;
-	pHandlerInfo->m_Create(&pBH);
-    AXISTRACE1("pHandlerInfo->m_Create(&pBH);");
+	pHandlerInfo->m_Create(&pBH);    
 	if (pBH)
 	{
 		if (SUCCESS == pBH->Init())
 		{
 			pHandlerInfo->m_nObjCount++;
-			*pHandler = pBH;
-            AXISTRACE1("*pHandler = pBH;");
+			*pHandler = pBH;            
 			unlock();
 			return SUCCESS;
 		}
