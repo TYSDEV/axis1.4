@@ -212,7 +212,7 @@ public class WSDDGlobalConfiguration
         context.endElement();
     }
 
-    public void deployToRegistry(DeploymentRegistry registry)
+    public void deployToRegistry(WSDDDeployment registry)
             throws DeploymentException {
         if (requestFlow != null)
             requestFlow.deployToRegistry(registry);
