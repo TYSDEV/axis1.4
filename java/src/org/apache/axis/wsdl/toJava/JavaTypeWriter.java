@@ -160,12 +160,13 @@ public class JavaTypeWriter implements Generator {
 
 		if (type.isReferenced() && !type.isOnlyLiteralReferenced()) {
 
-			if (!type.getName().endsWith("[]")) {
+			//if it is an Array do not emmit classes
+			if (!sType.isArray()) {
 
 				TypeEntry base = null;
 
             
-                						 
+       	 
 				if (sType.getJaxmetype() != null
 					&& sType.getJaxmetype().isSimple() == true
 					&& sType.getJaxmetype().getSimpleType().getEnumerations()
@@ -176,20 +177,16 @@ public class JavaTypeWriter implements Generator {
 					if (baseQname != null) {
 						base = symbolTable.getType(baseQname);
 					}
-				}
-
-				//The even indices are the element types (TypeEntry) and
-				//the odd indices are the corresponding names (Strings).
-
-				typeWriter =
-					getBeanWriter(
-						emitter,
-						type,
-						sType.getElementInfo(),
-						base,
-						sType.getAttributeInfo());
-				// If the holder is needed (ie., something uses this type as an out or inout
-				// parameter), instantiate the holder writer.
+					typeWriter =
+						getBeanWriter(
+							emitter,
+							type,
+							sType.getElementInfo(),
+							base,
+							sType.getAttributeInfo());
+				}			
+							// If the holder is needed (ie., something uses this type as an out or inout
+							// parameter), instantiate the holder writer.
 			}
 			//in anycase check for 
 			if (holderIsNeeded(type)) {

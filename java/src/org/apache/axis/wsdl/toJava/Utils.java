@@ -852,14 +852,14 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
         String ret;
 
         if (parm.getMIMEInfo() == null) {
-            ret = parm.getType().getName();
-        } else {
+			ret = parm.getJavaName();
+       } else {
             String mime = parm.getMIMEInfo().getType();
 
             ret = JavaUtils.mimeToJava(mime);
 
             if (ret == null) {
-                ret = parm.getType().getName();
+                ret = parm.getJavaName();
             } else {
                 ret += parm.getMIMEInfo().getDimensions();
             }
@@ -1108,6 +1108,11 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
 										 BooleanHolder bThrow) {
         
 		String paramType = param.getType().getName();
+
+		if(param.getElement() != null && param.getElement().isArrayElement() ){
+			paramType = paramType + "[]";
+		}
+		
 		String mimeType = param.getMIMEInfo() == null ? null : param.getMIMEInfo().getType();
 		String mimeDimensions = param.getMIMEInfo() == null ? "" : param.getMIMEInfo().getDimensions();
 		String out = null;

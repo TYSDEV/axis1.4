@@ -42,7 +42,7 @@ public class SchemaElement extends TypeEntry {
 	 // should not be passed over the wire.  This
 	 // is slightly different than nillable=true which
 	 // causes nil=true to be passed over the wire.
-	 private int minOccurs = 0;
+	 private int minOccurs = 1;
 	 private int maxOccurs = 1;
 
 	 private boolean nillable = false;
@@ -103,6 +103,8 @@ public class SchemaElement extends TypeEntry {
 	  * @param i
 	  */
 	 public void setMaxOccurs(int i) {
+		 if(i < 0)
+			i = 99999;
 		 maxOccurs = i;
 	 }
 
@@ -128,6 +130,30 @@ public class SchemaElement extends TypeEntry {
 	 */
 	public void setRefType(SchemaType refType) {
 		this.setType(refType);
+	}
+	
+	public boolean isArrayElement(){
+		return maxOccurs >1 || (maxOccurs == -1);
+	}
+	
+	public String getName(){
+		String name = this.getType().getName();
+		if(isArrayElement())
+			name = name +"[]";
+		if(name != null && name.startsWith(".")){
+			name = name.substring(1);
+		}
+		return name;			
+	}
+
+	/* (non-Javadoc)
+	 * @see org.apache.axis.wsdl.symbolTable.TypeEntry#getBaseType()
+	 */
+	public String getBaseType() {
+		  String baseType = super.getBaseType();
+		  if(baseType == null)
+		baseType = type.getBaseType();
+		return baseType;
 	}
 
 }

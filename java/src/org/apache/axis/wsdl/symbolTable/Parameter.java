@@ -195,17 +195,38 @@ public class Parameter {
      * 
      * @return 
      */
-    public TypeEntry getType() {
-        return type;
+    public SchemaType getType() {
+		if(type instanceof SchemaType)
+        	return (SchemaType)type;
+		else{
+			return ((SchemaElement)type).getType();
+		}        	
     }
 
+	/**
+	 * if the type is element return it or null
+	 * @return
+	 */
+	public SchemaElement getElement(){
+		if(type instanceof SchemaElement)
+			return (SchemaElement)type;
+		return null;	
+	}
+	
+	public String getJavaName(){
+		String ret = this.getType().getName();
+		if(getElement() != null && getElement().isArrayElement())
+			ret = ret + "[]";
+		return ret;		
+	}
+     	
     /**
      * Set the TypeEntry of the parameter.
      * 
      * @param type 
      */
     public void setType(TypeEntry type) {
-        this.type = type;
+       	this.type = type;
     }
 
     /**
@@ -266,4 +287,9 @@ public class Parameter {
     public void setOutHeader(boolean outHeader) {
         this.outHeader = outHeader;
     }    // setOutHeader
+    
+	
+	public TypeEntry getTypeEntry(){
+		return type;
+	}
 }    // class Parameter

@@ -393,7 +393,7 @@ public abstract class TypeEntry extends SymTabEntry implements Serializable {
     /* (non-Javadoc)
      * @see org.apache.axis.wsdl.symbolTable.SymTabEntry#getName()
      */
-    public final String getName() {
+    public String getName() {
   		if(this.name == null)
   			return null;
   		if(name.startsWith(".")){

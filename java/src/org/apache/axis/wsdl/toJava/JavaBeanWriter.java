@@ -58,6 +58,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Vector;
 
 import javax.xml.namespace.QName;
@@ -65,7 +66,7 @@ import javax.xml.namespace.QName;
 import org.apache.axis.Constants;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
-import org.apache.axis.wsdl.symbolTable.ElementInfo;
+import org.apache.axis.wsdl.symbolTable.SchemaElement;
 import org.apache.axis.wsdl.symbolTable.SchemaType;
 import org.apache.axis.wsdl.symbolTable.SymbolTable;
 import org.apache.axis.wsdl.symbolTable.TypeEntry;
@@ -85,10 +86,10 @@ public class JavaBeanWriter extends JavaClassWriter {
     private HashMap attributes;
 
     /** Field extendType */
-    private TypeEntry extendType;
+    private SchemaType extendType;
 
-    /** Field baseType */
-    private TypeEntry baseType;
+//    /** Field baseType */
+ //   private TypeEntry baseType;
 
     /** Field helper */
     protected JavaBeanHelperWriter helper;
@@ -153,11 +154,11 @@ public class JavaBeanWriter extends JavaClassWriter {
 
         super(emitter, type.getName(), "complexType");
 
-        this.baseType = type;
+  //      this.baseType = type;
         this.sType = symbolTable.getSchemaType(type.getQName());
         this.elements = new Vector(elements.values());
         this.attributes = attributes;
-        this.extendType = extendType;
+        this.extendType = (SchemaType)extendType;
         this.symbolTable = symbolTable;
         this.helper = (JavaBeanHelperWriter) helper;
 
@@ -295,24 +296,32 @@ public class JavaBeanWriter extends JavaClassWriter {
 			SchemaType superType =  symbolTable.getSchemaType(extendType.getQName());
 			inheritedAttributes = superType.getAttributeInfo();
 			inheritedElements = superType.getElementInfo();
-		}
-    	
-		//create the inherited list 
-//		Iterator temp = inheritedElements.keySet().iterator();
-//		QName name = null;
-//		while(temp.hasNext()){
-//			name = (QName)temp.next();
-//			inheritednames.add(name);
-//			inheritednames.add(inheritedElements.get(name));
-//		}
-//		temp = inheritedAttributes.keySet().iterator();
-//		while(temp.hasNext()){
-//				name = (QName)temp.next();
-//				inheritednames.add(name);
-//				inheritednames.add(inheritedAttributes.get(name));
-//		}
-//		//all inherited types added
-    	
+
+			//create the inherited list 
+			Iterator temp = inheritedElements.keySet().iterator();
+			QName name = null;
+			while(temp.hasNext()){
+				name = (QName)temp.next();
+				
+				SchemaElement elementInfo = (SchemaElement)inheritedElements.get(name);
+				SchemaType containedElementtype = elementInfo.getType();
+				String typeName = containedElementtype.getName();
+			   
+				if(elementInfo.isArrayElement()){
+					 typeName = typeName +"[]";
+				}
+
+				inheritednames.add(typeName);
+				inheritednames.add(Utils.xmlNameToJava(name.getLocalPart()));
+			}
+			temp = inheritedAttributes.keySet().iterator();
+			while(temp.hasNext()){
+				name = (QName)temp.next();
+				inheritednames.add(((SchemaType)inheritedAttributes.get(name)).getName());
+				inheritednames.add(Utils.xmlNameToJava(name.getLocalPart()));
+			}
+			//all inherited types added
+		}    	
     	
     	
     	
@@ -321,8 +330,8 @@ public class JavaBeanWriter extends JavaClassWriter {
 		if (elements != null) {
     
 			for (int i =0;i< elements.size();i++) {
-				ElementInfo elementInfo = (ElementInfo)elements.get(i);
-				QName eleQ = elementInfo.getName();
+				SchemaElement elementInfo = (SchemaElement)elements.get(i);
+				QName eleQ = elementInfo.getQName();
 				
 				//TODO we are not clear how to get the XML QName to java name mapping is done here. 
 				// so we get a type from the type map and get  the "name" from the type.
@@ -330,8 +339,14 @@ public class JavaBeanWriter extends JavaClassWriter {
 				
 			   SchemaType containedElement = elementInfo.getType();
 			   String typeName = containedElement.getName();
+			   
+			   if(elementInfo.isArrayElement()){
+					typeName = typeName +"[]";
+			   }
+			   
 			   String variableName;
-               
+ 
+ 				              
 				if ("any".equals(elementInfo.getType().getQName().getLocalPart()) ) {
 					typeName = "org.apache.axis.message.MessageElement []";
 					variableName = Constants.ANYCONTENT;
@@ -388,7 +403,7 @@ public class JavaBeanWriter extends JavaClassWriter {
 			}
 		}
         
-		if(extendType != null && extendType.getDimensions().equals("[]")) {
+		if(extendType != null && extendType.isArray()) {
 			String typeName = extendType.getName();
 			String elemName = extendType.getQName().getLocalPart();
 			String variableName = Utils.xmlNameToJava(elemName);
@@ -579,99 +594,111 @@ public class JavaBeanWriter extends JavaClassWriter {
 	  //TODO
 //NEW CODE////////////////////////////////////////////////////////////////////////////////////        
        	
-	  SchemaType sBaseType = symbolTable.getSchemaType(sType.getExtentionBase());
-	  Iterator attribNames = sType.getAttributeNames();//get the whole attribute
-	  Iterator elementNames = sType.getElementNames();//get the whole element
-		
-	  Iterator attribBaseNames = null;
-	  Iterator elementBaseNames = null;
-	  if(sBaseType != null){
-		  attribBaseNames = sBaseType.getAttributeNames();//
-		  elementBaseNames = sBaseType.getElementNames();
-	  }
-
-	  Vector paramTypes = new Vector();
-	  Vector paramNames = new Vector();
-	  Vector paramTypesBase = new Vector();
-	  Vector paramNamesBase = new Vector();
-	  //we will fill up the type Vectors 
-	 if (attribNames != null) {
-		  while(attribNames.hasNext()){
-			  QName attribName = (QName)attribNames.next();
-				
-			  TypeEntry entry = symbolTable.getType(
-				  sType.getAttributeTypeByName(attribName).getQName());	
-			  paramTypes.add(entry.getName());
-		   		
-			  String name = attribName.getLocalPart();
-			  paramNames.add(Utils.xmlNameToJava(name));
-		  }
-	  }
-	  if(elementNames != null){
-		  while(elementNames.hasNext()){
-			  ElementInfo eleDecl = sType.getElementTypeByName(
-				  (QName)elementNames.next());
-
-			  TypeEntry entry = symbolTable.getType(eleDecl.getType().getQName());	
-			  paramTypes.add(entry.getName());
-
-			  paramNames.add(Utils.xmlNameToJava(eleDecl.getName().getLocalPart()));
-		  }
-	  }
-        	
-	  if (attribBaseNames != null) {
-		  while(attribBaseNames.hasNext()) {
-			  QName attribBaseName = (QName)attribBaseNames.next();
-				
-			  TypeEntry entry = symbolTable.getType(
-				  sBaseType.getAttributeTypeByName(attribBaseName).getQName());	
-			  paramTypesBase.add(entry.getName());
-				
-			  String name = attribBaseName.getLocalPart();
-			  paramNamesBase.add(Utils.xmlNameToJava(name));
-		  }
-	  }
-	  if(elementBaseNames != null){
-		  while(elementBaseNames.hasNext()){
-			  ElementInfo eleDecl = sType.getElementTypeByName(
-					  (QName)elementBaseNames.next());
-
-			  TypeEntry entry = symbolTable.getType(eleDecl.getType().getQName());	
-			  paramTypesBase.add(entry.getName());
-				
-			  paramNamesBase.add(Utils.xmlNameToJava(eleDecl.getName().getLocalPart()));
-		  }
-	  }      	
+//	  SchemaType sBaseType = symbolTable.getSchemaType(sType.getExtentionBase());
+//	  Iterator attribNames = sType.getAttributeNames();//get the whole attribute
+//	  Iterator elementNames = sType.getElementNames();//get the whole element
+//		
+//	  Iterator attribBaseNames = null;
+//	  Iterator elementBaseNames = null;
+//	  if(sBaseType != null){
+//		  attribBaseNames = sBaseType.getAttributeNames();//
+//		  elementBaseNames = sBaseType.getElementNames();
+//	  }
+//
+//	  Vector paramTypes = new Vector();
+//	  Vector paramNames = new Vector();
+//	  Vector paramTypesBase = new Vector();
+//	  Vector paramNamesBase = new Vector();
+//	  //we will fill up the type Vectors 
+//	 if (attribNames != null) {
+//		  while(attribNames.hasNext()){
+//			  QName attribName = (QName)attribNames.next();
+//				
+//			  TypeEntry entry = symbolTable.getType(
+//				  sType.getAttributeTypeByName(attribName).getQName());	
+//			  paramTypes.add(entry.getName());
+//		   		
+//			  String name = attribName.getLocalPart();
+//			  paramNames.add(Utils.xmlNameToJava(name));
+//		  }
+//	  }
+//	  if(elementNames != null){
+//		  while(elementNames.hasNext()){
+//			  ElementInfo eleDecl = sType.getElementTypeByName(
+//				  (QName)elementNames.next());
+//
+//			  TypeEntry entry = symbolTable.getType(eleDecl.getType().getQName());	
+//			  paramTypes.add(entry.getName());
+//
+//			  paramNames.add(Utils.xmlNameToJava(eleDecl.getName().getLocalPart()));
+//		  }
+//	  }
+//        	
+//	  if (attribBaseNames != null) {
+//		  while(attribBaseNames.hasNext()) {
+//			  QName attribBaseName = (QName)attribBaseNames.next();
+//				
+//			  TypeEntry entry = symbolTable.getType(
+//				  sBaseType.getAttributeTypeByName(attribBaseName).getQName());	
+//			  paramTypesBase.add(entry.getName());
+//				
+//			  String name = attribBaseName.getLocalPart();
+//			  paramNamesBase.add(Utils.xmlNameToJava(name));
+//		  }
+//	  }
+//	  if(elementBaseNames != null){
+//		  while(elementBaseNames.hasNext()){
+//			  ElementInfo eleDecl = sType.getElementTypeByName(
+//					  (QName)elementBaseNames.next());
+//
+//			  TypeEntry entry = symbolTable.getType(eleDecl.getType().getQName());	
+//			  paramTypesBase.add(entry.getName());
+//				
+//			  paramNamesBase.add(Utils.xmlNameToJava(eleDecl.getName().getLocalPart()));
+//		  }
+//	  }      	
 	  // Set the index where the local params start
 	 // int localParams = paramTypes.size() - (attribBase.size()+elementBase.size());
 	  // Now write the constructor signature
-	  if (paramTypes.size() > 0) {
-		  Vector paramDetail = new Vector();
-		  for(int i = 0;i<paramTypes.size();i++){
-			  paramDetail.add(paramTypes.elementAt(i)+" " +paramNames.elementAt(i));
-		  }
-		  pw.println("    public " + className + "(");
-		  pw.println(vectorParsedString(paramDetail));
-		  pw.println(") {");
-            
+	  if (inheritednames.size() > 0 || localnames.size() > 0) {
+		  SortedVector paramDetail = new SortedVector();
+
+		for(int i = 0;i<localnames.size();i=i+2){
+			paramDetail.sortedAdd(localnames.elementAt(i)+" " +localnames.elementAt(i+1));
+		}
+
+		for(int i = 0;i<inheritednames.size();i=i+2){
+		    paramDetail.sortedAdd(inheritednames.elementAt(i)+" " +inheritednames.elementAt(i+1));
+		}
+		  
+		  
+    	pw.println("    public " + className + "(");
+	    pw.println(vectorParsedString(paramDetail));
+	    pw.println(") {");    
 	 }
 	 // Call the extended constructor to set inherited fields
         
-	   if (baseType != null && paramNamesBase.size() > 0) {
-			  pw.println("        super(");
-			  pw.println(vectorParsedString(paramNamesBase));
-			  pw.println(");");
+	   if (extendType != null && inheritednames.size() > 0) {
+			SortedVector paramDetail = new SortedVector();
+			
+			for(int i = 0;i<paramDetail.size();i=i+2){
+				paramDetail.sortedAdd(inheritednames.elementAt(i+1));
+			}
+
+			pw.println("        super(");
+			pw.println(vectorParsedString(paramDetail));
+			pw.println(");");
 	  }
+	  
 	  // Set local fields directly
-	  for (int j=0; j<paramNames.size(); j++) {
+	  for (int j=0; j<localnames.size(); j=j+2) {
 //			  for(int k = 0;k<paramNamesBase.size();k++){
 //				  if(!(paramNames.elementAt(j).equals(paramNamesBase.elementAt(k)))){
-		  if(!paramNamesBase.contains(paramNames.get(j)))
-			  pw.println("        this." + paramNames.get(j) +
-												 " = " + paramNames.get(j)+ ";");	
-                
+			String variable = (String)localnames.get(j+1);
+			  pw.println("        this." + variable +
+												 " = " + variable+ ";");	             
 	  }
-	  if (paramTypes.size() > 0) {        
+	  if (localnames.size() > 0) {        
 		  pw.println("    }");
 		  pw.println();
 	  }	
@@ -877,10 +904,8 @@ public class JavaBeanWriter extends JavaClassWriter {
 //		  }
 //	  }
 ///NEWCODE///////////////////////////////////////////////////////////////////////////        
-		  if (elements != null && j < elements.size()) {
-			  ElementInfo elem = (ElementInfo)elements.get(j);
 				
-			  if (elem.getType().getQName().getLocalPart().indexOf("[") > 0) {
+			  if (typeName.indexOf("[") > 0) {
 				  String compName = typeName.substring(0, typeName.lastIndexOf("["));
 				  if (enableGetters) {
 					  pw.println("    public " + compName + " " + get + capName +
@@ -919,7 +944,7 @@ public class JavaBeanWriter extends JavaClassWriter {
 				  }
 			  }
 		  }
-	  }
+
   }
 
 /**
@@ -1079,4 +1104,19 @@ protected void writeHashCodeMethod() {
 	pw.println("    }");
 	pw.println("");
 }
+
+	public class SortedVector extends Vector{
+       public synchronized boolean sortedAdd(Object o) {
+			for(int i = 0;i<size();i++){
+				if(get(i).hashCode()< o.hashCode()){
+					insertElementAt(o,i);
+					return true;
+				}
+			}
+            add(o);
+            return true;
+        }
+
+} 
+
 }    // class JavaBeanWriter

@@ -112,6 +112,7 @@ import org.apache.axis.wsdl.jaxme.AxisAttributeImpl;
 import org.apache.axis.wsdl.jaxme.AxisXSParser;
 import org.apache.axis.wsdl.jaxme.JAXMEInternalException;
 import org.apache.ws.jaxme.xs.XSAnnotation;
+import org.apache.ws.jaxme.xs.XSAny;
 import org.apache.ws.jaxme.xs.XSAppinfo;
 import org.apache.ws.jaxme.xs.XSAttributable;
 import org.apache.ws.jaxme.xs.XSAttribute;
@@ -1428,11 +1429,10 @@ public class SymbolTable {
 //                parameters.returnParam.setQName(
 //                    parameters.returnParam.getType().getQName());
 //            }
-			if (parameters.returnParam.getType() instanceof SchemaElement) {
-				parameters.returnParam.setQName(
-					parameters.returnParam.getType().getQName());
-			}
-
+////////////////////////////////////////////////////
+//				parameters.returnParam.setQName(
+//					parameters.returnParam.getType().getQName());
+/////////////////////////////////////////////
            ++parameters.outputs;
         } else {
             for (int i = 0; i < outputs.size(); i++) {
@@ -1484,9 +1484,10 @@ public class SymbolTable {
         Parameter p = (Parameter) inputs.get(index);
         // If this is an element, we want the XML to reflect the element name
         // not the part name.  Same check is made in addOutParam below.
-        if (p.getType() instanceof SchemaElement) {
-			SchemaElement de = (SchemaElement) p.getType();
+        if (p.getElement() != null) {
+			SchemaElement de = p.getElement();
             p.setQName(de.getQName());
+          
         }
         // If this is a collection we want the XML to reflect the type in
         // the collection, not foo[unbounded].  
@@ -1505,7 +1506,7 @@ public class SymbolTable {
         // then it's an inout parameter.        
         if (outdex >= 0) {
             Parameter outParam = (Parameter) outputs.get(outdex);
-            if (p.getType().equals(outParam.getType())) {
+            if (p.getType().getQName().equals(outParam.getType().getQName())) {
                 outputs.remove(outdex);
                 p.setMode(Parameter.INOUT);
                 ++parameters.inouts;
@@ -1548,8 +1549,8 @@ public class SymbolTable {
 
         // If this is an element, we want the XML to reflect the element name
         // not the part name.  Same check is made in addInishParam above.
-        if (p.getType() instanceof SchemaElement) {
-			SchemaElement de = (SchemaElement) p.getType();
+        if (p.getElement() != null) {
+			SchemaElement de =  p.getElement();
             p.setQName(de.getQName());
         }
         // If this is a collection we want the XML to reflect the type in
@@ -1632,14 +1633,17 @@ public class SymbolTable {
 
                 // Add this type or element name
                 if (typeName != null) {
-                    param.setType(getType(typeName));
+                	SchemaType type = getType(typeName);
+                	if(type == null)
+                		throw new JAXMEInternalException("the part's \"type\" cant be null ");
+                    param.setType(type);
                 } else if (elementName != null) {
                     // Just an FYI: The WSDL spec says that for use=encoded
                     // that parts reference an abstract type using the type attr
                     // but we kinda do the right thing here, so let it go.
                     // if (!literal)
                     //   error...
-                    param.setType(getElement(elementName).getType());
+                    param.setType(getElement(elementName));
                 } else {
                     // no type or element
                     throw new IOException(
@@ -1751,7 +1755,7 @@ public class SymbolTable {
 //                v.add(param);
 //            }
 ///NEWCODE///////////////////////////////////////////////////////////////////  
-			System.out.println(elementName);          
+          
 			SchemaType schemaType = this.getElement(elementName).getType();
 			Iterator attr = schemaType.getAttributeNames();  
 			Iterator ele = schemaType.getElementNames(); 
@@ -1764,10 +1768,10 @@ public class SymbolTable {
 			if (ele != null && wrapped) {
 				// add the elements in this list
 				for (;ele.hasNext();) {
-					ElementInfo elem = schemaType.getElementTypeByName((QName)ele.next());
+					SchemaElement elem = schemaType.getElementTypeByName((QName)ele.next());
 					Parameter p = new Parameter();
-					p.setQName(elem.getName());
-					p.setType(elem.getType());
+					p.setQName(elem.getQName());
+					p.setType(elem);
 					fillParamInfo(p, bindingEntry, opName, partName);
 					v.add(p);
 				}
@@ -1776,9 +1780,11 @@ public class SymbolTable {
 				// - we found attributes 
 				// so we can't use wrapped mode.
 				param.setName(partName);
-
 				if (typeName != null) {
-					param.setType(getType(typeName));
+					SchemaType type = getType(typeName);
+					if(type == null)
+						throw new JAXMEInternalException("the part's \"type\" cant be null ");
+					param.setType(type);
 				} else if (elementName != null) {
 					param.setType(getElement(elementName));
 				}
@@ -1913,6 +1919,11 @@ public class SymbolTable {
         // If there is no binding MIME construct (ie., the mimeType parameter is
         // null), then get the MIME type from the AXIS-specific xml MIME type.
         if (mimeInfo == null) {
+			//TODO if type not defined for a part the type is assigned as anyType 
+//        	if(p.getType() == null){
+//        		p.setType(getType(new QName(Constants.URI_2001_SCHEMA_XSD,"any")));
+//        	}
+//        	System.out.println(p.getQName());
             QName mimeQName = p.getType().getQName();
             if (mimeQName.getNamespaceURI().equals(Constants.NS_URI_XMLSOAP)) {
                 if (Constants.MIME_IMAGE.equals(mimeQName)) {
@@ -2302,7 +2313,7 @@ public class SymbolTable {
 								SchemaElement eleinfo =
 									getElement(part.getElementName());
 								stype = stype.getArrayType();                            
-								if (eleinfo.getMaxOccurs()>1) {
+								if (eleinfo.isArrayElement()) {
 									dims += "[]";
 								} 
 							}
@@ -2487,7 +2498,15 @@ public class SymbolTable {
 					if(typeEntry instanceof SchemaElement){
 						SchemaElement stype = (SchemaElement)typeEntry;
 						dims = stype.getType().getDimensions();
-						if(stype.getMaxOccurs()>1){
+						//if Stype has a one element with maxOccurs >1 then 
+						//new dimension should be added
+						if(dims.length() == 0){
+							Iterator it = stype.getType().getElementInfo().values().iterator();
+							if(it.hasNext() && ((SchemaElement)it.next()).isArrayElement()){
+								dims = dims + "[]";
+							}
+						}   
+						if(stype.isArrayElement()){
 							dims = dims + "[]";
 						}
 					}
@@ -2712,29 +2731,27 @@ public class SymbolTable {
         }
 
 
-        //		//////////////////////////////////////////////////////////////////////////////////        
-//        try {
-//            // TODO jaxme refactoring
-//	        this.dump(System.out);
-//            PrintStream w =
-//               new PrintStream(new FileOutputStream("st.txt", false));
-////            this.dump(w);
-//            w.close();
-//
-//            System.out.println("a");
-//                "--------------------DUMPING JAXME----------------");
-//            Iterator it = getAllSchemaTypes();
-//            while (it.hasNext()) {
-//            	SchemaType type = (SchemaType)it.next();
-//				if (isInbuildType(type.getQName()))
-//                	System.out.println(type.toString());
-//            }
-//            System.out.println(
-//                "--------------------DUMPING JAXME----------------");
-//        } catch (FileNotFoundException e) {
-//            e.printStackTrace();
-//        }
-//        //		/////////////////////////////////////////////////////////////////////////////////		 
+//		if(verbose){
+//			//TODO JAXME_REFACTOR///////////////////
+//			System.out.println(
+//				"--------------------DUMPING JAXME----------------");
+//			Iterator it = getAllSchemaTypes();
+//			while (it.hasNext()) {
+//			  SchemaType type = (SchemaType)it.next();
+//			  if (!isInbuildType(type.getQName()))
+//				  System.out.println(type);
+//			}
+//			System.out.println("------ ELEMENTS ------");
+//			it = getElements();
+//			while (it.hasNext()) {
+//				SchemaElement type = (SchemaElement)it.next();
+//				  System.out.println(type.getQName());
+//			}
+//				
+//			System.out.println(
+//				"--------------------DUMPING JAXME----------------");
+//		}		
+	/////////////////////////////////////////////////////////////////////////////////		 
     } // setReferences
 
 //	/**
@@ -3446,12 +3463,16 @@ public class SymbolTable {
 	
 	                    type.addAttributes(
 	                        xsQName2QName(attribName),attributeType);
-	                 }            
+	                 }
+//TODO what to do with whitecard types	                 
+//	                 else
+//	                 	throw new JAXMEInternalException("unknown attribute type "+attributes[i].getClass());  
+	                           
 	            }
 	
 	            if (se.hasSimpleContent()) {
 	                //TODO what to do with simple content
-	                //the simple content type is added as a type apart fom the 
+	                //the simple content type is added as a type apart from the 
 	                //attributes
 	                //you should not have enumerations inside the simpleContent !!!
 	                type.setSimpleType(true);
@@ -3464,7 +3485,7 @@ public class SymbolTable {
 				
 												
 	                type.addElement(
-	                    new ElementInfo(
+	                    new SchemaElement(
 	                        SchemaType.SIMPLE_CONTENT,
 							simpleContentType));
 	            } else {
@@ -3499,92 +3520,24 @@ public class SymbolTable {
         if (particle.isElement()) {
         	//if the particle type is a anonymous type of the not upper level elemnt 
         	//the type may not have added, create and registor the type
-			SchemaType arrayType = 
+        	
+        	//when name the type try to name it with the XSType name if that is null
+        	//registor with element name 
+			SchemaType elementType = 
 				createTypeEntry(particle.getElement().getType(),particle.getElement().getName()); 
         	
-            XsQName typeName = particle.getElement().getType().getName();
-            //some times <complexType> tag do not have name=".." when inside
-            //element then use element name  
-            QName theTypeName =
-                xsQName2QName(
-                    (typeName == null)
-                        ? particle.getElement().getName()
-                        : typeName);
             QName theName = xsQName2QName(particle.getElement().getName());
             
-            if (particle.getMaxOccurs() > 1) {
-
-                if (!type.getAttributeNames().hasNext()
-                    && !type.getElementNames().hasNext()
-                    && companions == 1) {
-                    //means it is array of the type 
-                    //<complexType>						<complexType>
-                    //	<element maxoccurs ="6"/>   or 		<sequance>
-                    //</complexType>							<element maxoccurs ="6"/>		
-                    //										</sequance>
-                    //									</complexType>
-                    //this is the single element and no companions SO
-                    //type is Array set it so
-                    type.setArray(true);
-
-
-
-                    //elementInfo.setMinOccurs(particle.getMinOccurs());
-                    //elementInfo.setMaxOccurs(particle.getMaxOccurs());
-                    type.setArrayType(arrayType);
-                } else {
-                    //this is array occured anywhere so we create ayyay type
-                    //create and add arrray type to the type MAP
-                    QName theArrayTypeName = theTypeName;
-
-                    //if  array type already exists in ST we use it else 
-                    //we create new  TypeEntry and add it to ST
-					SchemaType newarraytype = null;
-                    
-                    
-                    theTypeName =
-                        new QName(
-                            theTypeName.getNamespaceURI(),
-                            theTypeName.getLocalPart()
-                                + "["
-                                + particle.getMaxOccurs()
-                                + "]");
-
-                    newarraytype = getSchemaType(theTypeName);
-                    if (newarraytype == null) {
-                        //should be a better way than double check,fix it
-                        theTypeName =
-                            new QName(
-                                theTypeName.getNamespaceURI(),
-                                theTypeName.getLocalPart() + "[]");
-						newarraytype = getSchemaType(theTypeName);
-                        if (newarraytype == null) {
-							theTypeName = new QName(
-								theTypeName.getNamespaceURI(),
-								theTypeName.getLocalPart() + "[unbounded]");
-							newarraytype = getSchemaType(theTypeName);
-							if (newarraytype == null) {
-								newarraytype = new SchemaType(theTypeName);
-                           		putSchemaType(newarraytype);
-                        	}
-                        }		
-                    }
-                    
-                    //set the array type to the type	
-                     type.setArrayType(newarraytype);
-                }
-            } else {
-                type.addElement(new ElementInfo(theName, arrayType));
-                //				
-                //				//if type refer 
-                //				TypeEntry te = getType(theTypeName);
-                //				if(te == null){
-                //					te = new SchemaType(theTypeName);
-                //					symbolTablePut(te);
-                //				} 
-                //				type.setRefType(te);
-            }
-        } else if (particle.isGroup()) {
+			SchemaElement eleinfo = new SchemaElement(theName, elementType);
+//			System.out.println(particle.getElement().getName());
+			eleinfo.setMaxOccurs(particle.getMaxOccurs());
+			type.addElement(eleinfo);
+            
+        } else if(particle.isWildcard()){
+        	XSAny anyParticle = particle.getWildcard();
+			SchemaElement eleinfo = new SchemaElement(SchemaType.ANY_TYPE,getType(Constants.XSD_ANY));
+			type.addElement(eleinfo);
+        }else if (particle.isGroup()) {
             XSParticle[] parray = particle.getGroup().getParticles();
             for (int i = 0; i < parray.length; i++) {
                 addAllElements(parray[i], type, parray.length);
@@ -3634,7 +3587,7 @@ public class SymbolTable {
 	
 				SchemaType sType  = createTypeEntry(arrayparticle.getElement().getType()
 							,arrayparticle.getElement().getName());			
-	
+				type.setArrayDimension(1);	
 	            type.setArrayType(sType);
 	            return;
 	        } else {
@@ -3662,7 +3615,7 @@ public class SymbolTable {
 				}
 				
 				
-				int value = 1;
+				int value = 0;
 				if(wsdlArrayTypeValue == null)
 					throw new JAXMEInternalException("the array type not specified");
 				// The value could have any number of [] or [,] on the end
@@ -3697,7 +3650,7 @@ public class SymbolTable {
 					String prefix =  prefixedName.substring(0,prefixIndex);
 					prefixedName =  prefixedName.substring(prefixIndex+1);
 				}
-				System.out.println("qname "+ new QName(qvalue.getNamespaceURI(),prefixedName));
+//				System.out.println("qname "+ new QName(qvalue.getNamespaceURI(),prefixedName));
 				QName qname = new QName(qvalue.getNamespaceURI(),prefixedName);
 				stype = getSchemaType(new QName(qvalue.getNamespaceURI(),prefixedName));	
 				
@@ -3742,7 +3695,7 @@ public class SymbolTable {
     }
 
     public QName getTypeQNameAssociatedWithElement(QName element) {
-        System.out.println(element);
+//        System.out.println(element);
         if (element == null)
             return null;
 		//get the type and get the name 
@@ -3752,11 +3705,11 @@ public class SymbolTable {
         XSElement xselement = this.schema.getElement(xselementName);
         if (xselement == null)
             return null;
-        System.out.println(xselement.getType());
+//        System.out.println(xselement.getType());
         QName elementTypeQName = xsQName2QName(xselement.getType().getName());
         
         
-        System.out.println(elementTypeQName);
+//        System.out.println(elementTypeQName);
         //if the type is given via ref or type attributes the type is not
         //null. but if the type is anonymous
         //&lt;element name="xx"&gt;
@@ -3955,26 +3908,6 @@ public class SymbolTable {
 	//		while(it.hasNext()){
 	//			System.out.println(it.next());
 	//		}
-			if(verbose){
-				//TODO JAXME_REFACTOR///////////////////
-				System.out.println(
-					"--------------------DUMPING JAXME----------------");
-				Iterator it = getAllSchemaTypes();
-				while (it.hasNext()) {
-				  SchemaType type = (SchemaType)it.next();
-				  if (!isInbuildType(type.getQName()))
-					  System.out.println(type);
-				}
-				System.out.println("------ ELEMENTS ------");
-				it = getElements();
-				while (it.hasNext()) {
-					SchemaElement type = (SchemaElement)it.next();
-					  System.out.println(type.getQName());
-				}
-				
-				System.out.println(
-					"--------------------DUMPING JAXME----------------");
-			}		
 		}catch(SAXException e){
 			throw new JAXMEInternalException(e);
 		}	
@@ -3982,6 +3915,9 @@ public class SymbolTable {
     
     public static Vector inbuildTypesList = new Vector();
 	static{
+		inbuildTypesList.add(new QName("http://schemas.xmlsoap.org/soap/encoding/","integer"));
+		inbuildTypesList.add(new QName("http://schemas.xmlsoap.org/soap/encoding/","base64"));
+		inbuildTypesList.add(new QName("http://schemas.xmlsoap.org/soap/encoding/","base64Binary"));
 		inbuildTypesList.add(new QName("http://schemas.xmlsoap.org/soap/encoding/","double"));
 		inbuildTypesList.add(new QName("http://schemas.xmlsoap.org/soap/encoding/","long"));
 		inbuildTypesList.add(new QName("http://schemas.xmlsoap.org/soap/encoding/","byte"));
@@ -4144,6 +4080,22 @@ public class SymbolTable {
 		schemaInbuildTypes.put(name,new SchemaType(name));
 		name = new QName(Constants.URI_2001_SCHEMA_XSD,"positiveInteger");
 		schemaInbuildTypes.put(name,new SchemaType(name));
+		name = Constants.XSD_ANY;
+		schemaInbuildTypes.put(name,new SchemaType(name));	
+		name = new QName(Constants.URI_2001_SCHEMA_XSD,"NOTATION");
+		schemaInbuildTypes.put(name,new SchemaType(name));
+		
+		schemaInbuildTypes.put(Constants.SOAP_MAP,new SchemaType(Constants.SOAP_MAP));
+		schemaInbuildTypes.put(Constants.SOAP_ELEMENT,new SchemaType(Constants.SOAP_ELEMENT));
+		schemaInbuildTypes.put(Constants.SOAP_DOCUMENT,new SchemaType(Constants.SOAP_DOCUMENT));
+		schemaInbuildTypes.put(Constants.SOAP_VECTOR,new SchemaType(Constants.SOAP_VECTOR));
+		schemaInbuildTypes.put(Constants.MIME_IMAGE,new SchemaType(Constants.MIME_IMAGE));
+		schemaInbuildTypes.put(Constants.MIME_PLAINTEXT,new SchemaType(Constants.MIME_PLAINTEXT));
+		schemaInbuildTypes.put(Constants.MIME_MULTIPART,new SchemaType(Constants.MIME_MULTIPART));
+		schemaInbuildTypes.put(Constants.MIME_SOURCE,new SchemaType(Constants.MIME_SOURCE));
+		schemaInbuildTypes.put(Constants.MIME_OCTETSTREAM,new SchemaType(Constants.MIME_OCTETSTREAM));
+		schemaInbuildTypes.put(Constants.MIME_DATA_HANDLER,new SchemaType(Constants.MIME_DATA_HANDLER));
+			
     }
     public void changeTheHashMaps(){
     	System.out.println("this is jaxme");

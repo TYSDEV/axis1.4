@@ -819,22 +819,26 @@ public class JavaGeneratorFactory implements GeneratorFactory {
 
 			// If the TypeEntry is an element, advance to the type.
 			// This occurs if the message part uses the element= attribute
-			TypeEntry elementTE = null;
-			if (te instanceof SchemaElement) {
-				elementTE = te;
-				te = te.getRefType();
-			}
-
+			TypeEntry elementTE = ((Parameter)(parts.elementAt(j))).getElement();
+	
 			// remember the QName of the type.
 			faultXmlType = te.getQName();
             
 			// Determine if the te should be processed using the
 			// simple type mapping or the complex type mapping
 			// NOTE: treat array types as simple types
-			if (te.getBaseType() != null ||
-				te.isSimpleType() ||
-				  (te.getDimensions().length() > 0 && 
-					te.getRefType().getBaseType() != null) ) {
+////////JAXME_REFACTOR///////////////////////////////////////////////
+//			if (te.getBaseType() != null ||
+//				te.isSimpleType() ||
+//				  (te.getDimensions().length() > 0 && 
+//					te.getRefType().getBaseType() != null) ) {
+////////////////////////////////////////////////////////////////////////
+		  if (te.getBaseType() != null ||
+			  te.isSimpleType() ||
+				(te.getDimensions().length() > 0 && 
+				  ((SchemaType)te).isArray())) {
+			  // Simple Type Exception
+///////////////////////////////////////////////////////////////////						
 				// Simple Type Exception
 			} else {
 				// Complex Type Exception
@@ -1531,9 +1535,9 @@ public class JavaGeneratorFactory implements GeneratorFactory {
 //										symbolTable.getType(anonQName);
 //
 ///NEWCODE//////////////////////////////////////////////////////////////////////////////////                                    
-								TypeEntry typeentry = p.getType();
-								if(typeentry instanceof SchemaElement){ 
-									((SchemaElement)typeentry).getType().setDynamicVar(
+  								SchemaElement typeentry = p.getElement();
+								if(typeentry != null){ 
+									typeentry.getType().setDynamicVar(
 											JavaTypeWriter.HOLDER_IS_NEEDED,
 											Boolean.TRUE); 
 								}

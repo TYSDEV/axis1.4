@@ -32,9 +32,11 @@ public class SchemaType extends Type {
 	protected int arrayDimension = 0;
 	/** Field ARRAY_TYPE */
 	public static final QName ARRAY_TYPE = new QName("arrayType");
+    
+	public static final QName ANY_TYPE = new QName("any");
 
 	/** Field SIMPLE_CONTENT */
-	public static final QName SIMPLE_CONTENT = new QName("simpleContent");
+	public static final QName SIMPLE_CONTENT = new QName("value");
 
 	/**
 	 * @param pqName 
@@ -74,6 +76,9 @@ public class SchemaType extends Type {
 					+ "\n"
 					+ "dims = "
 					+ this.dims
+					+ "\n"
+					+ "Adims = "
+					+ arrayDimension
 					+ "\n"
 					+ "name = "
 					+ this.name
@@ -115,12 +120,13 @@ public class SchemaType extends Type {
 			val = val + "elements = " + "(";
 			while (it2.hasNext()) {
 				QName qn = (QName) it2.next();
-				ElementInfo info = this.getElementTypeByName(qn);
+				SchemaElement info = this.getElementTypeByName(qn);
 				val =  val
 						+ "("
 						+ qn
 						+ "="
 						+ "["+info.toString()+"]"
+						+ "{"+info.getMaxOccurs()+"}"
 						+ ")\n";
 			}
 			val = val + ")\n";
@@ -136,7 +142,7 @@ public class SchemaType extends Type {
 		if (!this.attrbuteInfo.containsKey(name))
 			this.attrbuteInfo.put(name, type);
 		else{
-			System.out.println("trying add existing attribute"+name);
+			throw new JAXMEInternalException("trying add existing attribute"+name);
 		}			
 	
 	}
@@ -159,12 +165,12 @@ public class SchemaType extends Type {
 	 * 
 	 * @param elementInfo 
 	 */
-	public void addElement(ElementInfo elementInfo) {
+	public void addElement(SchemaElement elementInfo) {
 
-		if (!this.attrbuteInfo.containsKey(elementInfo.getName())) {
-			this.elementInfo.put(elementInfo.getName(), elementInfo);
+		if (!this.attrbuteInfo.containsKey(elementInfo.getQName())) {
+			this.elementInfo.put(elementInfo.getQName(), elementInfo);
 		}else{
-			System.out.println("trying add existing element"+elementInfo.getName());
+			throw new JAXMEInternalException("trying add existing element"+elementInfo.getQName());
 		}
 	}
 
@@ -174,13 +180,13 @@ public class SchemaType extends Type {
 	 * @param name 
 	 * @return 
 	 */
-	public ElementInfo getElementTypeByName(QName name) {
+	public SchemaElement getElementTypeByName(QName name) {
 
 		Object obj = this.elementInfo.get(name);
 
 		return (obj == null)
 				? null
-				: (ElementInfo) obj;
+				: (SchemaElement) obj;
 	}
 
 	/**
@@ -196,7 +202,7 @@ public class SchemaType extends Type {
 	 * @return 
 	 */
 	public boolean isArray() {
-		return isArray;
+		return (this.arrayDimension > 0) || isArray;
 	}
 
 	/**
@@ -261,8 +267,9 @@ public class SchemaType extends Type {
 			if(this.getElementTypeByName(SIMPLE_CONTENT) == null){
 				//this.addElement(new ElementInfo());
 			}	
-		}
 			return null;
+		}
+		return 	extention;
 	}
 
 	private QName getExtention(XSType type){
@@ -301,6 +308,8 @@ public class SchemaType extends Type {
 	 * @param i
 	 */
 	public void setArrayDimension(int i) {
+		if(i == -1 )
+			i = 1;
 		arrayDimension = i;
 		dims ="";
 		for(int j = 0;j<this.arrayDimension;j++){
@@ -314,7 +323,7 @@ public class SchemaType extends Type {
 	 * @return 
 	 */
 	public SchemaType getArrayType() {
-		ElementInfo obj = this.getElementTypeByName(ARRAY_TYPE);
+		SchemaElement obj = this.getElementTypeByName(ARRAY_TYPE);
 		return (obj == null ? null : obj.getType());
 	}
     
@@ -323,7 +332,7 @@ public class SchemaType extends Type {
 	}
 
 	public void setArrayType(SchemaType type) {
-		this.addElement(new ElementInfo(ARRAY_TYPE,type));
+		this.addElement(new SchemaElement(ARRAY_TYPE,type));
 		this.setArray(true);
 	}	/* (non-Javadoc)
 	 * @see org.apache.axis.wsdl.symbolTable.TypeEntry#getDimensions()
