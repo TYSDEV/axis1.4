@@ -560,6 +560,10 @@ public class ServiceDesc {
         if (introspectionComplete || implClass == null)
             return;
 
+        if (Skeleton.class.equals(implClass)) {
+            return;
+        }
+
         Method [] methods = implClass.getDeclaredMethods();
 
         for (int i = 0; i < methods.length; i++) {

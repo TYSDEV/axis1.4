@@ -156,11 +156,16 @@ public class SerializationContextImpl implements SerializationContext
         Class javaType;
         QName xmlType;
         boolean sendType;
-        MultiRefItem(String id, Class javaType, QName xmlType, boolean sendType) {
+        Object value;
+        MultiRefItem(String id,
+                     Class javaType,
+                     QName xmlType,
+                     boolean sendType, Object value) {
             this.id = id;
             this.javaType = javaType;
             this.xmlType = xmlType;
             this.sendType = sendType;
+            this.value = value;
         }
 
     }
@@ -347,7 +352,7 @@ public class SerializationContextImpl implements SerializationContext
         if ((uri == null) || (uri.equals("")))
             return null;
 
-        // If we're looking for an attribute prefix, we shouldn't use the 
+        // If we're looking for an attribute prefix, we shouldn't use the
         // "" prefix, but always register/find one.
         String prefix = nsStack.getPrefix(uri, attribute);
 
@@ -355,7 +360,7 @@ public class SerializationContextImpl implements SerializationContext
             prefix = Constants.NS_PREFIX_SOAP_ENC;
             registerPrefixForURI(prefix, uri);
         }
-        
+
         if (prefix == null) {
             if (defaultPrefix == null) {
                 prefix = "ns" + lastPrefixIndex++;
@@ -438,7 +443,7 @@ public class SerializationContextImpl implements SerializationContext
      * There are slightly different rules for attributes:
      *  - There is no default namespace
      *  - any attribute in a namespace must have a prefix
-     * 
+     *
      * @param qName QName
      * @return prefixed qname representation for serialization.
      */
@@ -633,12 +638,12 @@ public class SerializationContextImpl implements SerializationContext
                 multiRefValues = new HashMap();
 
             String id;
-            MultiRefItem mri = (MultiRefItem)multiRefValues.get(value);
+            MultiRefItem mri = (MultiRefItem)multiRefValues.get("" + System.identityHashCode(value));
             if (mri == null) {
                 multiRefIndex++;
                 id = "id" + multiRefIndex;
-                mri = new MultiRefItem (id, javaType, xmlType, sendType);
-                multiRefValues.put(value, mri);
+                mri = new MultiRefItem (id, javaType, xmlType, sendType, value);
+                multiRefValues.put("" + System.identityHashCode(value), mri);
 
                 /** Problem - if we're in the middle of writing out
                  * the multi-refs and hit another level of the
@@ -650,7 +655,7 @@ public class SerializationContextImpl implements SerializationContext
                 if (outputMultiRefsFlag) {
                     if (secondLevelObjects == null)
                         secondLevelObjects = new HashSet();
-                    secondLevelObjects.add(value);
+                    secondLevelObjects.add("" + System.identityHashCode(value));
                 }
             } else {
                 id = mri.id;
@@ -722,13 +727,13 @@ public class SerializationContextImpl implements SerializationContext
                 MultiRefItem mri = (MultiRefItem) multiRefValues.get(val);
                 attrs.setAttribute(0, "", Constants.ATTR_ID, "id", "CDATA",
                                    mri.id);
-                forceSer = val;
+                forceSer = mri.value;
 
                 // Now serialize the value.
                 // The sendType parameter is set to true for interop purposes.
                 // Some of the remote services do not know how to
                 // ascertain the type in these circumstances (though Axis does).
-                serialize(multirefQName, attrs, val,
+                serialize(multirefQName, attrs, mri.value,
                           mri.javaType, mri.xmlType,
                           true,
                           true);   // mri.sendType
