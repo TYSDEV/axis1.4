@@ -67,8 +67,8 @@ import java.util.Iterator;
 import javax.xml.namespace.QName;
 
 import org.apache.axis.wsdl.wsdl2ws.WrapperFault;
-import org.apache.axis.wsdl.wsdl2ws.cpp.CPPUtils;
-import org.apache.axis.wsdl.wsdl2ws.cpp.ParamCPPFileWriter;
+import org.apache.axis.wsdl.wsdl2ws.c.CUtils;
+import org.apache.axis.wsdl.wsdl2ws.c.ParamCPPFileWriter;
 import org.apache.axis.wsdl.wsdl2ws.info.Type;
 import org.apache.axis.wsdl.wsdl2ws.info.WebServiceContext;
 
@@ -89,11 +89,11 @@ public class BeanParamWriter extends ParamCPPFileWriter{
 		HashSet typeSet = new HashSet();
 		String typeName;
 		for(int i = 0; i< attribs.length;i++){
-			if(!CPPUtils.isSimpleType(attribs[i][1])){
+			if(!CUtils.isSimpleType(attribs[i][1])){
 				Type memtype = wscontext.getTypemap().getType(type.getTypNameForAttribName(attribs[i][0]));
 				if (memtype.isArray()){
 					QName qname = memtype.getTypNameForAttribName("item");
-					if (CPPUtils.isSimpleType(qname)) continue; //no wrapper methods for basic types
+					if (CUtils.isSimpleType(qname)) continue; //no wrapper methods for basic types
 					typeName = qname.getLocalPart();
 				}else{
 					typeName = attribs[i][1];
@@ -150,16 +150,16 @@ public class BeanParamWriter extends ParamCPPFileWriter{
 		writer.write("\t		<< Axis_URI_"+classname+" << \"\\\">\";\n");
 		writer.write("\t}\n\n");
 		for(int i = 0; i< attribs.length;i++){
-			if(CPPUtils.isSimpleType(attribs[i][1])){
+			if(CUtils.isSimpleType(attribs[i][1])){
 				//if simple type
-				writer.write("\tpSZ << pSZ.SerializeBasicType(\""+attribs[i][0]+"\", param->"+attribs[i][0]+", "+ CPPUtils.getXSDTypeForBasicType(attribs[i][1])+");\n");
+				writer.write("\tpSZ << pSZ.SerializeBasicType(\""+attribs[i][0]+"\", param->"+attribs[i][0]+", "+ CUtils.getXSDTypeForBasicType(attribs[i][1])+");\n");
 			}else if((t = wscontext.getTypemap().getType(new QName(attribs[i][2],attribs[i][3])))!= null && t.isArray()){
 				//if Array
 				QName qname = t.getTypNameForAttribName("item");
 				String arrayType = null;
-				if (CPPUtils.isSimpleType(qname)){
-					arrayType = CPPUtils.getclass4qname(qname);
-					writer.write("\tpSZ.SerializeArray((Axis_Array*)(&param->"+attribs[i][0]+"),"+CPPUtils.getXSDTypeForBasicType(arrayType)+", \""+attribs[i][0]+"\");\n"); 
+				if (CUtils.isSimpleType(qname)){
+					arrayType = CUtils.getclass4qname(qname);
+					writer.write("\tpSZ.SerializeArray((Axis_Array*)(&param->"+attribs[i][0]+"),"+CUtils.getXSDTypeForBasicType(arrayType)+", \""+attribs[i][0]+"\");\n"); 
 				}
 				else{
 					arrayType = qname.getLocalPart();
@@ -190,19 +190,23 @@ public class BeanParamWriter extends ParamCPPFileWriter{
 			 return;
 		 }
 		for(int i = 0; i< attribs.length;i++){
-			if(CPPUtils.isSimpleType(attribs[i][1])){
+			if(CUtils.isSimpleType(attribs[i][1])){
 				//if symple type
-				writer.write("\tparam->"+attribs[i][0]+" = pIWSDZ->"+CPPUtils.getParameterGetValueMethodName(attribs[i][1])+"();\n");
+				if ("char*".equals(attribs[i][1]) || "Axis_Base64Binary".equals(attribs[i][1]) || "Axis_HexBinary".equals(attribs[i][1])){
+					writer.write("\tparam->"+attribs[i][0]+" = strdup(pIWSDZ->"+CUtils.getParameterGetValueMethodName(attribs[i][1])+"());\n");
+				}else{
+					writer.write("\tparam->"+attribs[i][0]+" = pIWSDZ->"+CUtils.getParameterGetValueMethodName(attribs[i][1])+"();\n");
+				}
 			}else if((t = wscontext.getTypemap().getType(new QName(attribs[i][2],attribs[i][3])))!= null && t.isArray()){
 				//if Array
 				QName qname = t.getTypNameForAttribName("item");
 				String arrayType = null;
-				if (CPPUtils.isSimpleType(qname)){
-					arrayType = CPPUtils.getclass4qname(qname);
+				if (CUtils.isSimpleType(qname)){
+					arrayType = CUtils.getclass4qname(qname);
 					writer.write("\tparam->"+attribs[i][0]+".m_Size = pIWSDZ->GetArraySize();\n");
 					writer.write("\tif (param->"+attribs[i][0]+".m_Size < 1) return AXIS_FAIL;\n");
 					writer.write("\tparam->"+attribs[i][0]+".m_Array = new "+arrayType+"[param->"+attribs[i][0]+".m_Size];\n");
-					writer.write("\tif (AXIS_SUCCESS != pIWSDZ->GetArray((Axis_Array*)(&param->"+attribs[i][0]+"), "+CPPUtils.getXSDTypeForBasicType(arrayType)+")) return AXIS_FAIL;\n");
+					writer.write("\tif (AXIS_SUCCESS != pIWSDZ->GetArray((Axis_Array*)(&param->"+attribs[i][0]+"), "+CUtils.getXSDTypeForBasicType(arrayType)+")) return AXIS_FAIL;\n");
 				}
 				else{
 					arrayType = qname.getLocalPart();
@@ -238,7 +242,7 @@ public class BeanParamWriter extends ParamCPPFileWriter{
 		writer.write("\t{\n");
 	 	boolean hasComplexType = false;
 		for(int i = 0; i< attribs.length;i++){
-			if(!CPPUtils.isSimpleType(attribs[i][1])){
+			if(!CUtils.isSimpleType(attribs[i][1])){
 				hasComplexType = true; break;
 			}
 		}			
@@ -248,13 +252,13 @@ public class BeanParamWriter extends ParamCPPFileWriter{
 			writer.write("\t\tfor (int x=0; x<nSize; x++)\n");
 			writer.write("\t\t{\n");
 			for(int i = 0; i< attribs.length;i++){
-				if(!CPPUtils.isSimpleType(attribs[i][1])){ //this can be either an array or complex type
+				if(!CUtils.isSimpleType(attribs[i][1])){ //this can be either an array or complex type
 					Type memtype = wscontext.getTypemap().getType(type.getTypNameForAttribName(attribs[i][0]));
 					if (memtype.isArray()){
 						QName qname = memtype.getTypNameForAttribName("item");
 						String containedType = null;
-						if (CPPUtils.isSimpleType(qname)){
-							containedType = CPPUtils.getclass4qname(qname);
+						if (CUtils.isSimpleType(qname)){
+							containedType = CUtils.getclass4qname(qname);
 							writer.write("\t\t\tdelete [] ("+containedType+"*)(pTemp->"+attribs[i][0]+".m_Array);\n");
 						}
 						else{
@@ -275,13 +279,13 @@ public class BeanParamWriter extends ParamCPPFileWriter{
 		writer.write("\t{\n");
 		writer.write("\t\t//delete any pointer members or array members of this struct here\n");
 		for(int i = 1; i< attribs.length;i++){
-			if(!CPPUtils.isSimpleType(attribs[i][1])){
+			if(!CUtils.isSimpleType(attribs[i][1])){
 				Type memtype = wscontext.getTypemap().getType(type.getTypNameForAttribName(attribs[i][0]));
 				if (memtype.isArray()){
 					QName qname = memtype.getTypNameForAttribName("item");
 					String containedType = null;
-					if (CPPUtils.isSimpleType(qname)){
-						containedType = CPPUtils.getclass4qname(qname);
+					if (CUtils.isSimpleType(qname)){
+						containedType = CUtils.getclass4qname(qname);
 						writer.write("\t\tdelete [] (("+containedType+"*)param->"+attribs[i][0]+".m_Array);\n");
 					}
 					else{
