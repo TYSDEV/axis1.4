@@ -55,13 +55,9 @@
  * <http://www.apache.org/>.
  *
  *
- *
- *
- * @author Susantha Kumara (skumara@virtusa.com)
- *
  */
 
-// HandlerChain.h: interface for the HandlerChain class.
+// HandlerChain.h: 
 //
 //////////////////////////////////////////////////////////////////////
 
@@ -74,6 +70,14 @@
 
 using namespace std;
 
+
+/**
+    @class HandlerChain
+    @brief interface for the HandlerChain class.
+
+
+    @author Susantha Kumara (skumara@virtusa.com)
+*/
 class HandlerChain : public BasicHandler  
 {
 	friend class HandlerPool;

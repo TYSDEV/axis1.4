@@ -53,13 +53,10 @@
  * <http://www.apache.org/>.
  *
  *
- *
- *
- * @author Susantha Kumara (skumara@virtusa.com)
- *
  */
 
-// ArrayBean.h: interface for the ArrayBeanI class.
+
+// ArrayBean.h:
 //
 //////////////////////////////////////////////////////////////////////
 
@@ -73,7 +70,15 @@
 #include <list>
 using namespace std;
 
-//This class is used inside Param class and wrapper classes only.
+/**
+    @class ArrayBean
+    @brief interface for the ArrayBeanI class.
+
+    This class is used inside Param class and wrapper classes only.
+    
+    @author Susantha Kumara (skumara@virtusa.com)
+*/
+
 class ArrayBean : public IArrayBean
 {
 public:

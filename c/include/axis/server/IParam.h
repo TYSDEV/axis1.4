@@ -53,12 +53,8 @@
  * <http://www.apache.org/>.
  *
  *
- *
- *
- * @author Susantha Kumara (skumara@virtusa.com)
- *
  */
-// IParam.h: interface for the IParam class.
+// IParam.h: 
 //
 //////////////////////////////////////////////////////////////////////
 
@@ -72,6 +68,12 @@
 #include <string>
 using namespace std;
 
+/**
+    @class ComplexObjectHandler
+    @brief 
+
+    @author Susantha Kumara (skumara@virtusa.com)
+*/
 class ComplexObjectHandler
 {
 public:
@@ -117,6 +119,13 @@ typedef union uParamValue
 	const AxisChar* pStrValue; 
 } uParamValue;
 
+
+/**
+    @class IParam
+    @brief interface for the IParam class.
+
+    @author Susantha Kumara (skumara@virtusa.com)
+*/
 class IParam  
 {
 public:
@@ -141,12 +150,13 @@ public:
 	virtual int GetHexString(const AxisChar** pValue) = 0;
 	virtual int GetBase64String(const AxisChar** pValue) = 0;
 	virtual const AxisString& GetTypeName() = 0;
-    /*return a tm struct which contain year-month-date-hour-
+    /**return a tm struct which contain year-month-date-hour-
       minute-second*/
+
     virtual int GetDateTime(struct tm* pValue) = 0;
     virtual int GetDate(struct tm* pValue) = 0;
     virtual int GetTime(struct tm* pValue) = 0;
-    /*return a tm struct which contain years-months-dates-hours-
+    /**return a tm struct which contain years-months-dates-hours-
       minutes-seconds which represents a duration*/
     virtual int GetDuration(long* pValue) = 0;
 

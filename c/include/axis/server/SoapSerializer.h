@@ -54,15 +54,9 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  *
- *
- *
- *
- * @author Roshan Weerasuriya (roshan@jkcs.slt.lk, roshan@opensource.lk)
- * @author Susantha Kumara (susantha@opensource.lk, skumara@virtusa.com)
- *
  */
 
-// SoapSerializer.h: interface for the SoapSerializer class.
+// SoapSerializer.h: 
 //
 //////////////////////////////////////////////////////////////////////
 
@@ -86,6 +80,16 @@ class SoapBody;
 class SoapFault;
 class HeaderBlock;
 
+
+/**
+    @class SoapSerializer
+    @brief interface for the SoapSerializer class.
+
+
+    
+    @author Roshan Weerasuriya (roshan@jkcs.slt.lk, roshan@opensource.lk)
+    @author Susantha Kumara (susantha@opensource.lk, skumara@virtusa.com)
+*/
 class SoapSerializer : public IWrapperSoapSerializer, public IHandlerSoapSerializer /*: public ISoapSerializer*/
 {
 private:

@@ -55,10 +55,6 @@
  * <http://www.apache.org/>.
  *
  *
- *
- *
- * @author Susantha Kumara (skumara@virtusa.com)
- *
  */
 
 #if !defined(__WRAPPERCLASSHANDLER_INCLUDED__)
@@ -66,6 +62,15 @@
 
 #include "BasicHandler.h"
 
+/**
+    @class WrapperClassHandler
+    @brief
+
+
+
+    @author Susantha Kumara (skumara@virtusa.com)
+
+*/
 class WrapperClassHandler : public BasicHandler 
 {
 public:

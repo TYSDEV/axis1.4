@@ -54,14 +54,9 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  *
- *
- *
- *
- * @author Roshan Weerasuriya (roshan@jkcs.slt.lk, roshan@opensource.lk)
- *
  */
 
-// IHandlerSoapSerializer.h: interface for the IHandlerSoapSerializer class.
+// IHandlerSoapSerializer.h: 
 //
 //////////////////////////////////////////////////////////////////////
 
@@ -71,6 +66,13 @@
 #include "ISoapSerializer.h"
 class IHeaderBlock;
 
+/**
+    @class IHandlerSoapSerializer
+    @brief interface for the IHandlerSoapSerializer class.
+
+
+    @author Roshan Weerasuriya (roshan@jkcs.slt.lk, roshan@opensource.lk)
+*/
 class IHandlerSoapSerializer : public virtual ISoapSerializer
 
 {

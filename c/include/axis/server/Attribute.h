@@ -55,13 +55,9 @@
  * <http://www.apache.org/>.
  *
  *
- *
- *
- * @author Roshan Weerasuriya (roshan@jkcs.slt.lk)
- *
  */
 
-// Attribute.h: interface for the Attribute class.
+// Attribute.h: 
 //
 //////////////////////////////////////////////////////////////////////
 
@@ -75,6 +71,15 @@ using namespace std;
 
 class SoapSerializer;
 
+/**
+    @class Attribute 
+    @brief interface for the Attribute class.
+
+
+
+    
+    @author Roshan Weerasuriya (roshan@jkcs.slt.lk)
+*/
 class Attribute  
 {
 private:	

@@ -55,12 +55,8 @@
  * <http://www.apache.org/>.
  *
  *
- *
- *
- * @author Susantha Kumara (susantha@opensource.lk, skumara@virtusa.com)
- *
  */
-// SoapDeSerializer.h: interface for the SoapDeSerializer class.
+// SoapDeSerializer.h: 
 //
 //////////////////////////////////////////////////////////////////////
 
@@ -79,6 +75,14 @@ class SoapMethod;
 class SoapBody;
 class SoapFault;
 
+
+/**
+    @class SoapDeSerializer
+    @brief interface for the SoapDeSerializer class.
+
+
+    @author Susantha Kumara (susantha@opensource.lk, skumara@virtusa.com)
+*/
 class SoapDeSerializer : public IWrapperSoapDeSerializer, public IHandlerSoapDeSerializer
 {
 private:
@@ -102,13 +106,13 @@ public:
 	int SetInputStream(const Ax_soapstream* pInputStream);
 	SoapDeSerializer();
 	virtual ~SoapDeSerializer();
-	/* Method used by wrappers to get a deserialized Array of complex types */
+	/** Method used by wrappers to get a deserialized Array of complex types */
 	Axis_Array GetArray(void* pDZFunct, void* pCreFunct, void* pDelFunct, void* pSizeFunct, const AxisChar* pchTypeName, const AxisChar* pchURI);
-	/* Method used by wrappers to get a deserialized Array of basic types */
+	/** Method used by wrappers to get a deserialized Array of basic types */
 	Axis_Array GetArray(XSDTYPE nType);
 	int GetArraySize();
 	int GetArray(Axis_Array* pArray, XSDTYPE nType);
-	/* Method used by wrappers to get a deserialized single object of complex type */
+	/** Method used by wrappers to get a deserialized single object of complex type */
 	void* GetObject(void* pDZFunct, void* pCreFunct, void* pDelFunct, const AxisChar* pchTypeName, const AxisChar* pchURI);
 	
 	/* Methods used by wrappers to get a deserialized value of basic types */
@@ -129,12 +133,12 @@ public:
     const AxisChar* GetQName();
 	const AxisChar* GetHexString();
 	const AxisChar* GetBase64String();
-    /*return a tm struct which contain year-month-date-hour-
+    /**return a tm struct which contain year-month-date-hour-
       minute-second*/
     struct tm GetDateTime();
     struct tm GetDate();
     struct tm GetTime();
-    /*return a tm struct which contain years-months-dates-hours-
+    /**return a tm struct which contain years-months-dates-hours-
       minutes-seconds which represents a duration*/
     long GetDuration();
 	void* CreateArray(XSDTYPE nType, int nSize);
