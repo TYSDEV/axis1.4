@@ -1,0 +1,97 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.2//EN" "./dtd/document-v12.dtd">
+<document>
+  <header>
+    <title>WebServices - Axis</title>
+  </header>
+  <body>
+
+<a name="AxisAntTasks"/>
+<section>
+<title>Axis Ant Tasks</title>
+
+<p>Axis comes with Ant tasks to automate aspects of the build process inside ant. To use these tasks, you need</p>
+
+<ol>
+  <li><a href="http://jakarta.apache.org/ant">Apache Ant 1.5.1 or later</a></li>
+  <li>The library <code>axis-ant.jar</code> which contains the tasks</li>
+  <li>All the main Axis libraries</li>
+</ol>
+
+<section>
+<title>Declaring the Tasks</title>
+
+<p>To declare the tasks, set up a classpath to include the axis task JAR and all the dependent libraries. Including everything in the axis lib directory should suffice</p>
+
+<source>&lt;path id="axis.classpath"&gt;
+  &lt;fileset dir="${axis.home}/build/lib"&gt;
+    &lt;include name="**/*.jar" /&gt;
+  &lt;/fileset&gt;
+&lt;/path&gt;</source>
+
+<p>Then use the <code>&lt;taskdef&gt;</code> declaration to declare all the tasks listed in a properties file inside the <code>axis-ant.jar</code> file:</p>
+<source>&lt;taskdef resource="axis-tasks.properties"
+  classpathref="axis.classpath" /&gt;</source>
+
+</section>
+
+<section>
+<title>Creating Java files from WSDL</title>
+
+<p>This uses the <a href="axis-wsdl2java.html">&lt;axis-wsdl2java&gt;</a> task.</p>
+<source>&lt;axis-wsdl2java
+  output="${generated.dir}"
+  testcase="true"
+  verbose="true"
+  url="${local.wsdl}" &gt;
+    &lt;mapping
+      namespace="http://axis.apache.org/ns/interop"
+      package="interop" /&gt;
+  &lt;/axis-wsdl2java&gt;</source>
+
+<p>The mapping elements are used to list the mappings from XML namespaces to Java packages; you can include as many as you need.</p>
+
+</section>
+
+<section>
+<title>Creating WSDL files from Java</title>
+
+<p>This uses the <a href="axis-java2wsdl.html">&lt;axis-java2wsdl&gt;</a> task.</p>
+
+</section>
+
+<section>
+<title>Talking to the admin service</title>
+
+<p>This can be done with the <a href="axis-admin.html">&lt;axis-admin&gt;</a> task.</p>
+<source>&lt;axis-admin
+    port="${target.port}"
+    hostname="${target.server}"
+    failonerror="true"
+    servletpath="${target.appname}/services/AdminService"
+    debug="true"
+    xmlfile="${endpoint-stub.wsdd}"
+    /&gt;</source>
+
+<p>Here the target.* properties are pulled from a properties file for the system being deployed to, so a single build file can deploy to different systems with ease.</p>
+
+</section>
+
+<section>
+<title>Foreach Task</title>
+
+<p><a href="foreach.html">&lt;axis-admin&gt;</a></p>
+
+</section>
+
+<section>
+<title>Runaxisfunctionaltests Task</title>
+
+<p><a href="runaxisfunctionaltests.html">&lt;axis-admin&gt;</a></p>
+
+</section>
+
+</section>
+
+  </body>
+</document>
