@@ -78,6 +78,10 @@ main(int argc, char *argv[])
     IHeaderBlock *header = NULL;
     header = ws.getFirstSOAPHeaderBlock();
     ws.deleteSOAPHeaderBlock(header);
+
+	header = NULL;
+    header = ws.getFirstSOAPHeaderBlock();
+    ws.deleteSOAPHeaderBlock(header);
     //now the request should have no SOAP headers
 
     if (0 == strcmp(ws.echoString("hello world"), "hello world"))
