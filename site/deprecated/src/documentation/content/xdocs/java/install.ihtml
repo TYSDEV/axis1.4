@@ -748,7 +748,7 @@ java -cp "$AXISCLASSPATH" ...
  many readers.</LI>
 
  <LI>Search the <A href=
- "http://nagoya.apache.org/eyebrowse/SummarizeList?listId=49">mailing
+ "http://mail-archives.apache.org/eyebrowse/SummarizeList?listId=209">mailing
  list archives</A> FIRST to see if someone had the same problem.
  This list is searchable--and may save you much time in getting
  an answer to your problem.</LI>
@@ -758,7 +758,7 @@ java -cp "$AXISCLASSPATH" ...
  search for Axis bugs, both open and closed.</LI>
 
  <LI>Consult the <A href=
- "http://nagoya.apache.org/wiki/apachewiki.cgi?AxisProjectPages">
+ "http://wiki.apache.org/ws/FrontPage/Axis">
  Axis Wiki</A> for its Frequently Asked Questions (FAQ),
  installation notes, interoperability issues lists, and other
  useful information.</LI>

@@ -278,7 +278,7 @@
 6      public static void main(String [] args) {
 7          try {
 8              String endpoint =
-9                       "http://nagoya.apache.org:5049/axis/services/echo";
+9                       "http://ws.apache.org:5049/axis/services/echo";
 10  
 11             Service  service = new Service();
 12             Call     call    = (Call) service.createCall();
@@ -2136,7 +2136,7 @@ public interface WidgetPrice {
 
  <LI>Consult the <A href="http://ws.apache.org/axis">Axis web
  site</A> for updated documentation and the <A href=
- "http://nagoya.apache.org/wiki/apachewiki.cgi?AxisProjectPages">
+ "http://wiki.apache.org/ws/FrontPage/Axis">
  Axis Wiki</A> for its Frequently Asked Questions (FAQ),
  installation notes, interoperability issues lists, and other
  useful information.</LI>

@@ -97,7 +97,7 @@ And we are fixing as many bug as possible.
 We can always use <b>your</b> help.  Here are some links to help you help us:
 <ul>
 <li><link href="http://ws.apache.org/axis/bugs.html">How do I report bugs?</link></li>
-<li><link href="http://nagoya.apache.org/wiki/apachewiki.cgi?AxisProjectPages/SubmitPatches">How do I submit patches to Axis?</link></li>
+<li><link href="http://wiki.apache.org/ws/SubmitPatches">How do I submit patches to Axis?</link></li>
 <li><link href="http://cvs.apache.org/snapshots/ws-axis/">Where can i get snapshots of latest CVS?</link></li> 
 </ul>
 
