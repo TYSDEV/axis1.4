@@ -294,7 +294,7 @@
 	<service name="ComplexRpcEncService">
 		<port name="ComplexRpcEncPort" binding="tns:ComplexRpcEncBinding">
 			<soap:address
-				location="REPLACE_WITH_ACTUAL_URL"/>
+				location="http://localhost:8080/axis/services/ComplexRpcEncPort"/>
 		</port>
 	</service>
 </definitions>
