@@ -15,7 +15,6 @@
  */
 package org.apache.geronimo.ews.ws4j2ee.context.webservices.server.interfaces;
 
-import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.jaxb.PortComponentHandlerType;
 
 /**
  * @author Chathura Herath
@@ -76,7 +75,4 @@ public interface WSCFHandler {
 	 * @return init-parameters
 	 */
 	public WSCFInitParam[] getInitParam();
-	
-	
-	public PortComponentHandlerType getJaxbHandler() ;
 }

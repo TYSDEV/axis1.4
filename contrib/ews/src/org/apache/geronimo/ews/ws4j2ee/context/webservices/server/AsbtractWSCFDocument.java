@@ -15,16 +15,9 @@
  */
 package org.apache.geronimo.ews.ws4j2ee.context.webservices.server;
 
-import java.io.InputStream;
-
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
-
 import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.interfaces.WSCFConstants;
 import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.interfaces.WSCFDocument;
 import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.interfaces.WSCFWebservices;
-import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.jaxb.Webservices;
 
 /**
  * This will encapsulate the webservices.xml document and this is the start of the 
@@ -34,43 +27,42 @@ import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.jaxb.Webservic
  * drill down the element tree. 
  * 
  */
-public class WSCFDocumentImpl implements WSCFConstants, WSCFDocument{
+public abstract class AsbtractWSCFDocument implements WSCFConstants, WSCFDocument{
 
 	/**
 	 * Will keep a reference to the webservices element which is the document element in the webservices.xml
 	 * @see org.apache.x.ws4j2ee.context.webservices.interfaces.WSCFWebservices
 	 */
-	private WSCFWebservices webservices;
+	protected WSCFWebservices webservices;
 
-
-/////////////////////////////////The jaxb delegation block////////////////////////////////////////////////
-
-	//This is kept basically to meet the future demands of the serialising.
-	private Webservices jaxbWebservices;
-
-	public WSCFDocumentImpl(InputStream in)throws WSCFException{
-		try{
-			JAXBContext jc    
-                = JAXBContext.newInstance(
-                        "org.apache.geronimo.ews.ws4j2ee.context.webservices.server.jaxb");
-			// create an Unmarshaller
-			Unmarshaller unmarshaller = jc.createUnmarshaller();
-	
-			// unmarshal a FooBar instance document into a tree of Java content
-			// objects composed of classes from the example package.
-			this.jaxbWebservices = (Webservices)unmarshaller.unmarshal(in);
-			this.webservices = new WSCFWebservicesImpl(this.jaxbWebservices);
-			
-			
-	//		  org.apache.x.ws4j2ee.context.webservices.jaxb.impl.DisplayNameTypeImpl dis = (org.apache.x.ws4j2ee.context.webservices.jaxb.impl.DisplayNameTypeImpl)ws.getDisplayName().get(0);
-		} catch( JAXBException je ) {
-			throw new WSCFException(je);
-		} 
-		
-	}
-
-
-
+//
+///////////////////////////////////The jaxb delegation block////////////////////////////////////////////////
+//
+////	//This is kept basically to meet the future demands of the serialising.
+////	protected Webservices jaxbWebservices;
+//
+//	public AsbtractWSCFDocumentImpl(InputStream in)throws WSCFException{
+//		try{
+//			JAXBContext jc    
+//                = JAXBContext.newInstance(
+//                        "org.apache.geronimo.ews.ws4j2ee.context.webservices.server.jaxb");
+//			// create an Unmarshaller
+//			Unmarshaller unmarshaller = jc.createUnmarshaller();
+//	
+//			// unmarshal a FooBar instance document into a tree of Java content
+//			// objects composed of classes from the example package.
+//			this.webservices = new AbstractWSCFWebservicesImpl((Webservices)unmarshaller.unmarshal(in));
+//			
+//			
+//	//		  org.apache.x.ws4j2ee.context.webservices.jaxb.impl.DisplayNameTypeImpl dis = (org.apache.x.ws4j2ee.context.webservices.jaxb.impl.DisplayNameTypeImpl)ws.getDisplayName().get(0);
+//		} catch( JAXBException je ) {
+//			throw new WSCFException(je);
+//		} 
+//		
+//	}
+//
+//
+//
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -95,11 +87,11 @@ public class WSCFDocumentImpl implements WSCFConstants, WSCFDocument{
 		return webservices;
 	}
 
-/**
- * @return
- */
-public Webservices getJaxbWebservices() {
-	return jaxbWebservices;
-}
+///**
+// * @return
+// */
+//public Webservices getJaxbWebservices() {
+//	return jaxbWebservices;
+//}
 
 }

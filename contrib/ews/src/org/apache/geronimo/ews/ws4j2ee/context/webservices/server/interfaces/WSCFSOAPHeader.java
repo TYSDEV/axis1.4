@@ -14,11 +14,6 @@
  * limitations under the License.
  */
 package org.apache.geronimo.ews.ws4j2ee.context.webservices.server.interfaces;
-
-import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.jaxb.XsdQNameType;
-
-
-
 /**
  * This interface is published to abstract the SOAP header element in the webservices.xml which is a layer 4 elment.
  *
@@ -36,6 +31,4 @@ public interface WSCFSOAPHeader {
 	 * @return namespace
 	 */
 	public String getNamespaceURI() ;
-	
-	public XsdQNameType getJaxbSoapHeader();
 }

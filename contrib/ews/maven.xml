@@ -13,9 +13,38 @@
             <path refid="maven.dependency.classpath"/>
         </path>
     </goal>
+    
+    <goal name="generate:xmlbeans"
+        description="Generates the XML beans using JAXB">
+
+        <j:jelly xmlns="jelly:ant">
+
+            <j:set var="src.dir" value="${basedir}/src"/>
+            <j:set var="dir" value="${basedir}/target/src"/>
+            <j:set var="schema.dir" value="${basedir}/schema"/>
+            <j:set var="xmlbeans.dir" value="${dir}/xmlbeans"/>
+
+			<taskdef name="xmlbean"
+            	classname="org.apache.xmlbeans.impl.tool.XMLBean"
+	            classpathref="maven.dependency.classpath"/>
+
+            <ant:mkdir dir="${dir}"/>
+            <ant:mkdir dir="${dir}/lib"/>
+
+		    <xmlbean schema="${schema.dir}"
+    	        destfile="${maven.repo.local}/ews/jars/ews-xmlbeans-DEV.jar"
+        	    srcgendir="${xmlbeans.dir}"
+            	classpathref="maven.dependency.classpath"
+	            debug="on">    
+		            <includes>j2ee_jaxrpc_mapping_1_1.xsd</includes>
+                    <includes>j2ee_web_services_client_1_1.xsd</includes>
+            </xmlbean>
+        </j:jelly>
+    </goal>
 
     <preGoal name="java:compile">
         <attainGoal name="generate:jaxb"/>
+        <attainGoal name="generate:xmlbeans"/> 
 
         <path id="ews.beans.compile.src.set"
               location="${basedir}/target/src"/>
@@ -91,6 +120,7 @@
 			<ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="samples/ejb/zip"/>
 			<ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="samples/servlet/bookquote"/>
 			<ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="samples/ejb/echo"/>
+			<!-- <ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="samples/servlet/echo"/>	-->		
         </j:jelly>
     </preGoal> 
     

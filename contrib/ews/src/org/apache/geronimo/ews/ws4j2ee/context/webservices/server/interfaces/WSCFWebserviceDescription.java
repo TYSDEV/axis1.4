@@ -15,10 +15,6 @@
  */
 package org.apache.geronimo.ews.ws4j2ee.context.webservices.server.interfaces;
 
-import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.jaxb.WebserviceDescriptionType;
-
-
-
 
 /**
  * This will interface the webservice-description element which is a level1 element of teh webservices.xml
@@ -73,6 +69,4 @@ public interface WSCFWebserviceDescription {
 	 * @return wsdl-file
 	 */
 	public String getWsdlFile() ;
-	
-	public WebserviceDescriptionType getJaxbWebserviesDescription();
 }

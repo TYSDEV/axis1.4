@@ -15,7 +15,6 @@
  */
 package org.apache.geronimo.ews.ws4j2ee.context.webservices.server.interfaces;
 
-import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.jaxb.Webservices;
 
 
 
@@ -55,7 +54,7 @@ public interface WSCFWebservices{
 	 */
 	public String getSmallIcon();
 	
-	public Webservices getJaxbWebservices(); 
+//	public Webservices getJaxbWebservices(); 
 	
 //	public WSCFWebserviceDescription getWSDDService(QName qname);
 //	public void setWebServiceDescriptions(Vector vector) ;

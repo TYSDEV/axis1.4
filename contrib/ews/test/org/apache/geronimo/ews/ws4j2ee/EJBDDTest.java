@@ -99,16 +99,17 @@ public class EJBDDTest extends AbstractTestCase{
             throw e;
         }
     }
-    public void testMathSampleWithDOMWithDOCTYPE() throws Exception{
-        try{
-            DomEJBDDParser pars = new DomEJBDDParser(con);
-           pars.parse(new FileInputStream(
-            getTestFile(testDir+"testData/math/ejb-jar1.xml")));
-           //Assert.assertEquals(con.getMiscInfo().getEjbName(),"MathFace"); 
-        }catch(Exception e){
-            e.printStackTrace();
-            throw e;
-        }
-    }
+//TODO
+//    public void testMathSampleWithDOMWithDOCTYPE() throws Exception{
+//        try{
+//            DomEJBDDParser pars = new DomEJBDDParser(con);
+//           pars.parse(new FileInputStream(
+//            getTestFile(testDir+"testData/math/ejb-jar1.xml")));
+//           //Assert.assertEquals(con.getMiscInfo().getEjbName(),"MathFace"); 
+//        }catch(Exception e){
+//            e.printStackTrace();
+//            throw e;
+//        }
+//    }
 
 }

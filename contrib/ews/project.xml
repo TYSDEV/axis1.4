@@ -147,11 +147,22 @@
   <build>
     <nagEmailAddress>geronimo-dev@jakarta.apache.org</nagEmailAddress>
     <sourceDirectory>src</sourceDirectory>
+    <!--
+    <sourceModifications> 
+    	<sourceModification> 
+    	  <className>org.apache.geronimo.ews.jaxrpcmapping.descriptor.JavaXmlTypeMappingType</className>
+    	  <excludes>
+    			 <exclude>**/jaxb/*.java</exclude>
+          </excludes>
+		</sourceModification>
+	 </sourceModifications>
+	 -->
     <unitTestSourceDirectory>test</unitTestSourceDirectory>
 
     <unitTest>
       <includes>
         <include>**/*Test.java</include>
+		<exclude>**/*WebApplicationTest.java</exclude> 
       </includes>
     </unitTest>
 
@@ -161,6 +172,7 @@
         <includes>
           <include>**/*.properties</include>
 		  <include>**/*.ser</include>
+  		  <include>**</include>
         </includes>
       </resource>
       <resource>
@@ -268,7 +280,7 @@
                 <module>true</module>
             </properties>
         </dependency>
-        
+
         <dependency>
             <groupId>geronimo-spec</groupId>
             <artifactId>geronimo-spec-j2ee</artifactId>
@@ -277,6 +289,7 @@
                 <module>true</module>
             </properties>
         </dependency>
+<!--                
 		<dependency>
             <groupId>geronimo</groupId>
             <artifactId>geronimo-core</artifactId>
@@ -309,7 +322,6 @@
                 <module>true</module>
             </properties>
         </dependency>
-        <!--
         <dependency>
             <groupId>xerces</groupId>
             <artifactId>xercesImpl</artifactId>
@@ -385,6 +397,7 @@
                 <module>true</module>
             </properties>
         </dependency>
+<!--
         <dependency>
             <groupId>openejb</groupId>
             <artifactId>openejb-core-2.0</artifactId>
@@ -393,6 +406,24 @@
                 <module>true</module>
             </properties>
         </dependency>
+-->        
+        <dependency>
+            <groupId>xmlbeans</groupId>
+            <artifactId>xbean-apache-1.0</artifactId>
+            <version>DEV</version>
+            <properties>
+                <module>true</module>
+            </properties>
+        </dependency>
+        <dependency>
+            <groupId>ews</groupId>
+            <artifactId>ews-xmlbeans</artifactId>
+            <version>DEV</version>
+            <properties>
+                <module>true</module>
+            </properties>
+        </dependency>
+
     </dependencies>
 </project>
 

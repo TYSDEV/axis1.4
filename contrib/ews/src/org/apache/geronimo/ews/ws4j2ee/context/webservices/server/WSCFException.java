@@ -20,7 +20,7 @@ package org.apache.geronimo.ews.ws4j2ee.context.webservices.server;
  *
  */
 public class WSCFException extends Exception{
-
+    
 	public WSCFException(Exception e){
 		super(e);
 	}
