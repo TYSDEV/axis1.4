@@ -222,8 +222,7 @@ public class J2eeBeanWriter extends J2eeClassWriter {
                     variableName = Constants.ANYCONTENT;
                     isAny = true;
                 } else {
-                    String elemName = elem.getName().getLocalPart();
-                    variableName = Utils.xmlNameToJava(elemName);
+                    variableName = elem.getName();
                 }
                 names.add(typeName);
                 names.add(variableName);
@@ -396,8 +395,7 @@ public class J2eeBeanWriter extends J2eeClassWriter {
                 for (int j = 0; j < elements.size(); j++) {
                     ElementDecl elem = (ElementDecl) elements.get(j);
                     paramTypes.add(elem.getType().getName());
-                    paramNames.add(mangle +
-                            Utils.xmlNameToJava(elem.getName().getLocalPart()));
+                    paramNames.add(mangle +elem.getName());
                 }
             }
         }

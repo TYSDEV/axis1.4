@@ -292,10 +292,8 @@ public class J2eeBeanHelperWriter extends J2eeClassWriter {
                         continue;
                     }
 
-                    String elemLocalName = elem.getName().getLocalPart();
-                    String fieldName = Utils.xmlNameToJava(elemLocalName);
-                    fieldName = getAsFieldName(fieldName);
-                    QName xmlName = elem.getName();
+                    String fieldName = getAsFieldName(elem.getName());
+                    QName xmlName = elem.getQName();
                     
                     // Some special handling for arrays.
                     TypeEntry elemType = elem.getType();
