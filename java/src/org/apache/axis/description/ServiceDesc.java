@@ -798,19 +798,18 @@ public class ServiceDesc {
                 paramDesc.setName("in" + k);
             }
 
-            // If it's a Holder, mark it INOUT and set the type to the
-            // held type.  Otherwise it's IN with its own type.
+            // If it's a Holder, mark it INOUT, and set the XML type QName
+            // to the held type.  Otherwise it's IN.
 
             Class heldClass = JavaUtils.getHolderValueType(type);
             if (heldClass != null) {
                 paramDesc.setMode(ParameterDesc.INOUT);
                 paramDesc.setTypeQName(tm.getTypeQName(heldClass));
-                paramDesc.setJavaType(heldClass);
             } else {
                 paramDesc.setMode(ParameterDesc.IN);
                 paramDesc.setTypeQName(tm.getTypeQName(type));
-                paramDesc.setJavaType(type);
             }
+            paramDesc.setJavaType(type);
             operation.addParameter(paramDesc);
         }
 
