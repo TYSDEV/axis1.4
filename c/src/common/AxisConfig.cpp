@@ -70,8 +70,8 @@ AxisConfig::AxisConfig()
 {
     /*assigning default values for configuration variables*/
     #ifdef WIN32
-        strcpy(m_sWsddFilePath, "c:\Axis\conf\server.wsdd");
-        strcpy(m_sAxisLogPath, "c:\Axis\conf\AxisLog");
+        strcpy(m_sWsddFilePath, "c:/Axis/conf/server.wsdd");
+        strcpy(m_sAxisLogPath, "c:/Axis/conf/AxisLog");
 
     #else
         strcpy(m_sWsddFilePath, "/usr/local/apache/Axis/conf/server.wsdd");

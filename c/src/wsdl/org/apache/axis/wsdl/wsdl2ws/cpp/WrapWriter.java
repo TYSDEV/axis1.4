@@ -270,7 +270,32 @@ public class WrapWriter extends CPPClassWriter{
 					"\n\t\t, Axis_TypeName_"+paraTypeName+", Axis_URI_"+paraTypeName+");\n");				
 			}
 		}
-			
+		//if any error occured in the deserialization do not call the web service method. just return an error.
+		writer.write("\tif (AXIS_SUCCESS != pIWSDZ->GetStatus())\n\t{\n");
+		for (int i = 0; i < paramsB.size(); i++) {
+			paraTypeName = ((ParameterInfo)paramsB.get(i)).getLangName();
+			Type type;
+			if((CPPUtils.isSimpleType(((ParameterInfo)paramsB.get(i)).getLangName()))){
+				//for simple types nothing is done	
+			}else if((type = this.wscontext.getTypemap().getType(((ParameterInfo)paramsB.get(i)).getSchemaName())) != null && type.isArray()){
+				QName qname = type.getTypNameForAttribName("item");
+				String containedType = null;
+				if (CPPUtils.isSimpleType(qname)){ //array of simple types
+					containedType = CPPUtils.getclass4qname(qname);
+					writer.write("\tdelete [] ("+containedType+"*) v"+i+".m_Array;\n"); 
+				}
+				else{
+					containedType = qname.getLocalPart();
+					writer.write("\tdelete [] ("+containedType+"*) v"+i+".m_Array;\n");
+				}
+			}else{
+				//for complex types 
+				writer.write("\tdelete v"+i+";\n");				
+			}
+		}
+
+		writer.write("\treturn AXIS_DESERIALIZATION_ERROR;\n\t}\n");
+
 		if(returntype != null){				
 			/* Invoke the service when return type not void */
 			writer.write("\t"+outparamType+((returntypeisarray || returntypeissimple)?" ":" *")+ "ret = "+"pWs->"+methodName+"(");

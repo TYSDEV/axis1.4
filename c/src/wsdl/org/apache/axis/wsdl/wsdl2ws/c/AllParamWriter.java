@@ -95,7 +95,7 @@ public class AllParamWriter implements SourceWriter{
 					}	
 					else{	
 						System.out.println("struct writer called ......");
-						(new org.apache.axis.wsdl.wsdl2ws.cpp.BeanParamWriter(wscontext,type)).writeSource();
+						(new org.apache.axis.wsdl.wsdl2ws.c.BeanParamWriter(wscontext,type)).writeSource();
 						(new ParmHeaderFileWriter(wscontext,type)).writeSource();	
 					}	
 				}	
