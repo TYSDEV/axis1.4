@@ -86,7 +86,6 @@ import java.util.List;
  * file which contains the <bindingName>Skeleton class.
  * 
  * @author Ias (iasandcb@tmax.co.kr)
- * @deprecated no more used by J2eeGeneratorFactory
  */
 public class J2eeSkelWriter extends JavaClassWriter {
     private BindingEntry bEntry;

@@ -10,7 +10,6 @@ import org.apache.axis.wsdl.toJava.JavaClassWriter;
 
 /**
  * @author Ias (iasandcb@tmax.co.kr)
- * @deprecated no more used by J2eeGeneratorFactory
  */
 public abstract class J2eeClassWriter extends JavaClassWriter {
 

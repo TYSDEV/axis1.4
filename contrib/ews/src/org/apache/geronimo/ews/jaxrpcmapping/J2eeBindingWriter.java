@@ -69,7 +69,6 @@ import java.io.IOException;
  * <bindingName>Stub.java, <bindingName>Skeleton.java, <bindingName>Impl.java.
  * 
  * @author Ias (iasandcb@tmax.co.kr)
- * @deprecated no more used by J2eeGeneratorFactory
  */
 public class J2eeBindingWriter implements Generator {
     protected Generator stubWriter = null;
