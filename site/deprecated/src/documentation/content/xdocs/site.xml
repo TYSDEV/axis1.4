@@ -52,7 +52,7 @@ See http://xml.apache.org/forrest/linking.html for more info
   <sourcecode label="Source Code" href="http://cvs.apache.org/viewcvs/ws-axis/"/>
 </downloads>
 <translation label="Translation">
-  <releases label="Japanese (Unofficial)" href="http://ws.apache.org/axis/jp/"/>
+  <releases label="Japanese" href="http://ws.apache.org/axis/jp/"/>
 </translation>
 <related label="Related Projects">
   <wsif label="WSIF" href="http://ws.apache.org/wsif/"/>
