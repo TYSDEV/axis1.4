@@ -152,17 +152,3 @@ void ESHHandler::OnFault(IMessageData *pIMsg)
 {
 
 }
-
-int ESHHandler::Init()
-{
-	//do any initialization, resetting of values
-
-	return SUCCESS;
-}
-
-int ESHHandler::Fini()
-{
-	//do any finalizatoin
-
-	return SUCCESS;
-}
