@@ -58,11 +58,7 @@ package org.apache.axis;
 import javax.xml.rpc.namespace.QName;
 import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.encoding.TypeMapping;
-
 import java.util.Hashtable;
-
-// temporary...
-import org.apache.axis.deployment.DeploymentRegistry;
 
 /**
  * EngineConfiguration is an interface that the Message Flow subsystem

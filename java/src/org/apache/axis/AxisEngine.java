@@ -55,9 +55,8 @@
 
 package org.apache.axis;
 
-import org.apache.axis.deployment.DeploymentRegistry;
 import org.apache.axis.deployment.DeploymentException;
-import org.apache.axis.deployment.wsdd.*;
+//import org.apache.axis.deployment.wsdd.*;
 import org.apache.axis.encoding.DeserializerFactory;
 import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.encoding.Serializer;
@@ -365,15 +364,6 @@ public abstract class AxisEngine extends BasicHandler
             setOptions(globalOptions);
 
         normaliseOptions();
-    }
-
-   /**
-     * Deploy a Handler into our handler registry.
-     */
-    public void deployHandler(String key, Handler handler)
-        throws ConfigurationException
-    {
-//        config.getDeploymentRegistry().deployHandler(key, handler);
     }
 
     /**

@@ -255,11 +255,16 @@ runtime artefacts such as Chains and SOAPServices and a set of global
 configuration options for the engine.
 <p>
 The Message Flow subsystem's EngineConfiguration interface
-is implemented by the Administration subsystem.
+is implemented by the Administration subsystem. FileProvider enables
+an engine to be configured statically from a file containing a
+deployment descriptor which is understood by the WSDDDeployment class.
+SimpleProvider, on the other hand, enables an engine to be configured
+dynamically.
 <br><img SRC="engineconfig.jpg">
 <h3>
 WSDD-Based Administration</h3>
-WSDD is an XML grammer for statically configuring Axis engines.
+WSDD is an XML grammer for deployment descriptors which are used to
+statically configuring Axis engines.
 Each Handler needs configuration in terms of the concrete class name
 of a factory for the Handler, a set of options for the handler, and
 a lifecycle scope value which determines the scope of sharing of
@@ -269,7 +274,7 @@ The structure of the WSDD grammar is mirrored by a class hierarchy of factories
 for runtime artefacts.
 The following diagram shows the classes and the types of runtime
 artefacts they produce (a dotted arrow means "instantiates").
-<br><img SRC="wsddclasses.jpg" height=381 width=655>
+<br><img SRC="wsddclasses.jpg">
 <h2>
 <a NAME="Sequence Diagrams"></a>Interaction Diagrams</h2>
 
