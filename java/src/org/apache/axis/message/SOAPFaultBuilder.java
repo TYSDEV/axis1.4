@@ -139,11 +139,12 @@ public class SOAPFaultBuilder extends SOAPHandler implements Callback
                         // This is our exception class
                         f = (AxisFault) faultData;
                     } else {
-                        // We need to create the exception, passing the data
-                        // to the constructor
+                        // We need to create the exception, 
+                        // passing the data to the constructor.
+                        Class argClass = ConvertWrapper(faultData.getClass());
                         Constructor con = 
                                 faultClass.getConstructor(
-                                        new Class[] { faultData.getClass() });
+                                        new Class[] { argClass });
                         f = (AxisFault) con.newInstance(new Object[] { faultData });
                     }
                 }
@@ -248,5 +249,31 @@ public class SOAPFaultBuilder extends SOAPHandler implements Callback
             faultActor = (String) value;
         }
         
+    }
+
+    /**
+     * A simple map of holder objects and their primitive types 
+     */
+    private static HashMap TYPES = new HashMap(7);
+
+    static {
+        TYPES.put(java.lang.Integer.class, int.class);
+        TYPES.put(java.lang.Float.class, float.class);
+        TYPES.put(java.lang.Boolean.class, boolean.class);
+        TYPES.put(java.lang.Double.class, double.class);
+        TYPES.put(java.lang.Byte.class, byte.class);
+        TYPES.put(java.lang.Short.class, short.class);
+        TYPES.put(java.lang.Long.class, long.class);
+    }
+    
+    /**
+     * Internal method to convert wrapper classes to their base class
+     */ 
+    private Class ConvertWrapper(Class cls) {
+        Class ret = (Class) TYPES.get(cls);
+        if (ret != null) {
+            return ret;
+        }
+        return cls;
     }
 }
