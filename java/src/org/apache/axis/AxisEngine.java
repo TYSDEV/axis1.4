@@ -443,16 +443,7 @@ public abstract class AxisEngine extends BasicHandler
     public void deployTransport(String key, SimpleTargetedChain transport)
         throws DeploymentException
     {
-        transport.setName(key);
-        WSDDTransport wt = new WSDDTransport();
-        wt.setName(key);
-        wt.setOptionsHashtable(transport.getOptions());
-        // !!! Request flow?
-        // !!! Response flow?
-        wt.setPivotQName(new QName(WSDDConstants.WSDD_JAVA,
-                                   transport.getPivotHandler().getClass().getName()));
-        
-        myRegistry.deployTransport(wt);
+        myRegistry.deployTransport(key, transport);
     }
 
     /**
@@ -461,7 +452,7 @@ public abstract class AxisEngine extends BasicHandler
     public void undeployTransport(String key)
         throws DeploymentException
     {
-        myRegistry.undeployTransport(new QName("", key));
+        myRegistry.undeployTransport(key);
     }
 
     /**

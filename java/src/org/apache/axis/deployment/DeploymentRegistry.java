@@ -55,6 +55,7 @@
 package org.apache.axis.deployment;
 
 import org.apache.axis.Handler;
+import org.apache.axis.SimpleTargetedChain;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.deployment.wsdd.WSDDGlobalConfiguration;
 import org.apache.axis.deployment.wsdd.WSDDDocument;
@@ -228,6 +229,15 @@ public abstract class DeploymentRegistry
         throws DeploymentException;
 
     /**
+     * deploy the given transport
+     * @param key XXX
+     * @param transport XXX
+     * @throws DeploymentException XXX
+     */
+    public abstract void deployTransport(String key, SimpleTargetedChain transport)
+        throws DeploymentException;
+  
+    /**
      * remove the given item
      * @param qname XXX
      * @throws DeploymentException XXX
@@ -273,6 +283,14 @@ public abstract class DeploymentRegistry
      * @throws DeploymentException XXX
      */
     public abstract void undeployTransport(QName qname)
+        throws DeploymentException;
+
+    /**
+     * remove the given transport
+     * @param key XXX
+     * @throws DeploymentException XXX
+     */
+    public abstract void undeployTransport(String key)
         throws DeploymentException;
 
     /**
