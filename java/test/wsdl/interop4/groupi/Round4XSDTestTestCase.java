@@ -136,9 +136,6 @@ public class Round4XSDTestTestCase extends junit.framework.TestCase {
 
         try {
             java.util.Calendar input = java.util.Calendar.getInstance();
-            //input.setTimeZone(TimeZone.getTimeZone("GMT"));
-            // WhiteMesa fails on optional milliseconds.
-            //input.set(Calendar.MILLISECOND,0);
             java.util.Calendar value = null;
             value = binding.echoDate(input);
             assertTrue(input.equals(value));

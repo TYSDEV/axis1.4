@@ -99,9 +99,10 @@ public class Utils {
                 rc = new QName(Constants.URI_DEFAULT_SOAP_ENC, 
                                qName.getLocalPart());
             }
-            else if (localName.equals("base64Binary") ||
-                     localName.equals("hexBinary")) {
+            else if (localName.equals("base64Binary")) {
                 rc = new QName(Constants.URI_DEFAULT_SOAP_ENC, "base64");
+            } else if (localName.equals("hexBinary")) {
+                rc = new QName(Constants.URI_DEFAULT_SCHEMA_XSD, "hexBinary");
             }
         }
        return rc;
