@@ -108,7 +108,15 @@ public class BuildFileGenerator implements Generator {
 			//out.write("	<property file=\"ws4j2ee.properties\"/>\n");
 
 			out.write("	<path id=\"classpath\" >\n");
-			File tempfile = new File("./target/classes");
+
+            File tempfile = null;
+            if(file != null) {
+                tempfile = new File(file.getParent(), "classes");
+            }
+            if(tempfile == null) {
+                tempfile = new File("./target/classes");
+            }
+
 			out.write("		<pathelement location=\"/"+tempfile.getAbsolutePath()+"\"/>");
 			tempfile = new File("target/test-classes");
 			out.write("		<pathelement location=\"/"+tempfile.getAbsolutePath()+"\"/>");
