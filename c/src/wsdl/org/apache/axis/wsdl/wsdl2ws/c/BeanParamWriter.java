@@ -192,7 +192,7 @@ public class BeanParamWriter extends ParamCPPFileWriter{
 		for(int i = 0; i< attribs.length;i++){
 			if(CPPUtils.isSimpleType(attribs[i][1])){
 				//if symple type
-				writer.write("\tparam->"+attribs[i][0]+" = pIWSDZ->"+CPPUtils.getParameterGetValueMethodName(attribs[i][1])+";\n");
+				writer.write("\tparam->"+attribs[i][0]+" = pIWSDZ->"+CPPUtils.getParameterGetValueMethodName(attribs[i][1])+"();\n");
 			}else if((t = wscontext.getTypemap().getType(new QName(attribs[i][2],attribs[i][3])))!= null && t.isArray()){
 				//if Array
 				QName qname = t.getTypNameForAttribName("item");
