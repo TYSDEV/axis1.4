@@ -291,9 +291,10 @@ int AxisTime::mkCTime()
             m_TM.tm_year -= 1900;
             m_TM.tm_mon--;
             m_TM.tm_isdst = -1;
+#ifndef WIN32
             m_TM.tm_zone = NULL;
             m_TM.tm_gmtoff = -1;
-
+#endif
             cTemp2 = strpbrk(m_sValue.c_str(), "T");
             cTemp3 = strrchr(cTemp2, ':');
             cTemp3[0] = '\0';
@@ -371,9 +372,10 @@ int AxisTime::mkCTime()
             m_TM.tm_min = 0;
             m_TM.tm_sec = 0;
             m_TM.tm_isdst = -1;
+#ifndef WIN32
             m_TM.tm_zone = NULL;
             m_TM.tm_gmtoff = -1;
-            
+#endif            
             cTemp3 = strpbrk(m_sValue.c_str(), ":");
 
             /*if the timezone is represented adding 'Z' at the end*/
@@ -442,8 +444,10 @@ int AxisTime::mkCTime()
             m_TM.tm_mon = 0;
             m_TM.tm_mday = 0;
             m_TM.tm_isdst = -1;
+#ifndef WIN32
             m_TM.tm_zone = NULL;
             m_TM.tm_gmtoff = -1;
+#endif
             printf("m_sValue:%s\n", m_sValue.c_str());
 
             cTemp2 = strpbrk(m_sValue.c_str(), "T");
