@@ -67,7 +67,7 @@
 #define __AXISTRACE__
 #if defined(__AXISTRACE__)  
   #define AXISTRACE1(X, Y) g_pAT->logaxis(X,Y,__FILE__,__LINE__);
-  #define AXISTRACE2(X,Y, Z) g_pAT->logaxis(X,Y,Z,__FILE__,__LINE__);
+  #define AXISTRACE2(X, Y, Z) g_pAT->logaxis(X,Y,Z,__FILE__,__LINE__);
   #define AXISTRACE3(X) g_pAT->trace(X);
   
 #endif
@@ -94,6 +94,7 @@ class AxisTrace
 public:
     AxisTrace();
 	virtual ~AxisTrace();
+    int logthis(const char* sLog, int level, char* arg2, int arg3);
     /**
 	 * This is called in writing to the log file whose path is specified in $AXIS_HOME/axiscpp.conf file.
      * This method is used when the caller has only one string message as argument. User
@@ -107,18 +108,44 @@ public:
 	 */
     int logaxis(const char* sLog, int level, char* arg2, int arg3);
     /**
-	 * This is called in writing to the log file whose path is specified in $AXIS_HOME/axiscpp.conf file.
-     * This method is used when the caller has two string messages as arguments. One may be his own message.
-     * The other may be to print a trace value. User can also specify the severity of the message by
+     * This is called in writing to the log file whose path is specified in $AXIS_HOME/axiscpp.c     * onf file.
+     * This method is used when the caller has two string messages as arguments. One may be his      *own message.
+     * The other may be to print a trace value. User can also specify the severity of the messag     *e by
      * assigning level argument to one of CRITICAL, WARN, INFO or TRIVIAL.
-	 * @param sLog1 string message one
+     * @param sLog1 string message one
      * @param sLog2 string message two  
      * @param level severity level
      * @param arg3 file name
      * @param arg4 line number
-	 * @return The status which indicates whether the operation is success (AXIS_SUCCESS) or not (AXIS_FAIL).
-	 */
+     * @return The status which indicates whether the operation is success (AXIS_SUCCESS) or not     * (AXIS_FAIL).
+    */
     int logaxis(const char* sLog1, const char* sLog2, int level, char* arg3, int arg4);
+    /**
+     * This is called in writing to the log file whose path is specified in $AXIS_HOME/axiscpp.c     * onf file.
+     * This method is used when the caller pass first argument as string and the second argument     * as long. First is his own message.
+     * The other may be to print a trace value. User can also specify the severity of the messag     * e by
+     * assigning level argument to one of CRITICAL, WARN, INFO or TRIVIAL.
+     * @param sLog1 string message one
+     * @param sLog2 string message two  
+     * @param level severity level
+     * @param arg3 file name
+     * @param arg4 line number
+     * @return The status which indicates whether the operation is success (AXIS_SUCCESS) or not     * (AXIS_FAIL).
+    */
+    int logaxis(const char* sLog1, const long nLog2, int level, char* arg3, int arg4);
+    /**
+     * This is called in writing to the log file whose path is specified in $AXIS_HOME/axiscpp.c     * onf file.
+     * This method is used when the caller pass first argument as string and the second argument     * as double. First is his own message.
+     * The other may be to print a trace value. User can also specify the severity of the messag     * e by
+     * assigning level argument to one of CRITICAL, WARN, INFO or TRIVIAL.
+     * @param sLog1 string message one
+     * @param sLog2 string message two  
+     * @param level severity level
+     * @param arg3 file name
+     * @param arg4 line number
+     * @return The status which indicates whether the operation is success (AXIS_SUCCESS) or not     * (AXIS_FAIL).
+    */
+    int logaxis(const char* sLog1, const double dLog2, int level, char* arg3, int arg4);
 	/**
 	 * Writes the given string to the standard console. This method is useful when using
      * the standalone server.
