@@ -157,7 +157,7 @@ public class BuildFileGenerator implements Generator {
             out.write("    </delete>\n");
 
 			out.write("	   <mkdir dir=\"${build.lib}\"/>\n");
-			out.write("		<javac destdir=\"${build.classes}\" debug=\"on\">\n");
+			out.write("		<javac destdir=\"${build.classes}\" source=\"1.3\" debug=\"on\">\n");
 			out.write("			<classpath refid=\"classpath\" />\n");
 			out.write("			<src path=\"${src}\"/>\n");
 			out.write("		</javac>\n");
