@@ -35,13 +35,9 @@
 
 class FaultTo:public EndpointReferenceType 
 {
-      /***
-       * Constructor FaultTo
-       * 
-       * @param address 
-       */
 public:
     FaultTo();
-    FaultTo(AxisChar * address);   
-  };
+    FaultTo(AxisChar * pachAddress);   
+    FaultTo(IHeaderBlock * pIHeaderBlock);
+};
 #endif

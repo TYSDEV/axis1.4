@@ -41,6 +41,7 @@ RelatesTo::RelatesTo()
 RelatesTo::RelatesTo(AxisChar* pachUri)
 :AttributedUri(Constants.RELATES_TO,pachUri)
 {
+    m_pRelationshipType = NULL;
 }
 
 void RelatesTo::setRelationshipType(RelationshipType * pRelationshipType)
@@ -61,21 +62,17 @@ RelationshipType * RelatesTo::getRelationshipType()
 
 IHeaderBlock * RelatesTo::toSoapHeaderBlock(IMessageData *pIMsg)
 {
-   IHandlerSoapSerializer* pISZ;
+    FILE * f = fopen("log4.out","w");
+    IHandlerSoapSerializer* pISZ;
 	pIMsg->getSoapSerializer(&pISZ);
-
-	IHeaderBlock* pIHeaderBlock= pISZ->createHeaderBlock();
     
-	pIHeaderBlock->setLocalName(getLocalName());
-    pIHeaderBlock->setUri(Constants.NS_URI_ADDRESSING);
+	IHeaderBlock* pIHeaderBlock= pISZ->createHeaderBlock(getLocalName(),Constants.NS_URI_ADDRESSING);
 
     if(m_pRelationshipType != NULL)
         pIHeaderBlock->createAttribute(Constants.RELATIONSHIP_TYPE,"",m_pRelationshipType->getUri());
 		        
-	printf("in the WsaHandler::Invoke : %s\n");
-
-	BasicNode* pBasicNode = pIHeaderBlock->createChild(CHARACTER_NODE);
-	pBasicNode->setValue(getUri());
+	BasicNode* pBasicNode = pIHeaderBlock->createChild(CHARACTER_NODE,  
+                            NULL,NULL,NULL,getUri());
 	
 	pIHeaderBlock->addChild(pBasicNode);
     

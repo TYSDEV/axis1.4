@@ -34,25 +34,85 @@
     
 ReferenceProperties::ReferenceProperties()
 {
-}
 
-ReferenceProperties::ReferenceProperties(AxisChar * pachLocalName)
+}
+ReferenceProperties::ReferenceProperties(IHeaderBlock * pIHParent)
 {
-	m_pachLocalName = (AxisChar*) malloc(strlen(pachLocalName)+1);
-    strcpy(m_pachLocalName, pachLocalName);
-
-    m_pachPrefix = '\0';
+	if(pIHParent!=NULL)
+	{
+		for(int i=0; i<pIHParent->getNoOfChildren(); i++)
+		{
+			BasicNode * pBasicNode = (BasicNode*) pIHParent->getChild(i);
+			if(pBasicNode!=NULL)
+			{
+				AxisChar * pachLocalName = (AxisChar*)pBasicNode->getLocalName();
+				if(pachLocalName!=NULL)
+					if(pBasicNode->getFirstChild!=NULL && pBasicNode->getFirstChild()->getValue()!=NULL)
+					{
+						m_refProps[pachLocalName] = (AxisChar*)pBasicNode->getFirstChild()->getValue();
+					}
+			}
+		}
+	}
 }
+
+ReferenceProperties::ReferenceProperties(const AxisChar * pachLocalName)
+{
+	m_pachLocalName = (AxisChar*)malloc(strlen(pachLocalName)+1);
+    strcpy(m_pachLocalName, pachLocalName);
+    
+    m_pachUri = NULL;
+}
+
+ReferenceProperties::ReferenceProperties(ReferenceProperties * pRefprops)
+{
+    map<AxisChar *,AxisChar *,ltstr> tempmap = pRefprops->getProperties();
+    map<AxisChar *,AxisChar *,ltstr>::iterator itCurrentItem 
+        = tempmap.begin();
+    while (itCurrentItem != tempmap.end ())
+    { 
+        m_refProps[(*itCurrentItem).first] = itCurrentItem->second;       
+        itCurrentItem++;
+    }
+
+    if(pRefprops->getLocalName() != NULL)
+    {
+        m_pachLocalName = (AxisChar*)malloc(strlen(pRefprops->getLocalName()));
+        strcpy(m_pachLocalName,pRefprops->getLocalName());
+    }
+   /* 
+    if(pRefprops->getPrefixUri() != NULL)
+    {
+        m_pachUri = (AxisChar*)malloc(strlen(pRefprops->getPrefixUri()));
+        strcpy(m_pachUri,pRefprops->getPrefixUri());
+    }*/    
+}
+
 ReferenceProperties::~ReferenceProperties()
 {
-    free(m_pachPrefix);
-	free(m_pachLocalName);
+    if(m_pachUri!=NULL)
+        free(m_pachUri);
+    if(m_pachLocalName != NULL)
+	    free(m_pachLocalName);
+	map <AxisChar*,AxisChar*, ltstr >::iterator itCurrentItem =
+        m_refProps.begin ();
+
+    while (itCurrentItem != m_refProps.end ())
+    {
+        delete [] (*itCurrentItem).first;
+        delete [] itCurrentItem->second;
+
+        itCurrentItem++;
+    }
+
+    m_refProps.clear ();
 }
 
-void ReferenceProperties::setLocalName(AxisChar * pachLocalName)
+void ReferenceProperties::setLocalName(const AxisChar * pachLocalName)
 {
-    free(m_pachLocalName);
-    m_pachLocalName = (AxisChar*) malloc(strlen(pachLocalName)+1);
+    if(m_pachLocalName!=NULL)
+        free(m_pachLocalName);
+    m_pachLocalName = (AxisChar*)malloc(strlen(pachLocalName)+1);
     strcpy(m_pachLocalName, pachLocalName);
 }
 
@@ -61,28 +121,17 @@ AxisChar * ReferenceProperties::getLocalName()
 	return m_pachLocalName;
 }
 
-void ReferenceProperties::setPrefix(AxisChar * pachPrefix)
+void ReferenceProperties::setPrefixUri(const AxisChar * pachUri)
 {
-    free(m_pachPrefix);
-    m_pachPrefix = (AxisChar*) malloc(strlen(pachPrefix));
-    strcpy(m_pachPrefix,pachPrefix);
+    if(m_pachUri!=NULL)
+        free(m_pachUri);
+    m_pachUri = (AxisChar*)malloc(strlen(pachUri)+1);
+    strcpy(m_pachUri,pachUri);
 }
 
-AxisChar * ReferenceProperties::getPrefix()
+AxisChar * ReferenceProperties::getPrefixUri()
 {
-    return m_pachPrefix;
-}
-
-int ReferenceProperties::setProperty(AxisChar * pachName, AxisChar * pachValue)
-{
-    AxisChar* pachTmpName = (AxisChar*) malloc (strlen (pachName) + 1);
-    strcpy (pachTmpName, pachName);
-    AxisChar* pachTmpValue = (AxisChar*) malloc (strlen (pachValue) + 1);
-    strcpy (pachTmpValue, pachValue);
-
-    m_refProps[pachTmpName] = pachTmpValue;
-
-    return AXIS_SUCCESS;
+    return m_pachUri;
 }
 
 const AxisChar* ReferenceProperties::getProperty (AxisChar* pachName)
@@ -95,7 +144,20 @@ const AxisChar* ReferenceProperties::getProperty (AxisChar* pachName)
     return "";
 }
 
-map<AxisChar*,AxisChar*> ReferenceProperties::getProperties()
+void ReferenceProperties::addProperty(const AxisChar* pachLocalName,const AxisChar* pachValue)
+{
+    if(pachLocalName!=NULL && pachValue != NULL)
+    {      
+        AxisChar* pachTmpName = (AxisChar*)malloc(strlen (pachLocalName) + 1);
+        strcpy (pachTmpName, pachLocalName);
+        AxisChar* pachTmpValue = (AxisChar*)malloc(strlen (pachValue) + 1);
+        strcpy (pachTmpValue, pachValue);
+       
+		m_refProps[pachTmpName] = pachTmpValue;        
+    }
+}
+
+map<AxisChar*,AxisChar*,ReferenceProperties::ltstr>  ReferenceProperties::getProperties()
 {
     return m_refProps;
 }
@@ -105,40 +167,59 @@ IHeaderBlock * ReferenceProperties::toSoapHeaderBlock(IMessageData *pIMsg)
 	return toSoapHeaderBlock(pIMsg,m_pachLocalName);
 }
 
-IHeaderBlock * ReferenceProperties::toSoapHeaderBlock(IMessageData *pIMsg, AxisChar* pName)
+IHeaderBlock * ReferenceProperties::toSoapHeaderBlock(IMessageData *pIMsg,const AxisChar* pName)
 {
 	IHandlerSoapSerializer* pISZ;
 	pIMsg->getSoapSerializer(&pISZ);
-//	m_children = pIMsg->getReferenceProperties();
-	//For testing
-	m_refProps["L1"] = "Val1";
-	m_refProps["L2"] = "Val2";
-	m_refProps["L3"] = "Val3";
 
 	IHeaderBlock* pIHeaderBlock= pISZ->createHeaderBlock();
 
 	pIHeaderBlock->setLocalName(pName);
 	pIHeaderBlock->setUri(Constants.NS_URI_ADDRESSING);
    		        
-	printf("in the WsaHandler::Invoke : %s\n");	
+	map<AxisChar *,AxisChar *,ltstr>::iterator itCurrentItem = m_refProps.begin();
 
-    map<AxisChar *,AxisChar *>::iterator prop = m_refProps.begin();
-
-	while(prop != m_refProps.end())
-	{		
-        BasicNode * pElementNode = pIHeaderBlock->createChild(ELEMENT_NODE);
-        pElementNode->setLocalName((*prop).first);
+	while(itCurrentItem != m_refProps.end())
+	{	
+        BasicNode * pElementNode = pIHeaderBlock->createChild(ELEMENT_NODE,  
+                                   (*itCurrentItem).first, NULL,Constants.NS_URI_ADDRESSING, 
+                                   NULL);
         
-        BasicNode * pCharacterNode = pIHeaderBlock->createChild(CHARACTER_NODE);
-		pCharacterNode->setValue(prop->second);
+        BasicNode * pCharacterNode = pIHeaderBlock->createChild(CHARACTER_NODE,  
+                                   NULL,NULL,NULL, itCurrentItem->second);
+        
         pElementNode->addChild(pCharacterNode);
-
-
         pIHeaderBlock->addChild(pElementNode);
-		prop++;
+
+		itCurrentItem++;
 	}
 	
     return pIHeaderBlock;
 	
+}
+
+void ReferenceProperties::toSoapHeaders(IMessageData *pIMsg)
+{
+    IHandlerSoapSerializer* pISZ;
+	pIMsg->getSoapSerializer(&pISZ);	
+
+    map<AxisChar *,AxisChar *,ltstr>::iterator itCurrentItem = m_refProps.begin();
+
+	while(itCurrentItem != m_refProps.end())
+	{	
+        IHeaderBlock* pIHeaderBlock= pISZ->createHeaderBlock();
+
+	    pIHeaderBlock->setLocalName((*itCurrentItem).first);
+        if(m_pachUri != NULL)
+            pIHeaderBlock->setUri(m_pachUri);
+	       		        
+        BasicNode * pCharacterNode = pIHeaderBlock->createChild(CHARACTER_NODE);
+		pCharacterNode->setValue(itCurrentItem->second);
+        pIHeaderBlock->addChild(pCharacterNode);
+
+		itCurrentItem++;
+	}
+	
+
 }
 

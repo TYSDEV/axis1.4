@@ -37,11 +37,15 @@ using namespace std;
 Constants::Constants(){};
 Constants::~Constants(){};
 
-AxisChar * Constants::NS_PREFIX_ADDRESSING = "wsa";
+AxisChar * Constants::NS_URI_SOAP_ENVELOPE = "http://schemas.xmlsoap.org/soap/envelope/";
+
+AxisChar * Constants::NS_PREFIX_SOAP_ENVELOPE = "SOAP-ENV";
 
 AxisChar * Constants::NS_URI_ADDRESSING="http://schemas.xmlsoap.org/ws/2003/03/addressing";
 
-AxisChar * Constants::NS_URI_ANONYMOUS= *Constants::NS_URI_ADDRESSING + "/role/anonymous";
+AxisChar * Constants::NS_PREFIX_ADDRESSING = "wsa";
+
+AxisChar * Constants::NS_URI_ANONYMOUS= "http://schemas.xmlsoap.org/ws/2003/03/addressing/role/anonymous";
 
 AxisChar * Constants::ENDPOINT_REFERENCE = "EndpointReference";
 
@@ -75,7 +79,28 @@ AxisChar * Constants::FROM = "From";
 
 AxisChar * Constants::RECIPIENT = "Recipient";
 
-AxisChar *  Constants::ENV_ADDRESSING_REQUEST_HEADERS ="org.apache.axis.message.addressing.REQUEST.HEADERS";
+AxisChar * Constants::MUSTUNDERSTAND = "mustUnderstand";
 
-AxisChar *  Constants::ENV_ADDRESSING_RESPONSE_HEADERS ="org.apache.axis.message.addressing.RESPONSE.HEADERS";
+AxisChar * Constants::ENV_ADDRESSING_REQUEST_HEADERS = "org.apache.axis.message.addressing.REQUEST.HEADERS";
 
+AxisChar * Constants::ENV_ADDRESSING_RESPONSE_HEADERS = "org.apache.axis.message.addressing.RESPONSE.HEADERS";
+
+AxisChar * Constants::ENV_ADDRESSING_TO_URI = "addressing.to.URI";
+
+AxisChar * Constants::ENV_ADDRESSING_FROM_URI = "addressing.from.URI";
+
+AxisChar * Constants::ENV_ADDRESSING_ACTION_URI = "addressing.from.URI";
+
+AxisChar * Constants::ENV_ADDRESSING_REPLYTO_URI = "addressing.replyTo.URI";
+
+AxisChar * Constants::ENV_ADDRESSING_FAULTTO_URI = "addressing.faultTo.URI";
+ 
+AxisChar * Constants::ENV_ADDRESSING_SET_MUST_UNDERSTAND = "addressing.setMustUnderstand";
+ 
+AxisChar * Constants::ENV_ADDRESSING_SEND_REPLYTO = "addressing.sendReplyTo";      
+  
+AxisChar * Constants::ENV_ADDRESSING_REFERENCEPROPERTIES = "addressing.referenceproperties";
+
+AxisChar * Constants::FAULT_ACTION = "http://schemas.xmlsoap.org/ws/2004/03/addressing/fault";
+
+AxisChar * Constants::NS_URI_ADDRESSING_04 = "http://schemas.xmlsoap.org/ws/2004/03/addressing";

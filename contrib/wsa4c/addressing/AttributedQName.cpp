@@ -34,25 +34,67 @@
 
 AttributedQName::AttributedQName()
 {
-	m_pachLocalName = "\0";
-	m_pachUri = "\0";
-	m_pachQname = "\0";
+	m_pachLocalName = NULL;
+	m_pachUri = NULL;
+	m_pachQname = NULL;
 
 }
+
 AttributedQName::AttributedQName(const AxisChar* pachLocalName, const AxisChar* pachUri)
 {
-	m_pachLocalName = (AxisChar*) malloc(strlen(pachLocalName)+1);
-    strcpy(m_pachLocalName, pachLocalName);
-	m_pachUri = (AxisChar*) malloc(strlen(pachUri)+1);
-	strcpy(m_pachUri,pachUri);
-	m_pachQname = "\0";
+    if(pachLocalName != NULL && pachUri != NULL)
+    {
+	    m_pachLocalName = new AxisChar(strlen(pachLocalName)+1);
+        strcpy(m_pachLocalName, pachLocalName);
+	    m_pachUri = new AxisChar(strlen(pachUri)+1);
+	    strcpy(m_pachUri,pachUri);
+    }
+	m_pachQname = NULL;
+}
+
+AttributedQName::AttributedQName(const AxisChar* pachQname)
+{
+    if(pachQname != NULL)
+    {
+        AxisChar *pachTemQname = new AxisChar(strlen(pachQname)+1);
+        strcpy(pachTemQname,pachQname);
+        AxisChar * p = pachTemQname;
+        m_pachUri = pachTemQname;
+        while(*p!='\0')
+        { 
+            if(*p==':')
+            {
+                m_pachUri = p+1;
+                *p = '\0';
+                m_pachLocalName =pachTemQname;
+                break;
+            }
+            p++;
+        }
+        if(m_pachQname!=NULL)
+            delete(m_pachQname);
+        m_pachQname = new AxisChar(strlen(pachQname)+1);
+        strcpy(m_pachQname,pachQname);      
+    }
 }
 
 AttributedQName::~AttributedQName()
 {	
-	free(m_pachLocalName);
-	free(m_pachUri);
-	free(m_pachQname);
+    if(m_pachLocalName != NULL)
+    {
+	    delete(m_pachLocalName);
+        m_pachLocalName = NULL;
+    }
+    if(m_pachUri != NULL)
+    {
+	    delete(m_pachUri);
+        m_pachUri = NULL;
+    }
+    if(m_pachQname != NULL)
+    {
+	    delete(m_pachQname);
+        m_pachQname = NULL;
+    }
 }
 
 AxisChar * AttributedQName::getLocalName()
@@ -60,10 +102,10 @@ AxisChar * AttributedQName::getLocalName()
 	return m_pachLocalName;
 }
 
-void AttributedQName::setLocalName(AxisChar * pachLocalName)
+void AttributedQName::setLocalName(const AxisChar * pachLocalName)
 {
-	free(m_pachLocalName);
-	m_pachLocalName = (AxisChar*) malloc(strlen(pachLocalName)+1);
+	delete(m_pachLocalName);
+	m_pachLocalName = new AxisChar(strlen(pachLocalName)+1);
     strcpy(m_pachLocalName, pachLocalName);
 }
 
@@ -72,31 +114,35 @@ AxisChar * AttributedQName::getUri()
 	return m_pachUri;
 }
 
-void AttributedQName::setUri(AxisChar * pachUri)
+void AttributedQName::setUri(const AxisChar * pachUri)
 {
-	free(m_pachUri);
-	m_pachUri = (AxisChar*) malloc(strlen(pachUri)+1);
+    if(m_pachUri!=NULL)
+	    delete(m_pachUri);
+	m_pachUri = new AxisChar(strlen(pachUri)+1);
 	strcpy(m_pachUri,pachUri);
 
 }
 
 AxisChar * AttributedQName::getQname()
 {  
-    if(strlen(m_pachQname)!=0)
-		 free(m_pachQname);
+    if(m_pachQname!=NULL)
+        delete(m_pachQname);
 
-	m_pachQname = (AxisChar*) malloc(strlen(m_pachLocalName)+strlen(m_pachUri)+5);
-	
-    if(strlen(m_pachUri)!=0){
-		strcpy(m_pachQname,m_pachUri);
-        if(strlen(m_pachLocalName)!=0){
-            strcat(m_pachQname,":");
-		    strcat(m_pachQname,m_pachLocalName);		    
+    if(m_pachUri != NULL)
+    {	
+        m_pachQname = (AxisChar*) malloc(strlen(m_pachLocalName)+strlen(m_pachUri)+5);	
+        if(m_pachLocalName!=0)
+        {
+            strcpy(m_pachQname,m_pachLocalName);
+		    strcat(m_pachQname,":");
+            strcat(m_pachQname,m_pachUri);
+        }
+        else
+        {
+            strcpy(m_pachQname,m_pachUri);
         }
     }
-    if(strlen(m_pachQname)==0)
-        return "";
-	
+    	
 	return m_pachQname;	
 }
 

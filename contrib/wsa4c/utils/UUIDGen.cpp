@@ -30,53 +30,23 @@
 
 #include "UUIDGen.hpp"
 #include <iostream.h>
-#include "MacAddress.hpp"
+#ifdef WIN32
+    #include "MacAddress.hpp"
+#else
+
+#endif
 
 UUIDGen::UUIDGen()
-{
-    iClockSequence = nextInt(MAX_RAND);
+{  
+   int MAX_RAND = 16384;
+   iClockSequence = nextInt(MAX_RAND);
 }
 
-int UUIDGen::hexToint(char cHex)
-{
-    switch(cHex)
-    {
-    case '0':
-        return 0;
-    case '1':
-        return 1;
-    case '2':
-        return 2;
-    case '3':
-        return 3;
-    case '4':
-        return 4;
-    case '5':
-        return 5;
-    case '6':
-        return 6;
-    case '7':
-        return 7;
-    case '8':
-        return 8;
-    case '9':
-        return 9;
-    case 'A':
-        return 10;
-    case 'B':
-        return 11;
-    case 'C':
-        return 12;
-    case 'D':
-        return 13;
-    case 'E':
-        return 14;
-    case 'F':
-        return 15;
-    }
-}  
 char * UUIDGen::nextUUID()
 {
+   unsigned long COUNT_START = -12219292800000;
+   char * pcHexaChars[16] = {"0","1","2","3","4","5","6","7","8","9","A","B","C","D","E","F"};   
+   
    unsigned long ulCount;
 
    // the number of milliseconds since 1 January 1970
@@ -105,6 +75,8 @@ char * UUIDGen::nextUUID()
            strcat(pcHexString,"0");
            //cout<<"0";
        }
+       if(i==0)
+           break;
     }
 			 
     // the time_low field
@@ -143,6 +115,8 @@ char * UUIDGen::nextUUID()
 			strcat(pcClockSeqLow,pcHexaChars[((ulCount >> i*4) & 0xF)]);
         else
             strcat(pcClockSeqHiAndReserved,pcHexaChars[((ulCount >> i*4) & 0xF)]);
+        if(i==0)
+            break;
     }
    
     int * piClockSeqHi = new int(hexToint(*pcClockSeqLow));
@@ -157,9 +131,14 @@ char * UUIDGen::nextUUID()
     }
         
     char * pcMacAddress = (char*)malloc(13);
-    MacAddress *pMacAddress = new MacAddress;
-    pMacAddress->findMacAddress(pcMacAddress);
+    #ifdef WIN32
+        MacAddress *pMacAddress = new MacAddress;
+        pMacAddress->findMacAddress(pcMacAddress);
+    #else
+        //need a way to find MacAddress in linux
+    #endif
     
+ 
     char * pcUUIDString = (char*)malloc(37);
     strcpy(pcUUIDString,pcTimeLow);
     strcat(pcUUIDString,"-");
@@ -170,8 +149,8 @@ char * UUIDGen::nextUUID()
     strcat(pcUUIDString,pcClockSeqHiAndReserved);
     strcat(pcUUIDString,pcClockSeqLow);
     strcat(pcUUIDString,"-");
-    strcat(pcUUIDString,strdup(pcMacAddress));
-
+    strcat(pcUUIDString,strupr(pcMacAddress));
+    
     free(pcHexString);
     free(pcTimeLow);
     free(pcTimeMid);
@@ -181,11 +160,51 @@ char * UUIDGen::nextUUID()
     free(pcMacAddress);
     delete(pMacAddress);
     delete(piClockSeqHi);
-    
+	    
 
     return pcUUIDString;
 
 } 
+
+int UUIDGen::hexToint(char cHex)
+{
+    switch(cHex)
+    {
+    case '0':
+        return 0;
+    case '1':
+        return 1;
+    case '2':
+        return 2;
+    case '3':
+        return 3;
+    case '4':
+        return 4;
+    case '5':
+        return 5;
+    case '6':
+        return 6;
+    case '7':
+        return 7;
+    case '8':
+        return 8;
+    case '9':
+        return 9;
+    case 'A':
+        return 10;
+    case 'B':
+        return 11;
+    case 'C':
+        return 12;
+    case 'D':
+        return 13;
+    case 'E':
+        return 14;
+    case 'F':
+        return 15;
+    }
+	return 0;
+}  
 
 int UUIDGen::nextInt(int iNumber)
 {

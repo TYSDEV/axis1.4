@@ -28,12 +28,11 @@
 
  */
 
-
 #include "To.hpp" 	
 
-To::To(AxisChar * pachUri)
+To::To(const AxisChar * pachUri)
 :AttributedUri(Constants.TO,pachUri)
-{
+{    
 }
 		 
 

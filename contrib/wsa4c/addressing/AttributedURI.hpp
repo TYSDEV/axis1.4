@@ -33,8 +33,8 @@
 #define __ATTRIBUTEDURI_OF_AXIS_INCLUDED__
 
 #include "Constants.hpp"
-#include <axis/server/IHeaderBlock.hpp>
-#include <axis/server/IMessageData.hpp>
+#include <axis/IHeaderBlock.hpp>
+#include <axis/IMessageData.hpp>
 
 AXIS_CPP_NAMESPACE_USE
 
@@ -43,33 +43,18 @@ class AttributedUri
 private:
     AxisChar * m_pachLocalName;
     AxisChar * m_pachUri;
+    bool m_bMustUnderstand;
     
 public:
-	/*
-     * Constructor AttributedURI
-     */
-    AttributedUri(); 
-
-	/*
-     * Constructor AttributedURI
-     * @param uri 
-     */
-    AttributedUri(AxisChar * pachLocalName, AxisChar * pachUri);
-
-    /*Distructor
-	 */
-	~AttributedUri();
-   
-    void setUri(AxisChar * pUri);
-
+	AttributedUri(); 
+    AttributedUri(const AxisChar * pachLocalName,const AxisChar * pachUri);
+	~AttributedUri(); 
+    void setUri(const AxisChar * pUri);
     AxisChar * getUri();
-
-    void setLocalName(AxisChar * pachLocalName);
-
+    void setLocalName(const AxisChar * pachLocalName);
     AxisChar * getLocalName();
-
-    virtual IHeaderBlock * toSoapHeaderBlock(IMessageData *pIMsg);
-     
-    
+    void setMustUnderstand(bool bMustUnderstand);
+    bool isMustUnderstand();
+    IHeaderBlock * toSoapHeaderBlock(IMessageData *pIMsg);   
 };
 #endif

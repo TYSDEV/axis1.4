@@ -38,12 +38,6 @@
 
 class RelatesTo:AttributedUri{
 public:
-    /***
-     * Constructor Adress
-     * 
-     * @param uri 
-     */
-
     RelatesTo();
     ~RelatesTo();
     RelatesTo(AxisChar* pachUri);

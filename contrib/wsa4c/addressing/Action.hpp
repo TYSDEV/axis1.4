@@ -33,19 +33,12 @@
 #define __ACTION_OF_AXIS_INCLUDED__
 
 #include "AttributedURI.hpp"
-#include <axis/server/IMessageData.hpp>
+#include <axis/IMessageData.hpp>
 
-class Action:public AttributedUri {
+class Action:public AttributedUri 
+{
 public:
-    /*
-     * Constructor Action
-     * 
-     * @param uri 
-     */
-     Action(AxisChar * pachUri);
-
-     
-      
-  };
+     Action(const AxisChar * pachUri);
+};
 
 #endif

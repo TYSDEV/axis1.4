@@ -34,35 +34,43 @@
 
 #include "Constants.hpp"
 #include <map>
-#include <axis/server/BasicNode.hpp>
-#include <axis/server/IHeaderBlock.hpp>
-#include <axis/server/IMessageData.hpp>
+#include <axis/BasicNode.hpp>
+#include <axis/IHeaderBlock.hpp>
+#include <axis/IMessageData.hpp>
 
 AXIS_CPP_NAMESPACE_USE
 
 class ReferenceProperties
-{
+{   
 private:
+    struct ltstr
+	{
+		bool operator()(const char* s1, const char* s2) const
+		{
+		    return strcmp(s1, s2) < 0;
+		}
+	};	
 	int iNoOfChildren;
-    map <AxisChar*, AxisChar*> m_refProps;
-    AxisChar* m_pachPrefix;
-    AxisChar* m_pachLocalName;
-    
-public:
+    map <AxisChar*,AxisChar*,ltstr> m_refProps;
+    AxisChar* m_pachUri;
+    AxisChar* m_pachLocalName;  
 
+public:    
 	ReferenceProperties();
-	ReferenceProperties(AxisChar * pachLocalName);
+    ReferenceProperties(ReferenceProperties * pRefprops);
+	ReferenceProperties(IHeaderBlock * pIHParent);
+	ReferenceProperties(const AxisChar * pachLocalName);
 	~ReferenceProperties();
-	void setLocalName(AxisChar * pachLocalName);
+	void setLocalName(const AxisChar * pachLocalName);
 	AxisChar * getLocalName();
-    void setPrefix(AxisChar * pachPrefix);
-    AxisChar * getPrefix();
-	int setProperty(AxisChar * pName, AxisChar * pValue);
+    void setPrefixUri(const AxisChar * pachUri);
+    AxisChar * getPrefixUri();
 	const AxisChar* getProperty (AxisChar* pachName);
-    map<AxisChar*,AxisChar*> getProperties();
+    map<AxisChar*,AxisChar*,ltstr> getProperties();
+	void addProperty(const AxisChar * pachLocalName,const AxisChar * pachValue);
 	IHeaderBlock * toSoapHeaderBlock(IMessageData *pIMsg); 
-    IHeaderBlock * toSoapHeaderBlock(IMessageData *pIMsg, AxisChar* pName); 
-
+    IHeaderBlock * toSoapHeaderBlock(IMessageData *pIMsg,const AxisChar* pName); 
+    void toSoapHeaders(IMessageData *pIMsg);  
 };
 
 #endif

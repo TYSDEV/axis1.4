@@ -35,14 +35,10 @@
 
 class From:public EndpointReferenceType 
 {
-      /***
-       * Constructor From
-       * 
-       * @param address 
-       */
 public:
     From();
-    From(AxisChar * address);   
+    From(AxisChar * pachAddress);  
+    From(IHeaderBlock * pIHeaderBlock);
 };
 
 #endif

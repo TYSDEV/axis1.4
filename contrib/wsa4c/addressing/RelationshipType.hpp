@@ -33,14 +33,14 @@
 #define __RELATIONSHIP_TYPE_OF_AXIS_INCLUDED__
 
 #include "AttributedQName.hpp"
-#include <axis/server/BasicNode.hpp>
-#include <axis/server/IHeaderBlock.hpp>
-#include <axis/server/IMessageData.hpp>
+#include <axis/BasicNode.hpp>
+#include <axis/IHeaderBlock.hpp>
+#include <axis/IMessageData.hpp>
 
 AXIS_CPP_NAMESPACE_USE
  
-class RelationshipType:public AttributedQName{
-      
+class RelationshipType:public AttributedQName
+{      
 public:
     RelationshipType();
 	RelationshipType(const AxisChar* pachLocalName, const AxisChar* pachUri);

@@ -39,6 +39,10 @@ FaultTo::FaultTo(AxisChar * address)
 :EndpointReferenceType(Constants.FAULT_TO,address)
 {
 }
+FaultTo::FaultTo(IHeaderBlock * pIHeaderBlock)
+:EndpointReferenceType(pIHeaderBlock)
+{
+}
   
 
       

@@ -33,9 +33,9 @@
 #define __SERVICE_NAME_OF_AXIS_INCLUDED__
 
 #include "AttributedQName.hpp"
-#include <axis/server/BasicNode.hpp>
-#include <axis/server/IHeaderBlock.hpp>
-#include <axis/server/IMessageData.hpp>
+#include <axis/BasicNode.hpp>
+#include <axis/IHeaderBlock.hpp>
+#include <axis/IMessageData.hpp>
 
 AXIS_CPP_NAMESPACE_USE
   
@@ -54,15 +54,16 @@ AXIS_CPP_NAMESPACE_USE
   * </pre>
   * 
   */
-class ServiceNameType:public AttributedQName{
-      
+class ServiceNameType:public AttributedQName
+{      
 public:
     ServiceNameType();
 	~ServiceNameType();
 	AxisChar * getPortName();
 	void setPortName(AxisChar * pachPortName);
-	ServiceNameType(const AxisChar* pachLocalName, const AxisChar* pachUri,const AxisChar * portName);
-	IHeaderBlock * toSoapHeaderBlock(IMessageData *pIMsg);
+	ServiceNameType(const AxisChar* pachLocalName, const AxisChar* pachUri,const AxisChar * pachPortName);
+	ServiceNameType(const AxisChar* pachQname, const AxisChar * pachPortName);
+    IHeaderBlock * toSoapHeaderBlock(IMessageData *pIMsg);
 private:
 	AxisChar * m_pachPortName;
         
