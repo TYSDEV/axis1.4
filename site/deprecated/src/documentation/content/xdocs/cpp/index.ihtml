@@ -1,72 +1,50 @@
 <html>
 <head>
   <meta http-equiv="Content-Type" content="text/html">
-  <title>Axis C++ 1.3 Beta  is Available!</title>
+  <title>Axis C++ 1.3 is Available!</title>
 </head>
 
 <body>
-<h1>Axis C++ 1.3 Beta is Available!</h1>
+<h1>Axis C++ 1.3 </h1>
+<p><a href="download.html">Download Axis C++</a></p>
 
-<p>(September 15, 2004)</p>
+<p>Axis C++ 1.3 includes the following features in addition to the core engine</p> <br>
+<p><li>A simple stand-alone server, known as simple_axis_server</li>
+<li>Apache web server modules, to help deploy services</li>
+<li>Supports the Web Service Description Language (WSDL)</li>
+<li>Emitter tooling that generates C/C++ source code from WSDL files </li>
+<li>Some sample programs, and a test framework </li> </p>
+<br> <br>
 
-<p><br>
+<h1>Key features of Axis C++ 1.3</h1>
+<p><b><li>Parser and Transport abstraction layers</li></b>  <br>
+&nbsp; &nbsp;One could switch between parsers and different transport implementations. This yields the user the much needed flexibility in choosing different external libraries. Users could extend parser abstraction layer API and transport abstraction layer API to implement their own parser/transport libs to suite their custom requirements. 
+
+<p><b><li>Pull Parser Model </li></b> <br>
+&nbsp; &nbsp;Axis C++ uses SAX (event-based) pull parsing model to achieve significant speeds. <br> <br>
+
+<b><li>XML Parsers</li></b> <br>
+&nbsp; &nbsp;Both Expat parser and Xerces parser are supported. Any other XML parser could be seamlessly integrated with the parser abstraction layer <br> </p>
+<p><b><li>Speedier client transport</li></b> <br>
+&nbsp; &nbsp; Axis C++ is now equipped with a client transport that has proved to be much faster than its early implementations. <br> <br>
+<b><li>Apache modules</li> </b> <br>
+&nbsp; &nbsp;Both Apache 1.3.x releases and Apache 2.0.x releases of the most widely used web servers are supported. <br> <br>
+<b><li>Multiple platforms</li></b> <br>
+&nbsp; &nbsp;Axis C++ have been tested on Linux and Windows platforms and proved to work. Efforts are also underway to support platforms such as Solaris and AIX, and so far, have had success with those platforms as well. <br> </p>
+<p><b><li>WSDL support</li></b> <br>
+&nbsp; &nbsp; Axis C++ WSDL processing tools are based on Axis Java 1.2 tools and have improved complex types support. Both C and C++ source code generation is supported. <br> <br>
+
+<b><li>Improved documentation </li> </b> <br> <br>
+<b><li>Self sufficient</li></b> <br>
+&nbsp; &nbsp;Axis C++ is now equipped with simple_axis_server. Hence all one needs additionally is an XML parser to try out Axis C++. (Not even Apache web server is required if you do not plan to do high level deployment) Soon Axis C++ would have its own implementation of a pull parser, with which core Axis C++ features could be used without requiring any other external libraries. <br> <br>
+
+
+<b><li>Interoperability</li></b> <br>
+&nbsp; &nbsp;Numerous tests have been done to test the ability of Axis C++ client side to inter operate with Axis Java server side and the results are successful. Efforts are under way to make the Axis C++ server side to inter operate with Axis Java client side. 
 </p>
 
-<h1>Axis C++ 1.3 Alpha is Available!</h1>
 
-<p>(August 18, 2004)</p>
-
-<p><br>
-</p>
-
-
-<h1>Axis C++ 1.2  is Available!</h1>
-
-<p>(July 09, 2004)</p>
-
-<p><br>
-</p>
-
-<h1>Axis C++ 1.2 Beta is Available!</h1>
-
-<p>(June 29, 2004)</p>
-
-<p><br>
-</p>
-
-<h1>Axis C++ 1.2 Alpha is Available!</h1>
-
-<p>(June 15, 2004)</p>
-
-<p><br>
-</p>
-
-<h2>What is Axis C++?</h2>
-
-<p>Axis C++ is a SOAP implementation done in C++ which can be used as a SOAP
-messaging server or client.</p>
-
-<p>While Axis C++ has adopted the general architecture of Axis java, it
-introduces several core architectural features that is meant for increased
-performance.</p>
-
-<h2>Developer Base</h2>
-
-<p>Axis C++ was initiated by a group of developers from Sri Lanka and is the
-first effort of it's kind in the country.<br>
-<br>
-The team consists of developers and other contributors sponsored by different
-software companies.<br>
-</p>
-
-<p>The Axis C++ team hopes to attract a large user base and welcomes the
-participation of other developers to make Axis C++ a success.</p>
-
-<p></p>
-
-<p><a href="download.html">Try out Axis C++!</a></p>
-
-<p><br>
-</p>
 </body>
 </html>
+
+
