@@ -469,7 +469,7 @@
 </p>
 <p>Now</p>
 <p>
-<strong>$ cd $AXISCPP_HOME/c/src/wsdl/</strong>
+<strong>$ cd $AXISCPP_HOME/src/wsdl/</strong>
 </p>
 <p>
 <strong>$ mkdir temp</strong>
@@ -786,10 +786,10 @@
 <div class="h3">
 <h3>Deploying the Service</h3>
 </div>
-<p>The Folder called deploy in the <strong>/home/axisuser/projects/axis_c/</strong> should be copied to apache root folder .Rename the deploy folder as <strong>"Axis"</strong>. Give all permissions to this folder.</p>
+<p>The Folder called deploy in the <strong>$AXISCPP_HOME/</strong> should be copied to apache root folder .Rename the deploy folder as <strong>"Axis"</strong>. Give all permissions to this folder.</p>
 
 <p>
-<strong>$ cp &ndash;rf /home/axisuser/projects/axis_c/deloy /usr/local/apache</strong>
+<strong>$ cp &ndash;rf $AXISCPP_HOME/deloy /usr/local/apache</strong>
 </p>
 <p>
 <strong>$ cd /usr/local/apache</strong>
@@ -1355,7 +1355,7 @@
 </div>
 <p>If you want to test handlers go into the <strong>$AXISCPP_HOME/src/server/handlers</strong> folder where example handlers are included (If you use the binary download sample handler libraries are included in <strong>$(AXIS_HOME)/handlers</strong> folder(assuming that you created this folder as described in installation guide). Several sample handlers are included there covering the concepts of service specific, global and transport handlers. We will show you the detail of running a service specific handler named loghandler. The task of this handler is writing to a file the number of times the service is accessed.</p>
 <p>
-<strong>cd /home/axisuser/projects/axis_c/src/server/handlers/custom/loghandler</strong>
+<strong>cd $AXISCPP_HOME/src/server/handlers/custom/loghandler</strong>
 </p>
 <p>
 <strong>$sh autogen.sh</strong>
@@ -1755,9 +1755,9 @@
 <div class="h3">
 <h3>Deploying the Services</h3>
 </div>
-<p>The Folder called deploy in the <strong>/home/axisuser/projects/axis_c/</strong> should be copied to apache root folder .Rename the deploy folder as <strong>"Axis"</strong>. Give all permissions to this folder.</p>
+<p>The Folder called deploy in the <strong>$AXISCPP_HOME</strong> should be copied to apache root folder .Rename the deploy folder as <strong>"Axis"</strong>. Give all permissions to this folder.</p>
 <p>
-<strong>$ cp &ndash;rf /home/axisuser/projects/axis_c/deloy /usr/local/apache</strong>
+<strong>$ cp &ndash;rf $AXISCPP_HOME/deloy /usr/local/apache</strong>
 </p>
 
 <p>
