@@ -9,33 +9,33 @@
 
 <!-- ===================================================================
 <description>
-   Test/Sample Component file for Axis
+Test/Sample Component file for Axis
 
 Notes:
-   This is a build file for use with the Jakarta Ant build tool.
+This is a build file for use with the Jakarta Ant build tool.
 
 Prerequisites:
 
-   jakarta-ant from http://jakarta.apache.org
+jakarta-ant from http://jakarta.apache.org
 
 Build Instructions:
-   To compile
-        ant compile
-   To execute
-        ant run
+To compile
+ant compile
+To execute
+ant run
 
 Author:
-  Matt Seibert mseibert@us.ibm.com
-  Glen Daniels gdaniels@apache.org
+Matt Seibert mseibert@us.ibm.com
+Glen Daniels gdaniels@apache.org
 
 Copyright:
-  Copyright (c) 2002-2003 Apache Software Foundation.
+Copyright (c) 2002-2003 Apache Software Foundation.
 </description>
 ==================================================================== -->
 
 <project name="Round4" default="compile">
     <property name="axis.home" location="../../../../.." />
-    <property name="componentName" value="test/wsdl/interop4/groupH/simpleDocLit" />
+    <property name="componentName" value="test/wsdl/interop4/groupH/complexDocLit" />
     &properties;
     &paths;
     &taskdefs;
@@ -49,34 +49,35 @@ Copyright:
     </target>
     
     <target name="compile">
-        <property name="testname" value="simpleDocLit"/>
+        <property name="testname" value="complexDocLit"/>
         
         <!-- generate skeletons -->
-        <wsdl2java url="${axis.home}/test/wsdl/interop4/groupH/simpleDocLit/simple-doc-literal.wsdl"
-            output="${root.dir}/build/work" skeletonDeploy="no"
+        <wsdl2java url="${axis.home}/test/wsdl/interop4/groupH/complexDocLit/complex-doc-literal.wsdl"
+            output="${root.dir}/build/work" skeletonDeploy="no" testCase="yes"
             serverSide="yes">
-            <mapping namespace="http://soapinterop.org/wsdl" package="test.wsdl.interop4.groupH.simpleDocLit"/>
-            <mapping namespace="http://soapinterop.org/types" package="test.wsdl.interop4.groupH.simpleDocLit"/>
-            <mapping namespace="http://soapinterop.org/types/part" package="test.wsdl.interop4.groupH.simpleDocLit"/>
-            <mapping namespace="http://soapinterop.org/types/requestresponse" package="test.wsdl.interop4.groupH.simpleDocLit"/>
+            <mapping namespace="http://soapinterop.org/wsdl" package="test.wsdl.interop4.groupH.complexDocLit"/>
+            <mapping namespace="http://soapinterop.org/types" package="test.wsdl.interop4.groupH.complexDocLit"/>
+            <mapping namespace="http://soapinterop.org/types/part" package="test.wsdl.interop4.groupH.complexDocLit"/>
+            <mapping namespace="http://soapinterop.org/types/requestresponse" package="test.wsdl.interop4.groupH.complexDocLit"/>
         </wsdl2java>
         
         <mkdir dir="${build.dest}"/>
         
-        <copy file="SimpleDocLitBindingImpl.java" overwrite="true"
+        <copy file="ComplexDocLitBindingImpl.java" overwrite="true"
             todir="${root.dir}/build/work/test/wsdl/interop4/groupH/${testname}"/>
-        <copy file="SimpleDocLitServiceTestCase.java"
+        <copy file="ComplexDocLitServiceTestCase.java"
             todir="${root.dir}/build/work/test/wsdl/interop4/groupH/${testname}"/>
         
         <!-- compile the code -->
         <javac srcdir="${build.dir}/work"
             destdir="${build.dest}" debug="on">
             <classpath refid="classpath" />
-            <include name="test/wsdl/interop4/groupH/simpleDocLit/*.java" />
+            <include name="test/wsdl/interop4/groupH/complexDocLit/*.java" />
         </javac>
     </target>
     
     <target name="run" >
         <antcall target="execute-Component" />
     </target>
+    
 </project>
