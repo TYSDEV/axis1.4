@@ -99,7 +99,7 @@ public class JavaUndeployWriter extends JavaWriter {
      */
     protected void writeFileBody() throws IOException {
         writeDeployServices();
-        pw.println("</deployment>");
+        pw.println("</undeployment>");
         pw.close();
     } // writeFileBody
 
@@ -134,8 +134,7 @@ public class JavaUndeployWriter extends JavaWriter {
 
         boolean isRPC = (bEntry.getBindingStyle() == BindingEntry.STYLE_RPC);
 
-        pw.println("  <service name=\"" + serviceName
-                + "\" provider=\"" + (isRPC ? "java:RPC" : "java:MSG") + "\">");
+        pw.println("  <service name=\"" + serviceName + "\">");
         pw.println("  </service>");
     } //writeDeployPort
 
