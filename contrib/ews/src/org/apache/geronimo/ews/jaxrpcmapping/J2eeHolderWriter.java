@@ -74,7 +74,7 @@ public class J2eeHolderWriter extends JavaClassWriter {
      * Constructor.
      */
     protected J2eeHolderWriter(J2eeEmitter emitter, TypeEntry type) {
-        super(emitter, Utils.holder(null, type, emitter), "holder");
+        super(emitter, Utils.holder(type, emitter), "holder");
         this.type = type;
     } // ctor
 
