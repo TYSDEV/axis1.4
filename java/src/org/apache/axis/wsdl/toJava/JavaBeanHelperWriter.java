@@ -257,6 +257,14 @@ public class JavaBeanHelperWriter extends JavaClassWriter {
             if (elementMetaData != null) {
                 for (int i=0; i<elementMetaData.size(); i++) {
                     ElementDecl elem = (ElementDecl) elementMetaData.elementAt(i);
+
+                    if (elem.getAnyElement()) {
+                        String anyName = "any";
+                        pw.println("        typeDesc.setAnyName(\"" +
+                                    anyName + "\");");
+                        continue;
+                    }
+
                     String elemLocalName = elem.getName().getLocalPart();
                     String fieldName = Utils.xmlNameToJava(elemLocalName);
                     QName xmlName = elem.getName();

@@ -57,11 +57,8 @@ package org.apache.axis;
 
 import java.util.Map;
 import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.Properties;
 
-import org.apache.axis.utils.JavaUtils;
 import org.apache.commons.discovery.ManagedProperties;
 
 
@@ -98,15 +95,15 @@ import org.apache.commons.discovery.ManagedProperties;
 public class AxisProperties {
 
     private static String commonsGroupContext = null;
-    
+
     public static void setCommonsGroupContext(String groupContext) {
         commonsGroupContext  = groupContext;
     }
-    
+
     public static String getCommonsGroupContext() {
         return commonsGroupContext ;
     }
-        
+
     /**
      * Get value for property bound to the current thread context class loader.
      *
@@ -178,14 +175,14 @@ public class AxisProperties {
         ManagedProperties.setProperties(newProperties, isDefault);
     }
 
-    
+
     public static Enumeration propertyNames() {
         return ManagedProperties.propertyNames();
     }
-    
+
     /**
      * This is an expensive operation.
-     * 
+     *
      * @return Returns a <code>java.util.Properties</code> instance
      * that is equivalent to the current state of the scoped
      * properties, in that getProperty() will return the same value.
