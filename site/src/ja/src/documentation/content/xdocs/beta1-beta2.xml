@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="Shift_JIS"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.2//EN" "./dtd/document-v12.dtd">
+<document>
+  <header>
+    <title>WebServices - Axis</title>
+  </header>
+  <body>
+
+<a name="ChangesFromBeta1ToBeta2"/>
+<section>
+<title>beta1 から beta2 への変更点</title>
+
+<p>
+<ul>
+  <li>javax インターフェースは JAX-RPC バージョン 0.8 と完全に互換性を持つようになりました。またその実装はそれらのインターフェースのほとんどをサポートしています。</li>
+
+  <li>もはやサーバ側スケルトンはデフォルトでは生成されなくなりました ('--skeletonDeploy true' オプションをつければ今もなお生成することができます)。もしスケルトンが存在すれば、WSDL メタデータはスケルトン内に備わります。もしスケルトンが存在しなければ、WSDL メタデータは deploy.wsdd に備わります。</li>
+
+  <li>生成された bean には 堅牢な toString()、equals(..)、hashCode() メソッドが含まれるようになりました。</li>
+
+  <li>以下はさらなる XML 型のサポートです。</li>
+
+  <ul>
+    <li>属性/要素 "format" 属性。</li>
+
+    <li>派生した complexTypes。</li>
+
+    <li>型が正しくデフォルトで xsd:anyType にならない要素、あるいは属性。</li>
+
+    <li>complexTypes の抽象属性</li>
+  </ul>
+
+  <li>echo サンプルのバインディングが wsdl ファイルから生成されるようになりました。</li>
+
+  <li>WSDL2Java は (--all が指定されていない限り) 参照型のみ生成します。現在、派生型の基本型が参照型であれば、派生型は参照型であるとみなされるようになりました。もし WSDL ファイルが xsd:anyType を含めば、すべての型は参照型であるとみなされます。</li>
+
+  <li>メタデータとシリアライザ/デシリアライザアクセスは、bean クラスやヘルパークラスの中に埋め込むことができます。</li>
+
+  <li>WSDL2Java でのパスワードのサポート。</li>
+
+  <li>javaType と xmlType の両方の指定を許すという、SerializationContext の改良。</li>
+
+  <li>getter/setter メソッドの代わりに public フィールドを持つ bean のシリアライゼーション/デシリアライゼーション。</li>
+
+  <li>beta 2 のランタイムはデバッグでビルドされています (人々が問題があれば私達にスタックトレースを渡し、私達は行番号を見ることができます)。</li>
+
+  <li>様々なバグが直され、改良されました。</li>
+</ul>
+</p>
+
+</section>
+
+
+  </body>
+</document>

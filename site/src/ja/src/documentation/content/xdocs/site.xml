@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="Shift_JIS"?>
+
+<!--
+Forrest site.xml
+
+This file contains an outline of the site's information content.  It is used to:
+- Generate the website menus (though these can be overridden - see docs)
+- Provide semantic, location-independent aliases for internal 'site:' URIs, eg
+<link href="site:changes"> links to changes.html (or ../changes.html if in
+  subdir).
+- Provide aliases for external URLs in the external-refs section.  Eg, <link
+  href="ext:cocoon"> links to http://xml.apache.org/cocoon/ 
+
+See http://xml.apache.org/forrest/linking.html for more info
+-->
+
+<site label="Axis" href="" xmlns="http://apache.org/forrest/linkmap/1.0" tab="">
+<Axis label="Axis">
+ <introduction label="はじめに" href="index.html"/>
+ <news label="お知らせ" href="news.html"/>
+<!-- <faq label="FAQ" href="faq.html"/>-->
+ <wiki label="FAQ/Wiki" href="http://ws.apache.org/axis/jp/wiki-java/index.html"/>
+ <getinvolved label="活動に参加">
+  <overview label="概要" href="overview.html"/>
+  <cvs label="CVS リポジトリ" href="cvs.html"/>
+  <mailinglist label="メーリングリスト" href="mail.html"/>
+  <library label="リファレンスライブラリ" href="ref.html" target="body"/>
+  <bugs label="バグ" href="bugs.html"/>
+  <buildsite label="サイト構築方法" href="howtobuild.html"/>
+ </getinvolved>
+ <axisjava label="Axis (Java)">
+  <documentation label="ドキュメント" href="java/index.html"/>
+  <installation label="インストール" href="java/install.html"/>
+  <users label="ユーザガイド" href="java/user-guide.html"/>
+  <developers label="開発者ガイド" href="java/developers-guide.html"/>
+  <integration label="統合ガイド" href="java/integration-guide.html"/>
+  <architecture label="アーキテクチャガイド" href="java/architecture-guide.html"/>
+  <reference label="リファレンスガイド" href="java/reference.html"/>
+  <read label="読書ガイド" href="java/reading.html"/>
+  <requirements label="要件" href="java/requirements.html"/>
+ </axisjava>
+ <axiscpp label="Axis (C++)">
+  <axisc label="Axis C++ 最新版" href="cpp/index.html"/>
+  <documentation label="ドキュメント" href="cpp/documentation.html"/>
+  <download label="ダウンロード" href="cpp/download.html"/>
+  <wiki label="Wiki ページ [英語]" href="http://wiki.apache.org/ws/FrontPage/AxisCPP"/>
+  <who label="メンバ紹介" href="cpp/who.html"/>
+  </axiscpp>
+<downloads label="ダウンロード">
+  <releases label="リリース" href="releases.html"/>
+  <interim label="暫定版" href="interim.html"/>
+  <sourcecode label="ソースコード [英語]" href="http://cvs.apache.org/viewcvs/ws-axis/"/>
+</downloads>
+<translation label="翻訳">
+  <releases label="日本語" href="http://ws.apache.org/axis/jp/"/>
+</translation>
+<related label="関連プロジェクト">
+  <wsif label="WSIF [英語]" href="http://ws.apache.org/wsif/"/>
+  <wsil label="WSIL [英語]" href="http://cvs.apache.org/viewcvs/*checkout*/ws-wsil/java/README.htm"/>
+  <wsdl4j label="WSDL4J [英語]" href="http://www-124.ibm.com/developerworks/projects/wsdl4j/"/>
+  <uddi4j label="UDDI4J [英語]" href="http://www.uddi4j.org/"/>
+</related>
+<misc label="その他">
+  <who label="メンバ紹介" href="who.html"/>
+  <contact label="連絡先" href="contact.html"/>
+  <legal label="法関連" href="legal.html"/>
+  <notes label="メモ/ドキュメント" href="docs.html"/>
+</misc>
+
+</Axis>
+
+  <external-refs>
+    <xml.apache.org href="http://xml.apache.org/">
+      <forrest href="forrest/">
+        <validation href="validation.html"/>
+        <webapp href="your-project.html#webapp"/>
+        <document-v11 href="document-v11.html"/>
+      </forrest>
+      <cocoon href="cocoon/"/>
+      <mori href="http://jakarta.terra-intl.com" />
+    </xml.apache.org>
+  </external-refs>
+
+</site>

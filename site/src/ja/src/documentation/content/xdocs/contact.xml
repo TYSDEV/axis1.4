@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="Shift_JIS"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.2//EN" "./dtd/document-v12.dtd">
+<document>
+  <header>
+    <title>WebServices - Axis</title>
+  </header>
+  <body>
+
+<a name="ContactUs"/>
+<section>
+<title>連絡先</title>
+
+<p><b>このサイト [翻訳者注: ここでいう"このサイト"とは英原文のサイトのことであり、本翻訳サイトではありません] に関して</b>質問やコメントがあれば、こちらにメールを送ってください。<br/>
+<a href="mailto:axis-dev@ws.apache.org">axis-dev@ws.apache.org</a></p>
+
+<p><b>このサイト [翻訳者注: ここでいう"このサイト"とは英原文のサイトのことであり、本翻訳サイトではありません] のソフトウェアやドキュメントに関して</b>質問やコメントがあれば、<b>axis-user</b> メーリングリストに参加してください。</p>
+
+<p><a href="mail.html">メーリングリスト</a></p>
+
+<p>Axis プロジェクトは Apache Software Foundation の活動です。一般的な ASF 文書とライセンスに関する質問のアドレスはこちらです。</p>
+
+<p><a href="mailto:apache@apache.org">apache@apache.org</a></p>
+
+<p>Apache Software Foundation の連絡先に関しては、<a href="http://www.apache.org/foundation/contact.html">Apache メインサイトの連絡先ページ</a> [英語] でさらに見つけることができます。</p>
+
+</section>
+
+
+  </body>
+</document>

@@ -1,0 +1,327 @@
+<?xml version="1.0" encoding="Shift_JIS"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.2//EN" "./dtd/document-v12.dtd">
+<document>
+  <header>
+    <title>WebServices - Axis</title>
+  </header>
+  <body>
+
+<a name="WebServiceSecurity"/>
+<section>
+<title>Webサービスセキュリティ</title>
+
+<p>内容目次</p>
+
+<ul>
+  <li><a href="#TheChallengeOfServerSecurity">サーバセキュリティの挑戦</a></li>
+  <li><a href="#IsSOAPFundamentallyInsecure">SOAP は根本的に安全ではない?</a></li>
+  <li><a href="#CommonAttackTypes">一般的な攻撃型</a></li>
+  <ul>
+    <li><a href="#SpecialXMLAttacks">特別な XML 攻撃</a></li>
+  </ul>
+  <li><a href="#AuthenticatingTheCaller">呼び出し側の認証</a></li>
+  <li><a href="#SecuringYourServices">サービスを安全にする</a></li>
+  <ul>
+    <li><a href="#XMLAttacks">XML 攻撃</a></li>
+    <li><a href="#SessionTheft">セッション泥棒</a></li>
+    <li><a href="#DOSAttacksViaLoad-intensiveOperations">負荷集中操作を介した DoS 攻撃</a></li>
+    <li><a href="#ParameterAttacks">パラメータ攻撃</a></li>
+    <li><a href="#CrossSiteScripting">クロスサイトスクリプティング</a></li>
+  </ul>
+  <li><a href="#SecuringAxis">Axis を安全にする</a></li>
+  <ul>
+    <li><a href="#Disguise">偽装</a></li>
+    <li><a href="#CutDownTheBuild">ビルドを削減する</a></li>
+    <li><a href="#RenameThings">改名</a></li>
+    <li><a href="#StopAxisServletListingServices">AxisServlet の、サービスのリスンを停止する</a></li>
+    <li><a href="#KeepStackTracesOutOfTheResponses">スタックトレースをレスポンスに入れさせない</a></li>
+    <li><a href="#StopAutogeneratingWSDL">WSDL の自動生成を停止する</a></li>
+    <li><a href="#Servlets2.3UseFiltersForExtraAuthentication">サーブレット2.3: 余分な認証のためにフィルタを利用する</a></li>
+    <li><a href="#LogThings">ログを取る</a></li>
+    <li><a href="#RunAxisWithReducedJavaRights">低減された Java 権利で Axis を実行する</a></li>
+    <li><a href="#RunTheWebServerWithReducedRights">低減された権利でWebサーバを実行する</a></li>
+    <li><a href="#MonitorLoad">負荷の監視</a></li>
+    <li><a href="#ConsiderTripwireAndHoneypotEndpoints">'tripwire (わなの針金)' エンドポイントと 'honeypot (密の壺)' エンドポイントを考慮する</a></li>
+    <li><a href="#MonitorTheMailingLists">メーリングリストをチェックする</a></li>
+  </ul>
+  <li><a href="#WhatToDoIfYouFindASecurityHoleInAxis">Axis でセキュリティホールを発見したらすること</a></li>
+  <li><a href="#AutomateSecurityTests">自動化されたセキュリティテスト</a></li>
+  <li><a href="#Conclusions">結論</a></li>
+</ul>  
+
+<a name="TheChallengeOfServerSecurity"/>
+<section>
+<title>サーバセキュリティの挑戦</title>
+
+<p>ウェブサイトの標準的な攻撃は一般的に、欠陥のある CGI スクリプトを特定し、悪用することです。ファイルシステムへの読み取りアクセスを与えるものは全てセキュリティホールであり、サイトの裏側にあるコードを得ることが可能になります。それはたいていデータベースパスワードやその他の敏感なデータを含んでいて、さらに当然ながら下に横たわっているプラットフォームの核心部分があり、そこにはパスワード、クレジットカードリスト、ユーザ個人情報などの重要な情報を含まれています。このデータに対する認証されていないアクセスは厄介で高価なものとなりえます。</p>
+
+<p>システムへの書き込みアクセスを与えればさらに悪用されることになり、外観を損なうウェブサイトが作成されたり、呼び出し側のデータを捕獲するなりすましエンドポイントが書かれたり、データベースが直接操作されたりします。</p>
+
+</section>
+
+<a name="IsSOAPFundamentallyInsecure"/>
+<section>
+<title>SOAP は根本的に安全ではない?</title>
+
+<p><a href="http://www.counterpane.com/crypto-gram-0006.html">Bruce Schneier</a> [英語] のようないくつかの人々は、SOAP はファイアーウォールを通り抜ける能力があるので、セキュリティ災害の卵であると主張しています。しかしながら HTTP 上の SOAP では、クライアントは SOAP 呼び出ししか行えず、呼び出しを受け取ることができないので、XML ファイルをWebサーバに POST するその他のアプリケーションと同様に、SOAP は安全ではないということはありません。サーバ (あるいはその DNS アドレス) が転覆していない限りクライアントは安全です。つまりサーバは攻撃を受けやすく、安全にする必要があります。</p>
+
+<p>同様に <a href="http://webservices.xml.com/pub/a/ws/2003/03/04/security.html">Bilal Siddiqui</a> [英語] は、<i>SOAP は敏感なWebサービスと敏感でないWebサービスを区別することはできず、ユーザ認証、権限付与、アクセス制御をおこなうことができない</i>ということを主張しています。</p>
+
+<p>同じように、これは過度のパニックのもう一つの例で、おそらく SOAP サービスの実装方法の知識の欠如が合わさっています。この著者のアドバイスに従って SOAP サーバを敏感レベルごとに切り離したり、XML と SOAP がファイアーウォールを意識したりする必要はなく、それよりもWebサーバを異なるユーザごとに切り離したり、ウェブサーバの一部を異なる IP アドレスに制限するためにルータを意識するよう HTTP に要求したりする必要があります。</p>
+
+</section>
+
+<a name="CommonAttackTypes"/>
+<section>
+<title>一般的な攻撃型</title>
+
+<ul>
+  <li>サーバへの DoS 攻撃</li>
+  <li>メッセージの傍受と操作</li>
+  <li>偽造クライアントリクエスト</li>
+  <li>偽造サーバレスポンス</li>
+  <li>サーバファイルシステム/データベースを読み込もうとする試み</li>
+  <li>サーバファイルシステム/データベースを書き込もうとする試み</li>
+</ul>
+
+<p>最も重大なセキュリティリスクは、あなたが呼び出しプログラムに機能を提供するためにコードを書いているという事実から来ます。もしその機能が違う人に提供されたら、あるいは書いたコードがセキュリティホールを生み出したら、その機能は "予期しない機能" となり、問題が発生します。</p>
+<p>ウェブサイトの安全化について扱っている資料は多数あります。例えば <a href="http://www.owasp.org/">Open Web Application Security Project</a> [英語] の Top Ten List of vulnerabilities (攻撃されやすいトップ10リスト) と、その Guide to Building Secure Web Applications (安全なWebアプリケーションをビルドするためのガイド) があります。</p>
+
+<a name="SpecialXMLAttacks"/>
+<section>
+<title>特別な XML 攻撃</title>
+
+<p>XML メッセージには、Webサービス作成者が知っておかなければならないいくつかの固有の脆弱性があります。これらの問題は全て、SOAP 特有のものではありません。入ってくる XML を処理しなくてはいけない人はこれらを知り、撃退する必要があります。</p>
+
+<ol>
+  <li>大きな XML ドキュメント<br/>クライアントが極端に長い/深い XML ドキュメント &lt;foo&gt;&lt;foo&gt;&lt;foo&gt;...&lt;/foo&gt;&lt;/foo&gt;&lt;/foo&gt; を送信すると、サーバ上で DOM パーサに悪影響を与え、メモリを消費します。すなわち DoS 攻撃です。ここで問題なのは、大きな XML ドキュメントを扱うコストは、それを生成するコストよりもはるかにかかるということです。</li>
+  <li>実体拡張攻撃<br/>もし XML ドキュメントのヘッダがいくつかの再帰的な実体宣言を宣言していて、ファイルがそれらを参照していたら問題が発生します。Axis は バージョン 1.0 と 1.1 の間ではこれに免疫になります。</li>
+  <li>ファイルシステムを参照している実体<br/>ローカルファイルを参照している実体を宣言し、それを拡張したとします。その結果、あなたはファイルを調べることになります。あるいはそのコピーをエラーレスポンス内で受け取ることにもなるでしょう。Axis はもはや実体をサポートしていないので、これに抵抗します。もしあなたのコードに、入ってくるメッセージから URL を解決する部分があれば、この問題を再現することができます。</li>
+</ol>
+
+<p>その他に XML について知っておかなければいけないことは、内容が安全であることを確認するのに文字列マッチングは十分ではないということです。なぜなら同じ XML を再フォーマットする方法がたくさんあるからです。</p>
+
+</section>
+
+</section>
+
+<a name="AuthenticatingTheCaller"/>
+<section>
+<title>呼び出し側の認証</title>
+
+<p>新しいWebサービスセキュリティ提案は、あなたのエンドポイントに対する呼び出し側の認証と、同様にその逆 (呼び出し側に対するあなたのエンドポイントの認証) も提供します。Axis はまだこれを実装していませんが、<a href="http://xml.apache.org/security/index.html">姉妹プロジェクト</a> [英語] で XML 署名を提供しています。</p>
+
+<p>その他のアプローチとしては、HTTPS を利用してトランスポートレベルで認証する方法があります。https をサポートするようにあなたのWebサーバを設定することは、確実に Axis ドキュメントの範囲外なので、サーバドキュメントを参考にしてください。Axis クライアントで https をサポートするには、クライアントのランタイム内で https サポートがあるか確かめる必要があります。Java1.4 以上であれば自動的にあります。古いバージョンであれば、Sun や代わりのプロバイダを通じて JSSE サポートを追加する必要があります。</p>
+
+<p>両端で HTTPS が機能したのであれば次に、クライアントがサーバ証明書を信頼する必要があり、これは一般的には、中央認証局によって署名されたものであれば自動的に、ホームの認証であれば手動で行われます。</p>
+
+<p>クライアントはクライアント証明か、HTTP 基本認証を用いて自身を認証できます。後者は暗号化されていないチャネル上では信頼性に欠けますが、HTTPS 上でも機能します。SOAP メッセージがエンドポイントに送信された時、<code>MessageContext</code> クラスに送信者のユーザ名とパスワードが設定されます。これらの値を調べるには適切な getter を利用します。Axis はサーブレット API 認証と<i>まだ</i>統合して<i>いない</i>ことに注意してください。認証の形式は、SOAP 呼び出しに関しては完全に axis が不要ですが、UserPrincipal の概念とサーバ設定との統合は、統合への動機を与えるでしょう。(これは開発者へのヒントです)</p>
+
+<p>Axis は (まだ) HTTP1.1 ダイジェスト認証をサポートしていません。もしそれが追加されるとしたら <a href="http://jakarta.apache.org/commons/httpclient/">HttpClient</a> [英語] ライブラリ経由になるでしょう。</p>
+
+</section>
+
+<a name="SecuringYourServices"/>
+<section>
+<title>サービスを安全にする</title>
+
+<p>Webサービスのセキュリティホールのキーポイントの1つは、あなた自身が書いたコードです。Axis ソースほど多くの人の目で試験されるわけではありません。締め切りが厳密な試験の障害となり、複雑なWebサービスが守りたい貴重なアイテム、例えば private データ、データベース、その他のサーバなど、に結び付けられます。</p>
+
+<p>この解決の鍵は、呼び出し側、すなわち呼び出し側の身元、呼び出し側の IP アドレス、呼び出し側のほとんど全てのデータを信頼しないことです。ここにいくつかの考慮すべき攻撃を挙げます。</p>
+
+<a name="XMLAttacks"/>
+<section>
+<title>XML 攻撃</title>
+
+<p>この攻撃をリストの最初に持ってきました。もしあなたのサービスが添付で XML を受け取り、あるいは base-64 エンコードされた文字列で XML を受け取り、それを単独のドキュメントとして保存するのであれば、これら全ての攻撃にさらされることになります。取ってくるために、xlink や URL を記述するその他の方法を統合する標準 XML 文法、例えば SVG など、に注意しましょう。レンダラが許可された URL のみから取ってくることを保証する必要があります。</p>
+
+</section>
+
+<a name="SessionTheft"/>
+<section>
+<title>セッション泥棒</title>
+
+<p>Axis はセッション ID を生成するために優れた乱数生成器を利用していますが、暗号化されていない通信を傍受している誰かがセッションを乗っ取り、新しいメッセージを送信するかもしれません。送信元の IP アドレスなど、送信者情報を記録しておくと役立ちますが、セッション途中で呼び出し元を変えるプロキシシステム (例えば AOL) には注意しましょう。</p>
+
+</section>
+
+<a name="DOSAttacksViaLoad-intensiveOperations"/>
+<section>
+<title>負荷集中操作を介した DoS 攻撃</title>
+
+<p>処理に時間がかかるリクエストは全て DoS 攻撃の標的です。なぜなら CPU を拘束させるからです。長いリクエストの前に認証し、また現実に長い実行時間を探知する監視機構スレッドの導入を考えてください。バグが発生したらリクエストを受け付けないようにします。</p>
+
+</section>
+
+<a name="ParameterAttacks"/>
+<section>
+<title>パラメータ攻撃</title>
+
+<p>XML のパラメータが、データベースクエリや、有効データに依存するルーチンに直接入力される場合、そのデータの有効性を確認する必要が<i>あります</i>。そうしなければ悪意のある者が、システムを操作できるようなデータベース更新リクエストや、その他の文字列を送ることができてしまいます。これは、悪意のある者が、セッション中に設定したリクエストのユーザIDを変えるのと同じくらい簡単に行うことができます。データベース攻撃は SQL クエリ中にパラメータが挿入される状況で起こります。セミコロン ";" を挿入できることで、呼び出し側は完全に新しい SQL コマンドを最初の SQL コマンドの最後に付け加えることができ、そしてWebサービスの権限でそれを実行することができます。</p>
+
+<p>悪意のあるパラメータから防衛する秘訣は、全てのデータの有効性を確認することです。要求する文字/正規表現のみを含む文字列だけを受け付け、その長さをチェックします。できたら'userID==session.userID'のようなあなたができるその他の高レベルチェックを適用したほうがいいでしょう。Prepared Statement は SQL 挿入に対する防衛の、後続の方法です。というのも JDBC ランタイムがエスケープの処理をするからです。手で SQL 文字列を試したりビルドしたりしないでください。これはセキュリティホールの製法です。</p>
+
+<p>これは、セッション EJB オブジェクトの SOAP エンドポイントへのマッピングに対して、激しく異議を唱えるように見えるかもしれないことに注意してください。これは違います。セッション bean は、全ての入力データは信頼できず、それゆえにさらに処理を進める前に入力データの有効性を確認する、ということだけを想定していればいいのです。これはまさに<a href="http://martinfowler.com/eaaCatalog/serviceLayer.html"><i>サービス層</i></a> [英語] が行うべきタスク類です。</p>
+
+</section>
+
+<a name="CrossSiteScripting"/>
+<section>
+<title>クロスサイトスクリプティング</title>
+
+<p>理論的には、純粋なWebサービスは XSS 攻撃、少なくとも更新されたスクリプト (クライアントが表示するときに実行されるスクリプト) がサーバ側で HTML ウェブページとして表示されることに依存する XSS 攻撃、に対して免疫があるべきです。しかし Axis を用いて自分のWebアプリケーションと統合した瞬間、webapp の残りの部分に抜け穴があればまさにこの問題をさらすことになります。我々は Axis 自身が脆弱とは考えていません。なぜなら Axis は SOAPFault 中に提供されたデータを含めることができますが、これは HTML としてではなく XML として表示されるからです。私達が見逃したかもしれないこと、特に GET 処理、と同様に、この2つを区別できないクライアントが問題なのです。</p>
+
+</section>
+
+</section>
+
+<a name="SecuringAxis"/>
+<section>
+<title>Axis を安全にする</title>
+
+<p>核心の哲学は、トラブルを監視しながら '徹底的に防衛する' ことです。</p>
+
+<a name="Disguise"/>
+<section>
+<title>偽装</title>
+
+<p>ここで紹介する戦略の一つは、あなたが Axis を実行しているという事実を隠すことです。サービスを記述するために返信している全てのヘッダを見て、もし Axis を特定するものがあればソース内の定数を編集してください。自分自身のあいまいさが不十分であれば、攻撃をゆるめたり、既知のセキュリティホールに対して脆弱でないように見せることができます。</p>
+
+</section>
+
+<a name="CutDownTheBuild"/>
+<section>
+<title>ビルドを削減する</title>
+
+<p>必要としないものを除いて Axis を再ビルドします。これはとても偏執的な解決策ですが、潜在的な攻撃ポイントの数を減らすことができます。考慮に入れる1つの領域として、JWS ページの '瞬間 SOAP サービス' の機能が挙げられます。JSP ページと同様に JWS ページは、Webアプリケーションにテキストファイルを置くことのできる者に、任意の Java コードを実行する能力を提供します。</p>
+
+</section>
+
+<a name="RenameThings"/>
+<section>
+<title>改名</title>
+
+<p>AxisServlet、AdminService、また happyaxis.jsp でさえ、webapp 以下の良く知られた場所、デフォルトで 'axis' と名づけられた場所にあります。これら全てを、サーブレットに対しては web.xml、AdminService に対しては server-config.wsdd を編集することにより改名します。その他については単にあなたが改名できる JSP ファイルと WAR ファイルです。デプロイマシンにサーバ設定を一度生成すれば、AdminService は必要なくなります。</p>
+
+</section>
+
+<a name="StopAxisServletListingServices"/>
+<section>
+<title>AxisServlet の、サービスのリスンを停止する</title>
+
+<p>これを行うには Axis グローバル設定プロパティ <code>axis.enableListQuery</code> を false に設定します。</p>
+
+</section>
+
+<a name="KeepStackTracesOutOfTheResponses"/>
+<section>
+<title>スタックトレースをレスポンスに入れさせない</title>
+
+<p>デフォルトでは Axis は <i>production</i> モードで配布されていて、スタックトレースは呼び出し側に返信されません。設定の中で <code>axis.development.system</code> を true に設定すると、フォルト時にスタックトレースが通信路を経由して返信されます。これにより、脆弱性を探すのに利用されるかもしれない実装の内部情報をさらすことになります。</p>
+
+</section>
+
+<a name="StopAutogeneratingWSDL"/>
+<section>
+<title>WSDL の自動生成を停止する</title>
+
+<p>信頼できるパートナーには依然として電子メールやその他の手段で WSDL ファイルを渡すことができるとして、製品サーバで WSDL を返す必要はありません。どのようにして Axis が WSDL を返すのを停止することができるのでしょうか? <a href="reference.html#IndividualServiceConfiguration">個別のサービス設定</a>で説明されているように、単に空の &lt;wsdl/&gt; タグである WSDL リソースを返すように .wsdd 設定ファイルを編集します。</p>
+
+</section>
+
+<a name="Servlets2.3UseFiltersForExtraAuthentication"/>
+<section>
+<title>サーブレット2.3: 余分な認証のためにフィルタを利用する</title>
+
+<p>サーブレット 2.3 では、全ての入力リクエストを見て、あなたの好きなようにフィルタする (IP アドレス、呼び出し側の証明書などの有効性の確認をすることを含みます) ためにフィルタを利用することができます。他のエンドポイントが公開されていたとしても、管理サービスと管理ページを安全にするには、呼び出し側のアドレスの有効性を確認することが有用です。もちろんその場合ルータ設定も有用です。</p>
+
+</section>
+
+<a name="LogThings"/>
+<section>
+<title>ログを取る</title>
+
+<p>完全なログ取りはそれ自身 DoS 攻撃戦略ですが、誰がメッセージを送ったかログを取ることは、何が行われているかの軌跡を監査し保持する上でしばしば有用です。あなたがこれを行った方がいいと思う Axis 部分全てについて log4j タグを追加してください。</p>
+
+</section>
+
+<a name="RunAxisWithReducedJavaRights"/>
+<section>
+<title>低減された Java 権利で Axis を実行する</title>
+
+<p>Java は強力で複雑なセキュリティシステムを持っています。低減された権利でそれを利用して Axis を設定してください。Axis は、サーバ設定を更新する際は WEB-INF/server-config.wsdd へ、コンパイルされた .jws ページを保存する際はその他のどこか (設定可能) へ書き込もうとします。</p>
+
+</section>
+
+<a name="RunTheWebServerWithReducedRights"/>
+<section>
+<title>低減された権利でWebサーバを実行する</title>
+
+<p>これは Unix では大いに与えられていて、Windows NT やそれ以降のバージョンでさえサービスを異なるユーザで実行することができます。制限された権利でWebサーバを実行してください。システムの核心部分は、権利が制限されたユーザが、取得してはいけないものを取得しないように、核心部分へのアクセス許可を厳しくしてあることをよく確かめておいてください。</p>
+
+</section>
+
+<a name="MonitorLoad"/>
+<section>
+<title>負荷の監視</title>
+
+<p>DoS 攻撃を追跡記録するには負荷モニタが有用です。<code>AxisBaseServlet</code> はあらゆる時点におけるそのサブクラス内の呼び出し者の数を追跡記録し、<code>AdminServlet</code> はこのデータの取得方法を示します。</p>
+
+</section>
+
+<a name="ConsiderTripwireAndHoneypotEndpoints"/>
+<section>
+<title>'tripwire (わなの針金)' エンドポイントと 'honeypot (密の壺)' エンドポイントを考慮する</title>
+
+<p>エンドポイントの核心を移動して、管理エンドポイントの tripwire 実装、つまり Axis/AdminServlet 以下をリストアップしていて、そのそれぞれが、誰かが SOAP メッセージを送信するとアラートを送信するだけの honeypot エンドポイントを指し示しているなりすましエンドポイント、を作成してみてはいかがでしょうか。その場合、もちろんそのアラートに対する行動方針が必要になります。本当の honeypot は完全なバックエンドサービスを模倣します。構築して遊ぶのには興味深いちょっとした実験になるでしょう。</p>
+
+</section>
+
+<a name="MonitorTheMailingLists"/>
+<section>
+<title>メーリングリストをチェックする</title>
+
+<p>私達は、セキュリティについては問題があればいつでも axis-dev で議論する傾向がありますが、もし要望が多ければ重要な告知用に axis-announce メーリングリストを追加するかもしれません。</p>
+
+</section>
+
+</section>
+
+<a name="WhatToDoIfYouFindASecurityHoleInAxis"/>
+<section>
+<title>Axis でセキュリティホールを発見したらすること</title>
+
+<p>最近多くの人がセキュリティホールを発見することによって名声を得ようとしていて、Apache 製品ファミリーの一部である Axis は潜在的な標的です。Axis のセキュリティホールは多くのWebサービスに脆弱性をもたらすので、実に深刻なものとなりえます。しかしこれまでほんの数個しか見つかっておらず、主に XML パースの気まぐれ以外の何者でもありません。</p>
+
+<ol>
+  <li>パニックに陥らないで下さい。セキュリティホールを検証し、修正するプロセス体制があります。</li>
+  <li>プレスリリースをバグトラックに急いで投稿しないで下さい。私達に知らせて、さらにあなたが正しいことを検証してくださるとうれしいです。</li>
+  <li>(古い) リリースビルドではなく、最新の CVS 版に対してテストしてください。すでに修正されていることを望んでいます、ハッカーさん。</li>
+  <li>security@apache.org に電子メールを送ってください。公開されている axis-dev や jira には送らないで下さい。security エイリアスのメーリングリストは、全ての Apache プロジェクトからの代表者がいるメーリングリストであり、あなたの報告は深刻に受け止められます。</li>
+  <li>もし可能なら私達に修正をさせてください。そうすればあなたが発見を公表する際に、修正の準備ができていることを私達が公表することができます。この方法は発見者からいかなる名声をも取り上げません。単に人々がパニックに陥らないだけです。</li>
+</ol>
+
+</section>
+
+<a name="AutomateSecurityTests"/>
+<section>
+<title>自動化されたセキュリティテスト</title>
+
+<p>もしセキュリティ問題を発見したら、その問題に関してアプリケーションとインストールの回帰テストを行うための、JUnit テストや HttpUnit テストのようなテストを書いてください。セキュリティホールを作るのが設定に関する問題である場合に、これは特に重要です。将来のインストールで再び同じ問題が起こることがほとんど避けられないからです。</p>
+
+</section>
+
+<a name="Conclusions"/>
+<section>
+<title>結論</title>
+
+<p>私達は、Webサービスセキュリティに関するいくつかの問題、あなた自身のサービス内で考慮すべきこと、Axis 自身を強健にする方法を紹介してきました。システムを安全にすることは、システムを機能させることよりもはるかに難しいです。ここで '機能させる' とは一般的には '1つ2つの危機的でないバグは OK' ということを意味しています。セキュリティの観点から言えば、安全であるべきシステムには確実にセキュリティホールがあります。セキュリティーホールが正体不明であろうとも誰かがそれを見つけてさらすでしょう。偏執的になりましょう。それが意味をなすことをあなたは知っているでしょう。</p>
+
+<p>最後に、セキュリティの影響を懸念して SOAP サービスを書くことを放棄しないで下さい。パラメータを取る CGI-BIN や ASP/JSP ページは、SOAP エンドポイントと同じようにセキュリティリスクです。なんらかの理由からか、SOAP は無限のリスクについてのドラマチックな報道を引きつけますが、おろらく SOAP が新しくて未知だからでしょう。ですがそうではありません。SOAP は Webアプリケーションに送信される XML であり、それが全てです。それがあなたに恐怖を抱かせる場合に限り、SOAP サービスを書くべきではないでしょう。</p>
+
+</section>
+
+</section>
+
+  </body>
+</document>
