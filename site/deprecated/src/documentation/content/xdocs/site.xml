@@ -52,7 +52,7 @@ See http://xml.apache.org/forrest/linking.html for more info
   <sourcecode label="Source Code" href="http://cvs.apache.org/viewcvs/ws-axis/"/>
 </downloads>
 <translation label="Translation">
-  <releases label="Japanese (Unofficial)" href="http://ws.apache.org/~toshi/jp-site/axis/index.html"/>
+  <releases label="Japanese (Unofficial)" href="http://ws.apache.org/axis/jp/"/>
 </translation>
 <related label="Related Projects">
   <wsif label="WSIF" href="http://ws.apache.org/wsif/"/>
@@ -65,31 +65,10 @@ See http://xml.apache.org/forrest/linking.html for more info
   <who label="Who We Are" href="who.html"/>
   <contact label="Contact" href="contact.html"/>
   <legal label="Legal" href="legal.html"/>
-<!--
-  <li> <a href="http://ws.apache.org/~rubys/ApacheClientInterop.html" target="_top">Interop</a>
--->
   <notes label="Notes/Docs" href="docs.html"/>
 </misc>
 
 </Axis>
-
-<!--
-  <samples label="Samples" href="samples/" tab="samples">
-    <sample label="Sample page" href="sample.html">
-      <top href="#top"/>
-      <section href="#section"/>
-    </sample>
-    <sample2 label="Static content" href="sample2.html"/>
-    <sample-wiki label="Sample Wiki page" href="wiki-sample.html"/>
-    <sample-ihtml label="Sample ihtml page" href="ihtml-sample.html"/>
-    <sample-ehtml label="Sample ehtml page" href="ehtml-sample.html"/>
-    <faq label="FAQ" href="faq.html"/>
-    <sdocbook label="Sample Simplifed Docbook page" href="sdocbook.html"/>
-    <subdir label="Subdir" href="subdir/">
-      <index label="Index" href="index.html"/>
-    </subdir>
-  </samples>
--->
 
   <external-refs>
     <xml.apache.org href="http://xml.apache.org/">
