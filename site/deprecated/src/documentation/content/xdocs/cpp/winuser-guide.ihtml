@@ -346,7 +346,7 @@ XMLParser:[APACHE_HOME]\Axis\libs\AxisXMLParser_D.dll <br></p>
 <br>
 &lt;requestFlow name="CalculatorHandlers"&gt
 <br>  
-&lt;handler name="ESHHandler" type=" AXIS_EXTRACT/bin/echoStringHeaderHandler.dll"&gt
+&lt;handler name="ESHHandler" type="AXIS_EXTRACT/bin/echoStringHeaderHandler.dll"&gt
 <br>
 &lt;/handler&gt
 <br>  
@@ -354,7 +354,7 @@ XMLParser:[APACHE_HOME]\Axis\libs\AxisXMLParser_D.dll <br></p>
 <br> 
 &lt;responseFlow name="CalculatorHandlers"&gt
 <br>      
-&lt;handler name="ESHHandler" type=" AXIS_EXTRACT/bin/echoStringHeaderHandler.dll"&gt 
+&lt;handler name="ESHHandler" type="AXIS_EXTRACT/bin/echoStringHeaderHandler.dll"&gt 
 <br>    
 &lt;/handler&gt
 <br> 
@@ -383,7 +383,7 @@ Restart the Apache server.</p>
 <br>
 &lt;requestFlow name="CalculatorHandlers"&gt 
 <br>       
-&lt;handler name="TestHandler" type=" AXIS_EXTRACT/bin/testHandler.dll"&gt
+&lt;handler name="TestHandler" type="AXIS_EXTRACT/bin/testHandler.dll"&gt
 <br>
 &lt;/handler&gt
 <br>  
