@@ -108,9 +108,8 @@ export AXISCPP_HOME AXISCPP_DEPLOY LD_LIBRARY_PATH</b> </p>
 
 <h2>5. Build Axis C++</h2>
  
-<p> <b>Note:</b> If you have downloaded Axis C++ binaries, you can skip this step<br> <br>
+<p> <b>Note:</b> The following steps are for Axis C++ source downloads.<br> <br>
 <b>cd $AXISCPP_HOME </b> <br> <br>
-
 
 <b>./configure --prefix=$AXISCPP_DEPLOY --with-apache2=/path/to/Apache2 \<br>
 &nbsp;&nbsp;&nbsp;&nbsp;--with-xercesc=/path/to/xerces-c </b> <br>
@@ -127,7 +126,10 @@ $AXISCPP_DEPLOY/lib. (Provided that you used $AXISCPP_DEPLOY as
 --prefix option for configuring). Note that you need permission to install to the 
 specified directory given in prefix option.<br>
 
-&nbsp;<br>
+&nbsp;<br></p>
+
+<p> <b>Note:</b> The following steps are common to both source and binary downloads.<br> <br>
+
 You need global access rights to the Axis C++ deploy folder to make sure that Axis C++ works properly.<br> <br>
 
 <i><b>chmod -R 777 $AXISCPP_DEPLOY</b></i> </p>
