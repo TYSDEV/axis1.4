@@ -82,9 +82,13 @@ class AxisConfig
         int ReadConfFile();
         
     private:		 
-        char m_WsddFilePath[CONFBUFFSIZE];
-        char m_AxisLogPath[CONFBUFFSIZE];
-        char m_sWsddFilePath[CONFBUFFSIZE];
-        char m_sAxisLogPath[CONFBUFFSIZE];
+        //char m_WsddFilePath[CONFBUFFSIZE];
+        //char m_AxisLogPath[CONFBUFFSIZE];
+        //char m_sWsddFilePath[CONFBUFFSIZE];
+        //char m_sAxisLogPath[CONFBUFFSIZE];
+        char* m_sWsddFilePath;
+        char* m_sAxisLogPath;
+        char* m_sValue;
+        char m_sLine[CONFBUFFSIZE];
 };
 #endif

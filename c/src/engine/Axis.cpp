@@ -260,13 +260,15 @@ extern "C" int initialize_module(int bServer)
         int status = g_pConfig->ReadConfFile();/*Read from the configuration file*/
         if(status == AXIS_SUCCESS)
         {
-            char* pWsddPath = g_pConfig->GetWsddFilePath();
-            if (AXIS_SUCCESS != g_pWSDDDeployment->LoadWSDD(pWsddPath)) return AXIS_FAIL;
+            char* pWsddPath = g_pConfig->GetWsddFilePath();            
+            if (AXIS_SUCCESS != g_pWSDDDeployment->LoadWSDD(pWsddPath)) return AXIS_FAIL;            
+            #if defined(__AXISTRACE__) 
             status = g_pAT->openFile();
             if(status == AXIS_FAIL)
             {
                 return AXIS_FAIL;
             }
+            #endif
         }
         else
         {
@@ -281,11 +283,13 @@ extern "C" int initialize_module(int bServer)
 	}
     else if(bServer == 0)//client side module initialization
     {
+        #if defined(__AXISTRACE__) 
         status = g_pAT->openFileByClient();
         if(status == AXIS_FAIL)
         {
             return AXIS_FAIL;
         }
+        #endif
     }
 	return AXIS_SUCCESS;
 }
