@@ -75,8 +75,6 @@ WSDDDocument::WSDDDocument()
 	m_CurTrType = APTHTTP;//default is HTTP
 	m_nLibId = 0;
 	m_pLibNameIdMap = new map<AxisString, int>;
-	m_bFatalError = false;
-	m_bError = false;
 }
 
 WSDDDocument::~WSDDDocument()
@@ -87,9 +85,9 @@ WSDDDocument::~WSDDDocument()
 int WSDDDocument::GetDeployment(const AxisChar* sWSDD, WSDDDeployment* pDeployment)
 {
 	m_pDeployment = pDeployment; //this enables the access to Deployment object while parsing
-	if (AXIS_SUCCESS != ParseDocument(sWSDD)) return AXIS_FAIL;
+	if (SUCCESS != ParseDocument(sWSDD)) return FAIL;
 	m_pDeployment->SetLibIdMap(m_pLibNameIdMap);
-	return AXIS_SUCCESS;
+	return SUCCESS;
 }
 
 int WSDDDocument::ParseDocument(const AxisChar* sWSDD)
@@ -103,13 +101,12 @@ int WSDDDocument::ParseDocument(const AxisChar* sWSDD)
 		//AXISTRACE1("BEFORE parser->parse(sWSDD);");
 		parser->parse(sWSDD);   
 		delete parser;
-		if (m_bFatalError || m_bError) return AXIS_FAIL;
 	}
 	catch (...)
 	{
-		return AXIS_FAIL;
+		return FAIL;
 	}
-	return AXIS_SUCCESS;
+	return SUCCESS;
 }
 
 void  WSDDDocument::endElement (const XMLCh *const uri, const XMLCh *const localname, const XMLCh *const qname)
@@ -570,10 +567,8 @@ void WSDDDocument::warning(const SAXParseException& exception)
 }
 void WSDDDocument::error(const SAXParseException& exception)
 {
-	m_bError = true;
 }
 void WSDDDocument::fatalError(const SAXParseException& exception)
 {
-	m_bFatalError = true;
 }
 

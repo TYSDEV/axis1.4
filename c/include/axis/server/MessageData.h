@@ -93,9 +93,9 @@ public:
 	string& getProperty(string& sName);
 	int setProperty(string& sName, string& sValue);
 	void getSoapDeSerializer(IHandlerSoapDeSerializer** pIHandlerSoapDeSerializer);
-	void AXISCALL getSoapSerializer(IWrapperSoapSerializer** pIWSS);
-	void AXISCALL getSoapDeSerializer(IWrapperSoapDeSerializer** pIWSDS);
+	void getSoapDeSerializer(IWrapperSoapDeSerializer** pIWrapperSoapDeSerializer);
 	void getSoapSerializer(IHandlerSoapSerializer** pIHandlerSoapSerializer);
+	void getSoapSerializer(IWrapperSoapSerializer** pIWrapperSoapSerializer);	
 	IWrapperSoapDeSerializer* getSoapDeserializer();
 	int setPastPivotState(bool bState);
 	bool isPastPivot();

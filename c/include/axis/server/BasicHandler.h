@@ -61,7 +61,9 @@
  *
  */
 
-/* BasicHandler.h: interface for the BasicHandler class.*/
+// BasicHandler.h: interface for the BasicHandler class.
+//
+//////////////////////////////////////////////////////////////////////
 
 #if !defined(AFX_BASICHANDLER_H__FFF77AB5_015C_4B48_9BAC_D84A7C493015__INCLUDED_)
 #define AFX_BASICHANDLER_H__FFF77AB5_015C_4B48_9BAC_D84A7C493015__INCLUDED_
@@ -71,34 +73,16 @@
 
 enum HANDLER_TYPE { NORMAL_HANDLER, WEBSERVICE_HANDLER, CHAIN_HANDLER };
 
-#ifdef __cplusplus
-
 class BasicHandler  
 {
 public:
+	BasicHandler(){};
 	virtual ~BasicHandler(){};
-
-#else
-
-typedef struct BasicHandlerTag
-{
-	void* __vfptr;
-} BasicHandler;
-typedef struct BasicHandlerXTag
-{
-	AXISDESTRUCTOR
-
-#endif
-
-	virtual int AXISAPI(Invoke, (APIHASPARAMS IMessageData* pMsg))
-	virtual void AXISAPI(OnFault, (APIHASPARAMS IMessageData* mMsg))
-	virtual int AXISAPI(GetType, (APINOPARAMS))
-	virtual int AXISAPI(Init, (APINOPARAMS))
-	virtual int AXISAPI(Fini, (APINOPARAMS))
-
-#ifdef __cplusplus
+	virtual int Invoke(IMessageData* pMsg) = 0;
+	virtual void OnFault(IMessageData* pMsg) = 0;
+	virtual int GetType() = 0;
+	virtual int Init() = 0;
+	virtual int Fini() = 0;	
 };
-#else
-} BasicHandlerX;
-#endif
-#endif /* !defined(AFX_BASICHANDLER_H__FFF77AB5_015C_4B48_9BAC_D84A7C493015__INCLUDED_) */
+
+#endif // !defined(AFX_BASICHANDLER_H__FFF77AB5_015C_4B48_9BAC_D84A7C493015__INCLUDED_)

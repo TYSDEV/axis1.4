@@ -67,14 +67,14 @@
 #if !defined(AFX_IHANDLERSOAPDESERIALIZER_H__EAD744F9_FEB3_4885_9510_D7BAD8C5AD1C__INCLUDED_)
 #define AFX_IHANDLERSOAPDESERIALIZER_H__EAD744F9_FEB3_4885_9510_D7BAD8C5AD1C__INCLUDED_
 
-#include "../common/IWrapperSoapDeSerializer.h"
+#include "ISoapDeSerializer.h"
 class ISoapHeader;
 
-class IHandlerSoapDeSerializer : public IWrapperSoapDeSerializer
+class IHandlerSoapDeSerializer : public virtual ISoapDeSerializer
 {
 public:
-	virtual ~IHandlerSoapDeSerializer() {};
 	virtual ISoapHeader* GetHeader()=0;
+	virtual ~IHandlerSoapDeSerializer() {};
 
 };
 

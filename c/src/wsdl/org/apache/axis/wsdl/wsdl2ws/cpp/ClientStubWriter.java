@@ -94,11 +94,11 @@ public class ClientStubWriter extends CPPClassWriter{
 	}
 	protected void writeClassComment() throws WrapperFault {
 			try{
-				writer.write("/*\n");	
-				writer.write(" * This is the Client Stub implementation file genarated by WSDL2Ws tool.\n");
-				writer.write(" * "+classname+".cpp: implemtation for the "+classname+".\n");
-				writer.write(" *\n");
-				writer.write(" */\n\n");
+				writer.write("///////////////////////////////////////////////////////////////////////\n");	
+				writer.write("// This is the Client Stub implementation file genarated by WSDL2Ws tool.\n");
+				writer.write("// "+classname+".cpp: implemtation for the "+classname+".\n");
+				writer.write("//\n");
+				writer.write("//////////////////////////////////////////////////////////////////////\n\n");
 			}catch(IOException e){
 				throw new WrapperFault(e);
 			}
@@ -137,7 +137,7 @@ public class ClientStubWriter extends CPPClassWriter{
 	 */
 	protected void writeMethods() throws WrapperFault {
 		try{
-			writer.write("\n/*Methods corresponding to the web service methods*/\n");
+			writer.write("\n//Methods corresponding to the web service methods\n");
 			MethodInfo minfo;
 			for (int i = 0; i < methods.size(); i++) {
 				minfo = (MethodInfo)methods.get(i);
@@ -186,9 +186,9 @@ public class ClientStubWriter extends CPPClassWriter{
 		}
 		if (returntype != null)
 			returntypeissimple = CPPUtils.isSimpleType(outparamType);
-		writer.write("\n/*\n");
-		writer.write(" * This method wrap the service method"+ methodName +"\n");
-		writer.write(" */\n");
+		writer.write("\n/////////////////////////////////////////////////////////////////\n");
+		writer.write("// This method wrap the service method"+ methodName +"\n");
+		writer.write("//////////////////////////////////////////////////////////////////\n");
 		//method signature
 		String paraTypeName;
 		boolean typeisarray = false;
@@ -254,7 +254,7 @@ public class ClientStubWriter extends CPPClassWriter{
 				//TODO initialize return parameter appropriately.
 			}
 		}
-		writer.write("\tif (AXIS_SUCCESS != m_pCall->Initialize()) return ");
+		writer.write("\tif (SUCCESS != m_pCall->Initialize()) return ");
 		if (returntype != null){
 			writer.write((returntypeisarray?"RetArray":returntypeissimple?"Ret":"pReturn")+";\n\t");
 		}
@@ -298,7 +298,7 @@ public class ClientStubWriter extends CPPClassWriter{
 		}
 		if (returntype == null){
 			writer.write("\tnStatus = m_pCall->Invoke();\n");
-			writer.write("\tif (AXIS_SUCCESS != nStatus)\n\t{\n");
+			writer.write("\tif (SUCCESS != nStatus)\n\t{\n");
 			writer.write("\t\t//What to do ? . Throw an exception ??? \n\t}\n");
 			writer.write("\tm_pCall->UnInitialize();\n");
 		}
@@ -315,7 +315,7 @@ public class ClientStubWriter extends CPPClassWriter{
 				writer.write(", (void*) Axis_Create_"+containedType+", (void*) Axis_Delete_"+containedType+", (void*) Axis_GetSize_"+containedType+", Axis_TypeName_"+containedType+", Axis_URI_"+containedType+");\n");
 			}
 			writer.write("\tnStatus = m_pCall->Invoke();\n");
-			writer.write("\tif (AXIS_SUCCESS != nStatus)\n\t{\n");
+			writer.write("\tif (SUCCESS != nStatus)\n\t{\n");
 			writer.write("\t\tdelete RetArray.m_Array;\n");
 			writer.write("\t\tRetArray.m_Array = NULL;\n");
 			writer.write("\t\tRetArray.m_Size = 0;\n\t}\n");
@@ -325,7 +325,7 @@ public class ClientStubWriter extends CPPClassWriter{
 		else if(returntypeissimple){
 			writer.write("\tm_pCall->SetReturnType("+CPPUtils.getXSDTypeForBasicType(outparamType)+");\n");
 			writer.write("\tnStatus = m_pCall->Invoke();\n");
-			writer.write("\tif (AXIS_SUCCESS == nStatus)\n\t{\n");
+			writer.write("\tif (SUCCESS == nStatus)\n\t{\n");
 			writer.write("\t\tRet = m_pCall->GetResult()->"+CPPUtils.getParameterGetValueMethodName(outparamType)+";\n\t}\n");
 			writer.write("\tm_pCall->UnInitialize();\n");
 			writer.write("\treturn Ret;\n");
@@ -333,7 +333,7 @@ public class ClientStubWriter extends CPPClassWriter{
 		else{
 			writer.write("\tm_pCall->SetReturnType((void*) Axis_DeSerialize_"+outparamType+", (void*) Axis_Create_"+outparamType+", (void*) Axis_Delete_"+outparamType+", Axis_TypeName_"+outparamType+", Axis_URI_"+outparamType+");\n");
 			writer.write("\tnStatus = m_pCall->Invoke();\n");
-			writer.write("\tif (AXIS_SUCCESS == nStatus)\n\t{\n");
+			writer.write("\tif (SUCCESS == nStatus)\n\t{\n");
 			writer.write("\t\tm_pCall->GetResult((void**)&pReturn);\n\t}\n");
 			writer.write("\tm_pCall->UnInitialize();\n");
 			writer.write("\treturn pReturn;\n");						

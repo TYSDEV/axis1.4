@@ -71,7 +71,7 @@
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-extern "C" int initialize_module(int bServer);
+extern "C" int initialize_module(int bServer, const char * wsddPath);
 
 Call::Call()
 {
@@ -81,9 +81,7 @@ Call::Call()
 	m_pIWSDZ = NULL;
 	m_Soap.so.http.ip_headercount = 0;
 	m_Soap.so.http.ip_headers = NULL;
-	m_Soap.so.http.op_headercount = 0;
-	m_Soap.so.http.op_headers = NULL;
-	initialize_module(0);
+	initialize_module(0, "");
 	m_pTransport = NULL;
 	m_nReturnType = XSD_UNKNOWN;
 	m_nArrayType = XSD_UNKNOWN;
@@ -98,7 +96,7 @@ Call::~Call()
 int Call::SetEndpointURI(const char *pchEndpointURI)
 {
 	m_Soap.so.http.uri_path = pchEndpointURI;
-	return AXIS_SUCCESS;
+	return SUCCESS;
 }
 
 void Call::SetOperation(const char *pchOperation, const char* pchNamespace)
@@ -174,19 +172,19 @@ void Call::AddParameter(const AxisString& sStrValue,const char* pchName, XSDTYPE
 /**
  * Method used to add arrays of basic types as parameters
  */
-void Call::AddBasicArrayParameter(Axis_Array* pArray, XSDTYPE nType, const char* pchName)
+void Call::AddParameter(Axis_Array* pArray, XSDTYPE nType, const char* pchName)
 {
 	m_pIWSSZ->AddOutputParam(pchName, pArray, nType);
 }
 
-void Call::AddCmplxArrayParameter(Axis_Array* pArray, void* pSZFunct, void* pDelFunct, void* pSizeFunct, const char* pchTypeName, const char* pchURI, const char* pchName)
+void Call::AddParameter(Axis_Array* pArray, void* pSZFunct, void* pDelFunct, void* pSizeFunct, const char* pchTypeName, const char* pchURI, const char* pchName)
 {
-	m_pIWSSZ->AddOutputCmplxArrayParam(pchName, pArray, pSZFunct, pDelFunct, pSizeFunct, pchTypeName, pchURI);
+	m_pIWSSZ->AddOutputParam(pchName, pArray, pSZFunct, pDelFunct, pSizeFunct, pchTypeName, pchURI);
 }
 
-void Call::AddCmplxParameter(void *pObject, void *pSZFunct, void *pDelFunct, const char* pchName)
+void Call::AddParameter(void *pObject, void *pSZFunct, void *pDelFunct, const char* pchName)
 {
-	m_pIWSSZ->AddOutputCmplxParam(pchName, pObject, pSZFunct, pDelFunct);
+	m_pIWSSZ->AddOutputParam(pchName, pObject, pSZFunct, pDelFunct);
 }
 
 /**
@@ -200,7 +198,7 @@ void Call::SetReturnType(XSDTYPE nType)
 /**
  * This function is used to set that the return type is a complex type
  */
-void Call::SetCmplxReturnType(void *pDZFunct, void* pCreFunct, void *pDelFunct, const char* pchTypeName, const char * pchUri)
+void Call::SetReturnType(void *pDZFunct, void* pCreFunct, void *pDelFunct, const char* pchTypeName, const char * pchUri)
 {
 	m_nReturnType = USER_TYPE;
 	m_ReturnCplxObj.pObject = NULL;
@@ -214,7 +212,7 @@ void Call::SetCmplxReturnType(void *pDZFunct, void* pCreFunct, void *pDelFunct, 
 /**
  * This function is used to set that the return type is an array of complex types
  */
-void Call::SetCmplxArrayReturnType(Axis_Array* pArray, void* pDZFunct, void* pCreFunct, void* pDelFunct, void* pSizeFunct, const char* pchTypeName, const char* pchUri)
+void Call::SetReturnType(Axis_Array* pArray, void* pDZFunct, void* pCreFunct, void* pDelFunct, void* pSizeFunct, const char* pchTypeName, const char* pchUri)
 {
 	m_pArray = pArray;
 	m_nReturnType = XSD_ARRAY;
@@ -233,7 +231,7 @@ void Call::SetCmplxArrayReturnType(Axis_Array* pArray, void* pDZFunct, void* pCr
  *				 to the client application.
  * @param nType Basic type of the array elements
  */
-void Call::SetBasicArrayReturnType(Axis_Array* pArray, XSDTYPE nType)
+void Call::SetReturnType(Axis_Array* pArray, XSDTYPE nType)
 {
 	m_pArray = pArray;
 	m_nReturnType = XSD_ARRAY;
@@ -244,7 +242,7 @@ int Call::Invoke()
 {
 	int nStatus;
 	Param *pParam = NULL;
-	if (AXIS_SUCCESS == (nStatus = m_pAxisEngine->Process(&m_Soap)))
+	if (SUCCESS == (nStatus = m_pAxisEngine->Process(&m_Soap)))
 	{
 		//Get return type if it returns
 		if (USER_TYPE == m_nReturnType)
@@ -266,14 +264,14 @@ int Call::Invoke()
 			}
 			else
 			{
-				return AXIS_FAIL;
+				return FAIL;
 			}
 			*/
 			if (!m_ReturnCplxObj.pCreFunct || !m_ReturnCplxObj.pDZFunct)
-				return AXIS_FAIL; 
-			m_ReturnCplxObj.pObject = m_ReturnCplxObj.pCreFunct(false, 0);
+				return FAIL; 
+			m_ReturnCplxObj.pObject = m_ReturnCplxObj.pCreFunct();
 			if (!m_ReturnCplxObj.pObject)
-				return AXIS_FAIL;
+				return FAIL;
 			m_ReturnCplxObj.pDZFunct(m_ReturnCplxObj.pObject, m_pMsgData->m_pDZ);
 
 		}
@@ -281,9 +279,9 @@ int Call::Invoke()
 		{
 			IParam *param0 = m_pIWSDZ->GetParam(); 
 			/* now we know that this is an array. if needed we can check that too */
-			if (!m_pArray) return AXIS_FAIL; //No array expected ?
+			if (!m_pArray) return FAIL; //No array expected ?
 			m_pArray->m_Size = param0->GetArraySize();
-			if (AXIS_SUCCESS == MakeArray()) //Array is allocated successfully
+			if (SUCCESS == MakeArray()) //Array is allocated successfully
 			{
 				if (USER_TYPE == m_nArrayType)
 					param0->SetArrayElements((void*)(m_pArray->m_Array), m_ReturnCplxObj.pDZFunct, m_ReturnCplxObj.pDelFunct, m_ReturnCplxObj.pSizeFunct);
@@ -292,7 +290,7 @@ int Call::Invoke()
 				m_pIWSDZ->Deserialize(param0,0);
 			}
 			else 
-				return AXIS_FAIL; //CF_ZERO_ARRAY_SIZE_ERROR
+				return FAIL; //CF_ZERO_ARRAY_SIZE_ERROR
 		}
 		else if (XSD_UNKNOWN != m_nReturnType)//basic type
 		{
@@ -321,14 +319,14 @@ int Call::Invoke()
 					}
 					else
 					{
-						return AXIS_FAIL;
+						return FAIL;
 					}
 					*/
 					if (!pOutParam->m_OutCplxObj.pCreFunct || !pOutParam->m_OutCplxObj.pDZFunct)
-						return AXIS_FAIL; 
-					pOutParam->m_OutCplxObj.pObject = pOutParam->m_OutCplxObj.pCreFunct(false, 0);
+						return FAIL; 
+					pOutParam->m_OutCplxObj.pObject = pOutParam->m_OutCplxObj.pCreFunct();
 					if (!pOutParam->m_OutCplxObj.pObject)
-						return AXIS_FAIL;
+						return FAIL;
 					pOutParam->m_OutCplxObj.pDZFunct(pOutParam->m_OutCplxObj.pObject, m_pMsgData->m_pDZ);
 
 				}
@@ -336,9 +334,9 @@ int Call::Invoke()
 				{
 					IParam *param0 = m_pIWSDZ->GetParam(); 
 					/* now we know that this is an array. if needed we can check that too */
-					if (!pOutParam->m_pArray) return AXIS_FAIL; //No array expected ?
+					if (!pOutParam->m_pArray) return FAIL; //No array expected ?
 					pOutParam->m_pArray->m_Size = param0->GetArraySize();
-					if (pOutParam->m_pArray->m_Size < 1) return AXIS_FAIL;
+					if (pOutParam->m_pArray->m_Size < 1) return FAIL;
 					if (USER_TYPE == pOutParam->m_nArrayType)
 					{
 						pOutParam->m_pArray->m_Array = pOutParam->m_OutCplxObj.pCreFunct(true, pOutParam->m_pArray->m_Size);
@@ -356,7 +354,7 @@ int Call::Invoke()
 						m_pIWSDZ->Deserialize(param0,0);
 					}
 					else 
-						return AXIS_FAIL; //CF_ZERO_ARRAY_SIZE_ERROR
+						return FAIL; //CF_ZERO_ARRAY_SIZE_ERROR
 				}
 				else if (XSD_UNKNOWN != pOutParam->m_nOutType)//basic type
 				{
@@ -364,7 +362,7 @@ int Call::Invoke()
 				}
 				else // this is an unexpected situation
 				{
-					return AXIS_FAIL;
+					return FAIL;
 				}			
 			}
 		}
@@ -387,7 +385,7 @@ Param* Call::GetResult()
 /**
  * Used to get deserialized return object when the return type is complex type
  */
-void Call::GetCmplxResult(void** pReturn)
+void Call::GetResult(void** pReturn)
 {
 	if (m_ReturnCplxObj.pObject)
 	{
@@ -409,12 +407,11 @@ int Call::Initialize()
 	try {
 		InitializeObjects();
 		m_Soap.sessionid = "somesessionid1234";
-		remove_headers(&m_Soap);
-		if (AXIS_SUCCESS != OpenConnection()) return AXIS_FAIL;
+		if (SUCCESS != OpenConnection()) return FAIL;
 		if (m_pAxisEngine) delete m_pAxisEngine;
 		m_pAxisEngine = new ClientAxisEngine();
-		if (!m_pAxisEngine) return AXIS_FAIL;
-		if (AXIS_SUCCESS == m_pAxisEngine->Initialize())
+		if (!m_pAxisEngine) return FAIL;
+		if (SUCCESS == m_pAxisEngine->Initialize())
 		{
 			m_pMsgData = m_pAxisEngine->GetMessageData();
 			if (m_pMsgData)
@@ -423,21 +420,21 @@ int Call::Initialize()
 				m_pMsgData->getSoapDeSerializer((IWrapperSoapDeSerializer**)(&m_pIWSDZ));
 				if (m_pIWSSZ && m_pIWSDZ)
 				{
-					return AXIS_SUCCESS;
+					return SUCCESS;
 				}
 			}
-			return AXIS_FAIL;
+			return FAIL;
 		}
-		return AXIS_FAIL;
+		return FAIL;
 	}
 	catch (ChannelException e)
 	{
-		/*printf(e.GetErr().c_str());*/
+		printf(e.GetErr().c_str());
 		return FAIL;
 	}
 	catch (...)
 	{
-		/*printf("Unknown exception occured in the client");*/
+		printf("Unknown exception occured in the client");
 		return FAIL;
 	}
 }
@@ -466,7 +463,7 @@ int Call::UnInitialize()
 		m_pAxisEngine = NULL;
 	}
 	CloseConnection();
-	return AXIS_SUCCESS;
+	return SUCCESS;
 }
 
 int Call::SetProtocol(AXIS_PROTOCOL_TYPE protocol)
@@ -517,7 +514,7 @@ void Call::SetSOAPVersion(SOAP_VERSION version)
  */
 int Call::MakeArray()
 {
-	if (m_pArray->m_Size < 1) return AXIS_FAIL;
+	if (m_pArray->m_Size < 1) return FAIL;
 
 	if (USER_TYPE == m_nArrayType)
 	{
@@ -527,7 +524,7 @@ int Call::MakeArray()
 	{
 		m_pArray->m_Array = m_pIWSDZ->CreateArray(m_nArrayType, m_pArray->m_Size); 
 	}
-	return (NULL != m_pArray->m_Array)?AXIS_SUCCESS:AXIS_FAIL;
+	return (NULL != m_pArray->m_Array)?SUCCESS:FAIL;
 }
 
 Call::OutParamHolder::OutParamHolder()
@@ -566,7 +563,7 @@ void Call::AddOutParamType(XSDTYPE nType)
 /**
  * This function is used to set that the return type is a complex type
  */
-void Call::AddCmplxOutParamType(void *pDZFunct, void* pCreFunct, void *pDelFunct, const char* pchTypeName, const char * pchUri)
+void Call::AddOutParamType(void *pDZFunct, void* pCreFunct, void *pDelFunct, const char* pchTypeName, const char * pchUri)
 {
 	OutParamHolder* pOPH = AddOutParam();
 	if (pOPH)
@@ -584,7 +581,7 @@ void Call::AddCmplxOutParamType(void *pDZFunct, void* pCreFunct, void *pDelFunct
 /**
  * This function is used to set that the return type is an array of complex types
  */
-void Call::AddCmplxArrayOutParamType(Axis_Array* pArray, void* pDZFunct, void* pCreFunct, void* pDelFunct, void* pSizeFunct, const char* pchTypeName, const char* pchUri)
+void Call::AddOutParamType(Axis_Array* pArray, void* pDZFunct, void* pCreFunct, void* pDelFunct, void* pSizeFunct, const char* pchTypeName, const char* pchUri)
 {
 	OutParamHolder* pOPH = AddOutParam();
 	if (pOPH)
@@ -607,7 +604,7 @@ void Call::AddCmplxArrayOutParamType(Axis_Array* pArray, void* pDZFunct, void* p
  *				 to the client application.
  * @param nType Basic type of the array elements
  */
-void Call::AddBasicArrayOutParamType(Axis_Array* pArray, XSDTYPE nType)
+void Call::AddOutParamType(Axis_Array* pArray, XSDTYPE nType)
 {
 	OutParamHolder* pOPH = AddOutParam();
 	if (pOPH)
@@ -633,7 +630,7 @@ Param* Call::GetOutParam()
 /**
  * Used to get the deserialized object when the out param type is of complex type
  */
-void Call::GetCmplxOutParam(void** pOut)
+void Call::GetOutParam(void** pOut)
 {
 	if (m_CurItr == NULL) m_CurItr = m_OutParams.begin();
 	else m_CurItr++;
@@ -649,252 +646,3 @@ void Call::GetCmplxOutParam(void** pOut)
 		*pOut = NULL;
 	}
 }
-
-void AXISCALL Call::AddParameter(void* pValue,const char* pchName, XSDTYPE nType)
-{
-	m_pIWSSZ->AddOutputParam(pchName, pValue, nType);
-}
-
-int Call::GetInt()
-{
-	if (!m_pReturnValue) return 0; //TODO this is an error situation. Should be handled.
-	return m_pReturnValue->GetInt();
-}
-unsigned int Call::GetUnsignedInt()
-{
-	if (!m_pReturnValue) return 0; //TODO this is an error situation. Should be handled.
-	return m_pReturnValue->GetUnsignedInt();
-}
-short Call::GetShort()
-{
-	if (!m_pReturnValue) return 0; //TODO this is an error situation. Should be handled.
-	return m_pReturnValue->GetShort();
-}
-unsigned short Call::GetUnsignedShort()
-{
-	if (!m_pReturnValue) return 0; //TODO this is an error situation. Should be handled.
-	return m_pReturnValue->GetUnsignedShort();
-}
-char Call::GetByte()
-{
-	if (!m_pReturnValue) return 0; //TODO this is an error situation. Should be handled.
-	return m_pReturnValue->GetByte();
-}
-unsigned char Call::GetUnsignedByte()
-{
-	if (!m_pReturnValue) return 0; //TODO this is an error situation. Should be handled.
-	return m_pReturnValue->GetUnsignedByte();
-}
-long Call::GetLong()
-{
-	if (!m_pReturnValue) return 0; //TODO this is an error situation. Should be handled.
-	return m_pReturnValue->GetLong();
-}
-long Call::GetInteger()
-{
-	if (!m_pReturnValue) return 0; //TODO this is an error situation. Should be handled.
-	return m_pReturnValue->GetInteger();
-}
-unsigned long Call::GetUnsignedLong()
-{
-	if (!m_pReturnValue) return 0; //TODO this is an error situation. Should be handled.
-	return m_pReturnValue->GetUnsignedLong();
-}
-float Call::GetFloat()
-{
-	if (!m_pReturnValue) return 0; //TODO this is an error situation. Should be handled.
-	return m_pReturnValue->GetFloat();
-}
-double Call::GetDouble()
-{
-	if (!m_pReturnValue) return 0; //TODO this is an error situation. Should be handled.
-	return m_pReturnValue->GetDouble();
-}
-double Call::GetDecimal()
-{
-	if (!m_pReturnValue) return 0; //TODO this is an error situation. Should be handled.
-	return m_pReturnValue->GetDecimal();
-}
-const AxisChar* Call::GetString()
-{
-	if (!m_pReturnValue) return NULL; //TODO this is an error situation. Should be handled.
-	return m_pReturnValue->GetString();
-}
-const AxisChar* Call::GetAnyURI()
-{
-	if (!m_pReturnValue) return NULL; //TODO this is an error situation. Should be handled.
-	return m_pReturnValue->GetAnyURI();
-}
-const AxisChar* Call::GetQName()
-{
-	if (!m_pReturnValue) return NULL; //TODO this is an error situation. Should be handled.
-	return m_pReturnValue->GetQName();
-}
-const AxisChar* Call::GetHexString()
-{
-	if (!m_pReturnValue) return NULL; //TODO this is an error situation. Should be handled.
-	return m_pReturnValue->GetHexString();
-}
-const AxisChar* Call::GetBase64String()
-{
-	if (!m_pReturnValue) return NULL; //TODO this is an error situation. Should be handled.
-	return m_pReturnValue->GetBase64String();
-}
-struct tm Call::GetDateTime()
-{
-	return m_pReturnValue->GetDateTime();
-}
-struct tm Call::GetDate()
-{
-	return m_pReturnValue->GetDate();
-}
-struct tm Call::GetTime()
-{
-	return m_pReturnValue->GetTime();
-}
-long Call::GetDuration()
-{
-	if (!m_pReturnValue) return 0; //TODO this is an error situation. Should be handled.
-	return m_pReturnValue->GetDuration();
-}
-
-/* Methods used by stubs to get a deserialized value of basic type out params */
-int Call::GetIntOutParam()
-{
-	Param* param = GetOutParam();
-	if (!param) return 0; //TODO this is an error situation. Should be handled.
-	return param->GetInt();
-}
-unsigned int Call::GetUnsignedIntOutParam()
-{
-	Param* param = GetOutParam();
-	if (!param) return 0; //TODO this is an error situation. Should be handled.
-	return param->GetUnsignedInt();
-}
-short Call::GetShortOutParam()
-{
-	Param* param = GetOutParam();
-	if (!param) return 0; //TODO this is an error situation. Should be handled.
-	return param->GetShort();
-}
-unsigned short Call::GetUnsignedShortOutParam()
-{
-	Param* param = GetOutParam();
-	if (!param) return 0; //TODO this is an error situation. Should be handled.
-	return param->GetUnsignedShort();
-}
-char Call::GetByteOutParam()
-{
-	Param* param = GetOutParam();
-	if (!param) return 0; //TODO this is an error situation. Should be handled.
-	return param->GetByte();
-}
-unsigned char Call::GetUnsignedByteOutParam()
-{
-	Param* param = GetOutParam();
-	if (!param) return 0; //TODO this is an error situation. Should be handled.
-	return param->GetUnsignedByte();
-}
-long Call::GetLongOutParam()
-{
-	Param* param = GetOutParam();
-	if (!param) return 0; //TODO this is an error situation. Should be handled.
-	return param->GetLong();
-}
-long Call::GetIntegerOutParam()
-{
-	Param* param = GetOutParam();
-	if (!param) return 0; //TODO this is an error situation. Should be handled.
-	return param->GetInteger();
-}
-unsigned long Call::GetUnsignedLongOutParam()
-{
-	Param* param = GetOutParam();
-	if (!param) return 0; //TODO this is an error situation. Should be handled.
-	return param->GetUnsignedLong();
-}
-float Call::GetFloatOutParam()
-{
-	Param* param = GetOutParam();
-	if (!param) return 0; //TODO this is an error situation. Should be handled.
-	return param->GetFloat();
-}
-double Call::GetDoubleOutParam()
-{
-	Param* param = GetOutParam();
-	if (!param) return 0; //TODO this is an error situation. Should be handled.
-	return param->GetDouble();
-}
-double Call::GetDecimalOutParam()
-{
-	Param* param = GetOutParam();
-	if (!param) return 0; //TODO this is an error situation. Should be handled.
-	return param->GetDecimal();
-}
-const AxisChar* Call::GetStringOutParam()
-{
-	Param* param = GetOutParam();
-	if (!param) return NULL; //TODO this is an error situation. Should be handled.
-	return param->GetString();
-}
-const AxisChar* Call::GetAnyURIOutParam()
-{
-	Param* param = GetOutParam();
-	if (!param) return NULL; //TODO this is an error situation. Should be handled.
-	return param->GetAnyURI();
-}
-const AxisChar* Call::GetQNameOutParam()
-{
-	Param* param = GetOutParam();
-	if (!param) return NULL; //TODO this is an error situation. Should be handled.
-	return param->GetQName();
-}
-const AxisChar* Call::GetHexStringOutParam()
-{
-	Param* param = GetOutParam();
-	if (!param) return NULL; //TODO this is an error situation. Should be handled.
-	return param->GetHexString();
-}
-const AxisChar* Call::GetBase64StringOutParam()
-{
-	Param* param = GetOutParam();
-	if (!param) return NULL; //TODO this is an error situation. Should be handled.
-	return param->GetBase64String();
-}
-struct tm Call::GetDateTimeOutParam()
-{
-	struct tm zero;
-	Param* param = GetOutParam();
-	if (!param) return zero; //TODO this is an error situation. Should be handled.
-	return param->GetDateTime();
-}
-struct tm Call::GetDateOutParam()
-{
-	struct tm zero;
-	Param* param = GetOutParam();
-	if (!param) return zero; //TODO this is an error situation. Should be handled.
-	return param->GetDate();
-}
-struct tm Call::GetTimeOutParam()
-{
-	struct tm zero;
-	Param* param = GetOutParam();
-	if (!param) return zero; //TODO this is an error situation. Should be handled.
-	return param->GetTime();
-}
-long Call::GetDurationOutParam()
-{
-	Param* param = GetOutParam();
-	if (!param) return 0; //TODO this is an error situation. Should be handled.
-	return param->GetDuration();
-}
-
-/*global function to be used in C stubs */
-extern "C" Call* GetCallObject(AXIS_PROTOCOL_TYPE nProtocol, AxisChar* pchEndpointURI)
-{
-	Call* pCall = new Call();
-	pCall->SetProtocol(nProtocol);
-	pCall->SetEndpointURI(pchEndpointURI);
-	return pCall;
-}
-

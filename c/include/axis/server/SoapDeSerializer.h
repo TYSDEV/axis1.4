@@ -67,6 +67,7 @@
 #if !defined(AFX_SOAPDESERIALIZER_H__FD0E7C3B_B887_480A_9E2A_20736A88B09B__INCLUDED_)
 #define AFX_SOAPDESERIALIZER_H__FD0E7C3B_B887_480A_9E2A_20736A88B09B__INCLUDED_
 
+#include "../common/IWrapperSoapDeSerializer.h"
 #include "../common/IHandlerSoapDeSerializer.h"
 #include "XMLStreamHandler.h"
 
@@ -78,7 +79,7 @@ class SoapMethod;
 class SoapBody;
 class SoapFault;
 
-class SoapDeSerializer : public IHandlerSoapDeSerializer
+class SoapDeSerializer : public IWrapperSoapDeSerializer, public IHandlerSoapDeSerializer
 {
 private:
 	XMLStreamHandler* m_pHandler;
@@ -88,10 +89,10 @@ private:
 	Param* m_pLastArrayParam;
 public:
 	int GetVersion();
-	const AxisChar* AXISCALL GetMethodName();
+	const AxisChar* GetMethodName();
 	int Init();
-	IParam* AXISCALL GetParam();
-	int AXISCALL Deserialize(IParam* pIParam, int bHref);
+	IParam* GetParam();
+	int Deserialize(IParam* pIParam, int bHref);
 	SoapFault* GetFault();
 	SoapMethod* GetMethod();
 	SoapBody* GetBody();
@@ -101,40 +102,40 @@ public:
 	SoapDeSerializer();
 	virtual ~SoapDeSerializer();
 	/* Method used by wrappers to get a deserialized Array of complex types */
-	Axis_Array AXISCALL GetCmplxArray(void* pDZFunct, void* pCreFunct, void* pDelFunct, void* pSizeFunct, const AxisChar* pchTypeName, const AxisChar* pchURI);
+	Axis_Array GetArray(void* pDZFunct, void* pCreFunct, void* pDelFunct, void* pSizeFunct, const AxisChar* pchTypeName, const AxisChar* pchURI);
 	/* Method used by wrappers to get a deserialized Array of basic types */
-	Axis_Array AXISCALL GetBasicArray(XSDTYPE nType);
-	int AXISCALL GetArraySize();
-	int AXISCALL GetArray(Axis_Array* pArray, XSDTYPE nType);
+	Axis_Array GetArray(XSDTYPE nType);
+	int GetArraySize();
+	int GetArray(Axis_Array* pArray, XSDTYPE nType);
 	/* Method used by wrappers to get a deserialized single object of complex type */
-	void* AXISCALL GetObject(void* pDZFunct, void* pCreFunct, void* pDelFunct, const AxisChar* pchTypeName, const AxisChar* pchURI);
+	void* GetObject(void* pDZFunct, void* pCreFunct, void* pDelFunct, const AxisChar* pchTypeName, const AxisChar* pchURI);
 	
 	/* Methods used by wrappers to get a deserialized value of basic types */
-	int AXISCALL GetInt();
-    unsigned int AXISCALL GetUnsignedInt();
-    short AXISCALL GetShort();
-    unsigned short AXISCALL GetUnsignedShort();
-    char AXISCALL GetByte();
-    unsigned char AXISCALL GetUnsignedByte();
-    long AXISCALL GetLong();
-    long AXISCALL GetInteger();
-    unsigned long AXISCALL GetUnsignedLong();
-	float AXISCALL GetFloat();
-    double AXISCALL GetDouble();
-    double AXISCALL GetDecimal();
-	const AxisChar* AXISCALL GetString();
-    const AxisChar* AXISCALL GetAnyURI();
-    const AxisChar* AXISCALL GetQName();
-	const AxisChar* AXISCALL GetHexString();
-	const AxisChar* AXISCALL GetBase64String();
+	int GetInt();
+    unsigned int GetUnsignedInt();
+    short GetShort();
+    unsigned short GetUnsignedShort();
+    char GetByte();
+    unsigned char GetUnsignedByte();
+    long GetLong();
+    long GetInteger();
+    unsigned long GetUnsignedLong();
+	float GetFloat();
+    double GetDouble();
+    double GetDecimal();
+	const AxisChar* GetString();
+    const AxisChar* GetAnyURI();
+    const AxisChar* GetQName();
+	const AxisChar* GetHexString();
+	const AxisChar* GetBase64String();
     /*return a tm struct which contain year-month-date-hour-
       minute-second*/
-    struct tm AXISCALL GetDateTime();
-    struct tm AXISCALL GetDate();
-    struct tm AXISCALL GetTime();
+    struct tm GetDateTime();
+    struct tm GetDate();
+    struct tm GetTime();
     /*return a tm struct which contain years-months-dates-hours-
       minutes-seconds which represents a duration*/
-    long AXISCALL GetDuration();
+    long GetDuration();
 	void* CreateArray(XSDTYPE nType, int nSize);
 	void DeleteArray(Axis_Array* pArray , XSDTYPE nType);
 };

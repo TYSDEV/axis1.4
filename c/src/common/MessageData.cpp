@@ -140,7 +140,7 @@ int MessageData::setPastPivotState(bool bState)
 {
 	m_bPastPivotState = bState;
 
-	return AXIS_SUCCESS;
+	return SUCCESS;
 }
 
 void MessageData::getSoapSerializer(IHandlerSoapSerializer **pIHandlerSoapSerializer)
@@ -166,7 +166,7 @@ void MessageData::getSoapDeSerializer(IHandlerSoapDeSerializer **pIHandlerSoapDe
 int MessageData::setProperty(string &sName, string &sValue)
 {
 	m_Properties[sName.c_str()]= sValue;
-	return AXIS_SUCCESS;
+	return SUCCESS;
 }
 
 /*

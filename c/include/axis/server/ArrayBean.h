@@ -79,8 +79,8 @@ class ArrayBean : public IArrayBean
 public:
 	ArrayBean();
 	virtual ~ArrayBean();
-	virtual int DeSerialize(SoapDeSerializer *pDZ);
-	virtual int Serialize(SoapSerializer& pSZ);
+	virtual int DeSerialize(IWrapperSoapDeSerializer *pDZ);
+	virtual int Serialize(IWrapperSoapSerializer& pSZ);
 	int GetArraySize();
 private:
 	int GetArrayBlockSize(list<int>::iterator it);

@@ -143,8 +143,6 @@ typedef struct
 int set_header(Ax_soapstream* soap, char * pchkey, char * pchvalue);
 const char* get_header(const Ax_soapstream* soap, const char* pchkey);
 const char* get_service_from_uri(const Ax_soapstream* soap);
-void remove_headers(Ax_soapstream* soap);
-
 
 /*This function is implemented in axis*/
 /*int initialize_process();*/
@@ -161,7 +159,7 @@ extern "C"
 	int uninitialize_module();
 
 	/*This function is implemented in axis*/
-	int initialize_module(int bServer);
+	int initialize_module(int bServer, const char * wsddPath);
 
 	/*This function is implemented in axis*/
 	int process_request(Ax_soapstream* str);
