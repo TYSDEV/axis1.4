@@ -69,6 +69,7 @@ import java.io.PrintStream;
 import java.io.Serializable;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Vector;
 
 /**
  * @author James Snell (jasnell@us.ibm.com)
@@ -228,8 +229,7 @@ public class TypeMappingRegistry implements Serializer {
         String prefix = context.
                            getPrefixForURI(Constants.URI_CURRENT_SCHEMA_XSI,
                                            "xsi");
-        
-        
+
         attrs.addAttribute(Constants.URI_CURRENT_SCHEMA_XSI,
                            "type",
                            prefix + ":type",
@@ -242,34 +242,34 @@ public class TypeMappingRegistry implements Serializer {
         throws IOException
     {
         if (value != null) {
-            Class _class = value.getClass();
-            
-            // Find a Serializer for this class, walking up the inheritance
-            // hierarchy and implemented interfaces list.
-            while (_class != null) {
-                Serializer ser = getSerializer(_class);
-                if (ser != null) {
-                    QName type = getTypeQName(_class);
-                    attributes = setTypeAttribute(attributes, type, context);
-                    ser.serialize(name, attributes, value, context);
-                    return;
-                }
+            Serializer  ser     = null ;
+            Class       _class  = null ;
 
-                Class [] ifaces = _class.getInterfaces();
-                for (int i = 0; i < ifaces.length; i++) {
-                    Class iface = ifaces[i];
-                    ser = getSerializer(iface);
-                    if (ser != null) {
-                        QName type = getTypeQName(iface);
-                        attributes = setTypeAttribute(attributes, type, context);
-                        ser.serialize(name, attributes, value, context);
-                        return;
-                    }
+            // Check the most common case first
+            ser = getSerializer( _class = value.getClass() );
+            if ( ser == null ) {
+                Vector  classes = new Vector();
+                classes.add( _class );
+        
+                while( classes.size() != 0 ) {
+                    _class = (Class) classes.remove( 0 );
+                    if ( (ser = getSerializer(_class)) != null ) break ;
+                    if ( classes == null ) classes = new Vector();
+                    Class[] ifaces = _class.getInterfaces();
+                    for (int i = 0 ; i < ifaces.length ; i++ ) 
+                        classes.add( ifaces[i] );
+                    _class = _class.getSuperclass();
+                    if ( _class != null ) classes.add( _class );
                 }
-                
-                _class = _class.getSuperclass();
             }
-            
+
+            if ( ser != null ) {
+                QName type = getTypeQName(_class);
+                attributes = setTypeAttribute(attributes, type, context);
+                ser.serialize(name, attributes, value, context);
+                return;
+            }
+
             throw new IOException(JavaUtils.getMessage("noSerializer00",
                     value.getClass().getName(), "" + this));
         }
