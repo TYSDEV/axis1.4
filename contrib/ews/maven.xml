@@ -44,7 +44,7 @@
 
     <preGoal name="java:compile">
         <attainGoal name="generate:jaxb"/>
-        <attainGoal name="generate:xmlbeans"/> 
+        <!-- <attainGoal name="generate:xmlbeans"/> -->
 
         <path id="ews.beans.compile.src.set"
               location="${basedir}/target/src"/>
