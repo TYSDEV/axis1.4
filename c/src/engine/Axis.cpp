@@ -95,7 +95,7 @@
 
 #define BYTESTOREAD 64
 //the relative location of the wsdl files hardcoded
-#define WSDLDIRECTORY	"./Axis/wsdls/"
+#define WSDLDIRECTORY	"/wsdls/"
 
 //define all global variables of the axisengine
 #ifdef _AXISTRACE
@@ -210,7 +210,8 @@ extern "C" int process_request(Ax_soapstream *str)
 				}
 				else 
 				{
-					sServiceName = WSDLDIRECTORY + sUriWOAxis + ".wsdl";
+					sServiceName = g_pConfig->GetAxisHomePath();
+					sServiceName += WSDLDIRECTORY + sUriWOAxis + ".wsdl";
 					//check whether wsdl file is available
 					if((WsddFile = fopen(sServiceName.c_str(),"r"))==NULL)
 					{

@@ -97,12 +97,15 @@ class AxisConfig
 	     * @return The status which indicates whether the operation is success (AXIS_SUCCESS) or not (AXIS_FAIL).
 	     */
         int ReadConfFile();
+
+		char* GetAxisHomePath();
         
     private:		 
         //char m_WsddFilePath[CONFBUFFSIZE];
         //char m_AxisLogPath[CONFBUFFSIZE];
         //char m_sWsddFilePath[CONFBUFFSIZE];
         //char m_sAxisLogPath[CONFBUFFSIZE];
+		char* m_sAxisHome;
         char* m_sWsddFilePath;
         char* m_sAxisLogPath;
         char* m_sValue;

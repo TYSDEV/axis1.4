@@ -71,6 +71,7 @@ AxisConfig::AxisConfig()
 {
     m_sWsddFilePath = (char*) malloc(CONFBUFFSIZE);
     m_sAxisLogPath = (char*) malloc(CONFBUFFSIZE);
+	m_sAxisHome = (char*) malloc(CONFBUFFSIZE);
     m_sValue = NULL;
     
     /*assigning default values for configuration variables*/
@@ -89,6 +90,7 @@ AxisConfig::~AxisConfig()
 {
     if(m_sWsddFilePath) delete m_sWsddFilePath;
     if(m_sAxisLogPath) delete m_sAxisLogPath;
+	if(m_sAxisHome) delete m_sAxisHome;
     if(m_sValue) delete m_sValue;
     
 }
@@ -106,6 +108,7 @@ int AxisConfig::ReadConfFile()
 	sConfPath = getenv("AXIS_HOME");
 	if (!sConfPath)
         return AXIS_FAIL;
+	strcpy(m_sAxisHome, sConfPath);
 	strcpy(sNewConfPath, sConfPath);
     strcat(sNewConfPath, "/axiscpp.conf");
     if ((fileConfig = fopen(sNewConfPath, "r")) == NULL)
@@ -171,6 +174,11 @@ char* AxisConfig::GetWsddFilePath()
 char* AxisConfig::GetAxisLogPath()
 {    
     return m_sAxisLogPath;
+}
+
+char* AxisConfig::GetAxisHomePath()
+{
+	return m_sAxisHome;
 }
 
 /*int main(void)
