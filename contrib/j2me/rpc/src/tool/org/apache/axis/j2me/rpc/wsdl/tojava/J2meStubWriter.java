@@ -554,7 +554,7 @@ public class J2meStubWriter extends JavaClassWriter {
             for (int j = 0; j < typeSizes; j++) {
                 ElementDecl elem = (ElementDecl) vTypes.elementAt(j);
                 String componentId = typeId + j;
-                writeElement(pw, elem.getName(), componentId, elem.getType());
+                writeElement(pw, elem.getQName(), componentId, elem.getType());
                 pw.println("       " + typeId + ".elements[" + j + "] = " + componentId + ";");
             }
             pw.println("        javax.microedition.xml.rpc.Element " + id);
@@ -699,7 +699,7 @@ public class J2meStubWriter extends JavaClassWriter {
 					for (int k = 0; k < components.size(); k++) {
 						ElementDecl elem = (ElementDecl) components.elementAt(k);
 						String componentName = compositeName + k;
-						String fieldName = Utils.xmlNameToJava(Utils.getLastLocalPart(elem.getName().getLocalPart()));
+						String fieldName = elem.getName();
 						writeDecoding(pw, componentName, compositeName + "[" + k + "]", elem.getType());
 						faultParamList += componentName;
 						if (k < components.size() - 1) {
@@ -769,7 +769,7 @@ public class J2meStubWriter extends JavaClassWriter {
             for (int j = 0; j < typeSizes; j++) {
                 ElementDecl elem = (ElementDecl) vTypes.elementAt(j);
                 String componentId = id + j;
-                String fieldName = Utils.xmlNameToJava(Utils.getLastLocalPart(elem.getName().getLocalPart()));
+                String fieldName = elem.getName();
                 String getterName = "get" +Utils.capitalizeFirstChar(fieldName) + "()";
                 writeEncoding(pw, name + "." + getterName, componentId, elem.getType());
                 pw.println("       " + id + "[" + j + "] = " + componentId + ";");
@@ -826,7 +826,7 @@ public class J2meStubWriter extends JavaClassWriter {
             for (int j = 0; j < typeSizes; j++) {
                 ElementDecl elem = (ElementDecl) vTypes.elementAt(j);
                 String componentName = compositeName + j;
-                String fieldName = Utils.xmlNameToJava(Utils.getLastLocalPart(elem.getName().getLocalPart()));
+                String fieldName = elem.getName();
                 String setterName = "set" +Utils.capitalizeFirstChar(fieldName);
                 writeDecoding(pw, componentName, compositeName + "[" + j + "]", elem.getType());
                 pw.println("       " + name + "." + setterName + "(" + componentName + ");");
