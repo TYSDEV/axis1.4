@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Forrest site.xml
+
+This file contains an outline of the site's information content.  It is used to:
+- Generate the website menus (though these can be overridden - see docs)
+- Provide semantic, location-independent aliases for internal 'site:' URIs, eg
+<link href="site:changes"> links to changes.html (or ../changes.html if in
+  subdir).
+- Provide aliases for external URLs in the external-refs section.  Eg, <link
+  href="ext:cocoon"> links to http://xml.apache.org/cocoon/ 
+
+See http://xml.apache.org/forrest/linking.html for more info
+-->
+
+<site label="Axis" href="" xmlns="http://apache.org/forrest/linkmap/1.0" tab="">
+<Axis label="Axis">
+ <introduction label="Introduction" href="http://ws.apache.org/axis/index.html"/>
+ <news label="News" href="http://ws.apache.org/axis/news.html"/>
+ <wiki label="FAQ/Wiki" href="http://wiki.apache.org/ws/FrontPage/Axis"/>
+ <getinvolved label="Get Involved">
+  <overview label="Overview" href="http://ws.apache.org/axis/overview.html"/>
+  <cvs label="CVS Repository" href="http://ws.apache.org/axis/cvs.html"/>
+  <mailinglist label="Mailing Lists" href="http://ws.apache.org/axis/mail.html"/>
+  <library label="Reference Library" href="http://ws.apache.org/axis/ref.html" target="body"/>
+  <bugs label="Bugs" href="http://ws.apache.org/axis/bugs.html"/>
+  <buildsite label="HowToBuildSite" href="http://ws.apache.org/axis/howtobuild.html"/>
+ </getinvolved>
+ <axisjava label="Axis (Java)">
+  <documentation label="Documentation" href="http://ws.apache.org/axis/java/index.html"/>
+  <installation label="Installation" href="http://ws.apache.org/axis/java/install.html"/>
+  <users label="User's Guide" href="http://ws.apache.org/axis/java/user-guide.html"/>
+  <developers label="Developer's Guide" href="http://ws.apache.org/axis/java/developers-guide.html"/>
+  <integration label="Integration Guide" href="http://ws.apache.org/axis/java/integration-guide.html"/>
+  <architecture label="Architecture Guide" href="http://ws.apache.org/axis/java/architecture-guide.html"/>
+  <reference label="Reference Guide" href="http://ws.apache.org/axis/java/reference.html"/>
+  <read label="Reading Guide" href="http://ws.apache.org/axis/java/reading.html"/>
+  <requirements label="Requirements" href="http://ws.apache.org/axis/java/requirements.html"/>
+ </axisjava>
+ <axiscpp label="Axis (C++)">
+  <axisc label="Latest Axis C++ Release!" href="cpp/index.html"/>
+  <documentation label="Documentation" href="cpp/documentation.html"/>
+  <download label="Download" href="cpp/download.html"/>
+  <wiki label="Wiki Pages" href="http://wiki.apache.org/ws/FrontPage/AxisCPP"/>
+  <who label="Who we are" href="cpp/who.html"/>
+  </axiscpp>
+<downloads label="Downloads">
+  <releases label="Releases" href="http://ws.apache.org/axis/releases.html"/>
+  <interim label="Interim Drops" href="http://ws.apache.org/axis/interim.html"/>
+  <sourcecode label="Source Code" href="http://cvs.apache.org/viewcvs/ws-axis/"/>
+</downloads>
+<translation label="Translation">
+  <releases label="Japanese" href="http://ws.apache.org/axis/ja/index.html"/>
+</translation>
+<related label="Related Projects">
+  <wsif label="WSIF" href="http://ws.apache.org/wsif/"/>
+  <wsil label="WSIL" href="http://cvs.apache.org/viewcvs/*checkout*/ws-wsil/java/README.htm"/>
+  <wsdl4j label="WSDL4J" href="http://www-124.ibm.com/developerworks/projects/wsdl4j/"/>
+  <uddi4j label="UDDI4J" href="http://www.uddi4j.org/"/>
+</related>
+<misc label="Misc">
+  <who label="Who We Are" href="http://ws.apache.org/axis/who.html"/>
+  <contact label="Contact" href="http://ws.apache.org/axis/contact.html"/>
+  <legal label="Legal" href="http://ws.apache.org/axis/legal.html"/>
+  <notes label="Notes/Docs" href="http://ws.apache.org/axis/docs.html"/>
+</misc>
+
+</Axis>
+
+  <external-refs>
+    <xml.apache.org href="http://xml.apache.org/">
+      <forrest href="forrest/">
+        <validation href="validation.html"/>
+        <webapp href="your-project.html#webapp"/>
+        <document-v11 href="document-v11.html"/>
+      </forrest>
+      <cocoon href="cocoon/"/>
+      <mori href="http://jakarta.terra-intl.com" />
+    </xml.apache.org>
+  </external-refs>
+
+</site>
