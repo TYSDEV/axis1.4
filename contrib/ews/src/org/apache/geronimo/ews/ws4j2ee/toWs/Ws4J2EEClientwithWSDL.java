@@ -63,7 +63,6 @@ import org.apache.geronimo.ews.ws4j2ee.context.ContextValidator;
 import org.apache.geronimo.ews.ws4j2ee.context.J2EEWebServiceContext;
 import org.apache.geronimo.ews.ws4j2ee.context.MiscInfo;
 import org.apache.geronimo.ews.ws4j2ee.context.webservices.client.interfaces.ServiceReferanceContext;
-import org.apache.geronimo.ews.ws4j2ee.parsers.ServiceReferanceParser;
 import org.apache.geronimo.ews.ws4j2ee.toWs.impl.Ws4J2eeFactoryImpl;
 import org.apache.geronimo.ews.ws4j2ee.utils.MiscFactory;
 import org.apache.geronimo.ews.ws4j2ee.utils.Utils;

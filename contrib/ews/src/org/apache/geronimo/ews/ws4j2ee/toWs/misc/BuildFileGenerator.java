@@ -223,6 +223,7 @@ public class BuildFileGenerator implements Generator {
 //			}
 			out.write("		<copy todir=\"${build.classes}\">\n");
 			out.write("			<fileset dir=\"${src}\">\n");
+            out.write("             <include name=\"*.properties\"/>\n");
 			out.write("				<include name=\"META-INF/*.xml\"/>\n");
 			out.write("				<include name=\"WEB-INF/*.xml\"/>\n");
 			out.write("				<include name=\"META-INF/*.wsdl\"/>\n");

@@ -16,8 +16,6 @@
 
 package org.apache.geronimo.ews.ws4j2ee.toWs.impl;
 
-import javax.xml.namespace.QName;
-
 import org.apache.axis.wsdl.fromJava.Emitter;
 import org.apache.geronimo.ews.ws4j2ee.context.J2EEWebServiceContext;
 import org.apache.geronimo.ews.ws4j2ee.context.j2eeDD.EJBContext;
@@ -26,7 +24,6 @@ import org.apache.geronimo.ews.ws4j2ee.toWs.GenerationFault;
 import org.apache.geronimo.ews.ws4j2ee.toWs.Generator;
 import org.apache.geronimo.ews.ws4j2ee.toWs.Writer;
 import org.apache.geronimo.ews.ws4j2ee.toWs.Ws4J2eeDeployContext;
-import org.apache.geronimo.ews.ws4j2ee.toWs.Ws4J2eeServerCLOptionParser;
 import org.apache.geronimo.ews.ws4j2ee.toWs.dd.J2EEContainerSpecificDDGenerator;
 import org.apache.geronimo.ews.ws4j2ee.toWs.dd.JaxrpcMapperGenerator;
 import org.apache.geronimo.ews.ws4j2ee.toWs.dd.WebContainerDDGenerator;
@@ -38,6 +35,7 @@ import org.apache.geronimo.ews.ws4j2ee.toWs.ejb.EJBRemoteWriter;
 import org.apache.geronimo.ews.ws4j2ee.toWs.ejb.SessionBeanWriter;
 import org.apache.geronimo.ews.ws4j2ee.toWs.handlers.HandlerGenerator;
 import org.apache.geronimo.ews.ws4j2ee.toWs.misc.BuildFileGenerator;
+import org.apache.geronimo.ews.ws4j2ee.toWs.misc.PropertyFileGenerator;
 import org.apache.geronimo.ews.ws4j2ee.toWs.wrapperWs.WrapperWsGenerator;
 import org.apache.geronimo.ews.ws4j2ee.toWs.ws.ClientSideWsGenerator;
 import org.apache.geronimo.ews.ws4j2ee.toWs.ws.ServerSideWsGenerator;
@@ -113,6 +111,11 @@ public class GenerationFactoryImpl
     public Generator createWebContainerDDGenerator(J2EEWebServiceContext j2eewscontext)
         throws GenerationFault {
         return new WebContainerDDGenerator(j2eewscontext);
+    }
+
+    public Generator createPropertyFileGenerator(J2EEWebServiceContext j2eewscontext)
+        throws GenerationFault {
+        return new PropertyFileGenerator(j2eewscontext);
     }
 
 }
