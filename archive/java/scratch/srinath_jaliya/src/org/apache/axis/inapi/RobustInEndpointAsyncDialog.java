@@ -4,7 +4,7 @@
  * To change the template for this generated file go to
  * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
-package org.apache.axis.serverapi;
+package org.apache.axis.inapi;
 
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.messaging.MessageSender;
@@ -16,13 +16,11 @@ import org.apache.axis.messaging.SOAPEnvelope;
  * To change the template for this generated type comment go to
  * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
-public class RobustInEndpointReciverAsync implements EndpointReciver{
+public class RobustInEndpointAsyncDialog implements EndpointDialog{
     private Provider provider;
-    public RobustInEndpointReciverAsync(Provider provider){
-        this.provider = provider;
-    }
+ 
 
-    public void invoke(final MessageContext msgctx) {
+    public void handleMessage(final MessageContext msgctx) {
         Thread thrad = new Thread(new Runnable() {
             public void run() {
                 try {
@@ -36,6 +34,20 @@ public class RobustInEndpointReciverAsync implements EndpointReciver{
             }
         });
         thrad.start();
+    }
+    
+    /**
+     * @return
+     */
+    public Provider getProvider() {
+        return provider;
+    }
+
+    /**
+     * @param provider
+     */
+    public void setProvider(Provider provider) {
+        this.provider = provider;
     }
 
 }

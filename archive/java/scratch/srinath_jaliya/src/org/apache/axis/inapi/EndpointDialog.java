@@ -4,10 +4,10 @@
  * To change the template for this generated file go to
  * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
-package org.apache.axis.serverapi;
+package org.apache.axis.inapi;
 
-import org.apache.axis.clientapi.Callback;
 import org.apache.axis.context.MessageContext;
+import org.apache.axis.messaging.Dialog;
 
 /**
  * @author srinath
@@ -15,6 +15,6 @@ import org.apache.axis.context.MessageContext;
  * To change the template for this generated type comment go to
  * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
-public interface AsyncProvider {
-    public void invoke(MessageContext msgCtx,Callback callback);
+public interface EndpointDialog extends Dialog{
+    public void handleMessage(MessageContext msgctx);
 }

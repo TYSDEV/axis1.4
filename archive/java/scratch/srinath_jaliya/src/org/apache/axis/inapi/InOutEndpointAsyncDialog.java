@@ -4,9 +4,9 @@
  * To change the template for this generated file go to
  * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
-package org.apache.axis.serverapi;
+package org.apache.axis.inapi;
 
-import org.apache.axis.clientapi.Callback;
+import org.apache.axis.outapi.Callback;
 import org.apache.axis.context.MessageContext;
 import org.apache.axis.messaging.MessageSender;
 import org.apache.axis.messaging.SOAPEnvelope;
@@ -17,13 +17,11 @@ import org.apache.axis.messaging.SOAPEnvelope;
  * To change the template for this generated type comment go to
  * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
-public class InOutEndpointReciverAsync implements EndpointReciver{
+public class InOutEndpointAsyncDialog implements EndpointDialog{
     private AsyncProvider provider;
-    public InOutEndpointReciverAsync(AsyncProvider provider){
-        this.provider = provider;
-    }
+  
 
-    public void invoke(final MessageContext msgctx) {
+    public void handleMessage(final MessageContext msgctx) {
         final Callback callback = new Callback() {
             public void handleResult(SOAPEnvelope env) {
                 MessageSender sender = new MessageSender(msgctx.getRegistry());
@@ -37,6 +35,19 @@ public class InOutEndpointReciverAsync implements EndpointReciver{
             }
         });
         
+    }
+    /**
+     * @return
+     */
+    public AsyncProvider getProvider() {
+        return provider;
+    }
+
+    /**
+     * @param provider
+     */
+    public void setProvider(AsyncProvider provider) {
+        this.provider = provider;
     }
 
 }

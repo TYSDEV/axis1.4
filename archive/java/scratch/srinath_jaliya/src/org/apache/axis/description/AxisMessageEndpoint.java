@@ -1,6 +1,6 @@
-package org.apache.axis.clientapi;
+package org.apache.axis.description;
 
-import org.apache.axis.messaging.SOAPEnvelope;
+import org.apache.xml.utils.QName;
 
 /*
  * Created on Mar 23, 2005
@@ -15,6 +15,8 @@ import org.apache.axis.messaging.SOAPEnvelope;
  * To change the template for this generated type comment go to
  * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
-public interface Callback {
-    public void handleResult(SOAPEnvelope env);
+public class AxisMessageEndpoint implements SOAPEndpoint{
+    public AxisMessageEndpoint(QName name) {
+
+    }
 }

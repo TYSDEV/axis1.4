@@ -15,8 +15,8 @@ import org.apache.xml.utils.QName;
  * To change the template for this generated type comment go to
  * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
-public class AxisService {
-    public AxisService(QName name) {
+public class AxisServiceEndpoint implements SOAPEndpoint{
+    public AxisServiceEndpoint(QName name) {
 
     }
 

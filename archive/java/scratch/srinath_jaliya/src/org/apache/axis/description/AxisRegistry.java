@@ -1,7 +1,7 @@
 package org.apache.axis.description;
 
-import org.apache.axis.clientapi.CallbacksBag;
-import org.apache.axis.clientapi.TransportEndpointManager;
+import org.apache.axis.outapi.CallbacksBag;
+import org.apache.axis.outapi.TransportEndpointManager;
 
 /*
  * Created on Mar 23, 2005
@@ -22,7 +22,7 @@ public class AxisRegistry {
         return epm;
     }
     
-    public void addService(AxisService service){
+    public void addService(AxisServiceEndpoint service){
     
     }
     

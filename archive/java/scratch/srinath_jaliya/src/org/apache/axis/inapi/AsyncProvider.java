@@ -4,8 +4,9 @@
  * To change the template for this generated file go to
  * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
-package org.apache.axis.serverapi;
+package org.apache.axis.inapi;
 
+import org.apache.axis.outapi.Callback;
 import org.apache.axis.context.MessageContext;
 
 /**
@@ -14,14 +15,6 @@ import org.apache.axis.context.MessageContext;
  * To change the template for this generated type comment go to
  * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
-public class InEndpointReciverSync implements EndpointReciver{
-    private Provider provider;
-    public InEndpointReciverSync(Provider provider){
-        this.provider = provider;
-    }
-
-    public void invoke(final MessageContext msgctx) {
-        provider.invoke(msgctx);        
-    }
-
+public interface AsyncProvider {
+    public void invoke(MessageContext msgCtx,Callback callback);
 }

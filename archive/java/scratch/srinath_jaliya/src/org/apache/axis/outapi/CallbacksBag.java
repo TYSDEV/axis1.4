@@ -1,4 +1,4 @@
-package org.apache.axis.clientapi;
+package org.apache.axis.outapi;
 import java.util.HashMap;
 
 /*
