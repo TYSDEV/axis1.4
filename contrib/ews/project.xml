@@ -22,35 +22,123 @@
   </organization>
   
   <!-- the year the project started -->
-  <inceptionYear>2002</inceptionYear>
+  <inceptionYear>2003</inceptionYear>
   <package>org.apache.geronimo.ews</package>
   <logo>http://maven.apache.org/images/maven.jpg</logo>
   <description>
-    A collection of example projects showing how to use maven in different
-    situations   
+    Web Services and the J2EE are two technologies that support the Distributed Services. 
+         With the J2EE 1.4 and J2EE web Service specifications the Web Services has been defined as the part of the Java 2 Enterprise Edition.   
+         The EWS (Enterprise Web Service) is an effort to merge these two technologies. 
   </description>
   <!-- a short description of what the project does -->
   <shortDescription>
-    How to use maven in different situations
+    EWS provides a tool that enables the Web Services modules to be deployed in a J2EE Continaer.
   </shortDescription>
 
   <!-- the project home page -->
-  <url>http://maven.apache.org/reference/plugins/examples/</url>
+  <url>http://ws.apache.org/ews/</url>
   <issueTrackingUrl>http://nagoya.apache.org/scarab/servlet/scarab/</issueTrackingUrl>
-  <siteAddress>jakarta.apache.org</siteAddress>
-  <siteDirectory>/www/maven.apache.org/reference/plugins/examples/</siteDirectory>
-  <distributionDirectory>/www/maven.apache.org/builds/</distributionDirectory>
+  <siteAddress>ws.apache.org</siteAddress>
+  <siteDirectory>/www/ews.ws.apache.org/</siteDirectory>
+  <distributionDirectory>/www/ws.apache.org/builds/</distributionDirectory>
 
   <!-- the version control repository and http url for online access
        the connection element has the form:
        scm:<system>:<system specific connection string> -->
   <repository>
-    <connection>scm:cvs:pserver:anoncvs@cvs.apache.org:/home/cvspublic:maven/src/plugins-build/examples</connection>
-    <url>http://cvs.apache.org/viewcvs/maven/src/plugins-build/examples/</url>
+    <connection>scm:cvs:pserver:anoncvs@cvs.apache.org:/home/cvspublic:ws-axis/contrib/ews</connection>
+    <url>http://cvs.apache.org/viewcvs/ws-axis/contrib/ews/</url>
   </repository>
 
   <!-- any mailing lists for the project -->
-  <mailingLists/>
+  <mailingLists>
+    <mailingList>
+      <name>Axis Developer List</name>
+      <subscribe>axis-dev-subscribe@ws.apache.org</subscribe>
+      <unsubscribe>axis-dev-unsubscribe@ws.apache.org</unsubscribe>
+    </mailingList>
+    <mailingList>
+      <name>Geronimo Developer List</name>
+      <subscribe>dev-subscribe@geronimo.apache.org</subscribe>
+      <unsubscribe>dev-unsubscribe@geronimo.apache.org</unsubscribe>
+    </mailingList>
+  </mailingLists>
+
+  <!-- ========== -->
+  <!-- Developers -->
+  <!-- ========== -->
+  
+  <developers>
+
+    <developer>
+      <name>Srinath Perera</name>
+      <id>hemapani</id>
+      <email>hemapani@apache.org</email>
+      <organization>Lanka Software Foundation</organization>
+    </developer>
+
+    <developer>
+      <name>Chathura Herath</name>
+      <id>chathura</id>
+      <email>chathura@opensource.lk</email>
+      <organization></organization>
+    </developer>
+    <developer>
+      <name>Davanum Srinivas</name>
+      <id>dims</id>
+      <email>dims@apache.org</email>
+      <organization></organization>
+    </developer>
+    <developer>
+      <name>Ranjit Priyanga</name>
+      <id>priyanga</id>
+      <email>priyanga@opensource.lk</email>
+      <organization></organization>
+    </developer>
+
+    <developer>
+      <name>Ias</name>
+      <id>ias</id>
+      <email>iasandcb@tmax.co.kr</email>
+      <organization></organization>
+    </developer>
+
+    <developer>
+      <name>Luis Avila</name>
+      <id>lavila</id>
+      <email>lavila@axer.cl</email>
+      <organization></organization>
+    </developer>
+
+    <developer>
+      <name>Jeremy Lemaire</name>
+      <id>Jeremy.Lemaire</id>
+      <email>Jeremy.Lemaire@online.fr</email>
+      <organization></organization>
+    </developer>
+
+    <developer>
+      <name>Guillaume Sauthier</name>
+      <id>Guillaume</id>
+      <email>Guillaume.Sauthier@Objectweb.org</email>
+      <organization></organization>
+    </developer>
+
+    <developer>
+      <name>Dasarath Weerathunge</name>
+      <id>dasaru</id>
+      <email>dasaru@opensource.lk</email>
+      <organization></organization>
+    </developer>
+
+    <developer>
+      <name>Richard Monson-Haefel</name>
+      <id>rmonson</id>
+      <email>rmonson@apache.org</email>
+      <organization></organization>
+    </developer>
+  </developers>
+
   
   <!-- who the developers are for the project -->
   <developers/>
