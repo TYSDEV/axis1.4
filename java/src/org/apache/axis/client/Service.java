@@ -70,6 +70,7 @@ import javax.wsdl.Definition;
 import javax.wsdl.Port;
 import javax.wsdl.PortType;
 import javax.wsdl.factory.WSDLFactory;
+import javax.wsdl.xml.WSDLReader;
 import javax.xml.rpc.JAXRPCException;
 import javax.xml.rpc.encoding.TypeMappingRegistry;
 import javax.xml.rpc.namespace.QName;
@@ -208,7 +209,10 @@ public class Service implements javax.xml.rpc.Service {
             throws JAXRPCException {
         try {
             // Start by reading in the WSDL using WSDL4J
-            Definition           def    = WSDLFactory.newInstance().newWSDLReader().readWSDL( null, doc );
+            WSDLReader           reader = WSDLFactory.newInstance()
+                                                     .newWSDLReader();
+            reader.setVerbose( false );
+            Definition           def    = reader.readWSDL( null, doc );
 
             this.wsdlLocation   = null ;
             this.wsdlDefinition = def ;
