@@ -59,7 +59,7 @@ enum {
     SL_LAST
 } STRINGLITERALTABLEINDEX;
 
-const AxisChar* gsc_BigStringLiteral[] = 
+const AxisChar gsc_BigStringLiteral[] = 
   " </>&\"' xsi:type=\"xsd:&lt;&gt;&amp;&quot;&apos; xsi:nil=\"true\"";
 /* 012345 678901234567 890123456789012345678901234567890123456 78901 2345678901234567890 */
 /* 0          1          2         3         4         5          6          7         8 */ 
@@ -93,22 +93,22 @@ const AxisChar* gsc_strlit_anyURI = "anyURI";
 const AxisChar* gsc_strlit_QName = "QName";
 
 static StringLiteral gsc_StringLiteralsTable[SL_LAST] = {
-/*SL_SPACE                  */{gsc_BigStringLiteral, 1},
-/*SL_LT                     */{gsc_BigStringLiteral[1], 1},
-/*SL_GT                     */{gsc_BigStringLiteral[3], 1},
-/*SL_DBLQUOTE               */{gsc_BigStringLiteral[5], 1},
-/*SL_SGLQUOTE               */{gsc_BigStringLiteral[6], 1},
-/*SL_COLON                  */{gsc_BigStringLiteral[11], 1},
-/*SL_EQUAL                  */{gsc_BigStringLiteral[16], 1},
-/*SL_LT_FSLASH              */{gsc_BigStringLiteral[1], 2},
-/*SL_FSLASH_GT              */{gsc_BigStringLiteral[2], 2},
-/*SL_SPACEXSITYPEEQXSD      */{gsc_BigStringLiteral[7], 15},
-/*SL_XSINILEQLTRUE          */{gsc_BigStringLiteral[47], 15},
-/*SL_ENCODED_LESSER_STR     */{gsc_BigStringLiteral[22], 4},
-/*SL_ENCODED_GREATOR_STR    */{gsc_BigStringLiteral[26], 4},
-/*SL_ENCODED_AMPERSAND_STR  */{gsc_BigStringLiteral[30], 5},
-/*SL_ENCODED_DBL_QUOTE_STR  */{gsc_BigStringLiteral[35], 6},
-/*SL_ENCODED_SGL_QUOTE_STR  */{gsc_BigStringLiteral[41], 6},
+/*SL_SPACE                  */{&gsc_BigStringLiteral[0], 1},
+/*SL_LT                     */{&gsc_BigStringLiteral[1], 1},
+/*SL_GT                     */{&gsc_BigStringLiteral[3], 1},
+/*SL_DBLQUOTE               */{&gsc_BigStringLiteral[5], 1},
+/*SL_SGLQUOTE               */{&gsc_BigStringLiteral[6], 1},
+/*SL_COLON                  */{&gsc_BigStringLiteral[11], 1},
+/*SL_EQUAL                  */{&gsc_BigStringLiteral[16], 1},
+/*SL_LT_FSLASH              */{&gsc_BigStringLiteral[1], 2},
+/*SL_FSLASH_GT              */{&gsc_BigStringLiteral[2], 2},
+/*SL_SPACEXSITYPEEQXSD      */{&gsc_BigStringLiteral[7], 15},
+/*SL_XSINILEQLTRUE          */{&gsc_BigStringLiteral[47], 15},
+/*SL_ENCODED_LESSER_STR     */{&gsc_BigStringLiteral[22], 4},
+/*SL_ENCODED_GREATOR_STR    */{&gsc_BigStringLiteral[26], 4},
+/*SL_ENCODED_AMPERSAND_STR  */{&gsc_BigStringLiteral[30], 5},
+/*SL_ENCODED_DBL_QUOTE_STR  */{&gsc_BigStringLiteral[35], 6},
+/*SL_ENCODED_SGL_QUOTE_STR  */{&gsc_BigStringLiteral[41], 6},
 /*SL_XSD_INT                */{gsc_strlit_int, 3},
 /*SL_XSD_BOOLEAN            */{gsc_strlit_boolean, 7},
 /*SL_XSD_UNSIGNEDINT        */{gsc_strlit_unsignedInt, 11},
