@@ -62,6 +62,7 @@ public class InputOutputFileImpl implements InputOutputFile {
             }
             return instream;
         } catch (FileNotFoundException e) {
+            e.printStackTrace();
             throw GenerationFault.createGenerationFault(e);
         }
     }
@@ -77,6 +78,7 @@ public class InputOutputFileImpl implements InputOutputFile {
             }
             return outstream;
         } catch (FileNotFoundException e) {
+            e.printStackTrace();
             throw GenerationFault.createGenerationFault(e);
         }
     }

@@ -25,6 +25,8 @@ import org.apache.tools.ant.taskdefs.Ant;
 import org.apache.tools.ant.taskdefs.Javac;
 import org.apache.tools.ant.types.FileSet;
 import org.apache.tools.ant.types.Path;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -44,6 +46,9 @@ import java.util.jar.JarOutputStream;
 public class AntExecuter {
     private J2EEWebServiceContext wscontext;
     private JarOutputStream jarFile;
+
+    protected static Log log =
+            LogFactory.getLog(AntExecuter.class.getName());
 
     public AntExecuter(J2EEWebServiceContext wscontext) {
         this.wscontext = wscontext;
@@ -87,6 +92,7 @@ public class AntExecuter {
             compile(outDir, dest);
             createModule(outDir, dest);
         } catch (IOException e) {
+            log.error(e);
             throw GenerationFault.createGenerationFault(e);
         } catch (ClassNotFoundException e) {
             System.out.println("Ant file will not be run programatcally as the " +

@@ -58,6 +58,7 @@ public class JarModule extends AbstractModule {
             if (wscfFile == null)
                 throw new GenerationFault("wscf file must not be null");
         } catch (MalformedURLException e) {
+            e.printStackTrace();
             throw GenerationFault.createGenerationFault(e);
         }
     }

@@ -57,6 +57,7 @@ public class EJBDDParser {
             ejbName = session.getEjbName().getValue();
             context = new EJBDDContextImpl(ejbName, session.getEjbClass().getValue(), session.getHome().getValue(), null, null, null);
         } catch (Exception e) {
+            e.printStackTrace();
             throw GenerationFault.createGenerationFault(e);
         }
     }

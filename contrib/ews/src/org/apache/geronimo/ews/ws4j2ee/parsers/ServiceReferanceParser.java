@@ -60,6 +60,7 @@ public class ServiceReferanceParser {
             else
                 throw new GenerationFault("No service Referance in the file");
         } catch (Exception e) {
+            e.printStackTrace();
             throw GenerationFault.createGenerationFault(e);
         }
     }

@@ -17,6 +17,8 @@
 package org.apache.geronimo.ews.ws4j2ee.utils;
 
 import org.apache.geronimo.ews.ws4j2ee.toWs.GenerationFault;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Document;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
@@ -31,6 +33,8 @@ import java.io.InputStream;
  * @author hemapani@opensource.lk
  */
 public class EWSUtils {
+    protected static Log log =
+            LogFactory.getLog(EWSUtils.class.getName());
     public static Document createDocument(InputStream in) throws GenerationFault {
         try {
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -59,6 +63,7 @@ public class EWSUtils {
             db.setEntityResolver(er);
             return db.parse(in);
         } catch (Exception e) {
+            log.error(e);
             throw GenerationFault.createGenerationFault(e);
         }
     }

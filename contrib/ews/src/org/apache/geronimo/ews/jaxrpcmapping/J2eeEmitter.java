@@ -151,6 +151,7 @@ public class J2eeEmitter extends Emitter {
                 }
             }
         } catch (IOException e) {
+            e.printStackTrace();
             throw GenerationFault.createGenerationFault(e);
         }
     } // setup
