@@ -39,12 +39,18 @@
 		            <includes>j2ee_jaxrpc_mapping_1_1.xsd</includes>
                     <includes>j2ee_web_services_client_1_1.xsd</includes>
             </xmlbean>
+
+            <ant:path id="ews.xmlbeans.libraries">
+                <ant:pathelement path="${maven.repo.local}/ews/jars/ews-xmlbeans-DEV.jar"/>
+            </ant:path>
+            <maven:addPath id="maven.dependency.classpath" refid="ews.xmlbeans.libraries"/>
+
         </j:jelly>
     </goal>
 
     <preGoal name="java:compile">
         <attainGoal name="generate:jaxb"/>
-        <!-- <attainGoal name="generate:xmlbeans"/> -->
+        <attainGoal name="generate:xmlbeans"/>
 
         <path id="ews.beans.compile.src.set"
               location="${basedir}/target/src"/>
