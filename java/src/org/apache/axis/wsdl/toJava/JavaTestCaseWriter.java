@@ -216,17 +216,17 @@ public class JavaTestCaseWriter extends JavaWriter {
                 }
 
                 Parameter param = (Parameter) iparam.next();
-                String paramType = param.getType().getName();
+                String paramType = param.type.getName();
                 String suffix = "";
 
-                if (param.getMode() != Parameter.IN) {
-                    pw.print("new " + Utils.holder(param.getType(), symbolTable)
+                if (param.mode != Parameter.IN) {
+                    pw.print("new " + Utils.holder(param.type, symbolTable)
                             + "(");
                     suffix = ")";
                 }
 
-                if (param.getMode() != Parameter.OUT) {
-                    if ( isPrimitiveType(param.getType()) ) {
+                if (param.mode != Parameter.OUT) {
+                    if ( isPrimitiveType(param.type) ) {
                         if ( "boolean".equals(paramType) ) {
                             pw.print("true");
                         } else if ("byte".equals(paramType)) {
@@ -265,7 +265,7 @@ public class JavaTestCaseWriter extends JavaWriter {
 
                         // We have some constructed type.
                         Vector v = SchemaUtils.getEnumerationBaseAndValues(
-                                param.getType().getNode(), symbolTable);
+                                param.type.getNode(), symbolTable);
 
                         if (v != null) {
 

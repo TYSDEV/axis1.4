@@ -208,9 +208,9 @@ public class JavaSkelWriter extends JavaWriter {
                 }
                 for (int j=0; j < parameters.list.size(); j++) {
                     Parameter p = (Parameter) parameters.list.get(j);
-                    if (p.getMode() == Parameter.IN)
+                    if (p.mode == Parameter.IN)
                         pw.println("                   javax.xml.rpc.ParameterMode.PARAM_MODE_IN,");
-                    else if (p.getMode() == Parameter.OUT) 
+                    else if (p.mode == Parameter.OUT) 
                         pw.println("                   javax.xml.rpc.ParameterMode.PARAM_MODE_INOUT,");
                     else
                         pw.println("                   javax.xml.rpc.ParameterMode.PARAM_MODE_OUT,");

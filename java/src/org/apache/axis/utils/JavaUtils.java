@@ -459,12 +459,7 @@ public class JavaUtils
             // because toLowerCase will lowercase some characters that
             // isUpperCase will return false for.  Like \u2160, Roman
             // numeral one.
-
-            // Don't lowercase if this is the first character and the 2nd
-            // character is also uppercase, to follow Introspector rules.
-            if (Character.isUpperCase(nameArray[i]) &&
-                ((i != 0) ||
-                    (nameLen > 1 && Character.isLowerCase(nameArray[1])))) {
+            if (Character.isUpperCase(nameArray[i])) {
                 result.append(Character.toLowerCase(nameArray[i]));
             }
             else {

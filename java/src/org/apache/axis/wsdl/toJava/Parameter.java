@@ -67,15 +67,9 @@ public class Parameter {
     public static final byte OUT = 2;
     public static final byte INOUT = 3;
 
-    // The QName of the element associated with this param.  Defaults to
-    // null, which means it'll be new QName("", name)
-    private QName qname;
-    
-    // The part name of this parameter, just a string.
-    private String name;
-    
-    private TypeEntry type;
-    private byte mode = IN;
+    private QName name;
+    public TypeEntry type;
+    public byte mode = IN;
 
     public String toString() {
         return "(" + type + ", " + getName() + ", "
@@ -83,39 +77,18 @@ public class Parameter {
     } // toString
 
     public QName getQName() {
-        return qname;
-    }
-
-    public String getName() {
-        if (name == null && qname != null) {
-            return qname.getLocalPart();
-        }
         return name;
     }
 
+    public String getName() {
+        return name.getLocalPart();
+    }
+
     public void setName(String name) {
+        this.name = new QName("", name);
+    }
+
+    public void setQName(QName name) {
         this.name = name;
-        if (qname == null)
-            this.qname = new QName("", name);
-    }
-
-    public void setQName(QName qname) {
-        this.qname = qname;
-    }
-
-    public TypeEntry getType() {
-        return type;
-    }
-
-    public void setType(TypeEntry type) {
-        this.type = type;
-    }
-
-    public byte getMode() {
-        return mode;
-    }
-
-    public void setMode(byte mode) {
-        this.mode = mode;
     }
 } // class Parameter

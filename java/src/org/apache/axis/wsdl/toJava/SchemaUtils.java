@@ -83,13 +83,13 @@ public class SchemaUtils {
 
     /**
      * If the specified node represents a supported JAX-RPC complexType/element,
-     * a Vector is returned which contains ElementDecls for the child
-     * elements.
-     * 
+     * a Vector is returned which contains the child element types and
+     * child element names.  The even indices are the element types (TypeEntry) and
+     * the odd indices are the corresponding names (Strings).
      * If the specified node is not a supported JAX-RPC complexType/element
      * null is returned.
      */
-    public static Vector getComplexElementDeclarations(Node node, SymbolTable symbolTable) {
+    public static Vector getComplexElementTypesAndNames(Node node, SymbolTable symbolTable) {
         if (node == null) {
             return null;
         }
@@ -156,21 +156,17 @@ public class SchemaUtils {
                         QName extendsType =
                                 Utils.getNodeTypeRefQName(children.item(j), 
                                                           "base");
-                        
-                        // Return an element declaration with a fixed name
-                        // ("value") and the correct type.
-                        
                         Vector v = new Vector();
-                        ElementDecl elem = new ElementDecl();
-                        elem.setType(symbolTable.getTypeEntry(extendsType, false));
-                        elem.setName(new javax.xml.rpc.namespace.QName("", "value"));
-                        v.add(elem);
+                        v.add(symbolTable.getTypeEntry(extendsType, false));
+                        v.add("value"); // A fixed, implementation specific name
+                        
+                        // done
                         return v;
                     }
                         
                 }
+                
             }
-
             if (extension != null) {
                 node = extension;  // Skip over complexContent and extension
             }
@@ -192,8 +188,8 @@ public class SchemaUtils {
                 // didn't find anything
                 return new Vector();
             }
-
             if (groupNode != null) {
+
                 // Process each of the choice or element nodes under the sequence/all node
                 Vector v = new Vector();
                 NodeList elements = groupNode.getChildNodes();
@@ -202,11 +198,7 @@ public class SchemaUtils {
                     if (elementKind != null &&
                         Constants.isSchemaXSD(elementKind.getNamespaceURI())) {
                         if ( elementKind.getLocalPart().equals("element")) {
-                            ElementDecl elem = 
-                                    processChildElementNode(elements.item(i), 
-                                                            symbolTable);
-                            if (elem != null)
-                                v.add(elem);
+                            v.addAll(processChildElementNode(elements.item(i), symbolTable));
                         } else if (elementKind.getLocalPart().equals("choice")) {
                             Vector choiceElems = processChoiceNode(elements.item(i), symbolTable);
                             v.addAll(choiceElems);
@@ -223,8 +215,7 @@ public class SchemaUtils {
      * Invoked by getComplexElementTypesAndNames to get the child element types
      * and child element names underneath a Choice Node
      */
-    private static Vector processChoiceNode(Node choiceNode, 
-                                            SymbolTable symbolTable) {
+    private static Vector processChoiceNode(Node choiceNode, SymbolTable symbolTable) {
         Vector v = new Vector();
         NodeList children = choiceNode.getChildNodes();
         for (int j = 0; j < children.getLength(); j++) {
@@ -238,11 +229,7 @@ public class SchemaUtils {
                 } else if (subNodeKind.getLocalPart().equals("group")) {
                     v.addAll(processGroupNode(children.item(j), symbolTable));
                 } else if (subNodeKind.getLocalPart().equals("element")) {
-                    ElementDecl elem = 
-                            processChildElementNode(children.item(j), 
-                                                    symbolTable);
-                    if (elem != null)
-                        v.add(elem);
+                    v.addAll(processChildElementNode(children.item(j), symbolTable));
                 }
             }
         }
@@ -253,8 +240,7 @@ public class SchemaUtils {
      * Invoked by getComplexElementTypesAndNames to get the child element types
      * and child element names underneath a Sequence Node
      */
-    private static Vector processSequenceNode(Node sequenceNode, 
-                                              SymbolTable symbolTable) {
+    private static Vector processSequenceNode(Node sequenceNode, SymbolTable symbolTable) {
         Vector v = new Vector();
         NodeList children = sequenceNode.getChildNodes();
         for (int j = 0; j < children.getLength(); j++) {
@@ -268,11 +254,7 @@ public class SchemaUtils {
                 } else if (subNodeKind.getLocalPart().equals("group")) {
                     v.addAll(processGroupNode(children.item(j), symbolTable));
                 } else if (subNodeKind.getLocalPart().equals("element")) {
-                    ElementDecl elem = 
-                            processChildElementNode(children.item(j), 
-                                                    symbolTable);
-                    if (elem != null)
-                        v.add(elem);
+                    v.addAll(processChildElementNode(children.item(j), symbolTable));
                 }
             }
         }
@@ -316,11 +298,7 @@ public class SchemaUtils {
             if (subNodeKind != null &&
                 Constants.isSchemaXSD(subNodeKind.getNamespaceURI())) {
                 if (subNodeKind.getLocalPart().equals("element")) {
-                    ElementDecl elem = 
-                            processChildElementNode(children.item(j), 
-                                                    symbolTable);
-                    if (elem != null)
-                        v.add(elem);
+                    v.addAll(processChildElementNode(children.item(j), symbolTable));
                 }
             }
         }
@@ -333,11 +311,14 @@ public class SchemaUtils {
      * and child element name for a child element node.
      *
      * If the specified node represents a supported JAX-RPC child element,
-     * we return an ElementDecl containing the child element name and type.
+     * a Vector is returned which contains the child element type and
+     * child element name.  The 0th index is the element types (TypeEntry) and
+     * the 1st index is the corresponding name (Strings).
      */
-    private static ElementDecl processChildElementNode(Node elementNode, 
-                                                  SymbolTable symbolTable) {
+    private static Vector processChildElementNode(Node elementNode, SymbolTable symbolTable) {
+        Vector v = new Vector();
         // Get the name and type qnames.
+        // The name of the element is the local part of the name's qname.
         // The type qname is used to locate the TypeEntry, which is then
         // used to retrieve the proper java name of the type.
         QName nodeName = Utils.getNodeNameQName(elementNode);
@@ -348,13 +329,12 @@ public class SchemaUtils {
             forElement.value = false;
         }
         
-        TypeEntry type = (TypeEntry)symbolTable.getTypeEntry(nodeType, 
-                                                             forElement.value);
+        TypeEntry type = (TypeEntry) symbolTable.getTypeEntry(nodeType, forElement.value);
         if (type != null) {
-            return new ElementDecl(type, Utils.getAxisQName(nodeName));
+            v.add(type);
+            v.add(nodeName.getLocalPart());
         }
-        
-        return null;
+        return v;
     }
 
     /**

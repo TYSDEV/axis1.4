@@ -182,16 +182,14 @@ public class JavaWriterFactory implements WriterFactory {
                     }
                     // Get the QName to javify
                     QName typeQName = tEntry.getQName();
-                    if (typeQName.getLocalPart().lastIndexOf(SymbolTable.ANON_TOKEN) >= 0) {
+                    if (typeQName.getLocalPart().lastIndexOf('.') >= 0) {
                         // This is an anonymous type name.
-                        // Axis uses '>' as a nesting token to generate
+                        // Axis uses '.' as a nesting token to generate
                         // unique qnames for anonymous types.
-                        // Only consider the localName after the last '>' when
+                        // Only consider the localName after the last '.' when
                         // generating the java name
                         String localName = typeQName.getLocalPart();
-                        localName = 
-                            localName.substring(
-                                localName.lastIndexOf(SymbolTable.ANON_TOKEN)+1);
+                        localName = localName.substring(localName.lastIndexOf('.')+1);
                         typeQName = new QName(typeQName.getNamespaceURI(), localName);
                         // If there is already an existing type, there will be a 
                         // collision.  If there is an existing anon type, there will be a 
@@ -275,8 +273,7 @@ public class JavaWriterFactory implements WriterFactory {
                             // an anonymous type, then need to change the
                             // java name of the anonymous type to match.
                             QName anonQName = new QName(entry.getQName().getNamespaceURI(),
-                                                        SymbolTable.ANON_TOKEN +
-                                                        entry.getQName().getLocalPart());
+                                                        "." + entry.getQName().getLocalPart());
                             TypeEntry anonType = symbolTable.getType(anonQName);
                             if (anonType != null) {
                                 anonType.setName(entry.getName());
@@ -500,11 +497,11 @@ public class JavaWriterFactory implements WriterFactory {
             }
 
             String javifiedName = Utils.xmlNameToJava(p.getName());
-            if (p.getMode() == Parameter.IN) {
-                signature = signature + p.getType().getName() + " " + javifiedName;
+            if (p.mode == Parameter.IN) {
+                signature = signature + p.type.getName() + " " + javifiedName;
             }
             else {
-                signature = signature + Utils.holder(p.getType(), symbolTable) + " "
+                signature = signature + Utils.holder(p.type, symbolTable) + " "
                         + javifiedName;
             }
         }
@@ -540,15 +537,15 @@ public class JavaWriterFactory implements WriterFactory {
                             
                             // If the given parameter is an inout or out parameter, then
                             // set a HOLDER_IS_NEEDED flag using the dynamicVar design.
-                            if (p.getMode() != Parameter.IN) {
-                                p.getType().setDynamicVar(
+                            if (p.mode != Parameter.IN) {
+                                p.type.setDynamicVar(
                                         JavaTypeWriter.HOLDER_IS_NEEDED,
                                         new Boolean(true));
 
                                 // If the type is a DefinedElement, need to 
                                 // set HOLDER_IS_NEEDED on the anonymous type.
                                 QName anonQName = SchemaUtils.
-                                    getElementAnonQName(p.getType().getNode());
+                                    getElementAnonQName(p.type.getNode());
                                 if (anonQName != null) {
                                     TypeEntry anonType = 
                                         symbolTable.getType(anonQName);
