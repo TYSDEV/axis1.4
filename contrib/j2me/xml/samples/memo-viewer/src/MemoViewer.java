@@ -22,6 +22,13 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
 
+/**
+ * 
+ * A memo viewer using J2ME JAXP
+ *  
+ * @author Ias (iasandcb@tmax.co.kr)
+ */
+
 public class MemoViewer extends MIDlet implements CommandListener {
 
     private static final String MEMO_URL = "http://www.iasandcb.pe.kr/memo.xml";
