@@ -378,12 +378,9 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
      * Prepend an underscore to the name
      */
     public static String addUnderscore(String name) {
-        return name;
-        /*  Commenting out as the wsdl faults test breaks with this code --Glen
-        if (name == null || name.equals(""))
-        return name;
-        return "_" + name;
-        */
+      if (name == null || name.equals(""))
+          return name;
+      return "_" + name;
     }
 
     /**

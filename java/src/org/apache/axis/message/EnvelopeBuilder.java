@@ -193,16 +193,12 @@ public class EnvelopeBuilder extends SOAPHandler
         if (soapConstants == SOAPConstants.SOAP12_CONSTANTS) {
             throw new SAXException(Messages.getMessage("noElemAfterBody12"));
         }
+        
+        MessageElement element = new MessageElement(namespace, localName, prefix,
+                                     attributes, context);
 
-        try {
-            MessageElement element = new MessageElement(namespace, localName, prefix,
-                                         attributes, context);
-
-            if (element.getFixupDeserializer() != null)
-                return (SOAPHandler)element.getFixupDeserializer();
-        } catch (AxisFault axisFault) {
-            throw new SAXException(axisFault);
-        }
+        if (element.getFixupDeserializer() != null)
+            return (SOAPHandler)element.getFixupDeserializer();
 
         return null;
     }

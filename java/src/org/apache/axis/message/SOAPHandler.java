@@ -120,12 +120,8 @@ public class SOAPHandler extends DefaultHandler
         // By default, make a new element
         if (!context.isDoneParsing() && !context.isProcessingRef()) {
             if (myElement == null) {
-                try {
-                    myElement = makeNewElement(namespace, localName, prefix,
-                                               attributes, context);
-                } catch (AxisFault axisFault) {
-                    throw new SAXException(axisFault);
-                }
+                myElement = makeNewElement(namespace, localName, prefix,
+                                           attributes, context);
             }
             context.pushNewElement(myElement);
         }
@@ -134,7 +130,6 @@ public class SOAPHandler extends DefaultHandler
     public MessageElement makeNewElement(String namespace, String localName,
                              String prefix, Attributes attributes,
                              DeserializationContext context)
-        throws AxisFault
     {
         return new MessageElement(namespace, localName,
                                                prefix, attributes, context);

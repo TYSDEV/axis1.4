@@ -101,7 +101,7 @@ public class SOAPBody extends MessageElement
 
     public SOAPBody(String namespace, String localPart, String prefix,
                     Attributes attributes, DeserializationContext context,
-                    SOAPConstants soapConsts) throws AxisFault {
+                    SOAPConstants soapConsts) {
         super(namespace, localPart, prefix, attributes, context);
         soapConstants = soapConsts;
     }

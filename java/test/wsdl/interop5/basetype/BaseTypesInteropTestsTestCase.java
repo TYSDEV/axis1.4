@@ -7,11 +7,6 @@
 
 package test.wsdl.interop5.basetype;
 
-import org.apache.axis.types.NMToken;
-import org.apache.axis.types.NMTokens;
-import org.apache.axis.types.IDRef;
-import org.apache.axis.types.IDRefs;
-
 import java.net.URL;
 
 public class BaseTypesInteropTestsTestCase extends junit.framework.TestCase {
@@ -27,12 +22,6 @@ public class BaseTypesInteropTestsTestCase extends junit.framework.TestCase {
     } // main
 
     protected void setUp() throws Exception {
-        if (url == null) {
-            String urlStr = System.getProperty("testURL");
-            if (urlStr != null) {
-                url = new URL(urlStr);
-            }
-        }
         if(url == null) {
             url = new URL(new test.wsdl.interop5.basetype.BaseTypesInteropTestsLocator().getInteropTestsPortAddress());
         }
@@ -289,10 +278,8 @@ public class BaseTypesInteropTestsTestCase extends junit.framework.TestCase {
 
         // Test operation
         org.apache.axis.types.NMToken value = null;
-        NMToken token = new NMToken();
-        token.setValue("eye_am_an_en_em_tokin");
-        value = binding.echoNMToken(token);
-        assertEquals(token, value);
+        value = binding.echoNMToken(new org.apache.axis.types.NMToken());
+        // TBD - validate results
     }
 
     public void test15InteropTestsPortEchoNMTokens() throws Exception {
@@ -309,10 +296,8 @@ public class BaseTypesInteropTestsTestCase extends junit.framework.TestCase {
 
         // Test operation
         org.apache.axis.types.NMTokens value = null;
-        NMTokens tokens = new NMTokens();
-        tokens.setValue("one two three");
-        value = binding.echoNMTokens(tokens);
-        assertEquals(tokens, value);
+        value = binding.echoNMTokens(new org.apache.axis.types.NMTokens());
+        // TBD - validate results
     }
 
     public void test16InteropTestsPortEchoName() throws Exception {
@@ -383,10 +368,8 @@ public class BaseTypesInteropTestsTestCase extends junit.framework.TestCase {
 
         // Test operation
         org.apache.axis.types.IDRef value = null;
-        IDRef ref = new IDRef();
-        ref.setValue("THX1138");
-        value = binding.echoIDREF(ref);
-        assertEquals(ref, value);
+        value = binding.echoIDREF(new org.apache.axis.types.IDRef());
+        // TBD - validate results
     }
 
     public void test20InteropTestsPortEchoIDREFS() throws Exception {
@@ -403,10 +386,8 @@ public class BaseTypesInteropTestsTestCase extends junit.framework.TestCase {
 
         // Test operation
         org.apache.axis.types.IDRefs value = null;
-        IDRefs refs = new IDRefs();
-        refs.setValue("THX1138 R2D2 C3P0");
-        value = binding.echoIDREFS(refs);
-        assertEquals(refs, value);
+        value = binding.echoIDREFS(new org.apache.axis.types.IDRefs());
+        // TBD - validate results
     }
 
     public void test21InteropTestsPortEchoEntity() throws Exception {

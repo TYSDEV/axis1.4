@@ -57,7 +57,6 @@ package org.apache.axis.message;
 
 import org.apache.axis.Constants;
 import org.apache.axis.MessageContext;
-import org.apache.axis.AxisFault;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.SerializationContext;
@@ -104,7 +103,7 @@ public class SOAPHeader extends MessageElement
 
     public SOAPHeader(String namespace, String localPart, String prefix,
                       Attributes attributes, DeserializationContext context,
-                      SOAPConstants soapConsts) throws AxisFault {
+                      SOAPConstants soapConsts) {
         super(namespace, localPart, prefix, attributes, context);
         soapConstants = soapConsts;
     }

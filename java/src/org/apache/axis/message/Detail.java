@@ -72,9 +72,7 @@ import java.util.Iterator;
 public class Detail extends SOAPFault implements javax.xml.soap.Detail {
 
     public Detail(String namespace, String localName, String prefix,
-                  Attributes attrs, DeserializationContext context)
-            throws AxisFault
-    {
+                  Attributes attrs, DeserializationContext context) {
         super(namespace, localName, prefix, attrs, context);
     }
 

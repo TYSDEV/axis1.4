@@ -55,7 +55,6 @@
 package org.apache.axis.message;
 
 import org.apache.axis.InternalException;
-import org.apache.axis.AxisFault;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.utils.Messages;
@@ -83,7 +82,6 @@ public class SOAPBodyElement extends MessageElement
                            String prefix,
                            Attributes attributes,
                            DeserializationContext context)
-        throws AxisFault
     {
         super(namespace, localPart, prefix, attributes, context);
     }

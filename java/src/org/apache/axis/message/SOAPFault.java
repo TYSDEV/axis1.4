@@ -84,7 +84,6 @@ public class SOAPFault extends SOAPBodyElement implements javax.xml.soap.SOAPFau
     
     public SOAPFault(String namespace, String localName, String prefix,
                      Attributes attrs, DeserializationContext context)
-        throws AxisFault
     {
         super(namespace, localName, prefix, attrs, context);
     }
