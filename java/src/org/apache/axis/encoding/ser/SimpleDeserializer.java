@@ -277,6 +277,9 @@ public class SimpleDeserializer extends DeserializerImpl {
                 return new Double(Double.NEGATIVE_INFINITY);
             }
         }    
+        if (constructor == null) {
+            return null;
+        }
         return constructor.newInstance(new Object [] { source });
     }
 
