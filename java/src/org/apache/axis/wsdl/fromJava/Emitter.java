@@ -581,11 +581,6 @@ public class Emitter {
             }
         }
 
-        // Get a default TM if not specified.
-        if (defaultTM == null) {
-            defaultTM = DefaultTypeMappingImpl.getSingleton();
-        }
-
         // Set up a ServiceDesc to use to introspect the Service
         if (serviceDesc == null) {
             JavaServiceDesc javaServiceDesc = new JavaServiceDesc();
@@ -598,7 +593,7 @@ public class Emitter {
             if (tm != null) {
                 serviceDesc.setTypeMapping(tm);
             } else {
-                serviceDesc.setTypeMapping(defaultTM);
+                serviceDesc.setTypeMapping(getDefaultTypeMapping());
             }
 
             javaServiceDesc.setStopClasses(stopClasses);
@@ -621,7 +616,7 @@ public class Emitter {
                 if (tm != null) {
                     serviceDesc2.setTypeMapping(tm);
                 } else {
-                    serviceDesc2.setTypeMapping(defaultTM);
+                    serviceDesc2.setTypeMapping(getDefaultTypeMapping());
                 }
 
                 serviceDesc2.setStopClasses(stopClasses);
@@ -773,7 +768,7 @@ public class Emitter {
             throws IOException, WSDLException, SAXException,
             ParserConfigurationException {
 
-        types = new Types(def, tm, defaultTM, namespaces, intfNS, stopClasses,
+        types = new Types(def, tm, getDefaultTypeMapping(), namespaces, intfNS, stopClasses,
                 serviceDesc);
 
         if (inputWSDL != null) {
@@ -2338,6 +2333,9 @@ public class Emitter {
      * @return the default <code>TypeMapping</code> used by the service
      */
     public TypeMapping getDefaultTypeMapping() {
+        if (defaultTM == null) {
+            defaultTM = DefaultTypeMappingImpl.getSingleton();
+        }
         return defaultTM;
     }
 

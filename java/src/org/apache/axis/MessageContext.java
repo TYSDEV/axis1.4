@@ -90,18 +90,6 @@ import java.util.Hashtable;
  * strongly suggested in order to lower the chance for
  * conflicts.
  *
- * (These constants should be viewed as an explicit list of well
- *  known and widely used context keys, there's nothing wrong
- *  with directly using the key strings. This is the reason for
- *  the hierarchical constant namespace.
- *
- *  Actually I think we might just list the keys in the docs and
- *  provide no such constants since they create yet another
- *  namespace, but we'd have no compile-time checks then.
- *
- *  Whaddya think? - todo by Jacek)
- *
- *
  * @author Doug Davis (dug@us.ibm.com)
  * @author Jacek Kopecky (jacek@idoox.com)
  */
@@ -191,11 +179,6 @@ public class MessageContext implements SOAPMessageContext {
     private boolean useSOAPAction  = false;
     private String  SOAPActionURI  = null;
     
-    /**
-     * SOAP Actor roles
-     */
-    private String[] roles;
-
     /** Our SOAP namespaces and such */
     private SOAPConstants soapConstants = Constants.DEFAULT_SOAP_VERSION;
 
@@ -1149,14 +1132,10 @@ public class MessageContext implements SOAPMessageContext {
      * @see javax.xml.rpc.handler.HandlerChain#getRoles() HandlerChain.getRoles()
      */
     public String[] getRoles() {
-        //TODO: Flesh this out.
-        return roles;
+        ArrayList roles = axisEngine.getActorURIs();
+        return (String[])roles.toArray(new String[roles.size()]);
     }
     
-    public void setRoles( String[] roles) {
-        this.roles = roles;
-    }
-
     /**
      * if a message (or subclass) has any disposal needs, this method
      * is where it goes. Subclasses *must* call super.dispose(), and
