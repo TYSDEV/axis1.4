@@ -164,6 +164,7 @@ public class Ws4J2ee implements Generator {
                 throw new GenerationFault("ejb-jar.xml file file does not exsits");
             }
         } catch (IOException e) {
+            log.error(e);
             throw GenerationFault.createGenerationFault(e);
         }
     }
@@ -254,6 +255,7 @@ public class Ws4J2ee implements Generator {
                 wscontext.getMiscInfo().setSEIExists(false);
             }
         } catch (FileNotFoundException e) {
+            log.error(e);
             throw GenerationFault.createGenerationFault(e);
         }
     }
@@ -274,6 +276,7 @@ public class Ws4J2ee implements Generator {
                 wsdlFile.close();
             }
         } catch (Exception e) {
+            log.error(e);
             throw GenerationFault.createGenerationFault(e);
         }
     }

@@ -67,6 +67,7 @@ public class Packager {
             log.info("jar file creation done ");
             jfile.createNewJarFile();
         } catch (IOException e) {
+            log.error(e);
             throw GenerationFault.createGenerationFault(e);
         }
     }

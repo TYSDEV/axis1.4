@@ -58,8 +58,10 @@ public class EARModule implements Module {
                 }
             }
         } catch (UnrecoverableGenerationFault e) {
+            e.printStackTrace();
             throw GenerationFault.createGenerationFault(e);
         } catch (IOException e) {
+            e.printStackTrace();
             throw GenerationFault.createGenerationFault(e);
         }
     }

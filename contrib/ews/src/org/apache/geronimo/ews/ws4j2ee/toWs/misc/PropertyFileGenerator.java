@@ -42,6 +42,7 @@ public class PropertyFileGenerator implements Generator {
             p.store(out, "ws poperties");
             out.close();
         } catch (Exception e) {
+            e.printStackTrace();
             throw GenerationFault.createGenerationFault(e);
         }
     }

@@ -56,6 +56,7 @@ public class ContextValidator {
         try {
             this.context = context;
         } catch (Exception e) {
+            e.printStackTrace();
             throw GenerationFault.createGenerationFault(e);
         }
     }
@@ -102,6 +103,7 @@ public class ContextValidator {
                 throw new UnrecoverableGenerationFault("port type must exits");
             context.getWSDLContext().setTargetPortType(port);
         } catch (Exception e) {
+            e.printStackTrace();
             throw GenerationFault.createGenerationFault(e);
         }
     }

@@ -74,6 +74,7 @@ public abstract class AbstractWriter implements Writer {
                 out = new PrintWriter(new FileWriter(file, false));
             }
         } catch (IOException e) {
+            log.error(e);
             throw GenerationFault.createGenerationFault(e);
         }
     }

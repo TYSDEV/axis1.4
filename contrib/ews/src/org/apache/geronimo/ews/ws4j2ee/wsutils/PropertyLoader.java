@@ -18,6 +18,8 @@ package org.apache.geronimo.ews.ws4j2ee.wsutils;
 
 import org.apache.geronimo.ews.ws4j2ee.toWs.GenerationConstants;
 import org.apache.geronimo.ews.ws4j2ee.toWs.GenerationFault;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -29,6 +31,8 @@ import java.util.Properties;
  * @author Srinath Perera(hemapani@opensource.lk)
  */
 public class PropertyLoader {
+    protected static Log log =
+            LogFactory.getLog(PropertyLoader.class.getName());
     public Properties loadProperties(String propertyFile) throws GenerationFault {
         try {
             Properties properties = new Properties();
@@ -49,6 +53,7 @@ public class PropertyLoader {
             }
             return properties;
         } catch (Exception e) {
+            log.error(e);
             throw GenerationFault.createGenerationFault(e);
         }
     }
