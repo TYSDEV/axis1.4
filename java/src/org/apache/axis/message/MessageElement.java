@@ -57,10 +57,12 @@ package org.apache.axis.message;
 
 import org.apache.axis.Constants;
 import org.apache.axis.MessageContext;
+import org.apache.axis.configuration.NullProvider;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.Deserializer;
+import org.apache.axis.encoding.SOAPTypeMappingRegistry;
 import org.apache.axis.encoding.SerializationContext;
-import org.apache.axis.encoding.SerializationContextImpl;
+import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.utils.Mapping;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.XMLUtils;
@@ -161,7 +163,7 @@ public class MessageElement
             this.attributes = new AttributesImpl();
         } else {
             this.attributes = new AttributesImpl(attributes);
-            String rootVal = attributes.getValue(Constants.URI_CURRENT_SOAP_ENC, Constants.ATTR_ROOT);
+            String rootVal = attributes.getValue(Constants.URI_SOAP_ENC, Constants.ATTR_ROOT);
             if (rootVal != null)
                 _isRoot = rootVal.equals("1");
 
@@ -174,8 +176,8 @@ public class MessageElement
             href = attributes.getValue(Constants.ATTR_HREF);
 
             // If there's an arrayType attribute, we can pretty well guess that we're an Array???
-            if (attributes.getValue(Constants.URI_CURRENT_SOAP_ENC, Constants.ATTR_ARRAY_TYPE) != null)
-                typeQName = Constants.SOAP_ARRAY;
+            if (attributes.getValue(Constants.URI_SOAP_ENC, Constants.ATTR_ARRAY_TYPE) != null)
+                typeQName = SOAPTypeMappingRegistry.SOAP_ARRAY;
         }
     }
 
@@ -311,13 +313,14 @@ public class MessageElement
         if (context == null)
             throw new Exception(JavaUtils.getMessage("noContext00"));
 
-        Deserializer dser = context.getDeserializerForType(type);
+        TypeMappingRegistry tmr = context.getTypeMappingRegistry();
+        Deserializer dser = tmr.getDeserializer(type);
         if (dser == null)
             throw new Exception(JavaUtils.getMessage("noDeser00", "" + type));
 
-        context.pushElementHandler(new EnvelopeHandler((SOAPHandler)dser));
+        context.pushElementHandler(new EnvelopeHandler(dser));
 
-        publishToHandler((org.xml.sax.ContentHandler) context);
+        publishToHandler(context);
 
         return dser.getValue();
     }
@@ -416,9 +419,9 @@ public class MessageElement
         if(context != null)
         {
             MessageContext msgContext = context.getMessageContext();
-            serializeContext = new SerializationContextImpl(writer, msgContext);
+            serializeContext = new SerializationContext(writer, msgContext);
         } else {
-            serializeContext = new SerializationContextImpl(writer);
+            serializeContext = new SerializationContext(writer);
         }
         output(serializeContext);
         writer.close();
@@ -503,8 +506,8 @@ public class MessageElement
     public String toString() {
         try {
             StringWriter  writer = new StringWriter();
-            SerializationContext serContext = new SerializationContextImpl(writer, 
-                                                                           null);
+            SerializationContext serContext = new SerializationContext(writer, 
+                                                                       null);
             serContext.setSendDecl(false);
             this.output(serContext);
             return( writer.toString() );

@@ -82,7 +82,7 @@ public class JavaTypeWriter implements Writer {
             Emitter emitter,
             TypeEntry type,
             SymbolTable symbolTable) {
-        if (type.isReferenced() && !type.isOnlyLiteralReferenced()) {
+        if (type.isReferenced()) {
 
             // Determine what sort of type this is and instantiate the appropriate Writer.
             Node node = type.getNode();

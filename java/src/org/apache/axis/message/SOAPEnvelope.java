@@ -61,7 +61,6 @@ import org.apache.axis.MessageContext;
 import org.apache.axis.configuration.NullProvider;
 import org.apache.axis.client.AxisClient;
 import org.apache.axis.encoding.DeserializationContext;
-import org.apache.axis.encoding.DeserializationContextImpl;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Mapping;
@@ -122,7 +121,7 @@ public class SOAPEnvelope extends MessageElement
             DeserializationContext dser = null ;
             AxisClient     tmpEngine = new AxisClient(new NullProvider());
             MessageContext msgContext = new MessageContext(tmpEngine);
-            dser = new DeserializationContextImpl(is, msgContext,
+            dser = new DeserializationContext(is, msgContext,
                                               Message.REQUEST, this );
             dser.parse();
         }

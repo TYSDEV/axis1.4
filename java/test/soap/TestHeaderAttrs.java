@@ -8,8 +8,6 @@ import org.apache.axis.Constants;
 import org.apache.axis.Handler;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
-import org.apache.axis.configuration.SimpleProvider;
-import org.apache.axis.providers.java.RPCProvider;
 import org.apache.axis.transport.local.LocalTransport;
 import org.apache.axis.client.Call;
 import org.apache.axis.handlers.soap.SOAPService;
@@ -54,8 +52,7 @@ public class TestHeaderAttrs extends TestCase {
     static SOAPHeader badHeader = new SOAPHeader(BAD_HEADER_NS, 
                                                  BAD_HEADER_NAME);
 
-    private SimpleProvider provider = new SimpleProvider();
-    private AxisServer engine = new AxisServer(provider);
+    private AxisServer engine = new AxisServer();
     private LocalTransport localTransport = new LocalTransport(engine);
     private Handler RPCDispatcher;
 
@@ -77,14 +74,15 @@ public class TestHeaderAttrs extends TestCase {
         engine.init();
         localTransport.setUrl(localURL);
         
+        Handler dispatcher = engine.getHandler("RPCDispatcher");
         SOAPService service = new SOAPService(new TestHandler(),
-                                              new RPCProvider(),
+                                              dispatcher, 
                                               null);
         
         service.setOption("className", TestService.class.getName());
         service.setOption("allowedMethods", "*");
         
-        provider.deployService("testService", service);
+        engine.deployService("testService", service);
     }
     
     /**

@@ -72,7 +72,7 @@ public class TestTransportSample extends TestCase {
     }
     
     public void doTestDeploy () throws Exception {
-        String[] args = { "-llocal:", "samples/transport/deploy.wsdd" };
+        String[] args = { "-llocal:", "samples/transport/deploy.xml" };
         AdminClient.main(args);
     }
     

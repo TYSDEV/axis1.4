@@ -3,9 +3,7 @@ package test.encoding;
 import junit.framework.TestCase;
 import org.apache.axis.MessageContext;
 import org.apache.axis.encoding.DeserializationContext;
-import org.apache.axis.encoding.DeserializationContextImpl;
 import org.apache.axis.encoding.SerializationContext;
-import org.apache.axis.encoding.SerializationContextImpl;
 import org.apache.axis.message.RPCElement;
 import org.apache.axis.message.RPCParam;
 import org.apache.axis.message.SOAPEnvelope;
@@ -35,7 +33,7 @@ public class TestString extends TestCase {
         msg.addBodyElement(body);
         
         Writer stringWriter = new StringWriter();
-        SerializationContext context = new SerializationContextImpl(stringWriter, msgContext);
+        SerializationContext context = new SerializationContext(stringWriter, msgContext);
         
         msg.output(context);
         
@@ -43,7 +41,7 @@ public class TestString extends TestCase {
         
         StringReader reader = new StringReader(msgString);
         
-        DeserializationContext dser = new DeserializationContextImpl(
+        DeserializationContext dser = new DeserializationContext(
             new InputSource(reader), msgContext, org.apache.axis.Message.REQUEST);
         dser.parse();
         

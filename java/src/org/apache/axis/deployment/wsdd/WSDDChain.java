@@ -56,8 +56,6 @@ package org.apache.axis.deployment.wsdd;
 
 import org.apache.axis.Chain;
 import org.apache.axis.Handler;
-import org.apache.axis.EngineConfiguration;
-import org.apache.axis.ConfigurationException;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.deployment.DeploymentRegistry;
@@ -162,8 +160,8 @@ public class WSDDChain
      * @return XXX
      * @throws Exception XXX
      */
-    public Handler makeNewInstance(EngineConfiguration registry)
-        throws ConfigurationException
+    public Handler makeNewInstance(DeploymentRegistry registry)
+        throws Exception
     {
         Chain         c        = new org.apache.axis.SimpleChain();
         
@@ -200,8 +198,8 @@ public class WSDDChain
         context.endElement();
     }
 
-    public void deployToRegistry(WSDDDeployment registry)
-            throws WSDDException {
+    public void deployToRegistry(DeploymentRegistry registry)
+            throws DeploymentException {
         if (getQName() != null)
             registry.deployHandler(this);
         

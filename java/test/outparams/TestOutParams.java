@@ -5,7 +5,6 @@ import org.apache.axis.Constants;
 import org.apache.axis.Handler;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
-import org.apache.axis.configuration.SimpleProvider;
 import org.apache.axis.client.Call;
 import org.apache.axis.client.Service;
 import org.apache.axis.encoding.XMLType;
@@ -41,8 +40,7 @@ public class TestOutParams extends TestCase {
 
     private Service s_service = null ;
     private Call    client    = null ;
-    private SimpleProvider provider = new SimpleProvider();
-    private AxisServer server = new AxisServer(provider);
+    private AxisServer server = new AxisServer();
 
     public TestOutParams(String name) {
         super(name);
@@ -61,7 +59,7 @@ public class TestOutParams extends TestCase {
         // ??? Do we need to register the handler?
 
         SOAPService service = new SOAPService(h);
-        provider.deployService(serviceURN, service);
+        server.deployService(serviceURN, service);
 
         // Make sure the local transport uses the server we just configured
         client.setTransport(new LocalTransport(server));

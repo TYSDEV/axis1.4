@@ -3,10 +3,7 @@ package test.wsdl.inout;
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 import junit.swingui.TestRunner;
-
 import org.apache.axis.utils.Options;
-
-import javax.xml.rpc.JAXRPCException;
 
 import javax.xml.rpc.holders.IntHolder;
 import javax.xml.rpc.holders.StringHolder;
@@ -20,16 +17,10 @@ import javax.xml.rpc.holders.StringHolder;
  */
 public class DetailedInoutTestCase extends TestCase
 {
-    private static Inout io;
+    private static Inout io = new InoutService().getInoutService();
     
     public DetailedInoutTestCase(String name) {
         super(name);
-        try {
-            io = new InoutService().getInoutService();
-        }
-        catch (JAXRPCException jre) {
-            throw new AssertionFailedError("JAX-RPC Exception:  " + jre);
-        }
     }
 
     private String printAddress (Address ad) {

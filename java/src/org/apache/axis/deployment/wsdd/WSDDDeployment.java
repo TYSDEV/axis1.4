@@ -57,18 +57,14 @@ package org.apache.axis.deployment.wsdd;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
-import org.apache.axis.*;
+import org.apache.axis.Constants;
 import org.apache.axis.deployment.DeploymentRegistry;
 import org.apache.axis.deployment.DeploymentException;
-import org.apache.axis.encoding.ser.BaseSerializerFactory;
-import org.apache.axis.encoding.ser.BaseDeserializerFactory;
 import org.apache.axis.encoding.*;
 
 import javax.xml.rpc.namespace.QName;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Hashtable;
 import java.util.Vector;
+import java.util.Iterator;
 import java.io.IOException;
 
 
@@ -76,92 +72,45 @@ import java.io.IOException;
  * WSDD deployment element
  *
  * @author James Snell
- * @author Glen Daniels (gdaniels@apache.org)
  */
 public class WSDDDeployment
     extends WSDDElement
-    implements WSDDTypeMappingContainer, EngineConfiguration
+    implements WSDDTypeMappingContainer
 {
-    private HashMap handlers = new HashMap();
-    private HashMap services = new HashMap();
-    private HashMap transports = new HashMap();
+    private Vector handlers = new Vector();
+    private Vector services = new Vector();
+    private Vector transports = new Vector();
     private Vector typeMappings = new Vector();
-    private WSDDGlobalConfiguration globalConfig = null;
-
-    /**
-     * Put a WSDDHandler into this deployment, replacing any other
-     * WSDDHandler which might already be present with the same QName.
-     *
-     * @param handler a WSDDHandler to insert in this deployment
-     */
-    public void deployHandler(WSDDHandler handler)
+    private WSDDGlobalConfiguration globalConfig = null; 
+    
+    public void addHandler(WSDDHandler handler)
     {
-        handlers.put(handler.getQName(), handler);
+        handlers.add(handler);
     }
-
-    /**
-     * Put a WSDDTransport into this deployment, replacing any other
-     * WSDDTransport which might already be present with the same QName.
-     *
-     * @param transport a WSDDTransport to insert in this deployment
-     */
-    public void deployTransport(WSDDTransport transport)
+    
+    public void addTransport(WSDDTransport transport)
     {
-        transports.put(transport.getQName(), transport);
+        transports.add(transport);
     }
-
-    /**
-     * Put a WSDDHandler into this deployment, replacing any other
-     * WSDDHandler which might already be present with the same QName.
-     *
-     * @param handler a WSDDHandler to insert in this deployment
-     */
-    public void deployService(WSDDService service)
+    
+    public void addService(WSDDService service)
     {
-        services.put(service.getQName(), service);
+        services.add(service);
     }
-
-    /**
-     * Remove a named handler
-     * @param qname the QName of the handler to remove
-     */
-    public void undeployHandler(QName qname)
-    {
-        handlers.remove(qname);
-    }
-
-    /**
-     * Remove a named service
-     * @param qname the QName of the service to remove
-     */
-    public void undeployService(QName qname)
-    {
-        services.remove(qname);
-    }
-
-    /**
-     * Remove a named transport
-     * @param qname the QName of the transport to remove
-     */
-    public void undeployTransport(QName qname)
-    {
-        transports.remove(qname);
-    }
-
-    public void deployTypeMapping(WSDDTypeMapping typeMapping)
+    
+    public void addTypeMapping(WSDDTypeMapping typeMapping)
         throws WSDDException
     {
         typeMappings.add(typeMapping);
-        deployMapping(typeMapping);
     }
 
     /**
      * Default constructor
-     */
+     */ 
     public WSDDDeployment()
     {
     }
-
+    
     /**
      * Create an element in WSDD that wraps an extant DOM element
      * @param e (Element) XXX
@@ -171,43 +120,43 @@ public class WSDDDeployment
         throws WSDDException
     {
         super(e);
-
+        
         Element [] elements = getChildElements(e, "handler");
         int i;
 
         for (i = 0; i < elements.length; i++) {
             WSDDHandler handler = new WSDDHandler(elements[i]);
-            deployHandler(handler);
+            addHandler(handler);
         }
 
         elements = getChildElements(e, "chain");
         for (i = 0; i < elements.length; i++) {
             WSDDChain chain = new WSDDChain(elements[i]);
-            chain.deployToRegistry(this);
+            addHandler(chain);
         }
-
+        
         elements = getChildElements(e, "transport");
         for (i = 0; i < elements.length; i++) {
             WSDDTransport transport = new WSDDTransport(elements[i]);
-            transport.deployToRegistry(this);
+            addTransport(transport);
         }
-
+        
         elements = getChildElements(e, "service");
         for (i = 0; i < elements.length; i++) {
             WSDDService service = new WSDDService(elements[i]);
-            service.deployToRegistry(this);
+            addService(service);
         }
-
+        
         elements = getChildElements(e, "typeMapping");
         for (i = 0; i < elements.length; i++) {
             WSDDTypeMapping mapping = new WSDDTypeMapping(elements[i]);
-            deployTypeMapping(mapping);
+            addTypeMapping(mapping);
         }
 
         elements = getChildElements(e, "beanMapping");
         for (i = 0; i < elements.length; i++) {
             WSDDBeanMapping mapping = new WSDDBeanMapping(elements[i]);
-            deployTypeMapping(mapping);
+            addTypeMapping(mapping);
         }
 
         Element el = getChildElement(e, "globalConfiguration");
@@ -220,91 +169,74 @@ public class WSDDDeployment
         return WSDDConstants.DEPLOY_QNAME;
     }
 
-    public void deployToRegistry(WSDDDeployment target)
+    public void deployToRegistry(DeploymentRegistry registry)
         throws DeploymentException
     {
-
         WSDDGlobalConfiguration global = getGlobalConfiguration();
 
         if (global != null) {
-            target.setGlobalConfiguration(global);
+            registry.setGlobalConfiguration(global);
         }
 
-        Iterator i = handlers.values().iterator();
-        while (i.hasNext()) {
-            WSDDHandler handler = (WSDDHandler) i.next();
-            target.deployHandler(handler);
+        WSDDHandler[]     handlers   = getHandlers();
+        WSDDTransport[]   transports = getTransports();
+        WSDDService[]     services   = getServices();
+        WSDDTypeMapping[] mappings   = getTypeMappings();
+
+        for (int n = 0; n < handlers.length; n++) {
+            handlers[n].deployToRegistry(registry);
         }
 
-        i = transports.values().iterator();
-        while (i.hasNext()) {
-            WSDDTransport transport = (WSDDTransport) i.next();
-            target.deployTransport(transport);
+        for (int n = 0; n < transports.length; n++) {
+            transports[n].deployToRegistry(registry);
         }
 
-        i = services.values().iterator();
-        while (i.hasNext()) {
-            WSDDService service = (WSDDService) i.next();
-            target.deployService(service);
+        for (int n = 0; n < services.length; n++) {
+            services[n].deployToRegistry(registry);
         }
 
-        i = typeMappings.iterator();
-        while (i.hasNext()) {
-            WSDDTypeMapping mapping = (WSDDTypeMapping) i.next();
-            target.deployTypeMapping(mapping);
+        for (int n = 0; n < mappings.length; n++) {
+            WSDDTypeMapping     mapping = mappings[n];
+            deployMappingToRegistry(mapping, registry);
         }
     }
 
-    public void deployMapping(WSDDTypeMapping mapping)
-            throws WSDDException
+    public static void deployMappingToRegistry(WSDDTypeMapping mapping,
+                                               DeploymentRegistry registry)
+            throws DeploymentException
     {
+        TypeMappingRegistry tmr     =
+                registry.getTypeMappingRegistry(mapping.getEncodingStyle());
+
+        if (tmr == null) {
+            tmr = new TypeMappingRegistry();
+            tmr.setParent(SOAPTypeMappingRegistry.getSingleton());
+
+            registry.addTypeMappingRegistry(mapping.getEncodingStyle(),
+                                            tmr);
+        }
+
+        Serializer          ser   = null;
+        DeserializerFactory deser = null;
+
         try {
-            TypeMappingRegistry tmr = getTypeMappingRegistry();
+            ser   = (Serializer) mapping.getSerializer().newInstance();
+            deser =
+                (DeserializerFactory) mapping.getDeserializer()
+                    .newInstance();
 
-            TypeMapping tm = (TypeMapping) tmr.getTypeMapping(mapping.getEncodingStyle());
-            TypeMapping df = (TypeMapping) tmr.getDefaultTypeMapping();
-            if (tm == null || tm == df) {
-                tm = (TypeMapping) tmr.createTypeMapping();
-                String namespace = mapping.getEncodingStyle();
-                if (mapping.getEncodingStyle() == null) {
-                    namespace = Constants.URI_CURRENT_SOAP_ENC;
-                }
-                tm.setSupportedEncodings(new String[] {namespace});
-                tmr.register(tm, new String[] {namespace});
+            if (ser != null) {
+                tmr.addSerializer(mapping.getLanguageSpecificType(),
+                                  mapping.getQName(), ser);
             }
 
-            SerializerFactory   ser   = null;
-            DeserializerFactory deser = null;
-
-            // Try to construct a serializerFactory by introspecting for the
-            // following:
-            // public static create(Class javaType, QName xmlType)
-            // public <constructor>(Class javaType, QName xmlType)
-            // public <constructor>()
-            //
-            // The BaseSerializerFactory createFactory() method is a utility
-            // that does this for us.
-            //System.out.println("start creating sf and df");
-            if (mapping.getSerializerName() != null &&
-                !mapping.getSerializerName().equals("")) {
-                ser = BaseSerializerFactory.createFactory(mapping.getSerializer(),
-                                                          mapping.getLanguageSpecificType(),
-                                                          mapping.getQName());
+            if (deser != null) {
+                tmr.addDeserializerFactory(mapping.getQName(), mapping
+                    .getLanguageSpecificType(), deser);
             }
-            //System.out.println("set ser factory");
-
-            if (mapping.getDeserializerName() != null &&
-                !mapping.getDeserializerName().equals("")) {
-                deser = BaseDeserializerFactory.createFactory(mapping.getDeserializer(),
-                                                          mapping.getLanguageSpecificType(),
-                                                          mapping.getQName());
-            }
-            //System.out.println("set dser factory");
-            tm.register( mapping.getLanguageSpecificType(), mapping.getQName(), ser, deser);
-            //System.out.println("registered");
         }
         catch (Exception e) {
-            throw new WSDDException(e);
+            throw new DeploymentException(e);
         }
     }
 
@@ -315,29 +247,29 @@ public class WSDDDeployment
         context.registerPrefixForURI("java", WSDDConstants.WSDD_JAVA);
         context.startElement(new QName(WSDDConstants.WSDD_NS, "deployment"),
                              null);
-
+        
         if (globalConfig != null) {
             globalConfig.writeToContext(context);
         }
-
-        Iterator i = handlers.values().iterator();
+        
+        Iterator i = handlers.iterator();
         while (i.hasNext()) {
             WSDDHandler handler = (WSDDHandler)i.next();
             handler.writeToContext(context);
         }
-
-        i = services.values().iterator();
+        
+        i = services.iterator();
         while (i.hasNext()) {
             WSDDService service = (WSDDService)i.next();
             service.writeToContext(context);
         }
-
-        i = transports.values().iterator();
+        
+        i = transports.iterator();
         while (i.hasNext()) {
             WSDDTransport transport = (WSDDTransport)i.next();
             transport.writeToContext(context);
         }
-
+        
         i = typeMappings.iterator();
         while (i.hasNext()) {
             WSDDTypeMapping mapping = (WSDDTypeMapping)i.next();
@@ -345,19 +277,15 @@ public class WSDDDeployment
         }
         context.endElement();
     }
-
+    
     /**
 	 * Get our global configuration
-     *
+     * 
      * @return XXX
      */
     public WSDDGlobalConfiguration getGlobalConfiguration()
     {
         return globalConfig;
-    }
-
-    public void setGlobalConfiguration(WSDDGlobalConfiguration globalConfig) {
-        this.globalConfig = globalConfig;
     }
 
     /**
@@ -373,17 +301,13 @@ public class WSDDDeployment
 
     /**
      *
-     * @param name XXX
      * @return XXX
      */
-    public Handler getHandler(QName name) throws ConfigurationException
+    public WSDDHandler[] getHandlers()
     {
-        WSDDHandler h = (WSDDHandler)handlers.get(name);
-        if (h != null) {
-            return h.getInstance(this);
-        }
-
-        return null;
+        WSDDHandler[] h = new WSDDHandler[handlers.size()];
+        handlers.toArray(h);
+        return h;
     }
 
     /**
@@ -391,11 +315,15 @@ public class WSDDDeployment
      * @param name XXX
      * @return XXX
      */
-    public Handler getTransport(QName name) throws ConfigurationException
+    public WSDDHandler getHandler(QName name)
     {
-        WSDDTransport t = (WSDDTransport)transports.get(name);
-        if (t != null) {
-            return t.getInstance(this);
+
+        WSDDHandler[] h = getHandlers();
+
+        for (int n = 0; n < h.length; n++) {
+            if (h[n].getQName().equals(name)) {
+                return h[n];
+            }
         }
 
         return null;
@@ -403,57 +331,61 @@ public class WSDDDeployment
 
     /**
      *
+     * @return XXX
+     */
+    public WSDDTransport[] getTransports()
+    {
+        WSDDTransport[] t = new WSDDTransport[transports.size()];
+        transports.toArray(t);
+        return t;
+    }
+
+    /**
+     *
      * @param name XXX
      * @return XXX
      */
-    public Handler getService(QName name) throws ConfigurationException
+    public WSDDTransport getTransport(QName name)
     {
-        WSDDService s = (WSDDService)services.get(name);
-        if (s != null) {
-            return s.getInstance(this);
+
+        WSDDTransport[] t = getTransports();
+
+        for (int n = 0; n < t.length; n++) {
+            if (t[n].getQName().equals(name)) {
+                return t[n];
+            }
         }
 
         return null;
     }
 
-    public void configureEngine(AxisEngine engine)
-            throws ConfigurationException {
-
+    /**
+     *
+     * @return XXX
+     */
+    public WSDDService[] getServices()
+    {
+        WSDDService[] s = new WSDDService[services.size()];
+        services.toArray(s);
+        return s;
     }
 
-    public void writeEngineConfig(AxisEngine engine) throws ConfigurationException {
-    }
+    /**
+     *
+     * @param name XXX
+     * @return XXX
+     */
+    public WSDDService getService(QName name)
+    {
 
-    TypeMappingRegistry tmr = new TypeMappingRegistryImpl();
-    public TypeMapping getTypeMapping(String encodingStyle) throws ConfigurationException {
-        return (TypeMapping)tmr.getTypeMapping(encodingStyle);
-    }
+        WSDDService[] s = getServices();
 
-    public TypeMappingRegistry getTypeMappingRegistry() throws ConfigurationException {
-        return tmr;
-    }
-
-    public Handler getGlobalRequest() throws ConfigurationException {
-        if (globalConfig != null) {
-            WSDDRequestFlow reqFlow = globalConfig.getRequestFlow();
-            if (reqFlow != null)
-                return reqFlow.getInstance(this);
+        for (int n = 0; n < s.length; n++) {
+            if (s[n].getQName().equals(name)) {
+                return s[n];
+            }
         }
 
         return null;
-    }
-
-    public Handler getGlobalResponse() throws ConfigurationException {
-        if (globalConfig != null) {
-            WSDDResponseFlow respFlow = globalConfig.getResponseFlow();
-            if (respFlow != null)
-                return respFlow.getInstance(this);
-        }
-
-        return null;
-    }
-
-    public Hashtable getGlobalOptions() throws ConfigurationException {
-        return globalConfig.getParametersTable();
     }
 }

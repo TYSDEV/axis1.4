@@ -3,14 +3,12 @@ package test.encoding;
 import junit.framework.TestCase;
 import org.apache.axis.MessageContext;
 import org.apache.axis.AxisEngine;
-import org.apache.axis.configuration.SimpleProvider;
 import org.apache.axis.transport.local.LocalTransport;
 import org.apache.axis.providers.java.RPCProvider;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.client.Call;
 import org.apache.axis.client.Service;
 import org.apache.axis.encoding.SerializationContext;
-import org.apache.axis.encoding.SerializationContextImpl;
 import org.apache.axis.encoding.XMLType;
 import org.apache.axis.message.RPCElement;
 import org.apache.axis.message.RPCParam;
@@ -28,8 +26,7 @@ public class TestXsiType extends TestCase {
 
     private String header;
     private String footer;
-    private SimpleProvider provider = new SimpleProvider();
-    private AxisServer server = new AxisServer(provider);
+    private AxisServer server = new AxisServer();
     
     public TestXsiType()
     {
@@ -46,7 +43,7 @@ public class TestXsiType extends TestCase {
     public void testNoXsiTypes()
        throws Exception
     {
-        MessageContext msgContext = new MessageContext(server);
+        MessageContext msgContext = new MessageContext(new AxisServer());
 
         // Don't serialize xsi:type attributes
         msgContext.setProperty(Call.SEND_TYPE_ATTR, "false" );
@@ -61,8 +58,8 @@ public class TestXsiType extends TestCase {
         msg.addBodyElement(body);
 
         Writer stringWriter = new StringWriter();
-        SerializationContext context = new SerializationContextImpl(stringWriter,
-                                                                    msgContext);
+        SerializationContext context = new SerializationContext(stringWriter,
+                                                                msgContext);
 
         msg.output(context);
 
@@ -77,12 +74,16 @@ public class TestXsiType extends TestCase {
      */ 
     public void testTypelessDeserialization() throws Exception
     {
+        // Set up a server to NOT send XSI types, and deploy
+        // this class as a service there.
+        
+        AxisServer server = new AxisServer();
         server.setOption(AxisEngine.PROP_SEND_XSI, Boolean.FALSE);
         
         SOAPService service = new SOAPService(new RPCProvider());
         service.setOption("className", "test.encoding.TestXsiType");
         service.setOption("allowedMethods", "*");
-        provider.deployService("TestService", service);
+        server.deployService("TestService", service);
         
         // Call that same server, accessing a method we know returns
         // a double.  We should figure this out and deserialize it

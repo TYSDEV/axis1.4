@@ -153,35 +153,28 @@ public class JavaTestCaseWriter extends JavaWriter {
         pw.println("    public void test" + portName + "() {");
         pw.print("        ");
         pw.print(bindingType);
-        pw.println(" binding;");
-        pw.println("        try {");
-        pw.print("            binding = new ");
+        pw.print(" binding = new ");
         pw.print(this.className.substring(0, this.className.length() - "TestCase".length()));
         pw.print("().get");
         pw.print(portName);
         pw.println("();");
-        pw.println("        }");
-        pw.println("        catch (javax.xml.rpc.JAXRPCException jre) {");
-        pw.print("            ");
-        pw.println("throw new junit.framework.AssertionFailedError(\"JAX-RPC Exception caught: \" + jre);");
-        pw.println("        }");
 
         pw.println("        assertTrue(\"" +
                 JavaUtils.getMessage("null00", "binding") +
                 "\", binding != null);");
 
-        this.writePortTestCode(portType, bEntry);
+        this.writePortTestCode(portType);
 
         pw.println("    }");
     } // writeServiceTestCode
 
-    private final void writePortTestCode(PortType port, BindingEntry bEntry) throws IOException {
+    private final void writePortTestCode(PortType port) throws IOException {
         PortTypeEntry ptEntry = symbolTable.getPortTypeEntry(port.getQName());
         Iterator ops = port.getOperations().iterator();
         while (ops.hasNext()) {
             Operation op = (Operation) ops.next();
             OperationType type = op.getStyle();
-            Parameters params = bEntry.getParameters(op.getName());
+            Parameters params = ptEntry.getParameters(op.getName());
 
             // These operation types are not supported.  The signature
             // will be a string stating that fact.
@@ -297,7 +290,22 @@ public class JavaTestCaseWriter extends JavaWriter {
 
             pw.println(");");
 
-            pw.println("        }");
+/* I'm not sure why we'd do this...
+            if ( !"void".equals(params.returnType) ) {
+                pw.print("            ");
+
+                if ( this.emitter.isPrimitiveType( params.returnType ) ) {
+                    if ( "boolean".equals( params.returnType ) ) {
+                        pw.println("assertTrue(\"Value is still false\", value != false);");
+                    } else {
+                        pw.println("assertTrue(\"Value is still -3\", value != -3);");
+                    }
+                } else {
+                    pw.println("assertTrue(\"Value is null\", value != null);");
+                }
+            }
+*/
+            pw.print("        }");
 
             Map faultMap = op.getFaults();
 
@@ -309,18 +317,18 @@ public class JavaTestCaseWriter extends JavaWriter {
                     count++;
                     Fault f = (Fault) i.next();
                     String namespace = port.getQName().getNamespaceURI();
-                    pw.print("        catch (");
+                    pw.print(" catch (");
                     pw.print(Utils.getFullExceptionName(
                             f, symbolTable, namespace));
                     pw.println(" e" + count + ") {");
                     pw.print("            ");
                     pw.println("throw new junit.framework.AssertionFailedError(\"" + f.getName() + " Exception caught: \" + e" + count + ");");
-                    pw.println("        }");
+                    pw.print("        }");
                 }
             }
-            pw.println("        catch (java.rmi.RemoteException re) {");
+            pw.println(" catch (java.rmi.RemoteException re) {");
             pw.print("            ");
-            pw.println("throw new junit.framework.AssertionFailedError(\"Remote Exception caught: \" + re);");
+            pw.println("throw new junit.framework.AssertionFailedError(\"Remote Exception caught: \" + re );");
             pw.println("        }");
         }
     } // writePortTestCode

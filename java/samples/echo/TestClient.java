@@ -58,11 +58,8 @@ package samples.echo ;
 import org.apache.axis.AxisFault;
 import org.apache.axis.client.Call;
 import org.apache.axis.client.Service;
-import org.apache.axis.encoding.ser.BeanSerializerFactory;
-import org.apache.axis.encoding.ser.BeanDeserializerFactory;
+import org.apache.axis.encoding.BeanSerializer;
 import org.apache.axis.encoding.TypeMappingRegistry;
-import org.apache.axis.encoding.TypeMapping;
-import org.apache.axis.Constants;
 import org.apache.axis.transport.http.HTTPTransport;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Options;
@@ -91,8 +88,7 @@ public abstract class TestClient {
     private static boolean addMethodToAction = false;
     private static String soapAction = "http://soapinterop.org/";
 
-    private TypeMappingRegistry tmr;
-    private TypeMapping tm;
+    private TypeMappingRegistry map;
 
     /**
      * Determine if two objects are equal.  Handles nulls and recursively
@@ -141,6 +137,7 @@ public abstract class TestClient {
      * @param toSend object of the correct type to be sent
      */
     private void test(String type, Object toSend) {
+
         String method = "echo" + type;
 
         type = type.trim();
@@ -159,7 +156,7 @@ public abstract class TestClient {
                 // args = new Object[] {new RPCParam(arg, toSend)};
 
                 // Default return type based on what we expect
-                QName qn = tm.getTypeQName(toSend.getClass());
+                QName qn = map.getTypeQName(toSend.getClass());
 
                 call.addParameter( arg, qn, ParameterMode.PARAM_MODE_IN);
                 call.setReturnType( qn );
@@ -198,8 +195,7 @@ public abstract class TestClient {
             service = new Service();
             call = (Call) service.createCall();
             call.setTargetEndpointAddress( new java.net.URL(url) );
-            tmr = call.getMessageContext().getTypeMappingRegistry();
-            tm  = (TypeMapping) tmr.getTypeMapping(Constants.URI_SOAP_ENC);
+            map = call.getMessageContext().getTypeMappingRegistry();
         }
         catch( Exception exp ) {
             throw AxisFault.makeFault(exp);
@@ -213,7 +209,8 @@ public abstract class TestClient {
         // register the SOAPStruct class
         QName ssqn = new QName("http://soapinterop.org/xsd", "SOAPStruct");
         Class cls = SOAPStruct.class;
-        call.registerTypeMapping(cls, ssqn, BeanSerializerFactory.class, BeanDeserializerFactory.class);
+        call.addSerializer(cls, ssqn, new BeanSerializer(cls));
+        call.addDeserializerFactory(ssqn, cls, BeanSerializer.getFactory());
 
         // execute the tests
         test("String      ", "abcdefg");

@@ -18,12 +18,7 @@ public class VerifyTestCase extends junit.framework.TestCase {
     }
 
     public void testParameterOrder() {
-        test.wsdl.parameterOrder.ParameterOrderTest binding;
-        try {
-            binding = new ParameterOrderService().getParameterOrder();
-        } catch (javax.xml.rpc.JAXRPCException jre) {
-            throw new junit.framework.AssertionFailedError("JAX-RPC Exception caught: " + jre);
-        }
+        test.wsdl.parameterOrder.ParameterOrderTest binding = new ParameterOrderService().getParameterOrder();
         assertTrue("binding is null", binding != null);
         try {
             binding.oneIn(0);

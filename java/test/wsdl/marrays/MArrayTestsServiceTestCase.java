@@ -13,13 +13,7 @@ public class MArrayTestsServiceTestCase extends junit.framework.TestCase {
     }
 
     public void testMArrayTests() {
-        test.wsdl.marrays.MArrayTests binding;
-        try {
-            binding = new MArrayTestsService().getMArrayTests();
-        }
-        catch (javax.xml.rpc.JAXRPCException jre) {
-            throw new junit.framework.AssertionFailedError("JAX-RPC Exception caught: " + jre );
-        }
+        test.wsdl.marrays.MArrayTests binding = new MArrayTestsService().getMArrayTests();
         assertTrue("binding is null", binding != null);
 
         // In each case below, the elements of the array are either nill, -1 or

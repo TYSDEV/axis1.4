@@ -55,7 +55,6 @@
 package org.apache.axis.deployment;
 
 import org.apache.axis.Handler;
-import org.apache.axis.EngineConfiguration;
 
 import javax.xml.rpc.namespace.QName;
 
@@ -81,6 +80,9 @@ public interface DeployableItem
      * @return a Handler which is assumedly the correct type
      * @throws Exception (!!! probably should be more specific)
      */
-    public Handler getInstance(EngineConfiguration registry)
+    public Handler getInstance(DeploymentRegistry registry)
         throws Exception;
+    
+    public void deployToRegistry(DeploymentRegistry registry)
+        throws DeploymentException;
 }

@@ -66,7 +66,7 @@ import java.security.PrivateKey;
 
 import org.apache.axis.*;
 import org.apache.axis.configuration.NullProvider;
-import org.apache.axis.encoding.DeserializationContextImpl;
+import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPBodyElement;
 import org.apache.axis.message.MessageElement;
@@ -76,7 +76,6 @@ import org.apache.axis.client.AxisClient;
 import org.apache.axis.transport.http.HTTPTransport ;
 import org.apache.axis.utils.*;
 import org.apache.xml.security.signature.XMLSignature;
-import org.apache.xml.security.c14n.Canonicalizer;
 import org.w3c.dom.Element;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
@@ -107,7 +106,6 @@ public class SignedSOAPEnvelope extends SOAPEnvelope
 
     private void init (SOAPEnvelope env, String baseURI, String keystoreFile) {
         try {
-System.out.println("Beginning Client signing...");
             env.addMapping(new Mapping(SOAPSECNS,SOAPSECprefix));
             env.addAttribute(Constants.URI_SOAP_ENV,"actor","some-uri");
             env.addAttribute(Constants.URI_SOAP_ENV,"mustUnderstand","1");
@@ -115,7 +113,7 @@ System.out.println("Beginning Client signing...");
             SOAPHeader header = new SOAPHeader(XMLUtils.StringToElement(SOAPSECNS,"Signature", ""));
             env.addHeader(header);
 
-	    Document doc = env.getAsDocument();
+            Document doc = env.getAsDocument();
 
             KeyStore ks = KeyStore.getInstance(keystoreType);
             FileInputStream fis = new FileInputStream(keystoreFile);
@@ -127,34 +125,28 @@ System.out.println("Beginning Client signing...");
 
             Element soapHeaderElement = (Element)((Element)doc.getFirstChild()).getElementsByTagNameNS("*","Header").item(0);
             Element soapSignatureElement = (Element)soapHeaderElement.getElementsByTagNameNS("*","Signature").item(0);
-
             XMLSignature sig = new XMLSignature(doc, baseURI,
                                                 XMLSignature.ALGO_ID_SIGNATURE_DSA);
-
             soapSignatureElement.appendChild(sig.getElement());
             sig.addDocument("#Body");
 
-
             X509Certificate cert =
                   (X509Certificate) ks.getCertificate(certificateAlias);
-
 
             sig.addKeyInfo(cert);
             sig.addKeyInfo(cert.getPublicKey());
             sig.sign(privateKey);
 
-            Canonicalizer c14n = Canonicalizer.getInstance(Canonicalizer.ALGO_ID_C14N_WITH_COMMENTS);
-            byte[] canonicalMessage = c14n.canonicalizeDocument(doc);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            org.apache.xml.security.utils.XMLUtils.outputDOMc14nWithComments(doc, baos);
 
-            InputSource is = new InputSource(new java.io.ByteArrayInputStream(canonicalMessage));
-            DeserializationContextImpl dser = null ;
+            InputSource is = new InputSource(new java.io.ByteArrayInputStream(baos.toByteArray()));
+            DeserializationContext dser = null ;
             AxisClient     tmpEngine = new AxisClient(new NullProvider());
             MessageContext msgContext = new MessageContext(tmpEngine);
-            dser = new DeserializationContextImpl(is, msgContext,
+            dser = new DeserializationContext(is, msgContext,
                                               Message.REQUEST, this );
-
             dser.parse();
-System.out.println("Client signing complete.");
         }
         catch( Exception e ) {
             e.printStackTrace();

@@ -60,17 +60,11 @@ import org.apache.axis.AxisFault;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
 import org.apache.axis.SimpleTargetedChain;
-import org.apache.axis.ConfigurationException;
-import org.apache.axis.deployment.wsdd.WSDDConstants;
-import org.apache.axis.providers.java.MsgProvider;
-import org.apache.axis.handlers.soap.SOAPService;
-import org.apache.axis.configuration.SimpleProvider;
-import org.apache.axis.configuration.XMLStringProvider;
+import org.apache.axis.deployment.DeploymentException;
 import org.apache.axis.server.AxisServer;
 import org.apache.axis.utils.Options;
 import org.apache.log4j.Category;
 
-import javax.xml.rpc.namespace.QName;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -104,16 +98,6 @@ public class TCPListener implements Runnable {
 
     // becomes true when we want to quit
     private boolean done = false;
-
-    static final String wsdd =
-            "<deployment xmlns=\"http://xml.apache.org/axis/wsdd/\" " +
-                  "xmlns:java=\"" + WSDDConstants.WSDD_JAVA + "\">\n" +
-            " <transport name=\"tcp\" pivot=\"java:samples.transport.tcp.TCPSender\"/>\n" +
-            " <service name=\"" + WSDDConstants.WSDD_NS + "\" provider=\"java:MSG\">\n" +
-            "  <parameter name=\"allowedMethods\" value=\"AdminService\"/>\n" +
-            "  <parameter name=\"className\" value=\"org.apache.axis.utils.Admin\"/>\n" +
-            " </service>\n" +
-            "</deployment>";
 
     public static void main (String args[]) {
         new TCPListener(args).run();
@@ -168,9 +152,17 @@ public class TCPListener implements Runnable {
         public void run () {
             // get the input stream
             if ( engine == null ) {
-                XMLStringProvider provider = new XMLStringProvider(wsdd);
-                engine = new AxisServer(provider);
+                engine = new AxisServer();
                 engine.init();
+
+                SimpleTargetedChain c = new SimpleTargetedChain(new TCPSender());
+
+                try {
+                    engine.deployTransport(transportName, c);
+                } catch (DeploymentException e) {
+                    // !!! We're toast.  What to do about it?
+                    System.exit(-1);
+                }
             }
 
             /* Place the Request message in the MessagContext object - notice */

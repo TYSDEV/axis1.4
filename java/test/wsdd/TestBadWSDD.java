@@ -92,7 +92,10 @@ public class TestBadWSDD extends TestCase
         try {
             client.process(stream);
         } catch (Exception e) {
-             return;
+            assertEquals("Wrong exception message processing bad Handler",
+                         "Must include type attribute for Handler deployment!",
+                         e.getMessage());
+            return;
         }
         
         fail("Successfully processed bad WSDD!");

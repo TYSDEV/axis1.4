@@ -54,13 +54,13 @@
  */
 package org.apache.axis.deployment.wsdd;
 
+import org.apache.axis.Handler;
+import org.apache.axis.TargetedChain;
+import org.apache.axis.FaultableHandler;
 import org.apache.axis.utils.XMLUtils;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.handlers.soap.SOAPService;
-import org.apache.axis.encoding.ser.BaseSerializerFactory;
-import org.apache.axis.encoding.ser.BaseDeserializerFactory;
 import org.apache.axis.encoding.*;
-import org.apache.axis.*;
 import org.apache.axis.deployment.DeploymentRegistry;
 import org.apache.axis.deployment.DeploymentException;
 import org.w3c.dom.Document;
@@ -115,13 +115,13 @@ public class WSDDService
         Element [] typeMappings = getChildElements(e, "typeMapping");
         for (int i = 0; i < typeMappings.length; i++) {
             WSDDTypeMapping typeMapping = new WSDDTypeMapping(typeMappings[i]);
-            deployTypeMapping(typeMapping);
+            addTypeMapping(typeMapping);
         }
 
         Element [] beanMappings = getChildElements(e, "beanMapping");
         for (int i = 0; i < beanMappings.length; i++) {
             WSDDBeanMapping beanMapping = new WSDDBeanMapping(beanMappings[i]);
-            deployTypeMapping(beanMapping);
+            addTypeMapping(beanMapping);
         }
 
         String typeStr = e.getAttribute("provider");
@@ -198,8 +198,8 @@ public class WSDDService
      * @return XXX
      * @throws Exception XXX
      */
-    public Handler makeNewInstance(EngineConfiguration registry)
-        throws ConfigurationException
+    public Handler makeNewInstance(DeploymentRegistry registry)
+        throws Exception
     {
         if (cachedService != null) {
             return cachedService;
@@ -215,13 +215,9 @@ public class WSDDService
         Handler providerHandler = null;
 
         if (providerQName != null) {
-            try {
-                providerHandler = WSDDProvider.getInstance(providerQName,
-                                                           this,
-                                                           registry);
-            } catch (Exception e) {
-                throw new ConfigurationException(e);
-            }
+            providerHandler = WSDDProvider.getInstance(providerQName,
+                                                       this,
+                                                       registry);
             if (providerHandler == null)
                 throw new WSDDException(
                           JavaUtils.getMessage("couldntConstructProvider00"));
@@ -241,7 +237,12 @@ public class WSDDService
             service.setName(getQName().getLocalPart());
         service.setOptions(getParametersTable());
 
+        if (tmr == null) {
+            tmr = new TypeMappingRegistry();
+        }
+
         service.setTypeMappingRegistry(tmr);
+        tmr.setParent(registry.getTypeMappingRegistry(""));
 
         WSDDFaultFlow [] faultFlows = getFaultFlows();
         if (faultFlows != null && faultFlows.length > 0) {
@@ -258,54 +259,37 @@ public class WSDDService
         return service;
     }
     
-    public void deployTypeMapping(WSDDTypeMapping mapping)
+    public void addTypeMapping(WSDDTypeMapping mapping)
         throws WSDDException
     {
-        if (tmr == null) {
-            tmr = new TypeMappingRegistryImpl();
-        }
+        if (tmr == null)
+            tmr = new TypeMappingRegistry();
 
         try {
-            TypeMapping tm = (TypeMapping) tmr.getTypeMapping(mapping.getEncodingStyle());
-            TypeMapping df = (TypeMapping) tmr.getDefaultTypeMapping();
-            if (tm == null || tm == df) {
-                tm = (TypeMapping) tmr.createTypeMapping();
-                String namespace = mapping.getEncodingStyle();
-                if (mapping.getEncodingStyle() == null) {
-                    namespace = Constants.URI_CURRENT_SOAP_ENC;
-                }
-                tm.setSupportedEncodings(new String[] {namespace});
-                tmr.register(tm, new String[] {namespace});
-            }
-            
-            SerializerFactory   ser   = null;
+            Serializer          ser   = null;
             DeserializerFactory deser = null;
-            
-            // Try to construct a serializerFactory by introspecting for the
-            // following:
-            // public static create(Class javaType, QName xmlType)
-            // public <constructor>(Class javaType, QName xmlType)
-            // public <constructor>()
-            // 
-            // The BaseSerializerFactory createFactory() method is a utility 
-            // that does this for us.
-            if (mapping.getSerializerName() != null &&
-                !mapping.getSerializerName().equals("")) {
-                ser = BaseSerializerFactory.createFactory(mapping.getSerializer(), 
-                                                          mapping.getLanguageSpecificType(),
-                                                          mapping.getQName());
+        
+            ser   = (Serializer) mapping.getSerializer().newInstance();
+            deser =
+                    (DeserializerFactory) mapping.getDeserializer()
+                    .newInstance();
+        
+            if (ser != null) {
+                tmr.addSerializer(mapping.getLanguageSpecificType(),
+                                  mapping.getQName(), ser);
             }
-            
-            if (mapping.getDeserializerName() != null &&
-                !mapping.getDeserializerName().equals("")) {
-                deser = BaseDeserializerFactory.createFactory(mapping.getDeserializer(), 
-                                                          mapping.getLanguageSpecificType(),
-                                                          mapping.getQName());
+        
+            if (deser != null) {
+                tmr.addDeserializerFactory(mapping.getQName(), mapping
+                                                               .getLanguageSpecificType(), deser);
             }
-            tm.register( mapping.getLanguageSpecificType(), mapping.getQName(), ser, deser);
-        } catch (ClassNotFoundException e) {
+        } catch (IntrospectionException e) {
             throw new WSDDException(e);
-        } catch (Exception e) {
+        } catch (InstantiationException e) {
+            throw new WSDDException(e);
+        } catch (IllegalAccessException e) {
+            throw new WSDDException(e);
+        } catch (ClassNotFoundException e) {
             throw new WSDDException(e);
         }
     }
@@ -331,9 +315,7 @@ public class WSDDService
         writeParamsToContext(context);
 
         if (tmr != null) {
-            // RJS_TEMP
-            // Need to provide a writeTypeMappingsToContext
-            //tmr.dumpToSerializationContext(context);
+            tmr.dumpToSerializationContext(context);
         }
 
         context.endElement();
@@ -344,8 +326,8 @@ public class WSDDService
         cachedService = service;
     }
 
-    public void deployToRegistry(WSDDDeployment registry)
-            throws WSDDException {
+    public void deployToRegistry(DeploymentRegistry registry)
+            throws DeploymentException {
         registry.deployService(this);
         
         super.deployToRegistry(registry);

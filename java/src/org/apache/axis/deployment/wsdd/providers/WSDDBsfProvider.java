@@ -55,7 +55,6 @@
 package org.apache.axis.deployment.wsdd.providers;
 
 import org.apache.axis.Handler;
-import org.apache.axis.EngineConfiguration;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.deployment.DeploymentRegistry;
 import org.apache.axis.deployment.wsdd.WSDDConstants;
@@ -81,7 +80,7 @@ public class WSDDBsfProvider
     extends WSDDProvider
 {
     public Handler newProviderInstance(WSDDService service,
-                                       EngineConfiguration registry)
+                                       DeploymentRegistry registry)
         throws Exception
     {
         Handler provider = new org.apache.axis.providers.BSFProvider();

@@ -72,11 +72,7 @@ public class TestUndeployment extends TestCase
 
         InputStream is = new StringBufferInputStream(undeployDoc);
         WSDDDocument doc = new WSDDDocument(XMLUtils.newDocument(is));
-
-        WSDDDeployment dep = provider.getDeployment();
-        doc.deploy(dep);
-
-        server.refreshGlobalOptions();
+        server.deployWSDD(doc);
         
         handler = server.getHandler("other");
         assertNull("Undeployed handler is still available", handler);

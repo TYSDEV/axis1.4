@@ -12,13 +12,8 @@ public class SequenceTestServiceTestCase extends junit.framework.TestCase {
     }
 
     public void testSequenceTest() {
-        test.wsdl.sequence.SequenceTestPortType binding;
-        try {
-            binding = new SequenceTest().getSequenceTest();
-        }
-        catch (javax.xml.rpc.JAXRPCException jre) {
-            throw new junit.framework.AssertionFailedError("JAX-RPC Exception caught: " + jre );
-        }
+        test.wsdl.sequence.SequenceTestPortType binding =
+            new SequenceTest().getSequenceTest();
         assertTrue("binding is null", binding != null);
         try {
             int value = -3;

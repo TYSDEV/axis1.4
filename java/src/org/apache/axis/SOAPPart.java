@@ -56,9 +56,7 @@
 package org.apache.axis ;
 
 import org.apache.axis.encoding.DeserializationContext;
-import org.apache.axis.encoding.DeserializationContextImpl;
 import org.apache.axis.encoding.SerializationContext;
-import org.apache.axis.encoding.SerializationContextImpl;
 import org.apache.axis.message.InputStreamBody;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.log4j.Category;
@@ -315,7 +313,7 @@ public class SOAPPart extends Part {
             StringWriter writer = new StringWriter();
             AxisFault env = (AxisFault)currentMessage;
             try {
-                env.output(new SerializationContextImpl(writer, getMessage().getMessageContext()));
+                env.output(new SerializationContext(writer, getMessage().getMessageContext()));
             } catch (Exception e) {
                 e.printStackTrace();
                 return null;
@@ -328,7 +326,7 @@ public class SOAPPart extends Part {
             StringWriter writer = new StringWriter();
             SOAPEnvelope env = (SOAPEnvelope)currentMessage;
             try {
-                env.output(new SerializationContextImpl(writer, getMessage().getMessageContext()));
+                env.output(new SerializationContext(writer, getMessage().getMessageContext()));
             } catch (Exception e) {
                 e.printStackTrace();
                 return null;
@@ -373,7 +371,7 @@ public class SOAPPart extends Part {
             is = new InputSource(new StringReader(getAsString()));
         }
         DeserializationContext dser =
-            new DeserializationContextImpl(is, getMessage().getMessageContext(), getMessage().getMessageType());
+            new DeserializationContext(is, getMessage().getMessageContext(), getMessage().getMessageType());
 
         // This may throw a SAXException
         try {

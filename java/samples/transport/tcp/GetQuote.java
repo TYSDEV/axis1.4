@@ -57,9 +57,6 @@ package samples.transport.tcp ;
 
 import org.apache.axis.AxisFault;
 import org.apache.axis.SimpleTargetedChain;
-import org.apache.axis.Constants;
-import org.apache.axis.configuration.SimpleProvider;
-import org.apache.axis.configuration.FileProvider;
 import org.apache.axis.client.Call;
 import org.apache.axis.client.Service;
 import org.apache.axis.client.Transport;
@@ -95,15 +92,12 @@ public class GetQuote {
         
         String namespace = "urn:xmltoday-delayed-quotes";
         symbol = args[0] ;
-
-        SimpleProvider provider =
-                new SimpleProvider(
-                        new FileProvider(Constants.CLIENT_CONFIG_FILE));
-        SimpleTargetedChain c = new SimpleTargetedChain(new TCPSender());
-        provider.deployTransport("tcp", c);
-
-        Service service = new Service(provider);
+        
+        Service service = new Service();
         Call call = (Call)service.createCall();
+        
+        SimpleTargetedChain c = new SimpleTargetedChain(new TCPSender());
+        service.getEngine().deployTransport("tcp", c);
         
         call.setTransport(new TCPTransport());
         

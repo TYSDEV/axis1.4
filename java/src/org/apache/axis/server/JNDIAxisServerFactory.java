@@ -1,6 +1,6 @@
 package org.apache.axis.server;
 
-import org.apache.axis.EngineConfiguration;
+import org.apache.axis.ConfigurationProvider;
 import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
 import org.apache.axis.configuration.FileProvider;
@@ -20,7 +20,7 @@ import java.util.Map;
  */ 
 
 public class JNDIAxisServerFactory implements AxisServerFactory {
-    private static FileProvider defaultEngineConfig =
+    private static FileProvider defaultConfigProvider =
                            new FileProvider(Constants.SERVER_CONFIG_FILE);
 
     /**
@@ -32,7 +32,7 @@ public class JNDIAxisServerFactory implements AxisServerFactory {
      * NOTE : REQUIRES SERVLET 2.3 FOR THE GetServletContextName() CALL!
      *
      * @param name the JNDI name we're interested in
-     * @param configProvider a EngineConfiguration which should be used
+     * @param configProvider a ConfigurationProvider which should be used
      *                       to configure any engine we end up creating, or
      *                       null to use the default configuration pattern.
      */
@@ -49,9 +49,9 @@ public class JNDIAxisServerFactory implements AxisServerFactory {
         } catch (NamingException e) {
         }
         
-        EngineConfiguration config = null;
+        ConfigurationProvider provider = null;
         try {
-            config = (EngineConfiguration)environment.get("engineConfig");
+            provider = (ConfigurationProvider)environment.get("provider");
         } catch (ClassCastException e) {
             // Just in case, fall through here.
         }
@@ -81,7 +81,7 @@ public class JNDIAxisServerFactory implements AxisServerFactory {
                     server = (AxisServer)context.lookup(name);
                 } catch (NamingException e) {
                     // Didn't find it.
-                    server = createNewServer(config);
+                    server = createNewServer(provider);
                     try {
                         context.bind(name, server);
                     } catch (NamingException e1) {
@@ -89,7 +89,7 @@ public class JNDIAxisServerFactory implements AxisServerFactory {
                     }
                 }
             } else {
-                server = createNewServer(config);
+                server = createNewServer(provider);
             }
         }
 
@@ -98,30 +98,30 @@ public class JNDIAxisServerFactory implements AxisServerFactory {
 
     /**
      * Do the actual work of creating a new AxisServer, using the passed
-     * engine configuration, or going through the default configuration
+     * configuration provider, or going through the default configuration
      * steps if null is passed.
      *
      * @return a shiny new AxisServer, ready for use.
      */
-    static private AxisServer createNewServer(EngineConfiguration config)
+    static private AxisServer createNewServer(ConfigurationProvider provider)
     {
-        // Just use the passed config if there is one.
-        if (config != null) {
-            return new AxisServer(config);
+        // Just use the passed provider if there is one.
+        if (provider != null) {
+            return new AxisServer(provider);
         }
 
         // Default configuration steps...
         //
-        // 1. Check for a system property telling us which Engine
-        //    Configuration to use.  If we find it, try creating one.
-        String configClass = System.getProperty("axis.engineConfigClass");
+        // 1. Check for a system property telling us which Configuration
+        //    Provider to use.  If we find it, try creating one.
+        String configClass = System.getProperty("axis.configProviderClass");
         if (configClass != null) {
             // Got one - so try to make it (which means it had better have
             // a default constructor - may make it possible later to pass in
             // some kind of environmental parameters...)
             try {
                 Class cls = Class.forName(configClass);
-                config = (EngineConfiguration)cls.newInstance();
+                provider = (ConfigurationProvider)cls.newInstance();
             } catch (ClassNotFoundException e) {
                 // Fall through???
             } catch (InstantiationException e) {
@@ -134,11 +134,11 @@ public class JNDIAxisServerFactory implements AxisServerFactory {
         // 2. If we couldn't make one above, use the default one.
         // !!! May want to add options here for getting another system
         //     property which is the config file name...
-        if (config == null) {
-            config = defaultEngineConfig;
+        if (provider == null) {
+            provider = defaultConfigProvider;
         }
 
-        // 3. Create an AxisServer using the appropriate config
-        return new AxisServer(config);
+        // 3. Create an AxisServer using the appropriate provider
+        return new AxisServer(provider);
     }
 }

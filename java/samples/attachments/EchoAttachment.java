@@ -61,8 +61,8 @@ import org.apache.axis.client.Call;
 import org.apache.axis.client.Service;
 import org.apache.axis.client.Transport;
 import org.apache.axis.encoding.XMLType;
-import org.apache.axis.encoding.ser.JAFDataHandlerSerializerFactory;
-import org.apache.axis.encoding.ser.JAFDataHandlerDeserializerFactory;
+import org.apache.axis.encoding.JAFDataHandlerSerializer;
+import org.apache.axis.encoding.JAFDataHandlerDeserializer;
 import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.axis.utils.Options;
 import javax.activation.DataHandler;
@@ -120,11 +120,13 @@ public class EchoAttachment {
 
         QName qnameAttachment = new QName("urn:EchoAttachmentsService", "DataHandler");
 
-        call.registerTypeMapping(dhSource.getClass(),//Add serializer for attachment. 
-                                 qnameAttachment,
-                                 JAFDataHandlerSerializerFactory.class,
-                                 JAFDataHandlerDeserializerFactory.class);
-                                 
+        call.addSerializer(dhSource.getClass(),//Add serializer for attachment. 
+            qnameAttachment,
+            new JAFDataHandlerSerializer());
+
+        call.addDeserializerFactory(qnameAttachment, dhSource.getClass(),
+            JAFDataHandlerDeserializer.getFactory());
+
         call.addParameter( "source", qnameAttachment,
                 ParameterMode.PARAM_MODE_IN ); //Add the file.
 
@@ -208,10 +210,12 @@ public class EchoAttachment {
 
         QName qnameAttachment = new QName("urn:EchoAttachmentsService", "DataHandler");
 
-        call.registerTypeMapping(attachments[0].getClass(),//Add serializer for attachment. 
-                                 qnameAttachment,
-                                 JAFDataHandlerSerializerFactory.class,
-                                 JAFDataHandlerDeserializerFactory.class);
+        call.addSerializer(attachments[0].getClass(),//Add serializer for attachment. 
+            qnameAttachment,
+            new JAFDataHandlerSerializer());
+
+        call.addDeserializerFactory(qnameAttachment, attachments[0].getClass(),
+            JAFDataHandlerDeserializer.getFactory());
 
         call.addParameter( "source",   XMLType.SOAP_ARRAY , // new XMLType(qnameAttachment),
             ParameterMode.PARAM_MODE_IN ); //Add the file.

@@ -141,7 +141,7 @@ public class JavaStubWriter extends JavaWriter {
         if (types.size() > 0) {
             pw.println("    private java.util.Vector cachedSerClasses = new java.util.Vector();");
             pw.println("    private java.util.Vector cachedSerQNames = new java.util.Vector();");
-            pw.println("    private java.util.Vector cachedSerFactories = new java.util.Vector();");
+            pw.println("    private java.util.Vector cachedSerializers = new java.util.Vector();");
             pw.println("    private java.util.Vector cachedDeserFactories = new java.util.Vector();");
         }
         pw.println();
@@ -240,15 +240,17 @@ public class JavaStubWriter extends JavaWriter {
         pw.println("                call.setProperty(key, cachedProperties.get(key));");
         pw.println("            }");
         if (types.size() > 0) {
-            pw.println("            for (int i = 0; i < cachedSerFactories.size(); ++i) {");
+            pw.println("            for (int i = 0; i < cachedSerializers.size(); ++i) {");
             pw.println("                Class cls = (Class) cachedSerClasses.get(i);");
             pw.println("                javax.xml.rpc.namespace.QName qname =");
             pw.println("                        (javax.xml.rpc.namespace.QName) cachedSerQNames.get(i);");
-            pw.println("                Class sf = (Class)");
-            pw.println("                         cachedSerFactories.get(i);");
-            pw.println("                Class df = (Class)");
+            pw.println("                org.apache.axis.encoding.Serializer ser =");
+            pw.println("                        (org.apache.axis.encoding.Serializer) cachedSerializers.get(i);");
+            pw.println("                org.apache.axis.encoding.DeserializerFactory deserFac =");
+            pw.println("                        (org.apache.axis.encoding.DeserializerFactory)");
             pw.println("                         cachedDeserFactories.get(i);");
-            pw.println("                call.registerTypeMapping(cls, qname, sf, df, false);");
+            pw.println("                call.addSerializer(cls, qname, ser);");
+            pw.println("                call.addDeserializerFactory(qname, cls, deserFac);");
             pw.println("            }");
         }
         pw.println("            return call;");
@@ -264,7 +266,7 @@ public class JavaStubWriter extends JavaWriter {
         for (int i = 0; i < operations.size(); ++i) {
             BindingOperation operation = (BindingOperation) operations.get(i);
             Parameters parameters =
-                    bEntry.getParameters(operation.getOperation().getName());
+                    ptEntry.getParameters(operation.getOperation().getName());
 
             // Get the soapAction from the <soap:operation>
             String soapAction = "";
@@ -334,12 +336,14 @@ public class JavaStubWriter extends JavaWriter {
         HashSet types = new HashSet();
         HashSet firstPassTypes = new HashSet();
 
+        PortTypeEntry pe = symbolTable.getPortTypeEntry(portType.getQName());
+
         // Get all the types from all the operations
         List operations = portType.getOperations();
 
         for (int i = 0; i < operations.size(); ++i) {
             Operation op = (Operation) operations.get(i);
-            firstPassTypes.addAll(getTypesInOperation(op));
+            firstPassTypes.addAll(getTypesInOperation(op, pe));
         }
 
         // Extract those types which are complex types.
@@ -361,11 +365,11 @@ public class JavaStubWriter extends JavaWriter {
      * This method returns a set of all the TypeEntry in a given Operation.
      * The elements of the returned HashSet are TypeEntry.
      */
-    private HashSet getTypesInOperation(Operation operation) {
+    private HashSet getTypesInOperation(Operation operation, PortTypeEntry portEntry) {
         HashSet types = new HashSet();
         Vector v = new Vector();
 
-        Parameters params = bEntry.getParameters(operation.getName());
+        Parameters params = portEntry.getParameters(operation.getName());
         
         // Loop over parameter types for this operation
         for (int i=0; i < params.list.size(); i++) {
@@ -430,21 +434,19 @@ public class JavaStubWriter extends JavaWriter {
         }
         if ( firstSer ) {
             pw.println("            Class cls;" );
-            pw.println("            javax.xml.rpc.namespace.QName qName;" );
-            pw.println("            Class sf = org.apache.axis.encoding.ser.BeanSerializerFactory.class;");
-            pw.println("            Class df = org.apache.axis.encoding.ser.BeanDeserializerFactory.class;");
+            pw.println("            org.apache.axis.encoding.Serializer ser;");
+            pw.println("            org.apache.axis.encoding.DeserializerFactory deserFac;");
         }
         firstSer = false ;
 
         QName qname = type.getQName();
-        pw.println("            qName = new javax.xml.rpc.namespace.QName(\""
-                   + qname.getNamespaceURI() + "\", \"" + qname.getLocalPart()
-                   + "\");");
-        pw.println("            cachedSerQNames.add(qName);");
+        pw.println("            cachedSerQNames.add(new javax.xml.rpc.namespace.QName(\""
+                + qname.getNamespaceURI() + "\", \"" + qname.getLocalPart()
+                + "\"));");
         pw.println("            cls = " + type.getName() + ".class;");
         pw.println("            cachedSerClasses.add(cls);");
-        pw.println("            cachedSerFactories.add(sf);");
-        pw.println("            cachedDeserFactories.add(df);");
+        pw.println("            cachedSerializers.add(new org.apache.axis.encoding.BeanSerializer(cls));");
+        pw.println("            cachedDeserFactories.add(org.apache.axis.encoding.BeanSerializer.getFactory());");
         pw.println();
     } // writeSerializationInit
 
@@ -518,7 +520,7 @@ public class JavaStubWriter extends JavaWriter {
             // turn off multirefs
             pw.println("        call.setProperty(org.apache.axis.AxisEngine.PROP_DOMULTIREFS, Boolean.FALSE);");
             // turn off XSI types
-            pw.println("        call.setProperty(org.apache.axis.client.Call.SEND_TYPE_ATTR, Boolean.FALSE);");
+            pw.println("        call.setProperty(org.apache.axis.AxisEngine.PROP_SEND_XSI, Boolean.FALSE);");
         }
         
         // Operation name

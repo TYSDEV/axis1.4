@@ -6,12 +6,8 @@ import org.apache.axis.Constants;
 import org.apache.axis.Handler;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
-import org.apache.axis.providers.java.RPCProvider;
-import org.apache.axis.configuration.SimpleProvider;
-import org.apache.axis.encoding.ser.BeanSerializerFactory;
-import org.apache.axis.encoding.ser.BeanDeserializerFactory;
-import org.apache.axis.encoding.TypeMappingRegistry;
-import org.apache.axis.encoding.TypeMapping;
+import org.apache.axis.encoding.BeanSerializer;
+import org.apache.axis.encoding.DeserializerFactory;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.message.RPCElement;
 import org.apache.axis.message.RPCParam;
@@ -43,20 +39,21 @@ public class TestSerializedRPC extends TestCase {
              "</soap:Body>\n" +
         "</soap:Envelope>\n";
 
-    private SimpleProvider provider = new SimpleProvider();
-    private AxisServer engine = new AxisServer(provider);
+    private AxisServer engine = new AxisServer();
+    private Handler RPCDispatcher;
 
     private String SOAPAction = "urn:reverse";
 
     public TestSerializedRPC(String name) throws Exception {
         super(name);
         engine.init();
-
+        RPCDispatcher = engine.getHandler("RPCDispatcher");
+        
         // Register the reverseString service
-        SOAPService reverse = new SOAPService(new RPCProvider());
+        SOAPService reverse = new SOAPService(RPCDispatcher);
         reverse.setOption("className", "test.RPCDispatch.Service");
         reverse.setOption("allowedMethods", "*");
-        provider.deployService(SOAPAction, reverse);
+        engine.deployService(SOAPAction, reverse);
     }
 
     /**
@@ -135,18 +132,11 @@ public class TestSerializedRPC extends TestCase {
      * Test a method that reverses a data structure
      */
     public void testSerReverseData() throws Exception {
-        Class javaType = Data.class;
-        QName xmlType = new QName("urn:foo", "Data");
-        BeanSerializerFactory   sf = new BeanSerializerFactory(javaType, xmlType);
-        BeanDeserializerFactory df = new BeanDeserializerFactory(javaType, xmlType);
-
-        TypeMappingRegistry tmr = engine.getTypeMappingRegistry();
-        TypeMapping tm = (TypeMapping) tmr.getTypeMapping(Constants.URI_SOAP_ENC);
-        if (tm == null) {
-            tm = (TypeMapping) tmr.createTypeMapping();
-            tmr.register(tm, new String[] {Constants.URI_SOAP_ENC});
-        }
-        tm.register(javaType, xmlType, sf, df);
+        BeanSerializer ser = new BeanSerializer(Data.class);
+        DeserializerFactory dSerFactory = BeanSerializer.getFactory();
+        QName qName = new QName("urn:foo", "Data");
+        engine.registerTypeMapping(qName, Data.class, dSerFactory,
+                                   ser);
         
         // invoke the service and verify the result
         String arg = "<arg0 xmlns:foo=\"urn:foo\" xsi:type=\"foo:Data\">";
@@ -160,18 +150,11 @@ public class TestSerializedRPC extends TestCase {
      * Test a method that reverses a data structure
      */
     public void testReverseDataWithUntypedParam() throws Exception {
-        Class javaType = Data.class;
-        QName xmlType = new QName("urn:foo", "Data");
-        BeanSerializerFactory   sf = new BeanSerializerFactory(javaType, xmlType);
-        BeanDeserializerFactory df = new BeanDeserializerFactory(javaType, xmlType);
-
-        TypeMappingRegistry tmr = engine.getTypeMappingRegistry();
-        TypeMapping tm = (TypeMapping) tmr.getTypeMapping(Constants.URI_SOAP_ENC);
-        if (tm == null) {
-            tm = (TypeMapping) tmr.createTypeMapping();
-            tmr.register(tm, new String[] {Constants.URI_SOAP_ENC});
-        }
-        tm.register(javaType, xmlType, sf, df);
+        BeanSerializer ser = new BeanSerializer(Data.class);
+        DeserializerFactory dSerFactory = BeanSerializer.getFactory();
+        QName qName = new QName("urn:foo", "Data");
+        engine.registerTypeMapping(qName, Data.class, dSerFactory,
+                                   ser);
         
         // invoke the service and verify the result
         String arg = "<arg0 xmlns:foo=\"urn:foo\">";
@@ -185,18 +168,11 @@ public class TestSerializedRPC extends TestCase {
      * Test DOM round tripping
      */
     public void testArgAsDOM() throws Exception {
-        Class javaType = Data.class;
-        QName xmlType = new QName("urn:foo", "Data");
-        BeanSerializerFactory   sf = new BeanSerializerFactory(javaType, xmlType);
-        BeanDeserializerFactory df = new BeanDeserializerFactory(javaType, xmlType);
-
-        TypeMappingRegistry tmr = engine.getTypeMappingRegistry();
-        TypeMapping tm = (TypeMapping) tmr.getTypeMapping(Constants.URI_SOAP_ENC);
-        if (tm == null) {
-            tm = (TypeMapping) tmr.createTypeMapping();
-            tmr.register(tm, new String[] {Constants.URI_SOAP_ENC});
-        }
-        tm.register(javaType, xmlType, sf, df);
+        BeanSerializer ser = new BeanSerializer(Data.class);
+        DeserializerFactory dSerFactory = BeanSerializer.getFactory();
+        QName qName = new QName("urn:foo", "Data");
+        engine.registerTypeMapping(qName, Data.class, dSerFactory,
+                                   ser);
         
         // invoke the service and verify the result
         String arg = "<arg0 xmlns:foo=\"urn:foo\">";

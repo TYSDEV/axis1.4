@@ -73,43 +73,18 @@ public class JavaInterfaceWriter extends JavaWriter {
     private PortType      portType;
     private PortTypeEntry ptEntry;
     private SymbolTable   symbolTable;
-    private BindingEntry  bEntry;
 
     /**
      * Constructor.
      */
     protected JavaInterfaceWriter(
             Emitter emitter,
-            PortTypeEntry ptEntry, BindingEntry bEntry, SymbolTable symbolTable) {
+            PortTypeEntry ptEntry, SymbolTable symbolTable) {
         super(emitter, ptEntry, "", "java", JavaUtils.getMessage("genIface00"), "interface");
         this.ptEntry = ptEntry;
         this.portType = ptEntry.getPortType();
         this.symbolTable = symbolTable;
-        this.bEntry = bEntry;
     } // ctor
-
-    /**
-     * Override write method to prevent duplicate interfaces because
-     * of two bindings referencing the same portType
-     */
-    public void write() throws IOException {
-        String fqClass = packageName + "." + className;
-        
-        // Do not emit the same portType/interface twice
-        // Warn the user and skip writing this class.
-        // XXX This would be the wrong thing if the two bindings
-        // XXX refer to the same port type, but describe it in a different way.
-        // XXX For example, one has use=literal, the other use=encoded.
-         if (emitter.fileInfo.getClassNames().contains(fqClass)) {
-             System.err.println(
-                     JavaUtils.getMessage("multipleBindings00", 
-                                          portType.getQName().toString()));
-             return;
-         }
-
-        // proceed normally
-        super.write();
-    } // write
 
     /**
      * Write the body of the portType interface file.
@@ -117,7 +92,11 @@ public class JavaInterfaceWriter extends JavaWriter {
     protected void writeFileBody() throws IOException {
         pw.println("public interface " + className + " extends java.rmi.Remote {");
 
-        Iterator operations = portType.getOperations().iterator();
+        // Remove Duplicates - happens with only a few WSDL's. No idea why!!! 
+        // (like http://www.xmethods.net/tmodels/InteropTest.wsdl) 
+        // TODO: Remove this patch...
+        // NOTE from RJB:  this is a WSDL4J bug and the WSDL4J guys have been notified.
+        Iterator operations = (new HashSet(portType.getOperations())).iterator();
         while(operations.hasNext()) {
             Operation operation = (Operation) operations.next();
             writeOperation(operation);
@@ -132,7 +111,7 @@ public class JavaInterfaceWriter extends JavaWriter {
      */
     private void writeOperation(Operation operation) throws IOException {
         writeComment(pw, operation.getDocumentationElement());
-        Parameters parms = bEntry.getParameters(operation.getName());
+        Parameters parms = ptEntry.getParameters(operation.getName());
         pw.println(parms.signature + ";");
     } // writeOperation
 

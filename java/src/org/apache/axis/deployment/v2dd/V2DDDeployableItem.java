@@ -55,7 +55,6 @@
 package org.apache.axis.deployment.v2dd;
 
 import org.apache.axis.Handler;
-import org.apache.axis.EngineConfiguration;
 import org.apache.axis.deployment.DeployableItem;
 import org.apache.axis.deployment.DeploymentRegistry;
 import org.apache.axis.deployment.DeploymentException;
@@ -92,7 +91,7 @@ public class V2DDDeployableItem implements DeployableItem, Serializable {
         return qname;
     }
 
-    public Handler getInstance(EngineConfiguration registry) {
+    public Handler getInstance(DeploymentRegistry registry) {
         
         // we would create an instance of the SOAP v2.x
         // compatible handler here using the service

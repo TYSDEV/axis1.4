@@ -54,14 +54,17 @@
  */
 package org.apache.axis.deployment;
 
-import org.apache.axis.ConfigurationException;
+import org.apache.axis.AxisFault;
 
 /**
  *
  */
 public class DeploymentException
-    extends ConfigurationException
+    extends AxisFault
 {
+    public DeploymentException() {
+    }
+
     public DeploymentException(Exception e) {
         super(e);
     }

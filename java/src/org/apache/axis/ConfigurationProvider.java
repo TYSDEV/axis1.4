@@ -54,8 +54,6 @@
  */
 package org.apache.axis;
 
-import org.apache.axis.deployment.DeploymentRegistry;
-
 /**
  * ConfigurationProvider is an interface which represents a source of
  * configuration information for an AxisEngine.  Concrete implementations
@@ -83,6 +81,4 @@ public interface ConfigurationProvider
      * @throws Exception if there was a problem
      */
     public void writeEngineConfig(AxisEngine engine) throws Exception;
-
-    public DeploymentRegistry getDeploymentRegistry();
 }

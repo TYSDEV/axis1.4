@@ -89,10 +89,8 @@ public class LogHandler extends BasicHandler {
         /** Log an access each time we get invoked.
          */
         try {
-System.out.println("Starting Server verification");            
             Handler serviceHandler = msgContext.getServiceHandler();
             String filename = (String)getOption("filename");
-
             if ((filename == null) || (filename.equals("")))
                 throw new AxisFault("Server.NoLogFile",
                                  "No log file configured for the LogHandler!",
@@ -101,19 +99,13 @@ System.out.println("Starting Server verification");
             
 	    PrintWriter writer = new PrintWriter(fos);
             
-            Integer numAccesses = null;
-
-            try {
-                 numAccesses = (Integer)serviceHandler.getOption("accesses");
-            } catch (ClassCastException cce) {
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            Integer numAccesses =
+                             (Integer)serviceHandler.getOption("accesses");
             if (numAccesses == null)
                 numAccesses = new Integer(0);
             
             numAccesses = new Integer(numAccesses.intValue() + 1);
-
+            
             Date date = new Date();
             String result = date + ": service " +
                             msgContext.getTargetService() +
@@ -132,20 +124,12 @@ System.out.println("Starting Server verification");
 
             Element nsctx = doc.createElement("nsctx");
             nsctx.setAttribute("xmlns:ds", Constants.SignatureSpecNS);
-
+	    
             Element signatureElem = (Element) xpathAPI.selectSingleNode(doc,
 									"//ds:Signature", nsctx);
-
-	    // check to make sure that the document claims to have been signed
-	    if (signatureElem == null) {
-		writer.println("The document is not signed"); writer.flush();
-		return;
-	    }
-
             XMLSignature sig = new XMLSignature(signatureElem, BaseURI);
 	    
             boolean verify = sig.checkSignatureValue(sig.getKeyInfo().getPublicKey());
-System.out.println("Server verification complete.");            
 
             writer.println("The signature is" + (verify
                                                ? " "

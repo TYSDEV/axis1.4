@@ -55,7 +55,6 @@
 package org.apache.axis.deployment.wsml;
 
 import org.apache.axis.Handler;
-import org.apache.axis.EngineConfiguration;
 import org.apache.axis.deployment.DeployableItem;
 import org.apache.axis.deployment.DeploymentRegistry;
 import org.apache.axis.deployment.DeploymentException;
@@ -68,7 +67,7 @@ public class WSMLDeployableItem implements DeployableItem {
         return null;
     }
 
-    public Handler getInstance(EngineConfiguration registry) {
+    public Handler getInstance(org.apache.axis.deployment.DeploymentRegistry registry) {
         return null;
     }
 

@@ -7,8 +7,6 @@
 
 package test.wsdl.types;
 
-import javax.xml.rpc.JAXRPCException;
-
 import javax.xml.rpc.holders.BigDecimalHolder;
 import javax.xml.rpc.holders.BigIntegerHolder;
 import javax.xml.rpc.holders.BooleanClassHolder;
@@ -31,12 +29,8 @@ import javax.xml.rpc.holders.StringHolder;
 
 import javax.xml.rpc.namespace.QName;
 
-import test.wsdl.types.comprehensive_types.Animal;
-import test.wsdl.types.comprehensive_types.AnimalHolder;
 import test.wsdl.types.comprehensive_types.ArrayHolder;
 import test.wsdl.types.comprehensive_types.ArrayMHolder;
-import test.wsdl.types.comprehensive_types.Cat;
-import test.wsdl.types.comprehensive_types.CatHolder;
 import test.wsdl.types.comprehensive_types.ComplexAll;
 import test.wsdl.types.comprehensive_types.ComplexAllHolder;
 import test.wsdl.types.comprehensive_types.ComplexSequence;
@@ -67,13 +61,7 @@ public class VerifyTestCase extends junit.framework.TestCase {
     }
 
     public void testTypeTest() {
-        TypeTest binding;
-        try {
-            binding = new TypeTestService().getTypeTest();
-        }
-        catch (JAXRPCException jre) {
-            throw new junit.framework.AssertionFailedError("JAX-RPC Exception caught: " + jre);
-        }
+        TypeTest binding = new TypeTestService().getTypeTest();
         assertTrue("binding is null", binding != null);
         try {
             binding.allPrimitivesIn("hi", new java.math.BigInteger("5"), 0, (long) 0, (short) 0, new java.math.BigDecimal(6), (float) 0, (double) 0, true, (byte) 0, new QName("hi", "ho"), new java.util.Date(), new byte[]{(byte) 5}, new byte[]{(byte) 6}, "hi ho", new Boolean(true), new Float(0), new Double(0), new java.math.BigDecimal(7), new Integer(0), new Short((short) 0), new Byte[]{new Byte((byte) 7)});
@@ -272,39 +260,6 @@ public class VerifyTestCase extends junit.framework.TestCase {
         }
         try {
             java.lang.Object value = binding.anyOut();
-        } catch (java.rmi.RemoteException re) {
-            throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
-        }
-        Cat cat = new Cat("meow");
-        try {
-            binding.animalIn(cat);
-        } catch (java.rmi.RemoteException re) {
-            throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
-        }
-        try {
-            binding.animalInout(new AnimalHolder(cat));
-        } catch (java.rmi.RemoteException re) {
-            throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
-        }
-        try {
-            Animal value = null;
-            value = binding.animalOut();
-        } catch (java.rmi.RemoteException re) {
-            throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
-        }
-        try {
-            binding.catIn(cat);
-        } catch (java.rmi.RemoteException re) {
-            throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
-        }
-        try {
-            binding.catInout(new CatHolder(cat));
-        } catch (java.rmi.RemoteException re) {
-            throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
-        }
-        try {
-            Cat value = null;
-            value = binding.catOut();
         } catch (java.rmi.RemoteException re) {
             throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
         }

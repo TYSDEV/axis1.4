@@ -67,14 +67,16 @@ import javax.wsdl.QName;
 */
 public class PortTypeEntry extends SymTabEntry {
     private PortType portType;
+    private HashMap  parameters = new HashMap ();
 
     /**
      * Construct a PortTypeEntry from a WSDL4J PortType object and a HashMap of Parameters objects,
      * keyed off of the operation name.
      */
-    public PortTypeEntry(PortType portType) {
+    public PortTypeEntry(PortType portType, HashMap parameters) {
         super(portType.getQName());
         this.portType = portType;
+        this.parameters = parameters;
     } // ctor
 
     /**
@@ -84,5 +86,18 @@ public class PortTypeEntry extends SymTabEntry {
         return portType;
     } // getPortType
 
+    /**
+     * Get the Parameters object for the given operation.
+     */
+    public Parameters getParameters(String operationName) {
+        return (Parameters) parameters.get(operationName);
+    } // getParameters
+
+    /**
+     * Get all of the parameters for all operations.
+     */
+    public HashMap getParameters() {
+        return parameters;
+    } // getParameters
 
 } // class PortTypeEntry

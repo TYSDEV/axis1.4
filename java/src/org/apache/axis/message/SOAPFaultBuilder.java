@@ -58,8 +58,8 @@ import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.Deserializer;
-import org.apache.axis.encoding.Callback;
-import org.apache.axis.encoding.CallbackTarget;
+import org.apache.axis.encoding.SOAPTypeMappingRegistry;
+import org.apache.axis.encoding.ValueReceiver;
 import org.apache.axis.utils.QFault;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -78,7 +78,7 @@ import java.util.Iterator;
  * @author Glen Daniels (gdaniels@macromedia.com)
  * @author Tom Jordahl (tomj@macromedia.com)
  */
-public class SOAPFaultBuilder extends SOAPHandler implements Callback
+public class SOAPFaultBuilder extends SOAPHandler implements ValueReceiver
 {
     protected SOAPFaultElement element;
     protected DeserializationContext context;
@@ -92,9 +92,9 @@ public class SOAPFaultBuilder extends SOAPHandler implements Callback
     protected Element[] faultDetails;
 
     static {
-        fields.put(Constants.ELEM_FAULT_CODE, Constants.XSD_STRING);
-        fields.put(Constants.ELEM_FAULT_STRING, Constants.XSD_STRING);
-        fields.put(Constants.ELEM_FAULT_ACTOR, Constants.XSD_STRING);
+        fields.put(Constants.ELEM_FAULT_CODE, SOAPTypeMappingRegistry.XSD_STRING);
+        fields.put(Constants.ELEM_FAULT_STRING, SOAPTypeMappingRegistry.XSD_STRING);
+        fields.put(Constants.ELEM_FAULT_ACTOR, SOAPTypeMappingRegistry.XSD_STRING);
         fields.put(Constants.ELEM_FAULT_DETAIL, null);
     }
     
@@ -152,13 +152,12 @@ public class SOAPFaultBuilder extends SOAPHandler implements Callback
         QName qName = (QName)fields.get(name);
         
         if (qName != null) {
-            currentDeser = context.getDeserializerForType(qName);
-            if (currentDeser != null) {
-                currentDeser.registerValueTarget(new CallbackTarget(this, name));
-            }
+            currentDeser = context.getTypeMappingRegistry().
+                          getDeserializer(qName);
+            currentDeser.registerCallback(this, name);
         }
         
-        return (SOAPHandler) currentDeser;
+        return currentDeser;
     }
 
     public void onEndChild(String namespace, String localName,
@@ -186,13 +185,7 @@ public class SOAPFaultBuilder extends SOAPHandler implements Callback
         }
     }
 
-    /* 
-     * Defined by Callback.
-     * This method gets control when the callback is invoked.
-     * @param is the value to set.
-     * @param hint is an Object that provide additional hint information.
-     */
-    public void setValue(Object value, Object hint)
+    public void valueReady(Object value, Object hint)
     {
         String name = (String)hint;
         if (name.equals(Constants.ELEM_FAULT_CODE)) {
