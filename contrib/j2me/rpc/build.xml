@@ -41,4 +41,32 @@ Copyright:
         </javac>
     </target>
 
+    <target name="generate-test-client" depends="compile">
+        <mkdir dir="${basedir}/test/employee-db/client/src/generated"/>
+        <java fork="true" classname="org.apache.axis.j2me.rpc.wsdl.tojava.WsdlToJ2me">
+            <arg value="${basedir}/test/employee-db/service/src/wsdl/EmployeeDatabase.wsdl"/>
+            <arg value="-o"/>
+	    	<arg value="${basedir}/test/employee-db/client/src/generated"/>
+            <classpath refid="classpath"/>
+        </java>
+    </target>
+
+    <target name="generate-test-service" depends="init">
+        <mkdir dir="${basedir}/test/employee-db/service/src/java/generated"/>
+        <java fork="true" classname="org.apache.axis.wsdl.WSDL2Java">
+            <arg value="${basedir}/test/employee-db/service/src/wsdl/EmployeeDatabase.wsdl"/>
+            <arg value="-s"/>
+            <arg value="-o"/>
+	    	<arg value="${basedir}/test/employee-db/service/src/java/generated"/>
+            <classpath refid="classpath"/>
+        </java>
+    </target>
+
+    <target name="compile-test-service" depends="init">
+        <mkdir dir="${basedir}/test/employee-db/service/classes"/>
+        <javac srcdir="${basedir}/test/employee-db/service/src/java/generated" destdir="${basedir}/test/employee-db/service/classes" debug="on">
+            <classpath refid="classpath"/>
+        </javac>
+    </target>
+
 </project>
