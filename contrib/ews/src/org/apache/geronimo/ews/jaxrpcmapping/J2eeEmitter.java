@@ -15,21 +15,6 @@
  */
 package org.apache.geronimo.ews.jaxrpcmapping;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Collection;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Vector;
-
-import javax.wsdl.Binding;
-import javax.wsdl.Definition;
-import javax.xml.namespace.QName;
-
 import org.apache.axis.i18n.Messages;
 import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.wsdl.gen.Generator;
@@ -49,6 +34,20 @@ import org.apache.axis.wsdl.toJava.Utils;
 import org.apache.geronimo.ews.ws4j2ee.context.J2EEWebServiceContext;
 import org.apache.geronimo.ews.ws4j2ee.toWs.GenerationFault;
 
+import javax.wsdl.Binding;
+import javax.wsdl.Definition;
+import javax.xml.namespace.QName;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Collection;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Vector;
+
 /**
  * @author Ias (iasandcb@tmax.co.kr)
  */
@@ -63,12 +62,12 @@ public class J2eeEmitter extends Emitter {
     private SymbolTable symbolTable;
 //    private boolean usedbyws4j2ee = false;
 //    private boolean seiNeeded = true;
-	protected J2EEWebServiceContext wscontext;
+    protected J2EEWebServiceContext wscontext;
 
-	public J2eeEmitter() {
-	   J2eeGeneratorFactory factory = new J2eeGeneratorFactory(this);
-	   setFactory(factory);
-	} // ctor
+    public J2eeEmitter() {
+        J2eeGeneratorFactory factory = new J2eeGeneratorFactory(this);
+        setFactory(factory);
+    } // ctor
 //    public J2eeEmitter(boolean usedByws4j2ee,boolean needSei,J2EEWebServiceContext wscontext) {
 //    	this.usedbyws4j2ee = usedByws4j2ee;
 //    	this.seiNeeded = needSei;
@@ -78,21 +77,19 @@ public class J2eeEmitter extends Emitter {
 //
 //    } // ctor
 
-  public J2eeEmitter(J2EEWebServiceContext wscontext,J2eeGeneratorFactory factory) {
-      this.wscontext = wscontext;
-      if(factory == null)
+    public J2eeEmitter(J2EEWebServiceContext wscontext, J2eeGeneratorFactory factory) {
+        this.wscontext = wscontext;
+        if (factory == null)
             factory = new J2eeGeneratorFactory(this);
-            
-      setFactory(factory);
-      factory.setEmitter(this);
-
-  } // ctor
+        setFactory(factory);
+        factory.setEmitter(this);
+    } // ctor
 
     public void setMappingFilePath(String mappingFilePath) {
         this.mappingFilePath = mappingFilePath;
     }
 
-    private void loadMapping()throws GenerationFault {
+    private void loadMapping() throws GenerationFault {
         //jaxRpcMapper = new JAXBJaxRpcMapper();
         jaxRpcMapper = new XMLBeansJaxRpcMapper();
         if (mappingFilePath == null) {
@@ -100,17 +97,15 @@ public class J2eeEmitter extends Emitter {
         } else {
             jaxRpcMapper.loadMappingFromDir(mappingFilePath);
         }
-
         int length = jaxRpcMapper.getPackageMappingCount();
         Map namespaceMap = getNamespaceMap();
-        for (int i = 0;i < length; i++) {
+        for (int i = 0; i < length; i++) {
             namespaceMap.put(jaxRpcMapper.getPackageMappingURI(i), jaxRpcMapper.getPackageMappingClassName(i));
         }
     }
 
     /**
      * Emit appropriate Java files for a WSDL at a given URL.
-     * <p/>
      * This method will time out after the number of milliseconds specified
      * by our timeoutms member.
      */
@@ -130,7 +125,6 @@ public class J2eeEmitter extends Emitter {
                 nowrap);
         symbolTable.populate(wsdlURL, username, password);
         generate(symbolTable);
-
     }
 
     public SymbolTable getSymbolTable() {
@@ -143,9 +137,7 @@ public class J2eeEmitter extends Emitter {
                 setTypeMappingVersion(typeMappingVersion);
             }
             getFactory().setBaseTypeMapping(baseTypeMapping);
-            
             namespaces = new Namespaces(getOutputDir());
-            
             if (getPackageName() != null) {
                 namespaces.setDefaultPackage(getPackageName());
             } else {
@@ -169,11 +161,10 @@ public class J2eeEmitter extends Emitter {
      * <li>if a file name is explicitly set using <code>setNStoPkg()</code>, tries
      * to load the mapping from this file. If this fails, the built-in default
      * mapping is used.
-     * <p/>
      * <li>if no file name is set, tries to load the file <code>DEFAULT_NSTOPKG_FILE</code>
      * as a java resource. If this fails, the built-in dfault mapping is used.
      * </ol>
-     * 
+     *
      * @param namespaces a hashmap which is filled with the namespace-to-package mapping
      *                   in this method
      * @see #setNStoPkg(String)
@@ -181,7 +172,6 @@ public class J2eeEmitter extends Emitter {
      * @see org.apache.axis.utils.ClassUtils#getResourceAsStream(java.lang.Class,String)
      */
     private void getNStoPkgFromPropsFile(HashMap namespaces) throws IOException {
-
         Properties mappings = new Properties();
         if (NStoPkgFilename != null) {
             try {
@@ -206,7 +196,6 @@ public class J2eeEmitter extends Emitter {
                     if (verbose) {
                         System.out.println(Messages.getMessage("nsToPkgDefaultFileLoaded00", DEFAULT_NSTOPKG_FILE));
                     }
-
                 } catch (Throwable t1) {
                     // loading the default mapping file failed.
                     // The built-in default mapping is used
@@ -214,7 +203,6 @@ public class J2eeEmitter extends Emitter {
                 }
             }
         }
-
         Enumeration keys = mappings.propertyNames();
         while (keys.hasMoreElements()) {
             String key = (String) keys.nextElement();
@@ -225,21 +213,15 @@ public class J2eeEmitter extends Emitter {
     /**
      * Convert the specified QName into a full Java Name.
      */
-
     public String getJavaName(QName qName) {
-
         // If this is one of our special 'collection' qnames.
 
         // get the element type and append []
 
         if (qName.getLocalPart().indexOf("[") > 0) {
-
             String localPart = qName.getLocalPart().substring(0, qName.getLocalPart().indexOf("["));
-
             QName eQName = new QName(qName.getNamespaceURI(), localPart);
-
             return getJavaName(eQName) + "[]";
-
         }
 
 
@@ -247,9 +229,7 @@ public class J2eeEmitter extends Emitter {
         // Handle the special "java" namespace for types
 
         if (qName.getNamespaceURI().equalsIgnoreCase("java")) {
-
             return qName.getLocalPart();
-
         }
 
 
@@ -257,9 +237,7 @@ public class J2eeEmitter extends Emitter {
         // The QName may represent a base java name, so check this first
 
         String fullJavaName = getFactory().getBaseTypeMapping().getBaseName(qName);
-
         if (fullJavaName != null)
-
             return fullJavaName;
 
 
@@ -267,24 +245,16 @@ public class J2eeEmitter extends Emitter {
         // Use the namespace uri to get the appropriate package
       
         String pkg = getPackage(qName.getNamespaceURI());
-
         if (pkg != null) {
-
             fullJavaName = pkg + "." + Utils.xmlNameToJavaClass(qName.getLocalPart());
-
         } else {
-
             fullJavaName = Utils.xmlNameToJavaClass(qName.getLocalPart());
-
         }
-
         return fullJavaName;
-
     } // getJavaName
 
     /**
      * Parse a WSDL at a given URL.
-     * <p/>
      * This method will time out after the number of milliseconds specified
      * by our timeoutms member.
      */
@@ -300,7 +270,6 @@ public class J2eeEmitter extends Emitter {
         WSDLRunnable runnable = new WSDLRunnable(symbolTable, wsdlURI);
         Thread wsdlThread = new Thread(runnable);
         wsdlThread.start();
-
         try {
             if (timeoutms > 0)
                 wsdlThread.join(timeoutms);
@@ -308,12 +277,10 @@ public class J2eeEmitter extends Emitter {
                 wsdlThread.join();
         } catch (InterruptedException e) {
         }
-
         if (wsdlThread.isAlive()) {
             wsdlThread.interrupt();
             throw new IOException(Messages.getMessage("timedOut"));
         }
-
         if (runnable.getFailure() != null) {
             throw runnable.getFailure();
         }
@@ -358,7 +325,6 @@ public class J2eeEmitter extends Emitter {
                     packageName += "_pkg";
                     namespaces.put(namespace, packageName);
                 }
-
             }
         }
     }
@@ -376,7 +342,6 @@ public class J2eeEmitter extends Emitter {
 
         // Generate bindings for types
         generateTypes(symbolTable);
-
         Iterator it = symbolTable.getHashMap().values().iterator();
         while (it.hasNext()) {
             Vector v = (Vector) it.next();
@@ -494,7 +459,7 @@ public class J2eeEmitter extends Emitter {
     }
 
     /**
-     * @return 
+     * @return
      */
     public boolean isGeneratingInterface() {
         // TODO Auto-generated method stub
@@ -502,7 +467,7 @@ public class J2eeEmitter extends Emitter {
     }
 
     /**
-     * @return 
+     * @return
      */
     public boolean isGeneratingTypes() {
         // TODO Auto-generated method stub

@@ -16,20 +16,17 @@
 
 package org.apache.geronimo.ews.ws4j2ee.context.webservices.server.interfaces;
 
-
-
-
 /**
  * This will interface the Service implementation bean element which is a layer 3 element in the webservices.xml
- *
  */
 public interface WSCFServiceImplBean {
-	
-	/**
-	 * Gets the ejblink elemet of the service implementation bean element
-	 * @return ejb link
-	 */
-	public String getEjblink() ;
-	
-	public String getServletlink();
+
+    /**
+     * Gets the ejblink elemet of the service implementation bean element
+     *
+     * @return ejb link
+     */
+    public String getEjblink();
+
+    public String getServletlink();
 }

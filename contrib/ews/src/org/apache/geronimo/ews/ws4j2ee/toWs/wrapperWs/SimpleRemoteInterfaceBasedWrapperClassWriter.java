@@ -15,91 +15,85 @@
  */
 package org.apache.geronimo.ews.ws4j2ee.toWs.wrapperWs;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-
 import org.apache.geronimo.ews.ws4j2ee.context.J2EEWebServiceContext;
 import org.apache.geronimo.ews.ws4j2ee.context.SEIOperation;
 import org.apache.geronimo.ews.ws4j2ee.toWs.GenerationFault;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+
 /**
  * @author Srinath Perera(hemapani@opensource.lk)
  */
-public abstract class SimpleRemoteInterfaceBasedWrapperClassWriter extends EJBBasedWrapperClassWriter{
+public abstract class SimpleRemoteInterfaceBasedWrapperClassWriter extends EJBBasedWrapperClassWriter {
 
-	/**
-	 * @param j2eewscontext
-	 * @throws GenerationFault
-	 */
-	public SimpleRemoteInterfaceBasedWrapperClassWriter(J2EEWebServiceContext j2eewscontext)
-		throws GenerationFault {
-		super(j2eewscontext);
-		seiName = context.getEjbRemoteInterface();
-	}
-    
-	protected abstract String getJNDIInitialContextFactory();
-	protected abstract String getJNDIHostAndPort();
-	protected String getimplementsPart() {
-			return " implements org.apache.geronimo.ews.ws4j2ee.wsutils.ContextAccssible";
-		}
-	
-	protected void writeMethods() throws GenerationFault {
-		
-		out.write("\tpublic void setMessageContext(org.apache.axis.MessageContext msgcontext){;\n");
-		out.write("\t\tthis.msgcontext = msgcontext;\n");
-		out.write("\t}\n");
-		
-		writeGetRemoteRef(classname);
-		
-		String parmlistStr = null;
-		 ArrayList operations = j2eewscontext.getMiscInfo().getSEIOperations();
-		 for(int i =0;i<operations.size();i++){
-			parmlistStr = "";
-			 SEIOperation op = (SEIOperation)operations.get(i);
-			 String returnType = op.getReturnType();
-			 if(returnType == null)
-				returnType = "void";
-			 out.write("\tpublic "+returnType+" "+op.getMethodName()+"(");
-				
-			 Iterator pas = op.getParameterNames().iterator();
-			 boolean first = true;
-			 while(pas.hasNext()){
-				 String name = (String)pas.next();
-				 String type = op.getParameterType(name);
-				 if(first){ 
-					 first = false;
-					 out.write(type + " " +name);
-					 parmlistStr = parmlistStr + name;
-				 }else{
-					 out.write(","+type + " " +name);
-					 parmlistStr = parmlistStr + ","+name;
-				 }
-						
-			 }
-				
-			 out.write(") throws java.rmi.RemoteException");
-			 ArrayList faults = op.getFaults();
-			 for(int j = 0;j<faults.size();j++){
-				 out.write(","+(String)faults.get(j));
-			 }
-			 out.write("{\n");
-			 out.write("\t\tif(ejb ==  null)\n");
-			 out.write("\t\t\tejb = getRemoteRef();\n");
+    /**
+     * @param j2eewscontext
+     * @throws GenerationFault
+     */
+    public SimpleRemoteInterfaceBasedWrapperClassWriter(J2EEWebServiceContext j2eewscontext)
+            throws GenerationFault {
+        super(j2eewscontext);
+        seiName = context.getEjbRemoteInterface();
+    }
 
-			 if(!"void".equals(returnType))
-				 out.write("\t\treturn ejb."+op.getMethodName()+"("+parmlistStr+");\n");
-			 else
-				 out.write("\t\tejb."+op.getMethodName()+"("+parmlistStr+");\n");	
-				
-			 out.write("\t}\n");
-		 }
-		 //out.write("}\n");	
+    protected abstract String getJNDIInitialContextFactory();
 
-	}
-	private void writeGetRemoteRef(String classname){
-	   out.write("\tpublic "+seiName+" getRemoteRef()throws org.apache.axis.AxisFault{\n");
+    protected abstract String getJNDIHostAndPort();
+
+    protected String getimplementsPart() {
+        return " implements org.apache.geronimo.ews.ws4j2ee.wsutils.ContextAccssible";
+    }
+
+    protected void writeMethods() throws GenerationFault {
+        out.write("\tpublic void setMessageContext(org.apache.axis.MessageContext msgcontext){;\n");
+        out.write("\t\tthis.msgcontext = msgcontext;\n");
+        out.write("\t}\n");
+        writeGetRemoteRef(classname);
+        String parmlistStr = null;
+        ArrayList operations = j2eewscontext.getMiscInfo().getSEIOperations();
+        for (int i = 0; i < operations.size(); i++) {
+            parmlistStr = "";
+            SEIOperation op = (SEIOperation) operations.get(i);
+            String returnType = op.getReturnType();
+            if (returnType == null)
+                returnType = "void";
+            out.write("\tpublic " + returnType + " " + op.getMethodName() + "(");
+            Iterator pas = op.getParameterNames().iterator();
+            boolean first = true;
+            while (pas.hasNext()) {
+                String name = (String) pas.next();
+                String type = op.getParameterType(name);
+                if (first) {
+                    first = false;
+                    out.write(type + " " + name);
+                    parmlistStr = parmlistStr + name;
+                } else {
+                    out.write("," + type + " " + name);
+                    parmlistStr = parmlistStr + "," + name;
+                }
+            }
+            out.write(") throws java.rmi.RemoteException");
+            ArrayList faults = op.getFaults();
+            for (int j = 0; j < faults.size(); j++) {
+                out.write("," + (String) faults.get(j));
+            }
+            out.write("{\n");
+            out.write("\t\tif(ejb ==  null)\n");
+            out.write("\t\t\tejb = getRemoteRef();\n");
+            if (!"void".equals(returnType))
+                out.write("\t\treturn ejb." + op.getMethodName() + "(" + parmlistStr + ");\n");
+            else
+                out.write("\t\tejb." + op.getMethodName() + "(" + parmlistStr + ");\n");
+            out.write("\t}\n");
+        }
+        //out.write("}\n");	
+    }
+
+    private void writeGetRemoteRef(String classname) {
+        out.write("\tpublic " + seiName + " getRemoteRef()throws org.apache.axis.AxisFault{\n");
        
-       //TODO remove the security code for the time been
+//TODO remove the security code for the time been
 //	   out.write("\t\ttry {\n");
 //	   out.write("\t\tif(msgcontext == null){\n");
 //	   out.write("\t\t		msgcontext = org.apache.axis.MessageContext.getCurrentContext();\n");
@@ -126,35 +120,33 @@ public abstract class SimpleRemoteInterfaceBasedWrapperClassWriter extends EJBBa
 //	   out.write("\t\t     throw org.apache.axis.AxisFault.makeFault(e);\n");
 //	   out.write("\t\t}\n");
    	
-	   out.write("\t\ttry{\n");
+        out.write("\t\ttry{\n");
 //	   use the properties set
 //	   out.write("\t\t\tjava.util.Properties env = new java.util.Properties();\n");
 //	   out.write("\t\t\tenv.put(javax.naming.Context.INITIAL_CONTEXT_FACTORY,\""+getJNDIInitialContextFactory()+"\");\n");
 //	   out.write("\t\t\tenv.put(javax.naming.Context.PROVIDER_URL, \""+getJNDIHostAndPort()+"\");\n");
-	   out.write("\t\t\tjava.util.Properties env = new java.util.Properties();\n");
-	   out.write("env.load(getClass().getClassLoader().getResourceAsStream(\"jndi.properties\"));\n");
+        out.write("\t\t\tjava.util.Properties env = new java.util.Properties();\n");
+        out.write("env.load(getClass().getClassLoader().getResourceAsStream(\"jndi.properties\"));\n");
 //use the propertyfile
 //       out.write("\t\t\torg.apache.geronimo.ews.ws4j2ee.wsutils.PropertyLoader ploader = new org.apache.geronimo.ews.ws4j2ee.wsutils.PropertyLoader();\n");
 //  	   out.write("\t\t\tjava.util.Properties env = " +
 //  			"ploader.loadProperties(\"jndi.properties\");\n");
 		
-	   out.write("\t\t\tjavax.naming.Context initial = new javax.naming.InitialContext(env);\n");		
-	   String ejbname = j2eewscontext.getWSDLContext().getTargetPortType().getName().toLowerCase();
-		int index = ejbname.lastIndexOf(".");
-		if(index>0){
-		  ejbname = ejbname.substring(index+1);
-		} 
-	   out.write("\t\t\tObject objref = initial.lookup(\"ejb/"+ejbname+"\");\n");
-	   String ejbhome = j2eewscontext.getEJBDDContext().getEjbhomeInterface();
-	   out.write("\t\t\t"+ejbhome+" home = \n\t\t\t\t("+ejbhome
-		   +")javax.rmi.PortableRemoteObject.narrow(objref,"+ejbhome+".class);\n");
-	   out.write("\t\t\treturn home.create();\n");
-	   out.write("\t\t}catch (Exception e) {\n");
-	   out.write("\t\t    throw org.apache.axis.AxisFault.makeFault(e);\n");
-	   out.write("\t\t}\n");
-	   out.write("\t}\n");
-	}
-
-
+        out.write("\t\t\tjavax.naming.Context initial = new javax.naming.InitialContext(env);\n");
+        String ejbname = j2eewscontext.getWSDLContext().getTargetPortType().getName().toLowerCase();
+        int index = ejbname.lastIndexOf(".");
+        if (index > 0) {
+            ejbname = ejbname.substring(index + 1);
+        }
+        out.write("\t\t\tObject objref = initial.lookup(\"ejb/" + ejbname + "\");\n");
+        String ejbhome = j2eewscontext.getEJBDDContext().getEjbhomeInterface();
+        out.write("\t\t\t" + ejbhome + " home = \n\t\t\t\t(" + ejbhome
+                + ")javax.rmi.PortableRemoteObject.narrow(objref," + ejbhome + ".class);\n");
+        out.write("\t\t\treturn home.create();\n");
+        out.write("\t\t}catch (Exception e) {\n");
+        out.write("\t\t    throw org.apache.axis.AxisFault.makeFault(e);\n");
+        out.write("\t\t}\n");
+        out.write("\t}\n");
+    }
 
 }

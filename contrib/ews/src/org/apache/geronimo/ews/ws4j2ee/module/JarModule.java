@@ -16,13 +16,13 @@
 
 package org.apache.geronimo.ews.ws4j2ee.module;
 
+import org.apache.geronimo.ews.ws4j2ee.toWs.GenerationFault;
+
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
-
-import org.apache.geronimo.ews.ws4j2ee.toWs.GenerationFault;
 
 /**
  * @author Srinath Perera(hemapani@opensource.lk)
@@ -30,22 +30,22 @@ import org.apache.geronimo.ews.ws4j2ee.toWs.GenerationFault;
 public class JarModule extends AbstractModule {
     private ClassLoader cl;
     private ArrayList list = new ArrayList(1);
+
     /**
      * @param jarFile
      * @throws GenerationFault
      */
     public JarModule(String jarFile, ClassLoader parentCL)
-        throws GenerationFault {
-        super(jarFile,parentCL);
+            throws GenerationFault {
+        super(jarFile, parentCL);
         try {
             this.parentCL = parentCL;
             list.add(new File(jarFile));
-            cl = new URLClassLoader(new URL[]{(new File(jarFile)).toURL()},parentCL);
-
+            cl = new URLClassLoader(new URL[]{(new File(jarFile)).toURL()}, parentCL);
             wscfFile = getInputStreamForJarEntry(jarFile, "META-INF/webservices.xml");
             if (wscfFile == null) {
                 wscfFile =
-                    getInputStreamForJarEntry(jarFile, "META-INF/webservice.xml");
+                        getInputStreamForJarEntry(jarFile, "META-INF/webservice.xml");
             }
             if (wscfFile == null) {
                 wscfFile = getInputStreamForJarEntry(jarFile, "webservice.xml");
@@ -55,7 +55,7 @@ public class JarModule extends AbstractModule {
                 webddfile = getInputStreamForJarEntry(jarFile, "web.xml");
             }
             ejbJarfile = getInputStreamForJarEntry(jarFile, "META-INF/ejb-jar.xml");
-            if (wscfFile == null) 
+            if (wscfFile == null)
                 throw new GenerationFault("wscf file must not be null");
         } catch (MalformedURLException e) {
             throw GenerationFault.createGenerationFault(e);
@@ -68,7 +68,8 @@ public class JarModule extends AbstractModule {
     public ClassLoader getClassLoaderWithPackageLoaded() {
         return cl;
     }
-	public ArrayList getClassPathElements() {
-		return list;
-	}
+
+    public ArrayList getClassPathElements() {
+        return list;
+    }
 }

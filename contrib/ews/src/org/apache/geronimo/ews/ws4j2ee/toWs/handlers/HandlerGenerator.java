@@ -16,51 +16,52 @@
 
 package org.apache.geronimo.ews.ws4j2ee.toWs.handlers;
 
-import java.util.HashMap;
-
 import org.apache.geronimo.ews.ws4j2ee.context.J2EEWebServiceContext;
 import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.interfaces.WSCFHandler;
 import org.apache.geronimo.ews.ws4j2ee.toWs.GenerationFault;
 import org.apache.geronimo.ews.ws4j2ee.toWs.Generator;
 import org.apache.geronimo.ews.ws4j2ee.toWs.Writer;
 
+import java.util.HashMap;
+
 /**
  * <p>Genarate the signature of the handlers as given by the webservices.xml file.</p>
- * 
+ *
  * @author Srinath Perera(hemapani@opensource.lk)
  */
 public class HandlerGenerator implements Generator {
-	private J2EEWebServiceContext j2eewscontext;
-	private Writer[] writers = new Writer[0];
-	
-	private static HashMap handlermap = new HashMap();
-	static {
-		handlermap.put("org.apache.ws.axis.security.CheckPoint4J2EEHandler",
-			"org.apache.ws.axis.security.CheckPoint4J2EEHandler");
-	};
+    private J2EEWebServiceContext j2eewscontext;
+    private Writer[] writers = new Writer[0];
+
+    private static HashMap handlermap = new HashMap();
+
+    static {
+        handlermap.put("org.apache.ws.axis.security.CheckPoint4J2EEHandler",
+                "org.apache.ws.axis.security.CheckPoint4J2EEHandler");
+    };
 
 
-	public HandlerGenerator(J2EEWebServiceContext j2eewscontext) throws GenerationFault {
-		this.j2eewscontext = j2eewscontext;
-			WSCFHandler[] handlers = j2eewscontext.getMiscInfo().getHandlers();
-			if(handlers!= null){
-				writers = new Writer[handlers.length];
-				for (int i = 0; i < handlers.length; i++) {
-					if(!handlermap.containsKey(handlers[i].getHandlerClass())){
-						writers[i] = new HandlerWriter(j2eewscontext, handlers[i]);
-					}
-				}
-			}
-	}
+    public HandlerGenerator(J2EEWebServiceContext j2eewscontext) throws GenerationFault {
+        this.j2eewscontext = j2eewscontext;
+        WSCFHandler[] handlers = j2eewscontext.getMiscInfo().getHandlers();
+        if (handlers != null) {
+            writers = new Writer[handlers.length];
+            for (int i = 0; i < handlers.length; i++) {
+                if (!handlermap.containsKey(handlers[i].getHandlerClass())) {
+                    writers[i] = new HandlerWriter(j2eewscontext, handlers[i]);
+                }
+            }
+        }
+    }
 
-	/**
-	 * genarate the handlers
-	 */
-	public void generate() throws GenerationFault {
-		for (int i = 0; i < writers.length; i++) {
-			if(writers[i] != null){
-				writers[i].write();			
-			}
-		}
-	}
+    /**
+     * genarate the handlers
+     */
+    public void generate() throws GenerationFault {
+        for (int i = 0; i < writers.length; i++) {
+            if (writers[i] != null) {
+                writers[i].write();
+            }
+        }
+    }
 }

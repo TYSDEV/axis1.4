@@ -30,7 +30,7 @@ import java.util.Iterator;
 /**
  * This is Wsdl2java's PortType Writer.  It writes the <portTypeName>.java file
  * which contains the <portTypeName> interface.
- * 
+ *
  * @author Ias (iasandcb@tmax.co.kr)
  */
 public class J2eeInterfaceWriter extends J2eeClassWriter {

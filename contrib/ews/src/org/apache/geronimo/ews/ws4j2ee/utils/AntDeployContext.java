@@ -25,128 +25,129 @@ import org.apache.geronimo.ews.ws4j2ee.toWs.Ws4J2eeDeployContext;
 /**
  * @author hemapani@opensource.lk
  */
-public class AntDeployContext implements Ws4J2eeDeployContext{
-        private String implStyle = GenerationConstants.USE_INTERNALS;
-        
-        private String j2eeContainer =  GenerationConstants.GERONIMO_CONTAINER;
-        
-        private boolean compile = false;
-		/**
-		 * Field module
-		 */
-		private Module module;
+public class AntDeployContext implements Ws4J2eeDeployContext {
+    private String implStyle = GenerationConstants.USE_INTERNALS;
 
-		/**
-		 * Field moduleLocation
-		 */
-		private String moduleLocation;
+    private String j2eeContainer = GenerationConstants.GERONIMO_CONTAINER;
 
-		/**
-		 * Field outputLocation
-		 */
-		private String outputLocation;
+    private boolean compile = false;
+    /**
+     * Field module
+     */
+    private Module module;
 
-        /**
-         * Constructor GeronimoWsDeployContext
-         *
-         * @param moduleLocation
-         * @param outputLocation
-         */
-        public AntDeployContext(String moduleLocation,
-                                String outputLocation,
-                                ClassLoader parentCL,
-                                String implStyle,
-                                String j2eeContiner) {
-            module =
-                    ModuleFactory.createPackageModule(moduleLocation,parentCL);
-            this.moduleLocation = moduleLocation;
-            this.outputLocation = outputLocation;
-            this.implStyle = implStyle;
-            this.j2eeContainer = j2eeContiner;
-        }
+    /**
+     * Field moduleLocation
+     */
+    private String moduleLocation;
 
-		/**
-		 * Constructor GeronimoWsDeployContext
-		 *
-		 * @param moduleLocation
-		 * @param outputLocation
-		 */
-		public AntDeployContext(String moduleLocation,
-									   String outputLocation,
-                                       ClassLoader parentCL) {
-			module =
-					ModuleFactory.createPackageModule(moduleLocation,parentCL);
-			this.moduleLocation = moduleLocation;
-			this.outputLocation = outputLocation;
-		}
+    /**
+     * Field outputLocation
+     */
+    private String outputLocation;
 
-		/**
-		 * Method getMode
-		 *
-		 * @return
-		 */
-		public int getMode() {
-			return Emitter.MODE_ALL;
-		}
+    /**
+     * Constructor GeronimoWsDeployContext
+     *
+     * @param moduleLocation
+     * @param outputLocation
+     */
+    public AntDeployContext(String moduleLocation,
+                            String outputLocation,
+                            ClassLoader parentCL,
+                            String implStyle,
+                            String j2eeContiner) {
+        module =
+                ModuleFactory.createPackageModule(moduleLocation, parentCL);
+        this.moduleLocation = moduleLocation;
+        this.outputLocation = outputLocation;
+        this.implStyle = implStyle;
+        this.j2eeContainer = j2eeContiner;
+    }
 
-		/**
-		 * Method getWsdlImplFilename
-		 *
-		 * @return
-		 */
-		public String getWsdlImplFilename() {
-			return null;
-		}
+    /**
+     * Constructor GeronimoWsDeployContext
+     *
+     * @param moduleLocation
+     * @param outputLocation
+     */
+    public AntDeployContext(String moduleLocation,
+                            String outputLocation,
+                            ClassLoader parentCL) {
+        module =
+                ModuleFactory.createPackageModule(moduleLocation, parentCL);
+        this.moduleLocation = moduleLocation;
+        this.outputLocation = outputLocation;
+    }
 
-		/**
-		 * Method getModule
-		 *
-		 * @return
-		 */
-		public Module getModule() {
-			return module;
-		}
+    /**
+     * Method getMode
+     *
+     * @return
+     */
+    public int getMode() {
+        return Emitter.MODE_ALL;
+    }
 
-		/**
-		 * Method getModuleLocation
-		 *
-		 * @return
-		 */
-		public String getModuleLocation() {
-			return moduleLocation;
-		}
+    /**
+     * Method getWsdlImplFilename
+     *
+     * @return
+     */
+    public String getWsdlImplFilename() {
+        return null;
+    }
 
-		/**
-		 * Method getContanier
-		 *
-		 * @return
-		 */
-		public String getContanier() {
-			return j2eeContainer;
-		}
+    /**
+     * Method getModule
+     *
+     * @return
+     */
+    public Module getModule() {
+        return module;
+    }
 
-		/**
-		 * Method getImplStyle
-		 *
-		 * @return
-		 */
-		public String getImplStyle() {
-			return implStyle;
-		}
+    /**
+     * Method getModuleLocation
+     *
+     * @return
+     */
+    public String getModuleLocation() {
+        return moduleLocation;
+    }
 
-		/**
-		 * Method getOutPutLocation
-		 *
-		 * @return
-		 */
-		public String getOutPutLocation() {
-			return outputLocation;
-		}
-        /**
-         * @return
-         */
-        public boolean isCompile() {
-            return compile;
-        }
+    /**
+     * Method getContanier
+     *
+     * @return
+     */
+    public String getContanier() {
+        return j2eeContainer;
+    }
 
-	}
+    /**
+     * Method getImplStyle
+     *
+     * @return
+     */
+    public String getImplStyle() {
+        return implStyle;
+    }
+
+    /**
+     * Method getOutPutLocation
+     *
+     * @return
+     */
+    public String getOutPutLocation() {
+        return outputLocation;
+    }
+
+    /**
+     * @return
+     */
+    public boolean isCompile() {
+        return compile;
+    }
+
+}

@@ -23,8 +23,8 @@ import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.interfaces.WSC
 import org.apache.geronimo.ews.ws4j2ee.toWs.GenerationFault;
 
 /**
- * @see org.apache.geronimo.ews.ws4j2ee.context.webservices.server.interfaces.WSCFContext
  * @author Srinath Perera(hemapani@opensource.lk)
+ * @see org.apache.geronimo.ews.ws4j2ee.context.webservices.server.interfaces.WSCFContext
  */
 public class AxisEmitterBasedWSCFContext extends AbstractWSCFContext implements WSCFContext {
     private Emitter emitter;
@@ -39,52 +39,52 @@ public class AxisEmitterBasedWSCFContext extends AbstractWSCFContext implements 
      * @see org.apache.geronimo.ews.ws4j2ee.context.webservices.server.interfaces.WSCFContext#getDescription()
      */
     public String getDescription() {
-		throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException();
     }
 
     /* (non-Javadoc)
      * @see org.apache.geronimo.ews.ws4j2ee.context.webservices.server.interfaces.WSCFContext#getDisplayName()
      */
     public String getDisplayName() {
-		throw new UnsupportedOperationException();
-	}
+        throw new UnsupportedOperationException();
+    }
 
     /* (non-Javadoc)
      * @see org.apache.geronimo.ews.ws4j2ee.context.webservices.server.interfaces.WSCFContext#getLargeIcon()
      */
     public String getLargeIcon() {
-		throw new UnsupportedOperationException();
-	}
+        throw new UnsupportedOperationException();
+    }
 
     /* (non-Javadoc)
      * @see org.apache.geronimo.ews.ws4j2ee.context.webservices.server.interfaces.WSCFContext#getSmallIcon()
      */
     public String getSmallIcon() {
-		throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException();
     }
 
     /* (non-Javadoc)
      * @see org.apache.geronimo.ews.ws4j2ee.context.webservices.server.interfaces.WSCFContext#getWebServicesDescription()
      */
     public WSCFWebserviceDescription[] getWebServicesDescription() {
-		throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException();
     }
 
     public void serialize(java.io.Writer out) throws GenerationFault {
         try {
             out.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-            out.write("<webservices xmlns=\"http://java.sun.com/xml/ns/j2ee\"\n"); 
-			out.write("xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\n"); 
-			out.write("xmlns:ns1=\"http://www.Monson-Haefel.com/jwsbook/BookQuote\n");
-			out.write("xsi:schemaLocation=\"http://java.sun.com/xml/ns/j2ee\n");
-			out.write("http://www.ibm.com/standards/xml/webservices/j2ee/j2ee_web_services_1_1.xsd\" version=\"1.1\">\n");
+            out.write("<webservices xmlns=\"http://java.sun.com/xml/ns/j2ee\"\n");
+            out.write("xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\n");
+            out.write("xmlns:ns1=\"http://www.Monson-Haefel.com/jwsbook/BookQuote\n");
+            out.write("xsi:schemaLocation=\"http://java.sun.com/xml/ns/j2ee\n");
+            out.write("http://www.ibm.com/standards/xml/webservices/j2ee/j2ee_web_services_1_1.xsd\" version=\"1.1\">\n");
             out.write("<webservice-description>\n");
             out.write("<webservice-description-name>" + emitter.getServiceElementName() + "</webservice-description-name>\n");
             out.write("<wsdl-file>" + j2eeweserviceContext.getMiscInfo().getWsdlFile() + "</wsdl-file>\n");
             out.write("<jaxrpc-mapping-file>" + j2eeweserviceContext.getMiscInfo().getJaxrpcfile() + "</jaxrpc-mapping-file>\n");
             out.write("<port-component>\n");
             out.write("<port-component-name>" + emitter.getPortTypeName() + "</port-component-name>\n");
-            out.write("<wsdl-port xmlns:ns1=\""+ j2eeweserviceContext.getWSDLContext().getTargetNSURI() + "\">\n");
+            out.write("<wsdl-port xmlns:ns1=\"" + j2eeweserviceContext.getWSDLContext().getTargetNSURI() + "\">\n");
             out.write("ns1:" + j2eeweserviceContext.getWSDLContext().getTargetPort().getName());
             out.write("</wsdl-port>\n");
             out.write("<service-endpoint-interface>" + emitter.getCls().getName() + "</service-endpoint-interface>\n");
@@ -96,7 +96,6 @@ public class AxisEmitterBasedWSCFContext extends AbstractWSCFContext implements 
             if (ejbName == null)
                 ejbName = emitter.getPortTypeName();
             out.write("<ejb-link >" + ejbName + "</ejb-link>\n");
-
             out.write("</service-impl-bean>\n");
             out.write("</port-component>\n");
             out.write("</webservice-description>\n");

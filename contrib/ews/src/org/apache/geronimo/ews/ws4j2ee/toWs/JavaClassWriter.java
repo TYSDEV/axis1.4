@@ -21,26 +21,26 @@ import org.apache.geronimo.ews.ws4j2ee.utils.Utils;
 
 /**
  * abstract class writer
- * 
+ *
  * @author Srianth Perera(hemapani@opensource.lk)
  */
 public abstract class JavaClassWriter extends AbstractWriter {
-	protected String qulifiedName;
+    protected String qulifiedName;
     protected String classname;
     protected String packageName;
     private String pacakgesatement;
     private String targetDirectory;
 
     public JavaClassWriter(J2EEWebServiceContext j2eewscontext, String qulifiedName) throws GenerationFault {
-		super(j2eewscontext,Utils.getFileNamefromClass(j2eewscontext,qulifiedName));
-		this.qulifiedName = qulifiedName;
+        super(j2eewscontext, Utils.getFileNamefromClass(j2eewscontext, qulifiedName));
+        this.qulifiedName = qulifiedName;
         packageName = Utils.getPackageNameFromQuallifiedName(qulifiedName);
         classname = Utils.getClassNameFromQuallifiedName(qulifiedName);
     }
 
     public void writeCode() throws GenerationFault {
-		if(out == null)
-			return;
+        if (out == null)
+            return;
         out.write((packageName != null) ? ("package " + packageName + ";\n") : "");
         writeImportStatements();
         writeClassComment();
@@ -49,7 +49,6 @@ public abstract class JavaClassWriter extends AbstractWriter {
                 + getExtendsPart()
                 + getimplementsPart()
                 + "{\n");
-
         writeAttributes();
         writeConstructors();
         writeMethods();

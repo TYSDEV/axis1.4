@@ -19,22 +19,21 @@ import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.interfaces.WSC
 
 /**
  * This encapsulates the Qname wsdlport name and this is the concrete implementation of the WSCFWSDLPort
- *
  */
 public abstract class AbstractWSCFWSDLPort extends WSCFElement implements WSCFWSDLPort {
+
+    /**
+     * WSDL Port namespace URI
+     */
+    protected String namespaceURI;
+
+    /**
+     * WSDL port local part
+     */
+    protected String localpart;
 	
-	/**
-	 * WSDL Port namespace URI
-	 */
-	protected String namespaceURI;
 	
-	/**
-	 * WSDL port local part
-	 */
-	protected String localpart;
-	
-	
-	////////////////////////////////jaxb interfacing block/////////////////////////////////////
+    ////////////////////////////////jaxb interfacing block/////////////////////////////////////
 //	
 //	protected XsdQNameType jaxbWSDLPort;
 //	
@@ -73,25 +72,27 @@ public abstract class AbstractWSCFWSDLPort extends WSCFElement implements WSCFWS
 //		
 //	}
 
-	/**
-	 * Gets the local part of the WSDL port element
-	 * @return local part
-	 */
-	public String getLocalpart() {
-		return localpart;
-	}
+    /**
+     * Gets the local part of the WSDL port element
+     *
+     * @return local part
+     */
+    public String getLocalpart() {
+        return localpart;
+    }
 
-	/**
-	 * Gets the namespace URI of the WSDL port element
-	 * @return
-	 */
-	public String getNamespaceURI() {
-		return namespaceURI;
-	}
+    /**
+     * Gets the namespace URI of the WSDL port element
+     *
+     * @return
+     */
+    public String getNamespaceURI() {
+        return namespaceURI;
+    }
 
-	/**
-	 * @return
-	 */
+    /**
+     * @return
+     */
 //	public XsdQNameType getJaxbWSDLPort() {
 //		return jaxbWSDLPort;
 //	}

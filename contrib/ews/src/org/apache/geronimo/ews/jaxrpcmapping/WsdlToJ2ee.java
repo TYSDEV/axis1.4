@@ -138,11 +138,9 @@ public class WsdlToJ2ee extends WSDL2 {
             case FACTORY_CLASS_OPT:
                 emitter.setFactory(option.getArgument());
                 break;
-
             case HELPER_CLASS_OPT:
                 emitter.setHelperWanted(true);
                 break;
-
             case SKELETON_DEPLOY_OPT:
                 emitter.setSkeletonWanted(JavaUtils.isTrueExplicitly(option.getArgument(0)));
                 // --skeletonDeploy assumes --server-side, so fall thru
@@ -150,49 +148,39 @@ public class WsdlToJ2ee extends WSDL2 {
             case SERVER_OPT:
                 emitter.setServerSide(true);
                 break;
-
             case NAMESPACE_OPT:
                 String namespace = option.getArgument(0);
                 String packageName = option.getArgument(1);
                 emitter.getNamespaceMap().put(namespace, packageName);
                 break;
-
             case NAMESPACE_FILE_OPT:
                 emitter.setNStoPkg(option.getArgument());
                 break;
-
             case PACKAGE_OPT:
                 bPackageOpt = true;
                 emitter.setPackageName(option.getArgument());
                 break;
-
             case OUTPUT_OPT:
                 emitter.setOutputDir(option.getArgument());
                 break;
-
             case SCOPE_OPT:
                 String arg = option.getArgument();
                 
                 // Provide 'null' default, prevents logging internal error.
                 // we have something different to report here.
                 Scope scope = Scope.getScope(arg, null);
-
                 if (scope != null) {
                     emitter.setScope(scope);
                 } else {
                     System.err.println(Messages.getMessage("badScope00", arg));
                 }
-
                 break;
-
             case TEST_OPT:
                 emitter.setTestCaseWanted(true);
                 break;
-
             case ALL_OPT:
                 emitter.setAllWanted(true);
                 break;
-
             case TYPEMAPPING_OPT:
                 String tmValue = option.getArgument();
                 if (tmValue.equals("1.1")) {
@@ -203,19 +191,15 @@ public class WsdlToJ2ee extends WSDL2 {
                     System.out.println(Messages.getMessage("badTypeMappingOption00"));
                 }
                 break;
-
             case USERNAME_OPT:
                 emitter.setUsername(option.getArgument());
                 break;
-
             case PASSWORD_OPT:
                 emitter.setPassword(option.getArgument());
                 break;
-
             case MAPPING_OPT:
                 emitter.setMappingFilePath(option.getArgument());
                 break;
-
             default:
                 super.parseOption(option);
         }
@@ -243,7 +227,7 @@ public class WsdlToJ2ee extends WSDL2 {
     /**
      * run
      * checkes the command-line arguments and runs the tool.
-     * 
+     *
      * @param args String[] command-line arguments.
      */
     protected void run(String[] args) {
@@ -281,7 +265,6 @@ public class WsdlToJ2ee extends WSDL2 {
      */
     public static void main(String args[]) {
         WsdlToJ2ee j2ee = new WsdlToJ2ee();
-
         j2ee.run(args);
     } // main
 } 

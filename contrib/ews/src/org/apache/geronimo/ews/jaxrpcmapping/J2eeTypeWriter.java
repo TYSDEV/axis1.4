@@ -32,7 +32,7 @@ import java.util.Vector;
 /**
  * This is Wsdl2java's Type Writer.  It writes the following files, as appropriate:
  * <typeName>.java, <typeName>Holder.java.
- * 
+ *
  * @author Ias (iasandcb@tmax.co.kr)
  * @deprecated no more used by J2eeGeneratorFactory
  */
@@ -48,16 +48,13 @@ public class J2eeTypeWriter implements Generator {
     public J2eeTypeWriter(J2eeEmitter emitter,
                           TypeEntry type,
                           SymbolTable symbolTable) {
-
         if (type.isReferenced() && !type.isOnlyLiteralReferenced()) {
-
             // Determine what sort of type this is and instantiate 
             // the appropriate Writer.
             Node node = type.getNode();
 
             // If it's an array, don't emit a class
             if (!type.getName().endsWith("[]")) {
-
                 // Generate the proper class for either "complex" or "enumeration" types
                 Vector v = Utils.getEnumerationBaseAndValues(node, symbolTable);
                 if (v != null) {
@@ -73,7 +70,6 @@ public class J2eeTypeWriter implements Generator {
                             base = symbolTable.getType(baseQName);
                         }
                     }
-
                     typeWriter = getBeanWriter(emitter,
                             type,
                             SchemaUtils.getContainedElementDeclarations(node,

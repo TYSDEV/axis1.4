@@ -15,33 +15,35 @@
  */
 package org.apache.geronimo.ews.ws4j2ee.utils;
 
+import org.apache.geronimo.ews.ws4j2ee.toWs.GenerationConstants;
+
 import java.io.File;
 import java.util.HashMap;
-
-import org.apache.geronimo.ews.ws4j2ee.toWs.GenerationConstants;
 
 /**
  * @author Srinath Perera (hemapani@opensource.lk)
  */
 public class TemporaryRepository {
     private static File root = new File(GenerationConstants.CONFIG_STORE);
-    static{
+
+    static {
         root.delete();
         root.mkdirs();
     }
+
     private static HashMap map = new HashMap();
     private static int COUNT = 0;
-    
-    public TemporaryRepository(File baseDir){
+
+    public TemporaryRepository(File baseDir) {
         TemporaryRepository.root = baseDir;
         root.mkdirs();
     }
-    
-    public static File getEntry(){
-        File dir = new File(root,String.valueOf(COUNT));
+
+    public static File getEntry() {
+        File dir = new File(root, String.valueOf(COUNT));
         COUNT++;
         dir.mkdir();
-        map.put(dir.getAbsoluteFile(),dir);
+        map.put(dir.getAbsoluteFile(), dir);
         return dir;
     }
 }

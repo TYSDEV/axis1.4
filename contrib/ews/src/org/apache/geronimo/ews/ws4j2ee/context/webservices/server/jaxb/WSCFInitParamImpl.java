@@ -15,30 +15,26 @@
  */
 package org.apache.geronimo.ews.ws4j2ee.context.webservices.server.jaxb;
 
-import java.util.List;
-
 import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.AbstractWSCFInitParam;
 import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.interfaces.WSCFInitParam;
 
+import java.util.List;
+
 /**
- * This will encapsulate the init parameter element and the information will be able access 
+ * This will encapsulate the init parameter element and the information will be able access
  * using the interface published.
- *
  */
 public class WSCFInitParamImpl extends AbstractWSCFInitParam implements WSCFInitParam {
 
-	public WSCFInitParamImpl(ParamValueType jaxbInitParameter){
-		/////////////////asigning values///////////////////
-		if(null != jaxbInitParameter.getParamName())
-			this.paramName = jaxbInitParameter.getParamName().getValue();
-		
-		if(null != jaxbInitParameter.getParamValue())	
-		this.paramValue = jaxbInitParameter.getParamValue().getValue();
-		
-		List temp = null;
-		temp = jaxbInitParameter.getDescription();
-		if(0 != temp.size())
-			this.description = ((DescriptionType)temp.get(0)).getValue();
-	
-	}
+    public WSCFInitParamImpl(ParamValueType jaxbInitParameter) {
+        /////////////////asigning values///////////////////
+        if (null != jaxbInitParameter.getParamName())
+            this.paramName = jaxbInitParameter.getParamName().getValue();
+        if (null != jaxbInitParameter.getParamValue())
+            this.paramValue = jaxbInitParameter.getParamValue().getValue();
+        List temp = null;
+        temp = jaxbInitParameter.getDescription();
+        if (0 != temp.size())
+            this.description = ((DescriptionType) temp.get(0)).getValue();
+    }
 }

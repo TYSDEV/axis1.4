@@ -16,6 +16,10 @@
 
 package org.apache.geronimo.ews.ws4j2ee.utils.packager;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.geronimo.ews.ws4j2ee.toWs.GenerationFault;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -30,10 +34,6 @@ import java.util.jar.JarFile;
 import java.util.jar.JarOutputStream;
 import java.util.zip.ZipEntry;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.geronimo.ews.ws4j2ee.toWs.GenerationFault;
-
 /**
  * create a jar file with given set of jar entries.
  * It works like
@@ -43,13 +43,13 @@ import org.apache.geronimo.ews.ws4j2ee.toWs.GenerationFault;
  * <li>if that failed the name is tired to load as a stream form the
  * class path</li>
  * </ol>
- * 
+ *
  * @author Srinath Perera(hemapani@opensource.lk)
  */
 public class JARFile {
-	protected static Log log =
-				LogFactory.getLog(JARFile.class.getName());
-	
+    protected static Log log =
+            LogFactory.getLog(JARFile.class.getName());
+
     private HashMap jarEntries;
     private File path;
 
@@ -65,19 +65,17 @@ public class JARFile {
 
     public void addJarFile(String jarFile) throws GenerationFault {
         try {
-			log.info(jarFile + " added ....");
-            
+            log.info(jarFile + " added ....");
             JarFile file = new JarFile(jarFile);
             Enumeration e = file.entries();
             while (e.hasMoreElements()) {
                 ZipEntry entry = (ZipEntry) e.nextElement();
                 JARFileEntry newEntry =
-                    new JARFileEntry(
-                        entry.getName(),
-                        file.getInputStream(entry));
-                if(!jarEntries.containsKey(entry.getName())){
-					this.jarEntries.put(entry.getName(), newEntry);
-                }        
+                        new JARFileEntry(entry.getName(),
+                                file.getInputStream(entry));
+                if (!jarEntries.containsKey(entry.getName())) {
+                    this.jarEntries.put(entry.getName(), newEntry);
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -93,25 +91,19 @@ public class JARFile {
         if (!path.exists())
             path.createNewFile();
         BufferedOutputStream bo =
-            new BufferedOutputStream(new FileOutputStream(path));
+                new BufferedOutputStream(new FileOutputStream(path));
         JarOutputStream jo = new JarOutputStream(bo);
-        
         Iterator it = jarEntries.values().iterator();
         for (; it.hasNext();) {
-
             JARFileEntry jarentry = (JARFileEntry) it.next();
-			System.out.println(jarentry.getJarEntry().getName() + " adding");
+            System.out.println(jarentry.getJarEntry().getName() + " adding");
             InputStream instream = null;
             instream = jarentry.getSource();
-
             BufferedInputStream source = new BufferedInputStream(instream);
-
             JarEntry je = jarentry.getJarEntry();
             jo.putNextEntry(je);
-
             byte[] buf = new byte[1024];
             int anz;
-
             while ((anz = source.read(buf)) != -1) {
                 jo.write(buf, 0, anz);
             }

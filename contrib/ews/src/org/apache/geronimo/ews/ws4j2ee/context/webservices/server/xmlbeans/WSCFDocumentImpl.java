@@ -15,36 +15,34 @@
  */
 package org.apache.geronimo.ews.ws4j2ee.context.webservices.server.xmlbeans;
 
-import java.io.IOException;
-import java.io.InputStream;
-
+import com.sun.java.xml.ns.j2Ee.WebservicesDocument;
+import com.sun.java.xml.ns.j2Ee.WebservicesType;
 import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.AsbtractWSCFDocument;
 import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.WSCFException;
 import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.interfaces.WSCFConstants;
 import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.interfaces.WSCFDocument;
 import org.apache.xmlbeans.XmlException;
 
-import com.sun.java.xml.ns.j2Ee.WebservicesDocument;
-import com.sun.java.xml.ns.j2Ee.WebservicesType;
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
- * This will encapsulate the webservices.xml document and this is the start of the 
- * parsing tree.This will be used to support the the methods of the WSCFContext. The 
+ * This will encapsulate the webservices.xml document and this is the start of the
+ * parsing tree.This will be used to support the the methods of the WSCFContext. The
  * class tree and the Interface tree will strat from here and there will be sufficient
  * functionality provided by each class to expose the information and to further
- * drill down the element tree. 
- * 
+ * drill down the element tree.
  */
 public class WSCFDocumentImpl extends AsbtractWSCFDocument implements WSCFConstants, WSCFDocument {
-	public WSCFDocumentImpl(InputStream in)throws WSCFException{
-		try{
+    public WSCFDocumentImpl(InputStream in) throws WSCFException {
+        try {
             WebservicesDocument wsDoc = WebservicesDocument.Factory.parse(in);
-            WebservicesType ws =  wsDoc.getWebservices();
+            WebservicesType ws = wsDoc.getWebservices();
             this.webservices = new WSCFWebservicesImpl(ws);
-		} catch(IOException je ) {
-			throw new WSCFException(je);
-		} catch(XmlException je ) {
+        } catch (IOException je) {
             throw new WSCFException(je);
-        } 
-	}
+        } catch (XmlException je) {
+            throw new WSCFException(je);
+        }
+    }
 }

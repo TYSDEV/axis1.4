@@ -39,16 +39,16 @@ public class J2EEContainerSpecificDDGenerator implements Generator {
         this.j2eewscontext = j2eewscontext;
         if (GenerationConstants.JBOSS_CONTAINER.equals(j2eewscontext.getMiscInfo().getTargetJ2EEContainer()))
             writer = new JBossDDWriter(j2eewscontext);
-        else if (GenerationConstants.JONAS_CONTAINER.equals(j2eewscontext.getMiscInfo().getTargetJ2EEContainer())) 
+        else if (GenerationConstants.JONAS_CONTAINER.equals(j2eewscontext.getMiscInfo().getTargetJ2EEContainer()))
             writer = new JOnASDDWriter(j2eewscontext);
-		else if (GenerationConstants.GERONIMO_CONTAINER.equals(j2eewscontext.getMiscInfo().getTargetJ2EEContainer())) 
-					writer = new GeronimoDDWriter(j2eewscontext);            
+        else if (GenerationConstants.GERONIMO_CONTAINER.equals(j2eewscontext.getMiscInfo().getTargetJ2EEContainer()))
+            writer = new GeronimoDDWriter(j2eewscontext);
         else
             new GenerationFault("unsupported j2ee container " + j2eewscontext.getMiscInfo().getTargetJ2EEContainer());
     }
 
     public void generate() throws GenerationFault {
-    	if(writer != null)
-			writer.write();
+        if (writer != null)
+            writer.write();
     }
 }

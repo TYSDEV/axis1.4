@@ -15,23 +15,6 @@
  */
 package org.apache.geronimo.ews.jaxrpcmapping;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-
-import javax.wsdl.Binding;
-import javax.wsdl.Operation;
-import javax.wsdl.Port;
-import javax.wsdl.PortType;
-import javax.xml.namespace.QName;
-
-import org.apache.axis.wsdl.symbolTable.BindingEntry;
-import org.apache.axis.wsdl.symbolTable.PortTypeEntry;
-import org.apache.axis.wsdl.symbolTable.ServiceEntry;
-import org.apache.geronimo.ews.ws4j2ee.toWs.GenerationFault;
-import org.apache.xmlbeans.XmlException;
-
 import com.sun.java.xml.ns.j2Ee.ExceptionMappingType;
 import com.sun.java.xml.ns.j2Ee.JavaWsdlMappingDocument;
 import com.sun.java.xml.ns.j2Ee.JavaWsdlMappingType;
@@ -44,6 +27,21 @@ import com.sun.java.xml.ns.j2Ee.ServiceEndpointMethodMappingType;
 import com.sun.java.xml.ns.j2Ee.ServiceInterfaceMappingType;
 import com.sun.java.xml.ns.j2Ee.WsdlReturnValueMappingType;
 import com.sun.java.xml.ns.j2Ee.XsdQNameType;
+import org.apache.axis.wsdl.symbolTable.BindingEntry;
+import org.apache.axis.wsdl.symbolTable.PortTypeEntry;
+import org.apache.axis.wsdl.symbolTable.ServiceEntry;
+import org.apache.geronimo.ews.ws4j2ee.toWs.GenerationFault;
+import org.apache.xmlbeans.XmlException;
+
+import javax.wsdl.Binding;
+import javax.wsdl.Operation;
+import javax.wsdl.Port;
+import javax.wsdl.PortType;
+import javax.xml.namespace.QName;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * @author Ias (iasandcb@tmax.co.kr)
@@ -52,14 +50,15 @@ public class XMLBeansJaxRpcMapper implements JaxRpcMapper {
 
     private JavaWsdlMappingType mapping;
 
-    public void loadMappingFromInputStream(InputStream is)throws GenerationFault {
+    public void loadMappingFromInputStream(InputStream is) throws GenerationFault {
         try {
             JavaWsdlMappingDocument mappingdoc = JavaWsdlMappingDocument.Factory.parse(is);
             mapping = mappingdoc.getJavaWsdlMapping();
         } catch (XmlException e) {
             throw GenerationFault.createGenerationFault(e);
         } catch (IOException e) {
-            throw GenerationFault.createGenerationFault(e);        } 
+            throw GenerationFault.createGenerationFault(e);
+        }
     }
 
     public void loadMappingFromDir(String path) throws GenerationFault {
@@ -69,28 +68,28 @@ public class XMLBeansJaxRpcMapper implements JaxRpcMapper {
             mapping = mappingdoc.getJavaWsdlMapping();
         } catch (FileNotFoundException e2) {
             throw GenerationFault.createGenerationFault(e2);
-        }catch(IOException e){
-            throw GenerationFault.createGenerationFault(e);        
-        }catch(XmlException e2) {
+        } catch (IOException e) {
+            throw GenerationFault.createGenerationFault(e);
+        } catch (XmlException e2) {
             throw GenerationFault.createGenerationFault(e2);
         }
     }
 
-    public int getPackageMappingCount(){
+    public int getPackageMappingCount() {
         PackageMappingType[] packagemapping = mapping.getPackageMappingArray();
         return packagemapping.length;
     }
-    
-    public String getPackageMappingClassName(int index){
+
+    public String getPackageMappingClassName(int index) {
         PackageMappingType[] packagemapping = mapping.getPackageMappingArray();
         return packagemapping[index].getPackageType().getStringValue();
     }
-    
-    public String getPackageMappingURI(int index){
+
+    public String getPackageMappingURI(int index) {
         PackageMappingType[] packagemapping = mapping.getPackageMappingArray();
         return packagemapping[index].getNamespaceURI().getStringValue();
     }
-    
+
     /**
      * @return Returns the mapping.
      */
@@ -103,21 +102,22 @@ public class XMLBeansJaxRpcMapper implements JaxRpcMapper {
             return null;
         }
         JavaXmlTypeMappingType[] typeList = mapping.getJavaXmlTypeMappingArray();
-        for (int i = 0;i<typeList.length;i++) {
+        for (int i = 0; i < typeList.length; i++) {
             JavaXmlTypeMappingType typeMapping = typeList[i];
             XsdQNameType rootType = typeMapping.getRootTypeQname();
             if (rootType == null) {
-                String mappedAnonymousTypeName = typeMapping.getAnonymousTypeQname().getStringValue();                String localPart = typeQName.getLocalPart();
+                String mappedAnonymousTypeName = typeMapping.getAnonymousTypeQname().getStringValue();
+                String localPart = typeQName.getLocalPart();
                 String revisitedTypeQName = typeQName.getNamespaceURI() + ":" + localPart;
                 if (mappedAnonymousTypeName.equals(revisitedTypeQName)) {
-                	//TODO this is a quick fix there should be a better way to do this 
+                    //TODO this is a quick fix there should be a better way to do this 
                     return J2eeUtils.jni2javaName(typeMapping.getJavaType().getStringValue());
                 }
             } else {
                 QName typeName = rootType.getQNameValue();
                 if (typeQName.equals(typeName)) {
                     String className = typeMapping.getJavaType().getStringValue();
-					//TODO this is a quick fix there should be a better way to do this
+                    //TODO this is a quick fix there should be a better way to do this
                     return J2eeUtils.jni2javaName(className);
                 }
             }
@@ -130,11 +130,10 @@ public class XMLBeansJaxRpcMapper implements JaxRpcMapper {
             return null;
         }
         ExceptionMappingType[] exceptionMappingList = mapping.getExceptionMappingArray();
-        
-        for (int j = 0;j< exceptionMappingList.length;j++) {
+        for (int j = 0; j < exceptionMappingList.length; j++) {
             ExceptionMappingType exceptionMapping = exceptionMappingList[j];
             QName name = exceptionMapping.getWsdlMessage().getQNameValue();
-            if (messageQName.equals(name)){
+            if (messageQName.equals(name)) {
                 return exceptionMapping.getExceptionType().getStringValue();
             }
         }
@@ -149,7 +148,7 @@ public class XMLBeansJaxRpcMapper implements JaxRpcMapper {
         String portName = port.getName();
         for (int i = 0; i < serviceList.length; i++) {
             PortMappingType[] portList = serviceList[i].getPortMappingArray();
-            for (int j = 0;j<portList.length; j++) {
+            for (int j = 0; j < portList.length; j++) {
                 PortMappingType portMapping = portList[j];
                 String mappedPortName = portMapping.getPortName().getStringValue();
                 if (portName.equals(mappedPortName)) {
@@ -191,7 +190,7 @@ public class XMLBeansJaxRpcMapper implements JaxRpcMapper {
             QName wsdlPortType = serviceList[i].getWsdlPortType().getQNameValue();
             if ((bindingQName.equals(wsdlBinging)) && (portTypeQName.equals(wsdlPortType))) {
                 String endpointServiceName =
-                    serviceList[i].getServiceEndpointInterface().getStringValue();
+                        serviceList[i].getServiceEndpointInterface().getStringValue();
                 return endpointServiceName;
             }
         }
@@ -199,10 +198,10 @@ public class XMLBeansJaxRpcMapper implements JaxRpcMapper {
     }
 
     /**
-     * @param entry     
-     * @param operation 
-     * @param i         
-     * @return 
+     * @param entry
+     * @param operation
+     * @param i
+     * @return
      */
     public String getJavaMethodParamType(BindingEntry bEntry, Operation operation, int position) {
         if (mapping == null) {
@@ -219,16 +218,15 @@ public class XMLBeansJaxRpcMapper implements JaxRpcMapper {
             if ((bindingQName.equals(wsdlBinging)) && (portTypeQName.equals(wsdlPortType))) {
                 ServiceEndpointMethodMappingType[] methodList = serviceList[i].getServiceEndpointMethodMappingArray();
                 String operationName = operation.getName();
-                for (int k = 0;k < methodList.length; k++) {
+                for (int k = 0; k < methodList.length; k++) {
                     ServiceEndpointMethodMappingType methodMapping = methodList[k];
                     String mappedOperationName = methodMapping.getWsdlOperation().getStringValue();
                     if (operationName.equals(mappedOperationName)) {
-                        
                         MethodParamPartsMappingType[] paramList = methodMapping.getMethodParamPartsMappingArray();
-                        for (int m = 0;m<paramList.length ;m++) {
+                        for (int m = 0; m < paramList.length; m++) {
                             MethodParamPartsMappingType paramPart = paramList[m];
                             if (paramPart.getParamPosition().getBigIntegerValue().intValue() == position) {
-								//TODO this is a quick fix there should be a better way to do this
+                                //TODO this is a quick fix there should be a better way to do this
                                 return J2eeUtils.jni2javaName(paramPart.getParamType().getStringValue());
                             }
                         }
@@ -240,9 +238,9 @@ public class XMLBeansJaxRpcMapper implements JaxRpcMapper {
     }
 
     /**
-     * @param entry     
-     * @param operation 
-     * @return 
+     * @param entry
+     * @param operation
+     * @return
      */
     public String getJavaMethodReturnType(BindingEntry bEntry, Operation operation) {
         if (mapping == null) {
@@ -259,14 +257,14 @@ public class XMLBeansJaxRpcMapper implements JaxRpcMapper {
             if ((bindingQName.equals(wsdlBinging)) && (portTypeQName.equals(wsdlPortType))) {
                 ServiceEndpointMethodMappingType[] methodList = serviceList[i].getServiceEndpointMethodMappingArray();
                 String operationName = operation.getName();
-                for (int k = 0;k < methodList.length; k++) {
+                for (int k = 0; k < methodList.length; k++) {
                     ServiceEndpointMethodMappingType methodMapping = methodList[k];
                     String mappedOperationName = methodMapping.getWsdlOperation().getStringValue();
                     if (operationName.equals(mappedOperationName)) {
                         WsdlReturnValueMappingType returnValueMapping =
                                 methodMapping.getWsdlReturnValueMapping();
                         if (returnValueMapping != null) {
-							//TODO this is a quick fix there should be a better way to do this
+                            //TODO this is a quick fix there should be a better way to do this
                             return J2eeUtils.jni2javaName(returnValueMapping.getMethodReturnValue().getStringValue());
                         }
                     }
@@ -277,9 +275,9 @@ public class XMLBeansJaxRpcMapper implements JaxRpcMapper {
     }
 
     /**
-     * @param entry     
-     * @param operation 
-     * @return 
+     * @param entry
+     * @param operation
+     * @return
      */
     public String getJavaMethodName(BindingEntry bEntry, Operation operation) {
         if (mapping == null) {
@@ -296,7 +294,7 @@ public class XMLBeansJaxRpcMapper implements JaxRpcMapper {
             if ((bindingQName.equals(wsdlBinging)) && (portTypeQName.equals(wsdlPortType))) {
                 ServiceEndpointMethodMappingType[] methodList = serviceList[i].getServiceEndpointMethodMappingArray();
                 String operationName = operation.getName();
-                for (int k = 0;k < methodList.length; k++) {
+                for (int k = 0; k < methodList.length; k++) {
                     ServiceEndpointMethodMappingType methodMapping = methodList[k];
                     String mappedOperationName = methodMapping.getWsdlOperation().getStringValue();
                     if (operationName.equals(mappedOperationName)) {

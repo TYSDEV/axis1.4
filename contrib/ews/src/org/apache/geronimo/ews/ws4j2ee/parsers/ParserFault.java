@@ -24,11 +24,10 @@ package org.apache.geronimo.ews.ws4j2ee.parsers;
 public class ParserFault extends Exception {
     /**
      * Nested Exception to hold wrapped exception.
-     * <p/>
      * <p>This field predates the general-purpose exception chaining facility.
      * The {@link Throwable#getCause()} method is now the preferred means of
      * obtaining this information.</p>
-     * 
+     *
      * @serial
      */
     public Throwable detail;
@@ -45,7 +44,7 @@ public class ParserFault extends Exception {
     /**
      * Constructs a <code>Exception</code> with the specified
      * detail message and nested exception.
-     * 
+     *
      * @param s  the detail message
      * @param ex the nested exception
      */
@@ -58,7 +57,7 @@ public class ParserFault extends Exception {
     /**
      * Returns the detail message, including the message from the nested
      * exception if there is one.
-     * 
+     *
      * @return	the detail message, including nested exception message if any
      */
     public String getMessage() {
@@ -72,7 +71,7 @@ public class ParserFault extends Exception {
 
     /**
      * Returns the wrapped exception (the <i>cause</i>).
-     * 
+     *
      * @return the wrapped exception, which may be <tt>null</tt>.
      */
     public Throwable getCause() {

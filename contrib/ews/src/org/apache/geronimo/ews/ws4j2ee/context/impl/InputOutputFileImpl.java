@@ -16,6 +16,9 @@
 
 package org.apache.geronimo.ews.ws4j2ee.context.impl;
 
+import org.apache.geronimo.ews.ws4j2ee.context.InputOutputFile;
+import org.apache.geronimo.ews.ws4j2ee.toWs.GenerationFault;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -23,9 +26,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-
-import org.apache.geronimo.ews.ws4j2ee.context.InputOutputFile;
-import org.apache.geronimo.ews.ws4j2ee.toWs.GenerationFault;
 
 /**
  * @author hemapani@opensource.lk
@@ -50,8 +50,7 @@ public class InputOutputFileImpl implements InputOutputFile {
 
     public String fileName() {
         if (fileName == null)
-            throw new UnsupportedOperationException(
-                "asking for file name when input/output is a stream");
+            throw new UnsupportedOperationException("asking for file name when input/output is a stream");
         return fileName;
     }
 
@@ -81,6 +80,7 @@ public class InputOutputFileImpl implements InputOutputFile {
             throw GenerationFault.createGenerationFault(e);
         }
     }
+
     /* (non-Javadoc)
      * @see java.lang.Object#finalize()
      */

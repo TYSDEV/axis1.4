@@ -16,19 +16,19 @@
 
 package org.apache.geronimo.ews.ws4j2ee.utils.packager;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.geronimo.ews.ws4j2ee.toWs.GenerationFault;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.geronimo.ews.ws4j2ee.toWs.GenerationFault;
-
 public class Packager {
-	protected static Log log =
-			LogFactory.getLog(Packager.class.getName());
-			
+    protected static Log log =
+            LogFactory.getLog(Packager.class.getName());
+
     private String[] args;
 
     public Packager(String[] args) throws GenerationFault {
@@ -38,8 +38,7 @@ public class Packager {
     public void createJar() throws GenerationFault {
         try {
             JARFile jfile = new JARFile(new File(args[0]));
-			
-			log.info("creating the jar "+args[0]);
+            log.info("creating the jar " + args[0]);
             for (int i = 1; i < args.length; i++) {
                 if (args[i].endsWith(".jar")) {
                     jfile.addJarFile(args[i]);
@@ -48,36 +47,33 @@ public class Packager {
                     if (file.isDirectory()) {
                         ArrayList list = new ArrayList();
                         getSourceFiles(list, file);
-                        
                         for (int j = 0; j < list.size(); j++) {
                             File temp = new File((String) list.get(j));
                             String filename = temp.getAbsolutePath();
                             int index = filename.indexOf("classes/");
-                            if(index > 0){
+                            if (index > 0) {
                                 filename = filename.substring(index + "classes/".length());
                             }
                             JARFileEntry newEntry =
-                                new JARFileEntry(filename,
-                                    new FileInputStream(temp));
+                                    new JARFileEntry(filename,
+                                            new FileInputStream(temp));
                             jfile.addJarEntry(newEntry);
                         }
                     }
                 }
-
-                
             }
-			log.info("jar file creation done ");
+            log.info("jar file creation done ");
             jfile.createNewJarFile();
         } catch (IOException e) {
             throw GenerationFault.createGenerationFault(e);
         }
-
     }
 
     public static void main(String[] args) throws GenerationFault {
-		Packager packger = new Packager(args);
-		packger.createJar();
+        Packager packger = new Packager(args);
+        packger.createJar();
     }
+
     private void getSourceFiles(ArrayList list, File location) {
         String[] dirs = location.list();
         if (dirs == null)
@@ -90,7 +86,6 @@ public class Packager {
             } else {
                 getSourceFiles(list, new File(filename));
             }
-
         }
     }
 

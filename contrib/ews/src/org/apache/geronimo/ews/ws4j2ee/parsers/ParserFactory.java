@@ -16,8 +16,6 @@
 
 package org.apache.geronimo.ews.ws4j2ee.parsers;
 
-import java.io.InputStream;
-
 import org.apache.geronimo.ews.ws4j2ee.context.J2EEWebServiceContext;
 import org.apache.geronimo.ews.ws4j2ee.context.j2eeDD.EJBContext;
 import org.apache.geronimo.ews.ws4j2ee.context.j2eeDD.WebContext;
@@ -25,12 +23,17 @@ import org.apache.geronimo.ews.ws4j2ee.context.webservices.client.interfaces.Ser
 import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.interfaces.WSCFContext;
 import org.apache.geronimo.ews.ws4j2ee.toWs.GenerationFault;
 
+import java.io.InputStream;
+
 /**
  * @author hemapani@opensource.lk
  */
 public interface ParserFactory {
-	public ServiceReferanceContext parseServiceReferance(J2EEWebServiceContext context,InputStream inputStream)throws GenerationFault;
-	public WSCFContext parseWSCF(J2EEWebServiceContext context,InputStream inputStream)throws GenerationFault;
-	public WebContext parseWebDD(J2EEWebServiceContext context,InputStream inputStream)throws GenerationFault;
-	public EJBContext parseEJBDDContext(J2EEWebServiceContext context,InputStream inputStream)throws GenerationFault;
+    public ServiceReferanceContext parseServiceReferance(J2EEWebServiceContext context, InputStream inputStream) throws GenerationFault;
+
+    public WSCFContext parseWSCF(J2EEWebServiceContext context, InputStream inputStream) throws GenerationFault;
+
+    public WebContext parseWebDD(J2EEWebServiceContext context, InputStream inputStream) throws GenerationFault;
+
+    public EJBContext parseEJBDDContext(J2EEWebServiceContext context, InputStream inputStream) throws GenerationFault;
 }

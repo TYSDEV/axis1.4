@@ -20,16 +20,27 @@ package org.apache.geronimo.ews.ws4j2ee.context.j2eeDD;
  * @author hemapani@opensource.lk
  */
 public interface EJBContext {
-	public String getEjbLocalHomeInterfce();
-	public String getEjbLocalInterface();
-	public String getEjbName();
-	public String getEjbRemoteInterface();
-	public String getImplBean();
-	public String getEjbhomeInterface();
-	public void setEjbhomeInterface(String string);
-	public void setEjbLocalHomeInterfce(String string);
-	public void setEjbLocalInterface(String string);
-	public void setEjbName(String string);
-	public void setEjbRemoteInterface(String string);
-	public void setImplBean(String string);
+    public String getEjbLocalHomeInterfce();
+
+    public String getEjbLocalInterface();
+
+    public String getEjbName();
+
+    public String getEjbRemoteInterface();
+
+    public String getImplBean();
+
+    public String getEjbhomeInterface();
+
+    public void setEjbhomeInterface(String string);
+
+    public void setEjbLocalHomeInterfce(String string);
+
+    public void setEjbLocalInterface(String string);
+
+    public void setEjbName(String string);
+
+    public void setEjbRemoteInterface(String string);
+
+    public void setImplBean(String string);
 }

@@ -18,31 +18,31 @@ package org.apache.geronimo.ews.ws4j2ee.context.webservices.server;
 import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.interfaces.WSCFInitParam;
 
 /**
- * This will encapsulate the init parameter element and the information will be able access 
+ * This will encapsulate the init parameter element and the information will be able access
  * using the interface published.
- *
  */
 public abstract class AbstractWSCFInitParam extends WSCFElement implements WSCFInitParam {
 
-	/**
-	 * Init parameter name 
-	 */
-	protected String paramName;
+    /**
+     * Init parameter name
+     */
+    protected String paramName;
+
+    /**
+     * Init parameter value
+     */
+    protected String paramValue;
+
+    /**
+     * Init parameter description
+     */
+    protected String description;
+
+    public AbstractWSCFInitParam() {
+    }
 	
-	/**
-	 * Init parameter value
-	 */
-	protected String paramValue;
 	
-	/**
-	 * Init parameter description
-	 */
-	protected String description;
-    
-    public AbstractWSCFInitParam(){}
-	
-	
-	////////////////////////////////////////jaxb intefacing block////////////////////////////
+    ////////////////////////////////////////jaxb intefacing block////////////////////////////
 	
 //	public WSCFInitParamImpl(ParamValueType jaxbInitParameter){
 //		this.jaxbInitParameter = jaxbInitParameter;
@@ -88,27 +88,30 @@ public abstract class AbstractWSCFInitParam extends WSCFElement implements WSCFI
 //	}
 	
 	
-	/**
-	 * Gets the description of the init parameter element
-	 * @return description
-	 */
-	public String getDescription() {
-		return description;
-	}
+    /**
+     * Gets the description of the init parameter element
+     *
+     * @return description
+     */
+    public String getDescription() {
+        return description;
+    }
 
-	/**
-	 * Gets the name of the init parameter element
-	 * @return name
-	 */
-	public String getParamName() {
-		return paramName;
-	}
+    /**
+     * Gets the name of the init parameter element
+     *
+     * @return name
+     */
+    public String getParamName() {
+        return paramName;
+    }
 
-	/**
-	 * Gets the value of the init parameter element
-	 * @return value
-	 */
-	public String getParamValue() {
-		return paramValue;
-	}
+    /**
+     * Gets the value of the init parameter element
+     *
+     * @return value
+     */
+    public String getParamValue() {
+        return paramValue;
+    }
 }

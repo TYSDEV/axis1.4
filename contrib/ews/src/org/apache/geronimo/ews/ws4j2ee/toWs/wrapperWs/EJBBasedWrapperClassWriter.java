@@ -26,47 +26,48 @@ import org.apache.geronimo.ews.ws4j2ee.utils.Utils;
 
 /**
  * This class genarate the wrapper Webservice.
+ *
  * @author Srinath Perera(hemapani@opensource.lk)
  */
-public abstract class EJBBasedWrapperClassWriter extends JavaClassWriter{
-	protected static Log log =
-						LogFactory.getLog(WrapperWsGenerator.class.getName());
-	protected String seiName = null;
-	protected EJBContext context;
-	/**
-	 * @param j2eewscontext
-	 * @param qulifiedName
-	 * @throws GenerationFault
-	 */
-	public EJBBasedWrapperClassWriter(J2EEWebServiceContext j2eewscontext)
-		throws GenerationFault {
-		super(j2eewscontext, getName(j2eewscontext) +"Impl");
-		context =  j2eewscontext.getEJBDDContext();
-		if(context == null){
-			throw new UnrecoverableGenerationFault("for ejbbased Impl" +
-							" the EJBDDContext must not be null");
-		}
-	}
-	
-	private static String getName(J2EEWebServiceContext j2eewscontext){
-		String name = j2eewscontext.getWSDLContext().gettargetBinding().getName();
-		if(name == null){
-			name = Utils.qName2JavaName(j2eewscontext.getWSDLContext().gettargetBinding().getQName());
-		}
-		return name;
-	}
+public abstract class EJBBasedWrapperClassWriter extends JavaClassWriter {
+    protected static Log log =
+            LogFactory.getLog(WrapperWsGenerator.class.getName());
+    protected String seiName = null;
+    protected EJBContext context;
 
-	protected String getimplementsPart() {
-		return " implements "+ j2eewscontext.getMiscInfo().getJaxrpcSEI()+",org.apache.geronimo.ews.ws4j2ee.wsutils.ContextAccssible";
-	}
+    /**
+     * @param j2eewscontext
+     * @param qulifiedName
+     * @throws GenerationFault
+     */
+    public EJBBasedWrapperClassWriter(J2EEWebServiceContext j2eewscontext)
+            throws GenerationFault {
+        super(j2eewscontext, getName(j2eewscontext) + "Impl");
+        context = j2eewscontext.getEJBDDContext();
+        if (context == null) {
+            throw new UnrecoverableGenerationFault("for ejbbased Impl" +
+                    " the EJBDDContext must not be null");
+        }
+    }
 
-	protected void writeAttributes() throws GenerationFault {
-		
-		out.write("private "+seiName+" ejb = null;\n");
-		out.write("private org.apache.axis.MessageContext msgcontext;\n");
-	}
+    private static String getName(J2EEWebServiceContext j2eewscontext) {
+        String name = j2eewscontext.getWSDLContext().gettargetBinding().getName();
+        if (name == null) {
+            name = Utils.qName2JavaName(j2eewscontext.getWSDLContext().gettargetBinding().getQName());
+        }
+        return name;
+    }
 
-	protected void writeConstructors() throws GenerationFault {
-		out.write("\tpublic "+classname+"(){}\n");
-	}
+    protected String getimplementsPart() {
+        return " implements " + j2eewscontext.getMiscInfo().getJaxrpcSEI() + ",org.apache.geronimo.ews.ws4j2ee.wsutils.ContextAccssible";
+    }
+
+    protected void writeAttributes() throws GenerationFault {
+        out.write("private " + seiName + " ejb = null;\n");
+        out.write("private org.apache.axis.MessageContext msgcontext;\n");
+    }
+
+    protected void writeConstructors() throws GenerationFault {
+        out.write("\tpublic " + classname + "(){}\n");
+    }
 }

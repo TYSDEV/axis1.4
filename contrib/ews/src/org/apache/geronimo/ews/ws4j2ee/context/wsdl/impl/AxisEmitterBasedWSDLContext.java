@@ -55,14 +55,6 @@
 
 package org.apache.geronimo.ews.ws4j2ee.context.wsdl.impl;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.wsdl.Definition;
-import javax.wsdl.Service;
-import javax.xml.namespace.QName;
-
 import org.apache.axis.wsdl.symbolTable.BindingEntry;
 import org.apache.axis.wsdl.symbolTable.Element;
 import org.apache.axis.wsdl.symbolTable.PortEntry;
@@ -72,12 +64,20 @@ import org.apache.axis.wsdl.symbolTable.TypeEntry;
 import org.apache.geronimo.ews.ws4j2ee.context.wsdl.WSDLContext;
 import org.apache.geronimo.ews.ws4j2ee.context.wsdl.type.SchemaType;
 
+import javax.wsdl.Definition;
+import javax.wsdl.Service;
+import javax.xml.namespace.QName;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * <p>This Class is a wrapper fo the Axis SymbolTable. Since SymbolTable is parsed
  * completly it is not editable so the methods will throw the
  * UnsupportedOperationException.</p>
- * @see org.apache.geronimo.ews.ws4j2ee.context.wsdl.WSDLContext
+ *
  * @author Srinath Perera(hemapani@opensource.lk)
+ * @see org.apache.geronimo.ews.ws4j2ee.context.wsdl.WSDLContext
  */
 public class AxisEmitterBasedWSDLContext extends AbstractWSDLContext implements WSDLContext {
     private Definition definition;
@@ -85,8 +85,6 @@ public class AxisEmitterBasedWSDLContext extends AbstractWSDLContext implements 
     private HashMap bindings;
     private HashMap portetypes;
     private HashMap ports;
-    
-
 
     public AxisEmitterBasedWSDLContext(Definition definition) {
         this.definition = definition;

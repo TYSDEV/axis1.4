@@ -29,7 +29,6 @@ import org.apache.geronimo.ews.ws4j2ee.toWs.Ws4J2eeFactory;
  * ws4j2ee. If we using any class from the geronimo deployment we should
  * wrap them. This is a Code whith runing once. It is worth keeping the
  * code independent.<p>
- * <p/>
  * <p>This interface and related interfaces has both getter and setter methods
  * but who ever implements this interface might not need the both.
  * e.g. there can be two concreate implementations for this class
@@ -39,58 +38,73 @@ import org.apache.geronimo.ews.ws4j2ee.toWs.Ws4J2eeFactory;
  * <li>do not have WSDL</li>
  * </ol>
  * if some method is not requried please throw java.lang.UnsupportedOperationException</p>
+ *
  * @author Srinath Perera(hemapani@opensource.lk)
  */
 
 public interface J2EEWebServiceContext {
-	/**
-	 * Information about the WSDL file
-	 * @return
-	 */
+    /**
+     * Information about the WSDL file
+     *
+     * @return
+     */
     public WSDLContext getWSDLContext();
+
     public void setWSDLContext(WSDLContext wsdlcontext);
 
-	/**
-	 * Information about the webservices.xml file
-	 * @return
-	 */
+    /**
+     * Information about the webservices.xml file
+     *
+     * @return
+     */
     public WSCFContext getWSCFContext();
+
     public void setWSCFContext(WSCFContext wscfcontext);
 
-	/**
-	 * Information about the jaxrpcmapping.xml file  
-	 * @return
-	 */
+    /**
+     * Information about the jaxrpcmapping.xml file
+     *
+     * @return
+     */
     public JaxRpcMapperContext getJAXRPCMappingContext();
+
     public void setJAXRPCMappingContext(JaxRpcMapperContext context);
 
-	/**
-	 * Have the mislaneous infomation about the web service.
-	 * @return
-	 */
+    /**
+     * Have the mislaneous infomation about the web service.
+     *
+     * @return
+     */
     public MiscInfo getMiscInfo();
+
     public void setMiscInfo(MiscInfo info);
 
-	/**
-	 * validate the context
-	 */
+    /**
+     * validate the context
+     */
     public void validate();
-    
+
     /**
      * Information about which implementation should used for by the tool
      * Changing this one can change how the tool behave.
+     *
      * @param factory
      */
     public void setFactory(Ws4J2eeFactory factory);
-	public Ws4J2eeFactory getFactory();
-	
-	public EJBContext getEJBDDContext();
-	public void setEJBDDContext(EJBContext context);
-	
-	public WebContext getWebDDContext();
-	public void setWebDDContext(WebContext context);
 
-	public ServiceReferanceContext getServiceReferanceContext(int index);
-	public void addServiceReferanceContext(ServiceReferanceContext context);
-	public int getServiceReferanceContextCount();
+    public Ws4J2eeFactory getFactory();
+
+    public EJBContext getEJBDDContext();
+
+    public void setEJBDDContext(EJBContext context);
+
+    public WebContext getWebDDContext();
+
+    public void setWebDDContext(WebContext context);
+
+    public ServiceReferanceContext getServiceReferanceContext(int index);
+
+    public void addServiceReferanceContext(ServiceReferanceContext context);
+
+    public int getServiceReferanceContextCount();
 }

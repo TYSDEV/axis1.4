@@ -19,21 +19,20 @@ import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.AbstractWSCFSe
 import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.interfaces.WSCFServiceImplBean;
 
 /**
- * This encapsulates the Service Implementation bean element whih is a level 3 elemet. This is the concrete implementation of teh 
+ * This encapsulates the Service Implementation bean element whih is a level 3 elemet. This is the concrete implementation of teh
  * WSCFServiceImplBean
- *
  */
 public class WSCFServiceImplBeanImpl extends AbstractWSCFServiceImplBean implements WSCFServiceImplBean {
-	public WSCFServiceImplBeanImpl(ServiceImplBeanType jaxbServiceImplBean){
-		if(null == jaxbServiceImplBean){return;}
+    public WSCFServiceImplBeanImpl(ServiceImplBeanType jaxbServiceImplBean) {
+        if (null == jaxbServiceImplBean) {
+            return;
+        }
 //		///////////assigning the values //////////////
 		
-		if(null != jaxbServiceImplBean.getEjbLink())
-			this.ejblink = jaxbServiceImplBean.getEjbLink().getValue();
-		
-		if(null != jaxbServiceImplBean.getServletLink())
-			this.servletlink = jaxbServiceImplBean.getServletLink().getValue();	
-		
-	}
-	
+        if (null != jaxbServiceImplBean.getEjbLink())
+            this.ejblink = jaxbServiceImplBean.getEjbLink().getValue();
+        if (null != jaxbServiceImplBean.getServletLink())
+            this.servletlink = jaxbServiceImplBean.getServletLink().getValue();
+    }
+
 }

@@ -16,9 +16,6 @@
 
 package org.apache.geronimo.ews.ws4j2ee.toWs.ws;
 
-import javax.wsdl.Binding;
-import javax.wsdl.Definition;
-
 import org.apache.axis.wsdl.gen.Generator;
 import org.apache.axis.wsdl.symbolTable.BindingEntry;
 import org.apache.axis.wsdl.symbolTable.SymbolTable;
@@ -26,10 +23,13 @@ import org.apache.axis.wsdl.toJava.JavaDefinitionWriter;
 import org.apache.axis.wsdl.toJava.JavaUndeployWriter;
 import org.apache.geronimo.ews.jaxrpcmapping.J2eeEmitter;
 
+import javax.wsdl.Binding;
+import javax.wsdl.Definition;
+
 /**
  * @author hemapani@opensource.lk
  */
-public class J2eeGeneratorFactory extends org.apache.geronimo.ews.jaxrpcmapping.J2eeGeneratorFactory{
+public class J2eeGeneratorFactory extends org.apache.geronimo.ews.jaxrpcmapping.J2eeGeneratorFactory {
     /**
      * 
      */
@@ -48,8 +48,8 @@ public class J2eeGeneratorFactory extends org.apache.geronimo.ews.jaxrpcmapping.
         addGenerator(Definition.class, JavaDefinitionWriter.class); // for faults
         addGenerator(Definition.class, J2eeDeployWriter.class); // for deploy.wsdd
         addGenerator(Definition.class, JavaUndeployWriter.class); // for undeploy.wsdd
-    } 
-    
+    }
+
     public Generator getGenerator(Binding binding, SymbolTable symbolTable) {
         Generator writer = new J2eeBindingWriter(emitter, binding, symbolTable);
         BindingEntry bEntry = symbolTable.getBindingEntry(binding.getQName());

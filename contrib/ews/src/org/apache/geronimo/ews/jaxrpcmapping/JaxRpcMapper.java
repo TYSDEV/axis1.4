@@ -15,60 +15,67 @@
  */
 package org.apache.geronimo.ews.jaxrpcmapping;
 
-import java.io.InputStream;
-
-import javax.wsdl.Operation;
-import javax.wsdl.Port;
-import javax.xml.namespace.QName;
-
 import org.apache.axis.wsdl.symbolTable.BindingEntry;
 import org.apache.axis.wsdl.symbolTable.PortTypeEntry;
 import org.apache.axis.wsdl.symbolTable.ServiceEntry;
 import org.apache.geronimo.ews.ws4j2ee.toWs.GenerationFault;
 
+import javax.wsdl.Operation;
+import javax.wsdl.Port;
+import javax.xml.namespace.QName;
+import java.io.InputStream;
+
 /**
  * @author Srinath Perera(hemapani@opensource.lk)
  */
 public interface JaxRpcMapper {
-    public abstract void loadMappingFromInputStream(InputStream is)throws GenerationFault;
-    public abstract void loadMappingFromDir(String path)throws GenerationFault;
+    public abstract void loadMappingFromInputStream(InputStream is) throws GenerationFault;
+
+    public abstract void loadMappingFromDir(String path) throws GenerationFault;
+
     /**
      * @return Returns the mapping.
      */
     public int getPackageMappingCount();
+
     public String getPackageMappingClassName(int index);
+
     public String getPackageMappingURI(int index);
+
     public abstract String getJavaType(QName typeQName);
+
     public abstract String getExceptionType(QName messageQName);
+
     public abstract String getPortName(Port port);
+
     public abstract String getServiceInterfaceName(ServiceEntry entry);
-    public abstract String getServiceEndpointInterfaceName(
-        PortTypeEntry ptEntry,
-        BindingEntry bEntry);
+
+    public abstract String getServiceEndpointInterfaceName(PortTypeEntry ptEntry,
+                                                           BindingEntry bEntry);
+
     /**
-     * @param entry     
-     * @param operation 
-     * @param i         
-     * @return 
+     * @param entry
+     * @param operation
+     * @param i
+     * @return
      */
-    public abstract String getJavaMethodParamType(
-        BindingEntry bEntry,
-        Operation operation,
-        int position);
+    public abstract String getJavaMethodParamType(BindingEntry bEntry,
+                                                  Operation operation,
+                                                  int position);
+
     /**
-     * @param entry     
-     * @param operation 
-     * @return 
+     * @param entry
+     * @param operation
+     * @return
      */
-    public abstract String getJavaMethodReturnType(
-        BindingEntry bEntry,
-        Operation operation);
+    public abstract String getJavaMethodReturnType(BindingEntry bEntry,
+                                                   Operation operation);
+
     /**
-     * @param entry     
-     * @param operation 
-     * @return 
+     * @param entry
+     * @param operation
+     * @return
      */
-    public abstract String getJavaMethodName(
-        BindingEntry bEntry,
-        Operation operation);
+    public abstract String getJavaMethodName(BindingEntry bEntry,
+                                             Operation operation);
 }

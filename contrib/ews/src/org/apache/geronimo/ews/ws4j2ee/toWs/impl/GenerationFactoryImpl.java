@@ -45,12 +45,11 @@ import org.apache.geronimo.ews.ws4j2ee.toWs.wsdl.WSDLGenerator;
  * @author hemapani@opensource.lk
  */
 public class GenerationFactoryImpl
-    implements org.apache.geronimo.ews.ws4j2ee.toWs.GenerationFactory {
-    public Writer createEJBWriter(
-        J2EEWebServiceContext j2eewscontext,
-        EJBContext ejbcontext,
-        int writerType)
-        throws GenerationFault {
+        implements org.apache.geronimo.ews.ws4j2ee.toWs.GenerationFactory {
+    public Writer createEJBWriter(J2EEWebServiceContext j2eewscontext,
+                                  EJBContext ejbcontext,
+                                  int writerType)
+            throws GenerationFault {
         if (GenerationConstants.EJB_DD_WRITER == writerType)
             return new EJBDDWriter(j2eewscontext, ejbcontext);
         else if (GenerationConstants.EJB_HOME_INTERFACE_WRITER == writerType)
@@ -58,63 +57,71 @@ public class GenerationFactoryImpl
         else if (GenerationConstants.EJB_REMOTE_INTERFACE_WRITER == writerType)
             return new EJBRemoteWriter(j2eewscontext, ejbcontext);
         else if (
-            GenerationConstants.EJB_LOCAL_HOME_INTERFACE_WRITER == writerType)
+                GenerationConstants.EJB_LOCAL_HOME_INTERFACE_WRITER == writerType)
             return new EJBLocalHomeWriter(j2eewscontext, ejbcontext);
         else if (GenerationConstants.EJB_LOCAL_INTERFACE_WRITER == writerType)
             return new EJBLocalHomeWriter(j2eewscontext, ejbcontext);
         else if (
-            GenerationConstants.EJB_IMPLEMENTATION_BEAN_WRITER == writerType)
+                GenerationConstants.EJB_IMPLEMENTATION_BEAN_WRITER == writerType)
             return new SessionBeanWriter(j2eewscontext, ejbcontext);
         else
             throw new GenerationFault("the writer not found");
     }
 
     public Generator createEJBGenerator(J2EEWebServiceContext j2eewscontext)
-        throws GenerationFault {
+            throws GenerationFault {
         return new EJBGenerator(j2eewscontext);
     }
+
     public Generator createWrapperWsGenerator(J2EEWebServiceContext j2eewscontext)
-        throws GenerationFault {
+            throws GenerationFault {
         return new WrapperWsGenerator(j2eewscontext);
     }
+
     public Generator createClientSideWsGenerator(J2EEWebServiceContext j2eewscontext)
-        throws GenerationFault {
+            throws GenerationFault {
         return new ClientSideWsGenerator(j2eewscontext);
     }
 
     public Generator createWSDLGenerator(J2EEWebServiceContext wscontext,
-    	Emitter emitter,
-		Ws4J2eeDeployContext clparser)
-        throws GenerationFault {
-        return new WSDLGenerator(wscontext,emitter,clparser);
+                                         Emitter emitter,
+                                         Ws4J2eeDeployContext clparser)
+            throws GenerationFault {
+        return new WSDLGenerator(wscontext, emitter, clparser);
     }
+
     public Generator createServerSideWsGenerator(J2EEWebServiceContext j2eewscontext)
-        throws GenerationFault {
+            throws GenerationFault {
         return new ServerSideWsGenerator(j2eewscontext);
     }
+
     public Generator createHandlerGenerator(J2EEWebServiceContext j2eewscontext)
-        throws GenerationFault {
+            throws GenerationFault {
         return new HandlerGenerator(j2eewscontext);
     }
+
     public Generator createJaxrpcMapperGenerator(J2EEWebServiceContext j2eewscontext)
-        throws GenerationFault {
+            throws GenerationFault {
         return new JaxrpcMapperGenerator(j2eewscontext);
     }
+
     public Generator createContainerSpecificDDGenerator(J2EEWebServiceContext j2eewscontext)
-        throws GenerationFault {
+            throws GenerationFault {
         return new J2EEContainerSpecificDDGenerator(j2eewscontext);
     }
+
     public Generator createBuildFileGenerator(J2EEWebServiceContext j2eewscontext)
-        throws GenerationFault {
+            throws GenerationFault {
         return new BuildFileGenerator(j2eewscontext);
     }
+
     public Generator createWebContainerDDGenerator(J2EEWebServiceContext j2eewscontext)
-        throws GenerationFault {
+            throws GenerationFault {
         return new WebContainerDDGenerator(j2eewscontext);
     }
 
     public Generator createPropertyFileGenerator(J2EEWebServiceContext j2eewscontext)
-        throws GenerationFault {
+            throws GenerationFault {
         return new PropertyFileGenerator(j2eewscontext);
     }
 

@@ -30,10 +30,9 @@ import java.util.Vector;
 
 /**
  * This is Wsdl2java's Fault Writer.  It writes the <faultName>.java file.
- * <p/>
  * NOTE: This only writes simple type faults, the JavaTypeWriter emits
  * faults that are complex types.
- * 
+ *
  * @author Ias (iasandcb@tmax.co.kr)
  * @deprecated no more used by J2eeGeneratorFactory
  */
@@ -68,7 +67,6 @@ public class J2eeFaultWriter extends JavaClassWriter {
      */
     protected void writeFileBody(PrintWriter pw) throws IOException {
         Vector params = new Vector();
-
         symbolTable.getParametersFromParts(params,
                 faultMessage.getOrderedParts(null),
                 literal,

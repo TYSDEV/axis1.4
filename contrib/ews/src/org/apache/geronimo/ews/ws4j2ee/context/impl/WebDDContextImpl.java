@@ -22,13 +22,14 @@ import org.apache.geronimo.ews.ws4j2ee.context.j2eeDD.WebContext;
  * @author hemapani@opensource.lk
  */
 public class WebDDContextImpl implements WebContext {
-	private String servletClass;
-	private String servletName;
-	
-	public WebDDContextImpl(String servletClass,String servletName){
-		this.servletClass = servletClass;
-		this.servletName = servletName;
-	}
+    private String servletClass;
+    private String servletName;
+
+    public WebDDContextImpl(String servletClass, String servletName) {
+        this.servletClass = servletClass;
+        this.servletName = servletName;
+    }
+
     /**
      * @return
      */

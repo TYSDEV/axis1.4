@@ -15,43 +15,37 @@
  */
 package org.apache.geronimo.ews.ws4j2ee.context.webservices.server.xmlbeans;
 
+import com.sun.java.xml.ns.j2Ee.IconType;
+import com.sun.java.xml.ns.j2Ee.PortComponentType;
 import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.AbstractWSCFWebserviceDescription;
 import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.WSCFException;
 import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.interfaces.WSCFPortComponent;
 import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.interfaces.WSCFWebserviceDescription;
 
-import com.sun.java.xml.ns.j2Ee.IconType;
-import com.sun.java.xml.ns.j2Ee.PortComponentType;
-
 /**
  * This represents a level 1 element in the Element tree :webservice-description. This is the concrete implementation of the
  * WSCFWebServiceDescription interface
- *
  */
-public class WSCFWebserviceDescriptionImpl extends AbstractWSCFWebserviceDescription implements WSCFWebserviceDescription{
-	public WSCFWebserviceDescriptionImpl(com.sun.java.xml.ns.j2Ee.WebserviceDescriptionType wsdes) throws WSCFException{
-
-		this.description = XMLBeansUtils.getStringValue(wsdes.getDescription());
-		
-		this.displayName = XMLBeansUtils.getStringValue(wsdes.getDisplayName());
-
+public class WSCFWebserviceDescriptionImpl extends AbstractWSCFWebserviceDescription implements WSCFWebserviceDescription {
+    public WSCFWebserviceDescriptionImpl(com.sun.java.xml.ns.j2Ee.WebserviceDescriptionType wsdes) throws WSCFException {
+        this.description = XMLBeansUtils.getStringValue(wsdes.getDescription());
+        this.displayName = XMLBeansUtils.getStringValue(wsdes.getDisplayName());
         IconType icon = wsdes.getIcon();
-        if(icon != null){
+        if (icon != null) {
             this.smallIcon = XMLBeansUtils.getStringValue(icon.getSmallIcon());
             this.largeIcon = XMLBeansUtils.getStringValue(icon.getLargeIcon());
         }
-  		
-  		this.webserviceDescriptionName = XMLBeansUtils.getStringValue(wsdes.getWebserviceDescriptionName());
-		this.wsdlFile = XMLBeansUtils.getStringValue(wsdes.getWsdlFile());
-		this.jaxrpcMappingFile = XMLBeansUtils.getStringValue(wsdes.getJaxrpcMappingFile());;
-  		
+        this.webserviceDescriptionName = XMLBeansUtils.getStringValue(wsdes.getWebserviceDescriptionName());
+        this.wsdlFile = XMLBeansUtils.getStringValue(wsdes.getWsdlFile());
+        this.jaxrpcMappingFile = XMLBeansUtils.getStringValue(wsdes.getJaxrpcMappingFile());
+        ;
         PortComponentType[] list = wsdes.getPortComponentArray();
-  		
-  		if (0 == list.length){
-            throw new WSCFException("At least one port-component element should exist in the "+this.description+" webservices element.");}
-  		for(int i=0; i < list.length; i++){
-	  		WSCFPortComponent portComponent = new WSCFPortComponentImpl(list[i]);
-	  		this.portComponent.put(portComponent.getPortComponentName(), portComponent);
-		}
-	}
+        if (0 == list.length) {
+            throw new WSCFException("At least one port-component element should exist in the " + this.description + " webservices element.");
+        }
+        for (int i = 0; i < list.length; i++) {
+            WSCFPortComponent portComponent = new WSCFPortComponentImpl(list[i]);
+            this.portComponent.put(portComponent.getPortComponentName(), portComponent);
+        }
+    }
 }

@@ -16,8 +16,6 @@
 
 package org.apache.geronimo.ews.ws4j2ee.toWs.ws;
 
-import javax.wsdl.Binding;
-
 import org.apache.axis.wsdl.gen.Generator;
 import org.apache.axis.wsdl.symbolTable.BindingEntry;
 import org.apache.axis.wsdl.symbolTable.PortTypeEntry;
@@ -26,10 +24,12 @@ import org.apache.axis.wsdl.toJava.Emitter;
 import org.apache.axis.wsdl.toJava.JavaBindingWriter;
 import org.apache.geronimo.ews.jaxrpcmapping.J2eeEmitter;
 
+import javax.wsdl.Binding;
+
 /**
  * @author hemapani@opensource.lk
  */
-public class J2eeBindingWriter extends JavaBindingWriter{
+public class J2eeBindingWriter extends JavaBindingWriter {
     /**
      * @param arg0
      * @param arg1
@@ -43,12 +43,13 @@ public class J2eeBindingWriter extends JavaBindingWriter{
                                                PortTypeEntry ptEntry,
                                                BindingEntry bEntry,
                                                SymbolTable st) {
-            //TODO Do we need to generate the SEI sometimes ??
-            return null;            
-    }       
+        //TODO Do we need to generate the SEI sometimes ??
+        return null;
+    }
+
     protected Generator getJavaImplWriter(J2eeEmitter emitter,
-                                              BindingEntry bEntry,
-                                              SymbolTable st) {
-            return null;        
+                                          BindingEntry bEntry,
+                                          SymbolTable st) {
+        return null;
     }
 }

@@ -23,10 +23,10 @@ import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.interfaces.WSC
  * Basically this is  a Qname
  */
 public class WSCFSOAPHeaderImpl extends AbstractWSCFSOAPHeader implements WSCFSOAPHeader {
-	public WSCFSOAPHeaderImpl(XsdQNameType jaxbSoapHeader){
-		if(null != jaxbSoapHeader.getValue()){	
-			this.localpart = jaxbSoapHeader.getValue().getLocalPart();
-			this.namespaceURI = jaxbSoapHeader.getValue().getNamespaceURI();
-		}
-	}
+    public WSCFSOAPHeaderImpl(XsdQNameType jaxbSoapHeader) {
+        if (null != jaxbSoapHeader.getValue()) {
+            this.localpart = jaxbSoapHeader.getValue().getLocalPart();
+            this.namespaceURI = jaxbSoapHeader.getValue().getNamespaceURI();
+        }
+    }
 }

@@ -1,4 +1,3 @@
-
 /*
  * Copyright 2001-2004 The Apache Software Foundation.
  * 
@@ -17,13 +16,13 @@
 
 package org.apache.geronimo.ews.ws4j2ee.module;
 
+import org.apache.geronimo.ews.ws4j2ee.toWs.GenerationFault;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-
-import org.apache.geronimo.ews.ws4j2ee.toWs.GenerationFault;
 
 /**
  * @author Srinath Perera(hemapani@opensource.lk)
@@ -37,17 +36,18 @@ public abstract class AbstractModule implements Module {
     protected ZipFile zip;
     protected ClassLoader parentCL;
 
-    public AbstractModule(String jarFile,ClassLoader parentCL) throws GenerationFault {
+    public AbstractModule(String jarFile, ClassLoader parentCL) throws GenerationFault {
         try {
-			this.parentCL = parentCL;
+            this.parentCL = parentCL;
             zip = new JarFile(jarFile);
         } catch (IOException e) {
             e.printStackTrace();
             throw GenerationFault.createGenerationFault(e);
         }
     }
+
     public InputStream getInputStreamForJarEntry(String path)
-        throws GenerationFault {
+            throws GenerationFault {
         try {
             ZipEntry zentry = zip.getEntry(path);
             if (zentry != null) {
@@ -62,7 +62,7 @@ public abstract class AbstractModule implements Module {
     }
 
     public InputStream getInputStreamForJarEntry(String jarFile, String path)
-        throws GenerationFault {
+            throws GenerationFault {
         try {
             ZipEntry zentry = zip.getEntry(path);
             if (zentry != null) {
@@ -120,9 +120,9 @@ public abstract class AbstractModule implements Module {
     public void setWscfFile(InputStream stream) {
         wscfFile = stream;
     }
-    
-	public InputStream findFileInModule(String path)throws GenerationFault  {
-		return getInputStreamForJarEntry(path);
-	}
+
+    public InputStream findFileInModule(String path) throws GenerationFault {
+        return getInputStreamForJarEntry(path);
+    }
 
 }

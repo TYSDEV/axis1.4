@@ -20,17 +20,15 @@ import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.interfaces.WSC
 
 /**
  * This encapsulates the Qname wsdlport name and this is the concrete implementation of the WSCFWSDLPort
- *
  */
 public class WSCFWSDLPortImpl extends AbstractWSCFWSDLPort implements WSCFWSDLPort {
-	public WSCFWSDLPortImpl(XsdQNameType jaxbWSDLPort){
-		
-		if(null == jaxbWSDLPort){return;}
-		if(null != jaxbWSDLPort.getValue()){
-			this.localpart = jaxbWSDLPort.getValue().getLocalPart();
-			this.namespaceURI = jaxbWSDLPort.getValue().getNamespaceURI();
-		}
-		
-		
-	}
+    public WSCFWSDLPortImpl(XsdQNameType jaxbWSDLPort) {
+        if (null == jaxbWSDLPort) {
+            return;
+        }
+        if (null != jaxbWSDLPort.getValue()) {
+            this.localpart = jaxbWSDLPort.getValue().getLocalPart();
+            this.namespaceURI = jaxbWSDLPort.getValue().getNamespaceURI();
+        }
+    }
 }

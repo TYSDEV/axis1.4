@@ -20,10 +20,11 @@ import java.rmi.RemoteException;
 
 /**
  * <p>this error is throwd if the error happen at the ejb side
- * in the wrapper WebService class.</p> 
+ * in the wrapper WebService class.</p>
+ *
  * @author Srinath Perera(hemapani@opensource.lk)
  */
-public class J2EEFault extends RemoteException{
+public class J2EEFault extends RemoteException {
 
     public J2EEFault() {
         super();
@@ -33,11 +34,11 @@ public class J2EEFault extends RemoteException{
         super(message);
     }
 
-   public J2EEFault(String message, Throwable cause) {
+    public J2EEFault(String message, Throwable cause) {
         super(message, cause);
     }
 
-   public J2EEFault(Throwable cause) {
-        super(cause.getMessage(),cause);
+    public J2EEFault(Throwable cause) {
+        super(cause.getMessage(), cause);
     }
 }

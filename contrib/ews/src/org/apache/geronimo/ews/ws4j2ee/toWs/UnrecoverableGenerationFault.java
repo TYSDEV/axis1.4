@@ -19,13 +19,13 @@ package org.apache.geronimo.ews.ws4j2ee.toWs;
 /**
  * <p>this error means that due to the error the programme going fail
  * and can't recoverd.</p>
- * 
+ *
  * @author hemapani
  */
 public class UnrecoverableGenerationFault extends RuntimeException {
-	public UnrecoverableGenerationFault() {
-		super();
-	}
+    public UnrecoverableGenerationFault() {
+        super();
+    }
 
     /**
      * @param message
@@ -44,10 +44,10 @@ public class UnrecoverableGenerationFault extends RuntimeException {
         // TODO Auto-generated constructor stub
     }
 
-	/**
-	 * @param message 
-	 */
-	public UnrecoverableGenerationFault(String message) {
-		super(message);
-	}
+    /**
+     * @param message
+     */
+    public UnrecoverableGenerationFault(String message) {
+        super(message);
+    }
 }
