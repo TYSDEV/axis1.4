@@ -57,6 +57,8 @@ package org.apache.axis.configuration;
 
 import org.apache.axis.AxisEngine;
 import org.apache.axis.ConfigurationProvider;
+import org.apache.axis.deployment.wsdd.SimpleWsddDeploymentManager;
+import org.apache.axis.deployment.DeploymentRegistry;
 
 /**
  * A do-nothing ConfigurationProvider
@@ -65,6 +67,12 @@ import org.apache.axis.ConfigurationProvider;
  */
 public class NullProvider implements ConfigurationProvider
 {
+    public DeploymentRegistry getDeploymentRegistry()
+    {
+        // yeuch!
+        return new SimpleWsddDeploymentManager();
+    }
+
     public void configureEngine(AxisEngine engine) throws Exception
     {
     }

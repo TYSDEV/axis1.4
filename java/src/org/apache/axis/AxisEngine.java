@@ -98,11 +98,13 @@ public abstract class AxisEngine extends BasicHandler
     public static final String PROP_SYNC_CONFIG = "syncConfiguration";
     public static final String PROP_SEND_XSI = "sendXsiTypes";
 
+    // Default admin. password
+    private static final String DEFAULT_ADMIN_PASSWORD = "admin";
+
     /** Our go-to guy for configuration... */
     protected transient ConfigurationProvider configProvider;
 
-    protected DeploymentRegistry myRegistry =
-            new SimpleWsddDeploymentManager();
+    protected DeploymentRegistry myRegistry;
 
     /** Has the user changed the password yet? */
     protected boolean _hasSafePassword = false;
@@ -118,8 +120,6 @@ public abstract class AxisEngine extends BasicHandler
      * scope", have it store things in this Session.
      */
     private Session session = new SimpleSession();
-    
-    protected WSDDGlobalConfiguration myGlobalConfig = null;
     
     /**
      * What actor URIs hold for the entire engine?
@@ -154,7 +154,7 @@ public abstract class AxisEngine extends BasicHandler
      * No-arg constructor.
      *
      */
-    public AxisEngine()
+    private AxisEngine()
     {
         // !!! Set up default configuration?
         init();
@@ -178,6 +178,8 @@ public abstract class AxisEngine extends BasicHandler
             category.debug(JavaUtils.getMessage("enter00", "AxisEngine::init"));
         }
 
+        myRegistry = configProvider.getDeploymentRegistry();
+
         getTypeMappingRegistry().setParent(SOAPTypeMappingRegistry.getSingleton());
 
         try {
@@ -185,6 +187,8 @@ public abstract class AxisEngine extends BasicHandler
         } catch (Exception e) {
             throw new InternalException(e);
         }
+
+
         
         if (category.isDebugEnabled()) {
             category.debug(JavaUtils.getMessage("exit00", "AxisEngine::init"));
@@ -248,7 +252,7 @@ public abstract class AxisEngine extends BasicHandler
     {
         return myRegistry;
     }
-    
+
     public TypeMappingRegistry getTypeMappingRegistry()
     {
         TypeMappingRegistry tmr = null;
@@ -268,25 +272,13 @@ public abstract class AxisEngine extends BasicHandler
     public Handler getGlobalRequest()
         throws Exception
     {
-        Handler h = null;
-        if (myGlobalConfig != null) {
-            WSDDRequestFlow reqFlow = myGlobalConfig.getRequestFlow();
-            if (reqFlow != null)
-                h = reqFlow.getInstance(myRegistry);
-        }
-        return h;
+        return myRegistry.getGlobalRequest();
     }
     
     public Handler getGlobalResponse()
         throws Exception
     {
-        Handler h = null;
-        if (myGlobalConfig != null) {
-            WSDDResponseFlow respFlow = myGlobalConfig.getResponseFlow();
-            if (respFlow != null)
-                h = respFlow.getInstance(myRegistry);
-        }
-        return h;
+        return myRegistry.getGlobalResponse();
     }
     
     public ArrayList getActorURIs()
@@ -356,76 +348,74 @@ public abstract class AxisEngine extends BasicHandler
 
     /**
      * List of options which should be converted from Strings to Booleans
-     * automatically.
+     * automatically. Note that these options are common to all XML
+     * web services.
      */ 
-    static String [] booleanOptions = new String [] {
+    private static final String [] BOOLEAN_OPTIONS = new String [] {
         PROP_DOMULTIREFS, PROP_SEND_XSI, PROP_XML_DECL
     };
 
     /**
-     * Deploy a WSDD document to this engine.  This will either add or
-     * remove Handlers/Services/Transports/etc. depending on whether the
-     * WSDD is a <deployment> or an <undeployment>
-     *
-     * @param doc the WSDD document to deploy.
-     * @throws DeploymentException if there is a problem.
+     * Normalise the engine's options.
+     * <p>
+     * Convert boolean options from String to Boolean and default
+     * any ommitted boolean options to TRUE. Default the admin.
+     * password.
      */
-    public void deployWSDD(WSDDDocument doc) throws DeploymentException
-    {
-        myRegistry.deploy(doc);
-        myGlobalConfig = myRegistry.getGlobalConfiguration();
-        if (myGlobalConfig != null)
-            setOptions(myGlobalConfig.getParametersTable());
-        
+    private void normaliseOptions() {
         // Convert boolean options to Booleans so we don't need to use
         // string comparisons.  Default is "true".
         
-        for (int i = 0; i < booleanOptions.length; i++) {
-            Object val = getOption(booleanOptions[i]);
+        for (int i = 0; i < BOOLEAN_OPTIONS.length; i++) {
+            Object val = getOption(BOOLEAN_OPTIONS[i]);
             if (val != null) {
                 if (val instanceof Boolean)
                     continue;
                 if (val instanceof String &&
                     "false".equalsIgnoreCase((String)val)) {
-                    setOption(booleanOptions[i], Boolean.FALSE);
+                    setOption(BOOLEAN_OPTIONS[i], Boolean.FALSE);
                     continue;
                 }
             }
             // If it was null or not "false"...
-            setOption(booleanOptions[i], Boolean.TRUE);
+            setOption(BOOLEAN_OPTIONS[i], Boolean.TRUE);
         }
         
         // Deal with admin password's default value.
         if (getOption(PROP_PASSWORD) == null) {
-            setOption(PROP_PASSWORD, "admin");
+            setOption(PROP_PASSWORD, DEFAULT_ADMIN_PASSWORD);
         } else {
             setAdminPassword((String)getOption(PROP_PASSWORD));
         }
     }
-    
+
+    /**
+     * (Re-)load the global options from the registry.
+     */
+    public void refreshGlobalOptions() throws DeploymentException {
+        Hashtable globalOptions = myRegistry.getGlobalOptions();
+        if (globalOptions != null)
+            setOptions(globalOptions);
+
+        normaliseOptions();
+    }
+
    /**
-     * Deploy a Handler into our handler registry
+     * Deploy a Handler into our handler registry.
      */
     public void deployHandler(String key, Handler handler)
         throws DeploymentException
     {
-        handler.setName(key);
-        WSDDDocument doc = (WSDDDocument)myRegistry.getConfigDocument();
-        WSDDHandler newHandler = new WSDDHandler();
-        newHandler.setName(key);
-        newHandler.setType(new QName(WSDDConstants.WSDD_JAVA,
-                                     handler.getClass().getName()));
-        newHandler.setOptionsHashtable(handler.getOptions());
-        myRegistry.deployHandler(newHandler);
+        myRegistry.deployHandler(key, handler);
     }
 
     /**
-     * Undeploy (remove) a Handler from the handler registry
+     * Undeploy (remove) a Handler from our handler registry.
      */
     public void undeployHandler(String key)
         throws DeploymentException
     {
-        myRegistry.removeDeployedItem(new QName("", key));
+        myRegistry.undeployHandler(key);
     }
 
     /**
@@ -434,29 +424,8 @@ public abstract class AxisEngine extends BasicHandler
     public void deployService(String key, SOAPService service)
         throws DeploymentException
     {
-        category.info(JavaUtils.getMessage("deployService00", key, this.toString()));
-        service.setName(key);
         service.setEngine(this);
-        
-        WSDDService newService = new WSDDService();
-        newService.setName(key);
-        newService.setOptionsHashtable(service.getOptions());
-        newService.setCachedService(service);
-        
-        Handler pivot = service.getPivotHandler();
-        if (pivot == null) {
-            throw new DeploymentException(JavaUtils.getMessage("noPivot01"));
-        }
-        
-        if (pivot instanceof RPCProvider) {
-            newService.setProviderQName(WSDDConstants.JAVARPC_PROVIDER);
-        } else if (pivot instanceof MsgProvider) {
-            newService.setProviderQName(WSDDConstants.JAVAMSG_PROVIDER);
-        } else {
-            newService.setProviderQName(WSDDConstants.HANDLER_PROVIDER);
-            newService.setParameter("handlerClass", pivot.getClass().getName());
-        }
-        myRegistry.deployService(newService);
+        myRegistry.deployService(key, service);
     }
 
     /**
@@ -465,7 +434,7 @@ public abstract class AxisEngine extends BasicHandler
     public void undeployService(String key)
         throws DeploymentException
     {
-        myRegistry.undeployService(new QName("", key));
+        myRegistry.undeployService(key);
     }
 
     /**

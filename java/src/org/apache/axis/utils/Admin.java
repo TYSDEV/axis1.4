@@ -306,8 +306,9 @@ public class Admin {
         Document doc = null ;
 
         WSDDDocument wsddDoc = new WSDDDocument(root);
-        engine.deployWSDD(wsddDoc);
-        
+        engine.getDeploymentRegistry().deploy(wsddDoc);
+        engine.refreshGlobalOptions();
+
         engine.saveConfiguration();
         
         doc = XMLUtils.newDocument();
