@@ -241,6 +241,50 @@
   axis/WEB-INF/lib to CATALINA_HOME/common/lib and restart Tomcat.
   </P>
 
+  <H3>WebLogic 8.1</H3>
+
+  <P>WebLogic 8.1 ships with <code>webservices.jar</code> that conflicts with Axis' 
+   <code>saaj.jar</code> and prevents Axis 1.2 from working right out of the box. 
+   This conflict exists because WebLogic uses an older definition of 
+   <code>javax.xml.soap.*</code> package from 
+   <a href="http://java.sun.com/webservices/docs/1.0/api/javax/xml/soap"> 
+   Java Web Services Developer Pack Version 1.0</a>, whereas Axis uses a newer 
+   revision from J2EE 1.4. 
+  </P>
+
+  <P> 
+   However, there are two alternative configuration changes that enable Axis based 
+   web services to run on Weblogic 8.1.</P> 
+
+   <ul> 
+   <li>In a webapp containing Axis, set &lt;prefer-web-inf-classes&gt; element in 
+   <code>WEB-INF/weblogic.xml</code> to true.  An example of <code>weblogic.xml</code> 
+   is shown below: 
+   <pre>
+   &lt;weblogic-web-app&gt; 
+    &lt;container-descriptor&gt; 
+     &lt;prefer-web-inf-classes&gt;true&lt;/prefer-web-inf-classes&gt; 
+    &lt;/container-descriptor&gt; 
+   &lt;/weblogic-web-app&gt;</pre> 
+
+   <P>If set to <code>true</code>, the <code>&lt;prefer-web-inf-classes&gt;</code> 
+   element will force WebLogic's classloader to load classes located in the 
+   WEB-INF directory of a web application in preference to application or system 
+   classes. This is a recommended approach since it only impacts a single web module.</P>
+   </li> 
+
+   <li>In a script used to start WebLogic server, modify <code>CLASSPATH</code> 
+   property by placing Axis's <code>saaj.jar</code> library in front of WeLlogic's 
+   <code>webservices.jar</code>.
+
+   <P><b>NOTE:</b> This approach impacts all applications deployed on a particular
+   WebLogic instance and may prevent them from using WebLogic's webservices.</P></li> 
+   </ul>
+ 
+   <P>For more information on how WebLogic's class loader works, see 
+   <a href="http://e-docs.bea.com/wls/docs81/programming/classloading.html"> 
+   WebLogic Server Application Classloading</a>.</P> 
+
   <P><A name="start"></A></P>
 
   <H2>Step 3: starting the web server</H2>
