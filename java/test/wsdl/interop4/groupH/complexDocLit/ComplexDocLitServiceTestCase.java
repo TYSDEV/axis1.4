@@ -12,9 +12,9 @@ public class ComplexDocLitServiceTestCase extends junit.framework.TestCase {
         super(name);
     }
     public void test1ComplexDocLitPortEchoSOAPStructFault() throws Exception {
-        test.wsdl.interop4.groupH.complexDocLit.ComplexDocLitPortType binding;
+        ComplexDocLitPortType binding;
         try {
-            binding = new test.wsdl.interop4.groupH.complexDocLit.ComplexDocLitServiceLocator().getComplexDocLitPort();
+            binding = new ComplexDocLitServiceLocator().getComplexDocLitPort();
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -24,20 +24,26 @@ public class ComplexDocLitServiceTestCase extends junit.framework.TestCase {
         assertTrue("binding is null", binding != null);
 
         // Test operation
+        SOAPStruct soapStruct = new SOAPStruct();
+        soapStruct.setVarFloat(1.1F);
+        soapStruct.setVarInt(3);
+        soapStruct.setVarString("Fault test");
+        
         try {
-            test.wsdl.interop4.groupH.complexDocLit.EchoSOAPStructFaultResponse value = null;
-            value = binding.echoSOAPStructFault(new test.wsdl.interop4.groupH.complexDocLit.SOAPStruct());
+            binding.echoSOAPStructFault(soapStruct);
         }
-        catch (test.wsdl.interop4.groupH.complexDocLit.SOAPStructFault e1) {
-            throw new junit.framework.AssertionFailedError("ComplexFault Exception caught: " + e1);
+        catch (SOAPStructFault e1) {
+            assertEquals("SOAPStruct values not equal",
+                         soapStruct, e1.getSoapStruct());
+            return;
         }
-            // TBD - validate results
+        fail("Should have caught exception!");
     }
 
     public void test2ComplexDocLitPortEchoBaseStructFault() throws Exception {
-        test.wsdl.interop4.groupH.complexDocLit.ComplexDocLitPortType binding;
+        ComplexDocLitPortType binding;
         try {
-            binding = new test.wsdl.interop4.groupH.complexDocLit.ComplexDocLitServiceLocator().getComplexDocLitPort();
+            binding = new ComplexDocLitServiceLocator().getComplexDocLitPort();
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -47,20 +53,26 @@ public class ComplexDocLitServiceTestCase extends junit.framework.TestCase {
         assertTrue("binding is null", binding != null);
 
         // Test operation
+        short s = 30;
+        SOAPStruct soapStruct = new SOAPStruct();
+        soapStruct.setVarFloat(1.1F);
+        soapStruct.setVarInt(3);
+        soapStruct.setVarString("Fault test");
+        BaseStruct param = new BaseStruct(soapStruct, s);
         try {
-            test.wsdl.interop4.groupH.complexDocLit.EchoBaseStructFaultResponse value = null;
-            value = binding.echoBaseStructFault(new test.wsdl.interop4.groupH.complexDocLit.BaseStruct());
+            binding.echoBaseStructFault(param);
         }
-        catch (test.wsdl.interop4.groupH.complexDocLit.BaseStruct e1) {
-            throw new junit.framework.AssertionFailedError("ComplexFault Exception caught: " + e1);
+        catch (BaseStruct e1) {
+            assertEquals("BaseStruct values not equal", param, e1);
+            return;
         }
-            // TBD - validate results
+        fail("Should have caught exception!");
     }
 
     public void test3ComplexDocLitPortEchoExtendedStructFault() throws Exception {
-        test.wsdl.interop4.groupH.complexDocLit.ComplexDocLitPortType binding;
+        ComplexDocLitPortType binding;
         try {
-            binding = new test.wsdl.interop4.groupH.complexDocLit.ComplexDocLitServiceLocator().getComplexDocLitPort();
+            binding = new ComplexDocLitServiceLocator().getComplexDocLitPort();
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -70,20 +82,34 @@ public class ComplexDocLitServiceTestCase extends junit.framework.TestCase {
         assertTrue("binding is null", binding != null);
 
         // Test operation
+        ExtendedStruct extended = new ExtendedStruct();
+        SOAPStruct soapStruct = new SOAPStruct();
+        soapStruct.setVarFloat(1.1F);
+        soapStruct.setVarInt(3);
+        soapStruct.setVarString("Fault test");
+        
+        extended.setIntMessage(1);
+        extended.setAnotherIntMessage(2);
+        extended.setStructMessage(soapStruct);
+        extended.setShortMessage((short)5);
+        extended.setStringMessage("This is an ExtendedStruct");
+        
+        
         try {
-            test.wsdl.interop4.groupH.complexDocLit.EchoExtendedStructFaultResponse value = null;
-            value = binding.echoExtendedStructFault(new test.wsdl.interop4.groupH.complexDocLit.ExtendedStruct());
+            binding.echoExtendedStructFault(extended);
         }
-        catch (test.wsdl.interop4.groupH.complexDocLit.ExtendedStruct e1) {
-            throw new junit.framework.AssertionFailedError("ComplexFault Exception caught: " + e1);
+        catch (ExtendedStruct e1) {
+            assertEquals("ExtendedStruct values not equal", extended, e1);
+            return;
         }
-            // TBD - validate results
+
+        fail("Should have caught exception!");
     }
 
     public void test4ComplexDocLitPortEchoMultipleFaults1() throws Exception {
-        test.wsdl.interop4.groupH.complexDocLit.ComplexDocLitPortType binding;
+        ComplexDocLitPortType binding;
         try {
-            binding = new test.wsdl.interop4.groupH.complexDocLit.ComplexDocLitServiceLocator().getComplexDocLitPort();
+            binding = new ComplexDocLitServiceLocator().getComplexDocLitPort();
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -93,23 +119,49 @@ public class ComplexDocLitServiceTestCase extends junit.framework.TestCase {
         assertTrue("binding is null", binding != null);
 
         // Test operation
-        try {
-            test.wsdl.interop4.groupH.complexDocLit.EchoMultipleFaults1Response value = null;
-            value = binding.echoMultipleFaults1(new test.wsdl.interop4.groupH.complexDocLit.EchoMultipleFaults1Request());
+        BaseStruct base = new BaseStruct();
+        base.setShortMessage((short)4);
+        
+        SOAPStruct soapStruct = new SOAPStruct();
+        soapStruct.setVarFloat(1.1F);
+        soapStruct.setVarInt(3);
+        soapStruct.setVarString("Fault test");
+        
+        base.setStructMessage(soapStruct);
+        
+        SOAPStruct struct = new SOAPStruct();
+        struct.setVarFloat(1.1F);
+        struct.setVarInt(5);
+        struct.setVarString("Twas a dark and stormy night...");
+
+        for (int i = 1; i < 3; i++) {
+            try {
+                EchoMultipleFaults1Request param = 
+                        new EchoMultipleFaults1Request();
+                param.setWhichFault(i);
+                param.setParam1(struct);
+                param.setParam2(base);
+                binding.echoMultipleFaults1(param);
+            }
+            catch (BaseStruct e1) {
+                assertEquals("Wrong fault thrown: " + e1.getClass(), 2, i);
+                assertEquals("Bad data echoed", base, e1);
+                continue;
+            }
+            catch (SOAPStructFault e2) {
+                assertEquals("Wrong fault thrown: " + e2.getClass(), 1, i);
+                assertEquals("Bad data echoed", struct, e2.getSoapStruct());
+                continue;
+            }
+            
+            fail("Should have caught exception!");
         }
-        catch (test.wsdl.interop4.groupH.complexDocLit.BaseStruct e1) {
-            throw new junit.framework.AssertionFailedError("ComplexFault2 Exception caught: " + e1);
-        }
-        catch (test.wsdl.interop4.groupH.complexDocLit.SOAPStructFault e2) {
-            throw new junit.framework.AssertionFailedError("ComplexFault1 Exception caught: " + e2);
-        }
-            // TBD - validate results
     }
 
     public void test5ComplexDocLitPortEchoMultipleFaults2() throws Exception {
-        test.wsdl.interop4.groupH.complexDocLit.ComplexDocLitPortType binding;
+        ComplexDocLitPortType binding;
         try {
-            binding = new test.wsdl.interop4.groupH.complexDocLit.ComplexDocLitServiceLocator().getComplexDocLitPort();
+            binding = new ComplexDocLitServiceLocator().getComplexDocLitPort();
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -118,21 +170,60 @@ public class ComplexDocLitServiceTestCase extends junit.framework.TestCase {
         }
         assertTrue("binding is null", binding != null);
 
+        SOAPStruct struct = new SOAPStruct();
+        struct.setVarFloat(1.1F);
+        struct.setVarInt(5);
+        struct.setVarString("Twas a dark and stormy night...");
+        
         // Test operation
-        try {
-            test.wsdl.interop4.groupH.complexDocLit.EchoMultipleFaults2Response value = null;
-            value = binding.echoMultipleFaults2(new test.wsdl.interop4.groupH.complexDocLit.EchoMultipleFaults2Request());
+        BaseStruct base = new BaseStruct();
+        base.setShortMessage((short)4);
+        base.setStructMessage(struct);
+        
+        ExtendedStruct extended = new ExtendedStruct();
+        extended.setIntMessage(1);
+        extended.setAnotherIntMessage(2);
+        extended.setShortMessage((short)5);
+        extended.setStringMessage("This is an ExtendedStruct");
+        extended.setStructMessage(struct);
+        
+        MoreExtendedStruct moreExtended = new MoreExtendedStruct();
+        moreExtended.setBooleanMessage(true);
+        moreExtended.setIntMessage(2);
+        moreExtended.setAnotherIntMessage(3);
+        moreExtended.setShortMessage((short)9);
+        moreExtended.setStringMessage("This is a MoreExtendedStruct");
+        moreExtended.setStructMessage(struct);
+        
+        // Test operation multiple times
+        for (int i = 1; i < 4; i++) {
+            try {
+                EchoMultipleFaults2Request param = 
+                        new EchoMultipleFaults2Request();
+                param.setWhichFault(i);
+                param.setParam1(base);
+                param.setParam2(extended);
+                param.setParam3(moreExtended);
+                binding.echoMultipleFaults2(param);
+            }
+            catch (MoreExtendedStruct e3) {
+                assertEquals("Wrong fault thrown: " + e3.getClass(), 3, i);
+                assertEquals("Bad data echoed", moreExtended, e3);
+                continue;
+            }
+            catch (ExtendedStruct e2) {
+                assertEquals("Wrong fault thrown: " + e2.getClass(), 2, i);
+                assertEquals("Bad data echoed", extended, e2);
+                continue;
+            }
+            catch (BaseStruct e1) {
+                assertEquals("Wrong fault thrown: " + e1.getClass(), 1, i);
+                assertEquals("Bad data echoed", base, e1);
+                continue;
+            }
+        
+            fail("Should have caught exception!");
         }
-        catch (test.wsdl.interop4.groupH.complexDocLit.MoreExtendedStruct e1) {
-            throw new junit.framework.AssertionFailedError("ComplexFault3 Exception caught: " + e1);
-        }
-        catch (test.wsdl.interop4.groupH.complexDocLit.ExtendedStruct e2) {
-            throw new junit.framework.AssertionFailedError("ComplexFault2 Exception caught: " + e2);
-        }
-        catch (test.wsdl.interop4.groupH.complexDocLit.BaseStruct e3) {
-            throw new junit.framework.AssertionFailedError("ComplexFault1 Exception caught: " + e3);
-        }
-            // TBD - validate results
     }
 
 }

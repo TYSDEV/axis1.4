@@ -7,25 +7,33 @@
 
 package test.wsdl.interop4.groupH.complexDocLit;
 
-public class ComplexDocLitBindingImpl implements test.wsdl.interop4.groupH.complexDocLit.ComplexDocLitPortType{
-    public test.wsdl.interop4.groupH.complexDocLit.EchoSOAPStructFaultResponse echoSOAPStructFault(test.wsdl.interop4.groupH.complexDocLit.SOAPStruct param) throws java.rmi.RemoteException, test.wsdl.interop4.groupH.complexDocLit.SOAPStructFault {
-        return null;
+public class ComplexDocLitBindingImpl implements ComplexDocLitPortType{
+    public EchoSOAPStructFaultResponse echoSOAPStructFault(SOAPStruct param) throws java.rmi.RemoteException, SOAPStructFault {
+        throw new SOAPStructFault(param);
     }
 
-    public test.wsdl.interop4.groupH.complexDocLit.EchoBaseStructFaultResponse echoBaseStructFault(test.wsdl.interop4.groupH.complexDocLit.BaseStruct param) throws java.rmi.RemoteException, test.wsdl.interop4.groupH.complexDocLit.BaseStruct {
-        return null;
+    public EchoBaseStructFaultResponse echoBaseStructFault(BaseStruct param) throws java.rmi.RemoteException, BaseStruct {
+        throw param;
     }
 
-    public test.wsdl.interop4.groupH.complexDocLit.EchoExtendedStructFaultResponse echoExtendedStructFault(test.wsdl.interop4.groupH.complexDocLit.ExtendedStruct param) throws java.rmi.RemoteException, test.wsdl.interop4.groupH.complexDocLit.ExtendedStruct {
-        return null;
+    public EchoExtendedStructFaultResponse echoExtendedStructFault(ExtendedStruct param) throws java.rmi.RemoteException, ExtendedStruct {
+        throw param;
     }
 
-    public test.wsdl.interop4.groupH.complexDocLit.EchoMultipleFaults1Response echoMultipleFaults1(test.wsdl.interop4.groupH.complexDocLit.EchoMultipleFaults1Request param) throws java.rmi.RemoteException, test.wsdl.interop4.groupH.complexDocLit.BaseStruct, test.wsdl.interop4.groupH.complexDocLit.SOAPStructFault {
-        return null;
+    public EchoMultipleFaults1Response echoMultipleFaults1(EchoMultipleFaults1Request param) throws java.rmi.RemoteException, BaseStruct, SOAPStructFault {
+        if (param.getWhichFault() == 2) {
+            throw param.getParam2();
+        }
+        throw new SOAPStructFault(param.getParam1());
     }
 
-    public test.wsdl.interop4.groupH.complexDocLit.EchoMultipleFaults2Response echoMultipleFaults2(test.wsdl.interop4.groupH.complexDocLit.EchoMultipleFaults2Request param) throws java.rmi.RemoteException, test.wsdl.interop4.groupH.complexDocLit.MoreExtendedStruct, test.wsdl.interop4.groupH.complexDocLit.ExtendedStruct, test.wsdl.interop4.groupH.complexDocLit.BaseStruct {
-        return null;
+    public EchoMultipleFaults2Response echoMultipleFaults2(EchoMultipleFaults2Request param) throws java.rmi.RemoteException, MoreExtendedStruct, ExtendedStruct, BaseStruct {
+        if (param.getWhichFault() == 2) {
+            throw param.getParam2();
+        } else if (param.getWhichFault() == 3) {
+            throw param.getParam3();
+        }
+        throw param.getParam1();
     }
 
 }
