@@ -191,6 +191,8 @@ public class JavaBeanWriter extends JavaClassWriter {
             for (int i = 0; i < elements.size(); i++) {
                 ElementDecl elem = (ElementDecl)elements.get(i);
                 String typeName = elem.getType().getName();
+                if (elem.getAnyElement())
+                    typeName = "java.lang.Object";
                 String elemName = elem.getName().getLocalPart();
                 String variableName = Utils.xmlNameToJava(elemName);
                 names.add(typeName);

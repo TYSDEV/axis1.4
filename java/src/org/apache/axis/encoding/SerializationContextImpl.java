@@ -1153,21 +1153,25 @@ public class SerializationContextImpl implements SerializationContext
 //                    xmlType = null;
 //                }
 //            }
-            // Try getting a serializer for the prefered xmlType
-            if (info == null && xmlType != null) {
-                info = getSerializer(javaType, xmlType);
+            // if we're looking for xsd:anyType, accept anything...
+            if (Constants.XSD_ANYTYPE.equals(xmlType)) {
+                xmlType = null;
+                shouldSendType = true;
             }
+
+            // Try getting a serializer for the prefered xmlType
+            info = getSerializer(javaType, xmlType);
 
             // If a serializer was not found using the preferred xmlType,
             // try getting any serializer.
-            if (info == null) {
-                info = getSerializer(javaType, value);
-                // Must send type if it does not match preferred type
-                if (xmlType != null) {
-                    shouldSendType = true;
-                }
-                xmlType = null;
-            }
+//            if (info == null) {
+//                info = getSerializer(javaType, value);
+//                // Must send type if it does not match preferred type
+//                if (xmlType != null) {
+//                    shouldSendType = true;
+//                }
+//                xmlType = null;
+//            }
 
             if ( info != null ) {
 
@@ -1211,13 +1215,29 @@ public class SerializationContextImpl implements SerializationContext
         SerializerFactory  serFactory  = null ;
         TypeMapping tm = getTypeMapping();
 
-        try {
-            if (!javaType.getName().equals("java.lang.Object") &&
-                tm.isRegistered(javaType, xmlType)) {
-                serFactory = (SerializerFactory) tm.getSerializer(javaType, xmlType);
-            }
-        } catch(JAXRPCException e) {}
+        while (javaType != null) {
+            serFactory = (SerializerFactory) tm.getSerializer(javaType, xmlType);
+            if (serFactory != null)
+                break;
 
+            // Walk my interfaces...
+            Class [] interfaces = javaType.getInterfaces();
+            if (interfaces != null) {
+                for (int i = 0; i < interfaces.length; i++) {
+                    Class iface = interfaces[i];
+                    serFactory = (SerializerFactory) tm.getSerializer(iface,
+                                                                      xmlType);
+                    if (serFactory != null)
+                        break;
+                }
+            }
+
+            // Finally, head to my superclass
+            if (serFactory != null)
+                break;
+
+            javaType = javaType.getSuperclass();
+        }
 
         // Using the serialization factory, create a serializer
         Serializer ser = null;
@@ -1309,4 +1329,9 @@ public class SerializationContextImpl implements SerializationContext
         return info;
     }
 
+    public String getValueAsString(Object value, QName xmlType) throws IOException {
+        SerializerInfo info = getSerializer(value.getClass(), xmlType);
+        SimpleValueSerializer ser = (SimpleValueSerializer)info.ser;
+        return ser.getValueAsString(value);
+    }
 }

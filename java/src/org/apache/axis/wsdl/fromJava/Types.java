@@ -507,9 +507,9 @@ public class Types {
         Serializer ser = null;
         SerializerFactory factory = null;
         if (tm != null) {
-            factory = (SerializerFactory)tm.getSerializer(type);
+            factory = (SerializerFactory)tm.getSerializer(type, null);
         } else {
-            factory = (SerializerFactory)defaultTM.getSerializer(type);
+            factory = (SerializerFactory)defaultTM.getSerializer(type, null);
         }
 
         // If no factory is found, use the BeanSerializerFactory

@@ -138,6 +138,20 @@ public class TypeDesc {
     private Map propertyMap = null;
 
     /**
+     * Indication if this type has support for xsd:any.  If so, this will
+     * be non-null, and point to the appropriate field.
+     */
+    private String anyName = null;
+
+    public String getAnyName() {
+        return anyName;
+    }
+
+    public void setAnyName(String anyName) {
+        this.anyName = anyName;
+    }
+
+    /**
      * Obtain the current array of FieldDescs
      */
     public FieldDesc[] getFields() {

@@ -211,7 +211,7 @@ public class BeanSerializer implements Serializer, Serializable {
                         context.serialize(qname,
                                           null,
                                           propValue,
-                                          context.getQNameForClass(javaType),
+                                          context.getQNameForClass(propertyDescriptor[i].getType()),
                                           true,
                                           null);
                     } else {
@@ -499,13 +499,7 @@ public class BeanSerializer implements Serializer, Serializable {
                                       QName qname,
                                       AttributesImpl attrs,
                                       SerializationContext context) throws Exception {
-        StringWriter writer = new StringWriter();
-        SerializationContext attributeContext = new AttributeSerializationContextImpl(writer, context);
-        attributeContext.serialize(qname,
-                                   null,
-                                   propValue);
-        writer.close();
-        String propString = writer.getBuffer().toString();
+        String propString = context.getValueAsString(propValue, null);
         String namespace = qname.getNamespaceURI();
         String localName = qname.getLocalPart();
 

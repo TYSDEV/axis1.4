@@ -298,9 +298,40 @@ public class TypeMappingImpl implements TypeMapping
     {
         javax.xml.rpc.encoding.SerializerFactory sf = null;
 
+        while (javaType != null && !javaType.equals(Object.class)) {
+            sf = getSerializerHelper(javaType, xmlType);
+            if (sf != null)
+                return sf;
+
+            javaType = null;
+//            // Walk my interfaces...
+//            Class [] interfaces = javaType.getInterfaces();
+//            if (interfaces != null) {
+//                for (int i = 0; i < interfaces.length; i++) {
+//                    Class iface = interfaces[i];
+//                    sf = getSerializerHelper(iface, xmlType);
+//                    if (sf != null)
+//                        return sf;
+//                }
+//            }
+//
+//            // Finally, head to my superclass
+//            javaType = javaType.getSuperclass();
+        }
+
+        return null;
+    }
+
+    private javax.xml.rpc.encoding.SerializerFactory
+            getSerializerHelper(Class javaType, QName xmlType)
+            throws JAXRPCException
+    {
+        javax.xml.rpc.encoding.SerializerFactory sf = null;
+
         // If the xmlType was not provided, get one
         if (xmlType == null) {
             xmlType = getTypeQName(javaType);
+
             // If we couldn't find one, we're hosed, since getTypeQName()
             // already asked all of our delegates.
             if (xmlType == null) {
@@ -436,11 +467,31 @@ public class TypeMappingImpl implements TypeMapping
      * @param javaType class or type
      * @return xmlType qname or null
      */
-    public QName getTypeQName(Class javaType) {
+    public QName getAnyTypeQName(Class javaType) {
         //log.debug("getTypeQName javaType =" + javaType);
-        if (javaType == null)
-            return null;
+        while (javaType != null) {
+            QName xmlType = getTypeQName(javaType);
+            if (xmlType != null)
+                return xmlType;
 
+            // Walk my interfaces...
+            Class [] interfaces = javaType.getInterfaces();
+            if (interfaces != null) {
+                for (int i = 0; i < interfaces.length; i++) {
+                    Class iface = interfaces[i];
+                    xmlType = getTypeQName(iface);
+                    if (xmlType != null)
+                        return xmlType;
+                }
+            }
+
+            // Finally, head to my superclass
+            javaType = javaType.getSuperclass();
+        }
+        return null;
+    }
+
+    public QName getTypeQName(Class javaType) {
         QName xmlType = null;
         Pair pair = (Pair) class2Pair.get(javaType);
         if (pair == null && delegate != null) {

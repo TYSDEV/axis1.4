@@ -58,6 +58,7 @@ package org.apache.axis.encoding.ser;
 import org.apache.axis.Constants;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.encoding.Serializer;
+import org.apache.axis.encoding.SimpleValueSerializer;
 import org.apache.axis.wsdl.fromJava.Types;
 import org.xml.sax.Attributes;
 
@@ -68,7 +69,7 @@ import java.io.IOException;
 /**
  * Serializer for QNames.
  */
-public class QNameSerializer implements Serializer {
+public class QNameSerializer implements SimpleValueSerializer {
 
     /**
      * Serialize a QName.
@@ -82,6 +83,11 @@ public class QNameSerializer implements Serializer {
         context.startElement(name, attributes);
         context.writeString(str);
         context.endElement();
+    }
+
+    public String getValueAsString(Object value) {
+        // crap - FIXME!
+        return null;
     }
 
     public String getMechanismType() { return Constants.AXIS_SAX; }

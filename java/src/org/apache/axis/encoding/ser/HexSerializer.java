@@ -56,7 +56,6 @@
 package org.apache.axis.encoding.ser;
 
 import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
 
 import javax.xml.namespace.QName;
 
@@ -64,17 +63,9 @@ import java.io.IOException;
 
 import org.apache.axis.Constants;
 import org.apache.axis.wsdl.fromJava.Types;
-import org.apache.axis.encoding.Serializer;
-import org.apache.axis.encoding.SerializerFactory;
 import org.apache.axis.encoding.SerializationContext;
-import org.apache.axis.encoding.Deserializer;
-import org.apache.axis.encoding.DeserializerFactory;
-import org.apache.axis.encoding.DeserializationContext;
-import org.apache.axis.encoding.Deserializer;
 import org.apache.axis.types.HexBinary;
-import org.w3c.dom.Element;
-import org.w3c.dom.Document;
-import org.apache.axis.encoding.Base64;
+import org.apache.axis.encoding.SimpleValueSerializer;
 import org.apache.axis.utils.JavaUtils;
 /**
  * Serializer for hexBinary.
@@ -83,7 +74,7 @@ import org.apache.axis.utils.JavaUtils;
  * Modified by @author Rich scheuerle <scheu@us.ibm.com>
  * @see <a href="http://www.w3.org/TR/xmlschema-2/#hexBinary">XML Schema 3.2.16</a>
  */
-public class HexSerializer implements Serializer {
+public class HexSerializer implements SimpleValueSerializer {
 
     public QName xmlType;
     public Class javaType;
@@ -100,15 +91,17 @@ public class HexSerializer implements Serializer {
         throws IOException
     {
         context.startElement(name, attributes);
-        
+        context.writeString(getValueAsString(value));
+        context.endElement();
+    }
+
+    public String getValueAsString(Object value) {
         value = JavaUtils.convert(value, javaType);
         if (javaType == HexBinary.class) {
-            context.writeString(((HexBinary) value).toString());
+            return ((HexBinary) value).toString();
         } else {
-            context.writeString(HexBinary.encode((byte[]) value));
+            return HexBinary.encode((byte[]) value);
         }
-
-        context.endElement();
     }
 
     public String getMechanismType() { return Constants.AXIS_SAX; }
