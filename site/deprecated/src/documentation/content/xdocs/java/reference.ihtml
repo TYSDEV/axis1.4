@@ -985,14 +985,14 @@ definition:<BR>
   there may be more (consult the source, as usual).</P>
   <PRE>
    &lt;globalConfiguration&gt;
- &lt;parameter name="adminPassword" value="admin"/&gt;
- &lt;parameter name="attachments.Directory" value="c:\temp\attachments"/&gt;
- &lt;parameter name="sendMultiRefs" value="true"/&gt;
- &lt;parameter name="sendXsiTypes" value="true"/&gt;
- &lt;parameter name="attachments.implementation"
+     &lt;parameter name="adminPassword" value="admin"/&gt;
+     &lt;parameter name="attachments.Directory" value="c:\temp\attachments"/&gt;
+     &lt;parameter name="sendMultiRefs" value="true"/&gt;
+     &lt;parameter name="sendXsiTypes" value="true"/&gt;
+     &lt;parameter name="attachments.implementation"
   value="org.apache.axis.attachments.AttachmentsImpl"/&gt;
- &lt;parameter name="sendXMLDeclaration" value="true"/&gt;
- &lt;parameter name="enable2DArrayEncoding" value="true"/&gt;
+     &lt;parameter name="sendXMLDeclaration" value="true"/&gt;
+     &lt;parameter name="enable2DArrayEncoding" value="true"/&gt;
    &lt;/globalConfiguration&gt;
 </PRE>
 
@@ -1033,6 +1033,13 @@ definition:<BR>
     <td>Flag to disable the list of services feature. Set to false by 
     default, which enables the list of services by the AxisServlet when a GET 
     request is performed on the servlet root.</td>
+ </TR>
+
+ <TR>
+   <TD><B>axis.servicesPath</B></TD>
+   <TD>Path to the Axis servlet. This should be the same as the services
+   servlet-mapping defined in web.xml. Used for displaying
+  the list of services. Default is "/services/".</TD>
  </TR>
 
  <TR>
