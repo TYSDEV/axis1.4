@@ -124,6 +124,7 @@ public class Emitter {
         this.writerFactory = writerFactory;
     } // ctor
 
+    public SymbolTable getSymbolTable() { return symbolTable;}
     /**
      * Call this method if you have a uri for the WSDL document
      * @param String wsdlURI the location of the WSDL file.
@@ -133,10 +134,12 @@ public class Emitter {
             System.out.println(JavaUtils.getMessage("parsing00", uri));
 
         // calculate baseURI so that imported relative URI's work
+        int lastSeparator = uri.lastIndexOf(File.separatorChar);
         int lastSlash = uri.lastIndexOf('/');
+        int index = (lastSlash > lastSeparator) ? lastSlash : lastSeparator;
         String baseURI = null;
-        if (lastSlash > 0) {
-            baseURI = uri.substring(0, lastSlash + 1);
+        if (index > 0) {
+            baseURI = uri.substring(0, index + 1);
         }
         emit(baseURI, XMLUtils.newDocument(uri));
     } // emit
@@ -148,7 +151,8 @@ public class Emitter {
      */
     public void emit(String context, Document doc) throws IOException, WSDLException {
         WSDLReader reader = WSDLFactory.newInstance().newWSDLReader();
-        reader.setFeature("verbose", bVerbose);
+        // The verbose option is no longer supported.
+        //reader.setFeature("verbose", bVerbose);
         def = reader.readWSDL(context, doc);
         this.doc = doc;
         namespaces = new Namespaces(outputDir);

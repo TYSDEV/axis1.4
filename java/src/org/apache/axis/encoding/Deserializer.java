@@ -2,7 +2,7 @@
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 2001 The Apache Software Foundation.  All rights 
+ * Copyright (c) 2001 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -10,7 +10,7 @@
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer. 
+ *    notice, this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
@@ -18,7 +18,7 @@
  *    distribution.
  *
  * 3. The end-user documentation included with the redistribution,
- *    if any, must include the following acknowledgment:  
+ *    if any, must include the following acknowledgment:
  *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowledgment may appear in the software itself,
@@ -26,7 +26,7 @@
  *
  * 4. The names "Axis" and "Apache Software Foundation" must
  *    not be used to endorse or promote products derived from this
- *    software without prior written permission. For written 
+ *    software without prior written permission. For written
  *    permission, please contact apache@apache.org.
  *
  * 5. Products derived from this software may not be called "Apache",
@@ -53,391 +53,252 @@
  * <http://www.apache.org/>.
  */
 
+
 package org.apache.axis.encoding;
 
-import org.apache.axis.Constants;
+import java.io.IOException;
+import java.io.Writer;
 
-import org.apache.axis.message.EnvelopeHandler;
+import org.apache.axis.Message;
+import org.apache.axis.MessageContext;
+
+import org.apache.axis.encoding.Target;
+
+import org.apache.axis.message.IDResolver;
 import org.apache.axis.message.MessageElement;
 import org.apache.axis.message.SAX2EventRecorder;
-import org.apache.axis.message.SAXOutputter;
 import org.apache.axis.message.SOAPHandler;
-import org.apache.axis.utils.JavaUtils;
-import org.apache.log4j.Category;
+import org.apache.axis.utils.NSStack;
+import org.apache.axis.message.SOAPEnvelope;
+
+import org.w3c.dom.Element;
+
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
+import javax.xml.parsers.SAXParser;
 import javax.xml.rpc.namespace.QName;
-import java.io.StringWriter;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.Enumeration;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Stack;
 import java.util.Vector;
 
-/** The Deserializer base class.
+/**
+ * This interface describes the AXIS Deserializer. 
+ * A compliant implementiation must extend either
+ * the AXIS SoapHandler (org.apache.axis.message.SOAPHandler)
+ * or the AXIS DeserializerImpl (org.apache.axis.encoding.DeserializerImpl)
  * 
- * Still needs some work.
- * 
- * @author Glen Daniels (gdaniels@allaire.com)
- */
-
-public class Deserializer extends SOAPHandler
-{
-    static Category category =
-            Category.getInstance(Deserializer.class.getName());
-
-    protected Object value = null;
-
-    // isEnded is set when the endElement is called
-    protected boolean isEnded = false;
-
-    protected Vector targets = null;
-    
-    public Object getValue()
-    {
-        return value;
-    }
-    public void setValue(Object value)
-    {
-        this.value = value;
-    }
-
-    /////////////////////////////////////////////////////////////
-    //  Reflection-based insertion of values into target objects
-    //  once deserialization is complete.
-    //
-    public interface Target {
-        public void set(Object value) throws SAXException;
-
-    }
-
-    public static class FieldTarget implements Target {
-        private Object targetObject;
-        private Field targetField;
-
-        public FieldTarget(Object targetObject, Field targetField)
-        {
-            this.targetObject = targetObject;
-            this.targetField = targetField;
-        }
-        
-        public FieldTarget(Object targetObject, String fieldName)
-            throws NoSuchFieldException
-        {
-            Class cls = targetObject.getClass();
-            targetField = cls.getField(fieldName);
-            this.targetObject = targetObject;
-        }
-
-        public void set(Object value) throws SAXException {
-            try {
-                targetField.set(targetObject, value);
-            } catch (IllegalAccessException accEx) {
-                accEx.printStackTrace();
-                throw new SAXException(accEx);
-            } catch (IllegalArgumentException argEx) {
-                argEx.printStackTrace();
-                throw new SAXException(argEx);
-            }
-        }
-    }
-    
-    public static class MethodTarget implements Target {
-        private Object targetObject;
-        private Method targetMethod;
-        private static final Class [] objArg = new Class [] { Object.class };
-
-        public MethodTarget(Object targetObject, String methodName)
-            throws NoSuchMethodException
-        {
-            this.targetObject = targetObject;
-            Class cls = targetObject.getClass();
-            targetMethod = cls.getMethod(methodName, objArg);
-        }
-        
-        public void set(Object value) throws SAXException {
-            try {
-                targetMethod.invoke(targetObject, new Object [] { value });
-            } catch (IllegalAccessException accEx) {
-                accEx.printStackTrace();
-                throw new SAXException(accEx);
-            } catch (IllegalArgumentException argEx) {
-                argEx.printStackTrace();
-                throw new SAXException(argEx);
-            } catch (InvocationTargetException targetEx) {
-                targetEx.printStackTrace();
-                throw new SAXException(targetEx);
-            }
-        }
-    }
-
-    class CallbackTarget implements Target {
-        public ValueReceiver target;
-        public Object hint;
-        CallbackTarget(ValueReceiver target, Object hint)
-        {
-            this.target = target;
-            this.hint = hint;
-        }
-        
-        public void set(Object value) throws SAXException {
-            target.valueReady(value, hint);
-        }
-    }
-
-    public void registerCallback(ValueReceiver target, Object hint)
-    {
-        if (target == null)
-            return;
-        
-        registerValueTarget(new CallbackTarget(target, hint));
-    }
-    
-
-    public void registerValueTarget(Target target)
-    {
-        if (targets == null)
-            targets = new Vector();
-        
-        targets.addElement(target);
-    }
-    
-    public void registerValueTarget(Object target, String fieldName)
-        throws NoSuchFieldException
-    {
-        registerValueTarget(new FieldTarget(target, fieldName));
-    }
-    
-    /** Add someone else's targets to our own (see DeserializationContext)
-     * 
-     */
-    public void copyValueTargets(Deserializer other)
-    {
-        if ((other == null) || (other.targets == null))
-            return;
-        
-        if (targets == null)
-            targets = new Vector();
-        
-        Enumeration e = other.targets.elements();
-        while (e.hasMoreElements()) {
-            targets.addElement(e.nextElement());
-        }
-    }
+ * The DeserializerImpl provides a lot of the default behavior including the
+ * support for id/href.  So you may want to try extending it as opposed to
+ * extending SoapHandler.
+ *
+ * An Axis compliant Deserializer must provide one or more 
+ * of the following methods:
+ *
+ * public <constructor>(Class javaType, QName xmlType)
+ * public <constructor>()
+ *
+ * This will allow for construction of generic factories that introspect the class 
+ * to determine how to construct a deserializer.
+ * The xmlType, javaType arguments are filled in with the values known by the factory. 
+g */
+public interface Deserializer extends javax.xml.rpc.encoding.Deserializer, Callback {
     
     /** 
-     * Store the value into the target
+     * Get the deserialized value.
+     * @return Object representing deserialized value or null
      */
-    public void valueComplete() throws SAXException
-    {
-        if (componentsReady()) {            
-            if (targets != null) {
-                Enumeration e = targets.elements();
-                while (e.hasMoreElements()) {
-                    Target target = (Target)e.nextElement();
-                    target.set(value);
-                    if (category.isDebugEnabled()) {
-                        category.debug(JavaUtils.getMessage("setValueInTarget00",
-                                                            "" + value, "" + target));
-                    }
-                }
-            }
-        }
-    }
-    
-    private int startIdx = 0;
-    private int endIdx = -1;
-    protected boolean isHref = false;
-    protected boolean isNil  = false;  // xsd:nil attribute is set to true
-    protected String id = null;  // Set to the id of the element
-    
-    /** Subclasses override this
+    public Object getValue();
+
+    /** 
+     * Set the deserialized value.
+     * @param Object representing deserialized value
+     */
+    public void setValue(Object value);
+
+    /** 
+     * If the deserializer has component values (like ArrayDeserializer)
+     * this method gets the specific component via the hint.
+     * The default implementation returns null.
+     * @return Object representing deserialized value or null
+     */
+    public Object getValue(Object hint);
+
+    /** 
+     * If the deserializer has component values (like ArrayDeserializer)
+     * this method sets the specific component via the hint.
+     * The default implementation does nothing.
+     * @param Object representing deserialized value or null
+     */
+    public void setValue(Object value, Object hint) throws SAXException;
+
+    /**
+     * For deserializers of non-primitives, the value may not be
+     * known until later (due to multi-referencing).  In such
+     * cases the deserializer registers Target object(s).  When
+     * the value is known, the set(value) will be invoked for
+     * each Target registered with the Deserializer.  The Target
+     * object abstracts the function of setting a target with a
+     * value.  See the Target interface for more info.
+     * @param Target
+     */
+    public void registerValueTarget(Target target);
+
+    /**
+     * Get the Value Targets of the Deserializer.
+     * @return Vector of Target objects or null
+     */
+    public Vector getValueTargets();
+
+   /**
+     * Add someone else's targets to our own (see DeserializationContext)
+     *
+     * The DeserializationContext only allows one Deserializer to  
+     * wait for a unknown multi-ref'ed value.  So to ensure
+     * that all of the targets are updated, this method is invoked
+     * to copy the Target objects to the waiting Deserializer.
+     * @param other is the Deserializer to copy targets from.
+     */
+    public void copyValueTargets(Deserializer other);
+
+    /**
+     * Some deserializers (ArrayDeserializer) require
+     * all of the component values to be known before the
+     * value is complete.
+     * (For the ArrayDeserializer this is important because
+     * the elements are stored in an ArrayList, and all values
+     * must be known before the ArrayList is converted into the
+     * expected array.
+     *
+     * This routine is used to indicate when the components are ready.
+     * The default (true) is useful for most Deserializers.
+     */
+    public boolean componentsReady();
+
+    /** 
+     * The valueComplete() method is invoked when the
+     * end tag of the element is read.  This results
+     * in the setting of all registered Targets (see
+     * registerValueTarget).
+     * Note that the valueComplete() only processes
+     * the Targets if componentReady() returns true.
+     * So if you override componentReady(), then your
+     * specific Deserializer will need to call valueComplete()
+     * when your components are ready (See ArrayDeserializer)
+     */
+    public void valueComplete() throws SAXException;
+
+
+    /**
+     * The following are the SAX specific methods.
+     * DeserializationImpl provides default behaviour, which
+     * in most cases is appropriate.
+     */
+
+    /**
+     * This method is invoked when an element start tag is encountered.
+     * DeserializerImpl provides default behavior, which involves the following:
+     *   - directly handling the deserialization of a nill value
+     *   - handling the registration of the id value.
+     *   - handling the registration of a fixup if this element is an href.
+     *   - calling onStartElement to do the actual deserialization if not nill or href cases.
+     * @param namespace is the namespace of the element
+     * @param localName is the name of the element
+     * @param qName is the prefixed qName of the element
+     * @param attributes are the attributes on the element...used to get the type
+     * @param context is the DeserializationContext
+     *
+     * Normally a specific Deserializer (FooDeserializer) should extend DeserializerImpl.
+     * Here is the flow that will occur in such cases:
+     *   1) DeserializerImpl.startElement(...) will be called and do the id/href/nill stuff.
+     *   2) If real deserialization needs to take place DeserializerImpl.onStartElement will be
+     *      invoked, which will attempt to install the specific Deserializer (FooDeserializer)
+     *   3) The FooDeserializer.startElement(...) will be called to do the Foo specific stuff.
+     *      This results in a call to FooDeserializer.onStartElement(...) if startElement was
+     *      not overridden.
+     *   4) The onChildElement(...) method is called for each child element.  Nothing occurs
+     *      if not overridden.  The FooDeserializer.onStartChild(...) method should return 
+     *      the deserializer for the child element.
+     *   5) When the end tag is reached, the endElement(..) method is invoked.  The default 
+     *      behavior is to handle hrefs/ids, call onEndElement and then call the Deserializer
+     *      valueComplete method.
+     * 
+     * So the methods that you potentially want to override are:
+     *   onStartElement, onStartChild, componentsReady, set(object, hint)
+     *
+     * You probably should not override startElement or endElement.
+     * If you need specific behaviour at the end of the element consider overriding
+     * onEndElement.
+     *
+     * See the pre-existing Deserializers for more information.
+     */
+    public void startElement(String namespace, String localName,
+                             String qName, Attributes attributes,
+                             DeserializationContext context)
+        throws SAXException;
+       
+    /**
+     * This method is invoked after startElement when the element requires
+     * deserialization (i.e. the element is not an href and the value is not nil.)
+     * DeserializerImpl provides default behavior, which simply
+     * involves obtaining a correct Deserializer and plugging its handler.
+     * @param namespace is the namespace of the element
+     * @param localName is the name of the element
+     * @param qName is the prefixed qname of the element
+     * @param attributes are the attributes on the element...used to get the type
+     * @param context is the DeserializationContext
      */
     public void onStartElement(String namespace, String localName,
                              String qName, Attributes attributes,
                              DeserializationContext context)
-        throws SAXException
-    {
-        // If I'm the base class, try replacing myself with an
-        // appropriate deserializer gleaned from type info.
-        if (this.getClass().equals(Deserializer.class)) {
-            QName type = context.getTypeFromAttributes(namespace,
-                                                       localName,
-                                                       attributes);
-            
-            if (category.isDebugEnabled()) {
-                category.debug(JavaUtils.getMessage("gotType00", "Deser", "" + type));
-            }
-            
-            // We know we're deserializing, and we can't seem to figure
-            // out a type... so let's give them a string.
-            // ??? Is this the right thing to do?
-            if (type != null) {
-                Deserializer dser = 
-                                   context.getTypeMappingRegistry().getDeserializer(type);
-                if (dser != null) {
-                    dser.copyValueTargets(this);
-                    context.replaceElementHandler(dser);
-                    // And don't forget to give it the start event...
-                    dser.startElement(namespace, localName, qName,
-                                      attributes, context);
-                }
-            } else {
-                startIdx = context.getCurrentRecordPos();
-            }
-        }
-    }
-    
+        throws SAXException;
+
+    /**
+     * onStartChild is called on each child element.
+     * The default behavior supplied by DeserializationImpl is to do nothing.
+     * A specific deserializer may perform other tasks.  For example a 
+     * BeanDeserializer will construct a deserializer for the indicated 
+     * property and return it.
+     * @param namespace is the namespace of the child element
+     * @param localName is the local name of the child element
+     * @param prefix is the prefix used on the name of the child element
+     * @param attributes are the attributes of the child element
+     * @param context is the deserialization context.
+     * @return is a Deserializer to use to deserialize a child (must be
+     * a derived class of SOAPHandler) or null if no deserialization should
+     * be performed.
+     */
     public SOAPHandler onStartChild(String namespace, String localName,
                              String prefix, Attributes attributes,
                              DeserializationContext context)
-        throws SAXException
-    {
-        return null;
-    }
-    
-    public void startElement(String namespace, String localName,
-                             String qName, Attributes attributes,
-                             DeserializationContext context)
-        throws SAXException
-    {
-        // If the xsi:nil attribute, set the value to null and return since
-        // there is nothing to deserialize.
-        String nil = null;
-        for (int i = 0; i < Constants.URIS_SCHEMA_XSI.length && nil == null; i++)
-            nil = attributes.getValue(Constants.URIS_SCHEMA_XSI[i], "nil");
-        if (nil != null && nil.equals("true")) {
-          value = null;
-          isNil = true;
-          return;
-        }
+        throws SAXException;
 
-        // If this element has an id, then associate the value with the id.
-        // (Prior to this association, the MessageElement of the element is
-        // associated with the id. Failure to replace the MessageElement at this
-        // point will cause an infinite loop during deserialization if the 
-        // current element contains child elements that cause an href back to this id.)
-        // Also note that that endElement() method is responsible for the final
-        // assoication of this id with the completed value.
-        id = attributes.getValue("id");
-        if (id != null) {
-            context.addObjectById(id, value);
-            if (category.isDebugEnabled()) {
-                category.debug(JavaUtils.getMessage("deserInitPutValueDebug00", "" + value, id));
-            }     
-        }
+    /** 
+     * endElement is called when the end element tag is reached.
+     * It handles href/id information for multi-ref processing
+     * and invokes the valueComplete() method of the deserializer
+     * which sets the targets with the deserialized value.
+     * @param namespace is the namespace of the child element
+     * @param localName is the local name of the child element
+     * @param context is the deserialization context
+     */
+    public void endElement(String namespace, String localName,
+                           DeserializationContext context)
+        throws SAXException;
 
-        String href = attributes.getValue("href");
-        if (href != null) {
-            isHref = true;
-
-            Object ref = context.getObjectByRef(href);            
-            if (category.isDebugEnabled()) {
-                category.debug(JavaUtils.getMessage(
-                        "gotForID00",
-                        new String[] {"" + ref, href, "" + ref.getClass()}));
-            }
-            
-            if (ref == null) {
-                // Nothing yet... register for later interest.
-                context.registerFixup(href, this);
-            }
-            
-            if (ref instanceof MessageElement) {
-                context.replaceElementHandler(new EnvelopeHandler(this));
-
-                SAX2EventRecorder r = context.recorder;
-                context.recorder = null;
-                ((MessageElement)ref).publishToHandler(context);
-                context.recorder = r;
-            } else {
-                // If the ref is not a MessageElement, then it must be an
-                // element that has already been deserialized.  Use it directly.
-                value = ref;
-                valueComplete();
-            }
-            
-            // !!! INSERT DEALING WITH ATTACHMENTS STUFF HERE?
-        } else {
-            isHref = false;
-            onStartElement(namespace, localName, qName, attributes,
-                           context);
-        }
-    }
-    
-    /**
-     * Subclasses override this to do custom functionality at the
-     * end of their enclosing element.  This will NOT be called
-     * for HREFs...
-     * 
+   /**
+     * onEndElement is called by endElement.  It is not called
+     * if the element has an href.
+     * @param namespace is the namespace of the child element
+     * @param localName is the local name of the child element
+     * @param context is the deserialization context
      */
     public void onEndElement(String namespace, String localName,
                            DeserializationContext context)
-        throws SAXException
-    {
-        // If we only have SAX events, but someone really wanted a
-        // value, try sending them the contents of this element
-        // as a String...
-        // ??? Is this the right thing to do here?
-        
-        if (this.getClass().equals(Deserializer.class) &&
-            targets != null &&
-            !targets.isEmpty()) {
-            endIdx = context.getCurrentRecordPos();
-            
-            StringWriter writer = new StringWriter();
-            SerializationContext serContext = 
-                        new SerializationContext(writer,
-                                                 context.getMessageContext());
-            serContext.setSendDecl(false);
-            SAXOutputter so = new SAXOutputter(serContext);
-            context.curElement.publishContents(so);
-            
-            value = writer.getBuffer().toString();
-        }
-    }
-    
-    public final void endElement(String namespace, String localName,
-                           DeserializationContext context)
-        throws SAXException
-    {
+        throws SAXException;
 
-        isEnded = true;
-        if (!isHref) {
-            onEndElement(namespace, localName, context);
-        }
-        
-        // Time to call valueComplete to copy the value to 
-        // the targets.  First a call is made to componentsReady
-        // to ensure that all components are ready.
-
-        if (componentsReady())
-            valueComplete();
-
-        // If this element has an id, then associate the value with the id.
-        // Subsequent hrefs to the id will obtain the value directly.
-        // This is necessary for proper multi-reference deserialization.
-        if (id != null) {
-            context.addObjectById(id, value);
-            if (category.isDebugEnabled()) {
-                category.debug(JavaUtils.getMessage("deserPutValueDebug00", "" + value, id));
-            }     
-        }
-    }
-
-    /**
-     * Return whether components are ready. 
-     * Use the default componentsReady if the  
-     * Deserializer value is used directly.  For arrays,
-     * componentsReady is overridden (since the
-     * ArraySerializer value is an ArrayList which will
-     * be converted into an actual array).  
-     * If componentsReady is overridden, the
-     * actual Deserializer is responsible for calling valueComplete
-     * when the value is ready.
-     */
-    protected boolean componentsReady() {
-        return true; 
-    }
 }
+
+

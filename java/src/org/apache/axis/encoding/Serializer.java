@@ -10,7 +10,7 @@
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer. 
+ *    notice, this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
@@ -18,7 +18,7 @@
  *    distribution.
  *
  * 3. The end-user documentation included with the redistribution,
- *    if any, must include the following acknowledgment:  
+ *    if any, must include the following acknowledgment:
  *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowledgment may appear in the software itself,
@@ -26,7 +26,7 @@
  *
  * 4. The names "Axis" and "Apache Software Foundation" must
  *    not be used to endorse or promote products derived from this
- *    software without prior written permission. For written 
+ *    software without prior written permission. For written
  *    permission, please contact apache@apache.org.
  *
  * 5. Products derived from this software may not be called "Apache",
@@ -53,21 +53,38 @@
  * <http://www.apache.org/>.
  */
 
+
 package org.apache.axis.encoding;
 
-//import org.apache.axis.message.Message;
-//import org.apache.axis.message.MessageElement;
-//import org.apache.axis.utils.NSStack;
 import org.xml.sax.Attributes;
 
 import javax.xml.rpc.namespace.QName;
 import java.io.IOException;
 
 /**
- * @author James Snell (jasnell@us.ibm.com)
+ * This interface describes the AXIS Serializer.
+ * An Axis compliant Serializer must provide one or more 
+ * of the following methods:
+ *
+ * public <constructor>(Class javaType, QName xmlType)
+ * public <constructor>()
+ *
+ * This will allow for construction of generic factories that introspect the class 
+ * to determine how to construct a deserializer.
+ * The xmlType, javaType arguments are filled in with the values known by the factory. 
  */
-public interface Serializer extends java.io.Serializable { 
+public interface Serializer extends javax.xml.rpc.encoding.Serializer {
+    /**
+     * Serialize an element named name, with the indicated attributes 
+     * and value.  
+     * @param name is the element name
+     * @param attributes are the attributes...serialize is free to add more.
+     * @param value is the value
+     * @param context is the SerializationContext
+     */
     public void serialize(QName name, Attributes attributes,
                           Object value, SerializationContext context)
         throws IOException;
 }
+
+

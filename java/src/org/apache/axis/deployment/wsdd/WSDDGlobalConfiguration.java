@@ -55,6 +55,7 @@
 package org.apache.axis.deployment.wsdd;
 
 import org.apache.axis.Handler;
+import org.apache.axis.EngineConfiguration;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.deployment.DeploymentRegistry;
@@ -192,7 +193,7 @@ public class WSDDGlobalConfiguration
      * @param registry XXX
      * @return XXX
      */
-    public Handler makeNewInstance(DeploymentRegistry registry)
+    public Handler makeNewInstance(EngineConfiguration registry)
     {
         return null;
     }
