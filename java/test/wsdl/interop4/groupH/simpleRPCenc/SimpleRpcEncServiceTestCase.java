@@ -9,16 +9,34 @@
 
 package test.wsdl.interop4.groupH.simpleRPCenc;
 
+import java.net.URL;
+
 public class SimpleRpcEncServiceTestCase extends junit.framework.TestCase {
-    public SimpleRpcEncServiceTestCase(java.lang.String name) {
+    
+    public static URL url = null;
+    
+    public static void main(String[] args) throws Exception {
+        if (args.length == 1) {
+            url = new URL(args[0]);
+        } else {
+            url = new URL(new SimpleRpcEncServiceLocator().getSimpleRpcEncPortAddress());
+        }
+        junit.textui.TestRunner.run(new junit.framework.TestSuite(SimpleRpcEncServiceTestCase.class));
+    } // main
+    
+    
+    public SimpleRpcEncServiceTestCase(java.lang.String name) throws Exception {
         super(name);
+        if (url == null) {
+            url = new URL(new SimpleRpcEncServiceLocator().getSimpleRpcEncPortAddress());
+        }
     }
     
     
     public void test1SimpleRpcEncPortEchoEmptyFault() throws Exception {
         SimpleRpcEncPortType binding;
         try {
-            binding = new SimpleRpcEncServiceLocator().getSimpleRpcEncPort();
+            binding = new SimpleRpcEncServiceLocator().getSimpleRpcEncPort(url);
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -43,7 +61,7 @@ public class SimpleRpcEncServiceTestCase extends junit.framework.TestCase {
     public void test2SimpleRpcEncPortEchoStringFault() throws Exception {
         SimpleRpcEncPortType binding;
         try {
-            binding = new SimpleRpcEncServiceLocator().getSimpleRpcEncPort();
+            binding = new SimpleRpcEncServiceLocator().getSimpleRpcEncPort(url);
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -66,7 +84,7 @@ public class SimpleRpcEncServiceTestCase extends junit.framework.TestCase {
     public void test3SimpleRpcEncPortEchoIntArrayFault() throws Exception {
         SimpleRpcEncPortType binding;
         try {
-            binding = new SimpleRpcEncServiceLocator().getSimpleRpcEncPort();
+            binding = new SimpleRpcEncServiceLocator().getSimpleRpcEncPort(url);
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -94,7 +112,7 @@ public class SimpleRpcEncServiceTestCase extends junit.framework.TestCase {
     public void test4SimpleRpcEncPortEchoMultipleFaults1() throws Exception {
         SimpleRpcEncPortType binding;
         try {
-            binding = new SimpleRpcEncServiceLocator().getSimpleRpcEncPort();
+            binding = new SimpleRpcEncServiceLocator().getSimpleRpcEncPort(url);
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -135,7 +153,7 @@ public class SimpleRpcEncServiceTestCase extends junit.framework.TestCase {
     public void test5SimpleRpcEncPortEchoMultipleFaults2() throws Exception {
         SimpleRpcEncPortType binding;
         try {
-            binding = new SimpleRpcEncServiceLocator().getSimpleRpcEncPort();
+            binding = new SimpleRpcEncServiceLocator().getSimpleRpcEncPort(url);
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -178,7 +196,7 @@ public class SimpleRpcEncServiceTestCase extends junit.framework.TestCase {
     public void test6SimpleRpcEncPortEchoMultipleFaults3() throws Exception {
         SimpleRpcEncPortType binding;
         try {
-            binding = new SimpleRpcEncServiceLocator().getSimpleRpcEncPort();
+            binding = new SimpleRpcEncServiceLocator().getSimpleRpcEncPort(url);
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -212,7 +230,7 @@ public class SimpleRpcEncServiceTestCase extends junit.framework.TestCase {
     public void test7SimpleRpcEncPortEchoMultipleFaults4() throws Exception {
         SimpleRpcEncPortType binding;
         try {
-            binding = new SimpleRpcEncServiceLocator().getSimpleRpcEncPort();
+            binding = new SimpleRpcEncServiceLocator().getSimpleRpcEncPort(url);
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
