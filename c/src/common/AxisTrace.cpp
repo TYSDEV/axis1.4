@@ -65,8 +65,6 @@
 #include <axis/common/AxisUtils.h>
 #include <axis/common/GDefine.h>
 #include <axis/common/AxisConfig.h>
-#include <fcntl.h>
-#include <unistd.h>
 
 
 extern AxisConfig* g_pConfig;

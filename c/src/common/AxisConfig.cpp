@@ -148,9 +148,15 @@ int AxisConfig::ReadConfFile()
         sscanf(m_sLine,"%s", key);
         
         if(strcmp(key, "WSDDFILEPATH") == 0)
+        {
             strncpy(m_sWsddFilePath, m_sValue + 1, linesize  - strlen(key) - 2);
+            m_sWsddFilePath[linesize  - strlen(key) - 2] = '\0';
+        }
         if(strcmp(key, "AXISLOGPATH") == 0)
+        {
             strncpy(m_sAxisLogPath, m_sValue + 1, linesize  - strlen(key) - 2);
+            m_sAxisLogPath[linesize  - strlen(key) - 2] = '\0';
+        }
          
     }
     
