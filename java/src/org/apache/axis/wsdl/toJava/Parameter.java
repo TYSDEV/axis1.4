@@ -54,6 +54,7 @@
  */
 package org.apache.axis.wsdl.toJava;
 
+import javax.wsdl.QName;
 import java.util.Vector;
 
 /**
@@ -66,12 +67,28 @@ public class Parameter {
     public static final byte OUT = 2;
     public static final byte INOUT = 3;
 
-    public String name;
+    private QName name;
     public TypeEntry type;
     public byte mode = IN;
 
     public String toString() {
-        return "(" + type + ", " + name + ", "
+        return "(" + type + ", " + getName() + ", "
                 + (mode == IN ? "IN)" : mode == INOUT ? "INOUT)" : "OUT)");
     } // toString
+
+    public QName getQName() {
+        return name;
+    }
+
+    public String getName() {
+        return name.getLocalPart();
+    }
+
+    public void setName(String name) {
+        this.name = new QName("", name);
+    }
+
+    public void setQName(QName name) {
+        this.name = name;
+    }
 } // class Parameter
