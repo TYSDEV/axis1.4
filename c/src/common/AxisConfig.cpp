@@ -121,7 +121,7 @@ int AxisConfig::ReadConfFile()
 		 */
 		AxisUtils::clearArray(value, CONFBUFFSIZE);
 
-        while(line[k] != '\n')
+        while((line[k] != '\n') && (line[k]!='\0'))
         {
             value[j]=line[k];
             k += 1;
