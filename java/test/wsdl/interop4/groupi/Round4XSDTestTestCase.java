@@ -10,15 +10,32 @@ package test.wsdl.interop4.groupi;
 import java.util.Arrays;
 import java.util.TimeZone;
 import java.util.Calendar;
+import java.net.URL;
 
 public class Round4XSDTestTestCase extends junit.framework.TestCase {
-    public Round4XSDTestTestCase(java.lang.String name) {
+    
+    public static URL url = null;
+    
+    public static void main(String[] args) throws Exception {
+        if (args.length == 1) {
+            url = new URL(args[0]);
+        } else {
+            url = new URL(new test.wsdl.interop4.groupi.Round4XSDTestLocator().getRound4XSDTestSoapAddress());
+        }
+        junit.textui.TestRunner.run(new junit.framework.TestSuite(Round4XSDTestTestCase.class));
+    } // main
+    
+    
+    public Round4XSDTestTestCase(java.lang.String name) throws Exception {
         super(name);
+        if (url == null) {
+            url = new URL(new test.wsdl.interop4.groupi.Round4XSDTestLocator().getRound4XSDTestSoapAddress());
+        }
     }
     public void test1Round4XSDTestSoapEchoVoid() {
         test.wsdl.interop4.groupi.Round4XSDTestSoap binding;
         try {
-            binding = new test.wsdl.interop4.groupi.Round4XSDTestLocator().getRound4XSDTestSoap();
+            binding = new test.wsdl.interop4.groupi.Round4XSDTestLocator().getRound4XSDTestSoap(url);
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -38,7 +55,7 @@ public class Round4XSDTestTestCase extends junit.framework.TestCase {
     public void test2Round4XSDTestSoapEchoInteger() {
         test.wsdl.interop4.groupi.Round4XSDTestSoap binding;
         try {
-            binding = new test.wsdl.interop4.groupi.Round4XSDTestLocator().getRound4XSDTestSoap();
+            binding = new test.wsdl.interop4.groupi.Round4XSDTestLocator().getRound4XSDTestSoap(url);
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -59,7 +76,7 @@ public class Round4XSDTestTestCase extends junit.framework.TestCase {
     public void test3Round4XSDTestSoapEchoFloat() {
         test.wsdl.interop4.groupi.Round4XSDTestSoap binding;
         try {
-            binding = new test.wsdl.interop4.groupi.Round4XSDTestLocator().getRound4XSDTestSoap();
+            binding = new test.wsdl.interop4.groupi.Round4XSDTestLocator().getRound4XSDTestSoap(url);
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -70,7 +87,7 @@ public class Round4XSDTestTestCase extends junit.framework.TestCase {
 
         try {
             float value = binding.echoFloat(1500);
-            assertTrue(value == 1500);
+            assertEquals(1500, value, 0.001F);
         }
         catch (java.rmi.RemoteException re) {
             throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re);
@@ -80,7 +97,7 @@ public class Round4XSDTestTestCase extends junit.framework.TestCase {
     public void test4Round4XSDTestSoapEchoString() {
         test.wsdl.interop4.groupi.Round4XSDTestSoap binding;
         try {
-            binding = new test.wsdl.interop4.groupi.Round4XSDTestLocator().getRound4XSDTestSoap();
+            binding = new test.wsdl.interop4.groupi.Round4XSDTestLocator().getRound4XSDTestSoap(url);
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -92,7 +109,7 @@ public class Round4XSDTestTestCase extends junit.framework.TestCase {
         try {
             java.lang.String value = null;
             value = binding.echoString(new java.lang.String("Hello World"));
-            assertEquals(value,"Hello World");
+            assertEquals("Hello World", value);
         }
         catch (java.rmi.RemoteException re) {
             throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re);
@@ -102,7 +119,7 @@ public class Round4XSDTestTestCase extends junit.framework.TestCase {
     public void test5Round4XSDTestSoapEchoBase64() {
         test.wsdl.interop4.groupi.Round4XSDTestSoap binding;
         try {
-            binding = new test.wsdl.interop4.groupi.Round4XSDTestLocator().getRound4XSDTestSoap();
+            binding = new test.wsdl.interop4.groupi.Round4XSDTestLocator().getRound4XSDTestSoap(url);
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -115,7 +132,7 @@ public class Round4XSDTestTestCase extends junit.framework.TestCase {
             byte[] input = new byte[] {0xC, 0xA, 0xF, 0xE, 0xB, 0xA, 0xB, 0xE};
             byte[] value = null;
             value = binding.echoBase64(input);
-            assertTrue(Arrays.equals(input, value));
+            assertTrue("Array values do not match", Arrays.equals(input, value));
         }
         catch (java.rmi.RemoteException re) {
             throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re);
@@ -125,7 +142,7 @@ public class Round4XSDTestTestCase extends junit.framework.TestCase {
     public void test6Round4XSDTestSoapEchoDate() {
         test.wsdl.interop4.groupi.Round4XSDTestSoap binding;
         try {
-            binding = new test.wsdl.interop4.groupi.Round4XSDTestLocator().getRound4XSDTestSoap();
+            binding = new test.wsdl.interop4.groupi.Round4XSDTestLocator().getRound4XSDTestSoap(url);
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -140,7 +157,7 @@ public class Round4XSDTestTestCase extends junit.framework.TestCase {
             java.util.Calendar value = null;
             value = binding.echoDate(input);
             value.setTimeZone(TimeZone.getTimeZone("GMT"));
-            assertTrue(input.equals(value));
+            assertEquals(input, value);
         }
         catch (java.rmi.RemoteException re) {
             throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re);
@@ -150,7 +167,7 @@ public class Round4XSDTestTestCase extends junit.framework.TestCase {
     public void test7Round4XSDTestSoapEchoComplexType() {
         test.wsdl.interop4.groupi.Round4XSDTestSoap binding;
         try {
-            binding = new test.wsdl.interop4.groupi.Round4XSDTestLocator().getRound4XSDTestSoap();
+            binding = new test.wsdl.interop4.groupi.Round4XSDTestLocator().getRound4XSDTestSoap(url);
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -165,7 +182,7 @@ public class Round4XSDTestTestCase extends junit.framework.TestCase {
             input.setVarInt(2048);
             input.setVarString("Hello World");
             test.wsdl.interop4.groupi.xsd.SOAPComplexType value = binding.echoComplexType(input);
-            assertTrue(input.equals(value));
+            assertEquals(input, value);
         }
         catch (java.rmi.RemoteException re) {
             throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re);
@@ -175,7 +192,7 @@ public class Round4XSDTestTestCase extends junit.framework.TestCase {
     public void test8Round4XSDTestSoapEchoIntegerMultiOccurs() {
         test.wsdl.interop4.groupi.Round4XSDTestSoap binding;
         try {
-            binding = new test.wsdl.interop4.groupi.Round4XSDTestLocator().getRound4XSDTestSoap();
+            binding = new test.wsdl.interop4.groupi.Round4XSDTestLocator().getRound4XSDTestSoap(url);
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -193,7 +210,7 @@ public class Round4XSDTestTestCase extends junit.framework.TestCase {
             input.set_int(input2);
             int[] value = null;
             value = binding.echoIntegerMultiOccurs(input);
-            assertTrue(Arrays.equals(input2, value));
+            assertTrue("Array values don't match", Arrays.equals(input2, value));
         }
         catch (java.rmi.RemoteException re) {
             throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re);
@@ -203,7 +220,7 @@ public class Round4XSDTestTestCase extends junit.framework.TestCase {
     public void test9Round4XSDTestSoapEchoFloatMultiOccurs() {
         test.wsdl.interop4.groupi.Round4XSDTestSoap binding;
         try {
-            binding = new test.wsdl.interop4.groupi.Round4XSDTestLocator().getRound4XSDTestSoap();
+            binding = new test.wsdl.interop4.groupi.Round4XSDTestLocator().getRound4XSDTestSoap(url);
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -221,7 +238,7 @@ public class Round4XSDTestTestCase extends junit.framework.TestCase {
             input.set_float(input2);
             float[] value = null;
             value = binding.echoFloatMultiOccurs(input);
-            assertTrue(Arrays.equals(input2, value));
+            assertTrue("Array values don't match", Arrays.equals(input2, value));
         }
         catch (java.rmi.RemoteException re) {
             throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re);
@@ -231,7 +248,7 @@ public class Round4XSDTestTestCase extends junit.framework.TestCase {
     public void test10Round4XSDTestSoapEchoStringMultiOccurs() {
         test.wsdl.interop4.groupi.Round4XSDTestSoap binding;
         try {
-            binding = new test.wsdl.interop4.groupi.Round4XSDTestLocator().getRound4XSDTestSoap();
+            binding = new test.wsdl.interop4.groupi.Round4XSDTestLocator().getRound4XSDTestSoap(url);
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -249,7 +266,7 @@ public class Round4XSDTestTestCase extends junit.framework.TestCase {
             input.setString(input2);
             java.lang.String[] value = null;
             value = binding.echoStringMultiOccurs(input);
-            assertTrue(Arrays.equals(input2, value));
+            assertTrue("Array values don't match", Arrays.equals(input2, value));
         }
         catch (java.rmi.RemoteException re) {
             throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re);
@@ -259,7 +276,7 @@ public class Round4XSDTestTestCase extends junit.framework.TestCase {
     public void test11Round4XSDTestSoapEchoComplexTypeMultiOccurs() {
         test.wsdl.interop4.groupi.Round4XSDTestSoap binding;
         try {
-            binding = new test.wsdl.interop4.groupi.Round4XSDTestLocator().getRound4XSDTestSoap();
+            binding = new test.wsdl.interop4.groupi.Round4XSDTestLocator().getRound4XSDTestSoap(url);
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -278,7 +295,7 @@ public class Round4XSDTestTestCase extends junit.framework.TestCase {
             input.setSOAPComplexType(0,input2);
             test.wsdl.interop4.groupi.xsd.SOAPComplexType[] value = null;
             value = binding.echoComplexTypeMultiOccurs(input);
-            assertTrue(Arrays.equals(input.getSOAPComplexType(), value));
+            assertTrue("Array values don't match", Arrays.equals(input.getSOAPComplexType(), value));
         }
         catch (java.rmi.RemoteException re) {
             throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re);
@@ -288,7 +305,7 @@ public class Round4XSDTestTestCase extends junit.framework.TestCase {
     public void test12Round4XSDTestSoapEchoDecimal() {
         test.wsdl.interop4.groupi.Round4XSDTestSoap binding;
         try {
-            binding = new test.wsdl.interop4.groupi.Round4XSDTestLocator().getRound4XSDTestSoap();
+            binding = new test.wsdl.interop4.groupi.Round4XSDTestLocator().getRound4XSDTestSoap(url);
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -301,7 +318,7 @@ public class Round4XSDTestTestCase extends junit.framework.TestCase {
             java.math.BigDecimal input = new java.math.BigDecimal(512);
             java.math.BigDecimal value = null;
             value = binding.echoDecimal(input);
-            assertTrue(value.equals(input));
+            assertEquals(input, value);
         }
         catch (java.rmi.RemoteException re) {
             throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re);
@@ -311,7 +328,7 @@ public class Round4XSDTestTestCase extends junit.framework.TestCase {
     public void test13Round4XSDTestSoapEchoBoolean() {
         test.wsdl.interop4.groupi.Round4XSDTestSoap binding;
         try {
-            binding = new test.wsdl.interop4.groupi.Round4XSDTestLocator().getRound4XSDTestSoap();
+            binding = new test.wsdl.interop4.groupi.Round4XSDTestLocator().getRound4XSDTestSoap(url);
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -323,7 +340,7 @@ public class Round4XSDTestTestCase extends junit.framework.TestCase {
         try {
             boolean value = false;
             value = binding.echoBoolean(true);
-            assertTrue(value == true);
+            assertTrue("boolean value is not TRUE", value == true);
         }
         catch (java.rmi.RemoteException re) {
             throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re);
@@ -333,7 +350,7 @@ public class Round4XSDTestTestCase extends junit.framework.TestCase {
     public void test14Round4XSDTestSoapEchoHexBinary() {
         test.wsdl.interop4.groupi.Round4XSDTestSoap binding;
         try {
-            binding = new test.wsdl.interop4.groupi.Round4XSDTestLocator().getRound4XSDTestSoap();
+            binding = new test.wsdl.interop4.groupi.Round4XSDTestLocator().getRound4XSDTestSoap(url);
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -346,7 +363,7 @@ public class Round4XSDTestTestCase extends junit.framework.TestCase {
             byte[] input = new byte[] {0xC, 0xA, 0xF, 0xE, 0xB, 0xA, 0xB, 0xE};
             byte[] value = null;
             value = binding.echoHexBinary(input);
-            assertTrue(Arrays.equals(input, value));
+            assertTrue("Array values don't match", Arrays.equals(input, value));
         }
         catch (java.rmi.RemoteException re) {
             throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re);
@@ -356,7 +373,7 @@ public class Round4XSDTestTestCase extends junit.framework.TestCase {
     public void test15Round4XSDTestSoapEchoComplexTypeAsSimpleTypes() {
         test.wsdl.interop4.groupi.Round4XSDTestSoap binding;
         try {
-            binding = new test.wsdl.interop4.groupi.Round4XSDTestLocator().getRound4XSDTestSoap();
+            binding = new test.wsdl.interop4.groupi.Round4XSDTestLocator().getRound4XSDTestSoap(url);
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -374,9 +391,9 @@ public class Round4XSDTestTestCase extends junit.framework.TestCase {
             javax.xml.rpc.holders.IntHolder value2 = new javax.xml.rpc.holders.IntHolder();
             javax.xml.rpc.holders.FloatHolder value3 = new javax.xml.rpc.holders.FloatHolder();            
             binding.echoComplexTypeAsSimpleTypes(input, value1, value2, value3);
-            assertTrue(input.getVarString().equals(value1.value));
-            assertTrue(input.getVarInt() == value2.value);
-            assertTrue(input.getVarFloat() == value3.value);
+            assertEquals(input.getVarString(), value1.value);
+            assertEquals(input.getVarInt(), value2.value);
+            assertEquals(input.getVarFloat(), value3.value, 0.01F);
         }
         catch (java.rmi.RemoteException re) {
             throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re);
@@ -386,7 +403,7 @@ public class Round4XSDTestTestCase extends junit.framework.TestCase {
     public void test16Round4XSDTestSoapEchoSimpleTypesAsComplexType() {
         test.wsdl.interop4.groupi.Round4XSDTestSoap binding;
         try {
-            binding = new test.wsdl.interop4.groupi.Round4XSDTestLocator().getRound4XSDTestSoap();
+            binding = new test.wsdl.interop4.groupi.Round4XSDTestLocator().getRound4XSDTestSoap(url);
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -398,9 +415,9 @@ public class Round4XSDTestTestCase extends junit.framework.TestCase {
         try {
             test.wsdl.interop4.groupi.xsd.SOAPComplexType value = null;
             value = binding.echoSimpleTypesAsComplexType(new java.lang.String("Hello World"), 1024, 2048);
-            assertTrue(value.getVarString().equals("Hello World"));
-            assertTrue(value.getVarInt() == 1024);
-            assertTrue(value.getVarFloat() == 2048);
+            assertEquals(value.getVarString(), "Hello World");
+            assertEquals(value.getVarInt(), 1024);
+            assertEquals(value.getVarFloat(),  2048, 0.01F);
         }
         catch (java.rmi.RemoteException re) {
             throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re);
@@ -410,7 +427,7 @@ public class Round4XSDTestTestCase extends junit.framework.TestCase {
     public void test17Round4XSDTestSoapEchoNestedComplexType() {
         test.wsdl.interop4.groupi.Round4XSDTestSoap binding;
         try {
-            binding = new test.wsdl.interop4.groupi.Round4XSDTestLocator().getRound4XSDTestSoap();
+            binding = new test.wsdl.interop4.groupi.Round4XSDTestLocator().getRound4XSDTestSoap(url);
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -431,7 +448,7 @@ public class Round4XSDTestTestCase extends junit.framework.TestCase {
             input.setVarComplexType(input2);
             test.wsdl.interop4.groupi.xsd.SOAPComplexTypeComplexType value = null;
             value = binding.echoNestedComplexType(input);
-            assertTrue(input.equals(value));
+            assertEquals(input, value);
         }
         catch (java.rmi.RemoteException re) {
             throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re);
@@ -441,7 +458,7 @@ public class Round4XSDTestTestCase extends junit.framework.TestCase {
     public void test18Round4XSDTestSoapEchoNestedMultiOccurs() {
         test.wsdl.interop4.groupi.Round4XSDTestSoap binding;
         try {
-            binding = new test.wsdl.interop4.groupi.Round4XSDTestLocator().getRound4XSDTestSoap();
+            binding = new test.wsdl.interop4.groupi.Round4XSDTestLocator().getRound4XSDTestSoap(url);
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -460,7 +477,7 @@ public class Round4XSDTestTestCase extends junit.framework.TestCase {
             input.setVarMultiOccurs(varMultiOccurs);
             test.wsdl.interop4.groupi.xsd.SOAPMultiOccursComplexType value = null;
             value = binding.echoNestedMultiOccurs(input);
-            assertTrue(input.equals(value));
+            assertEquals(input, value);
         }
         catch (java.rmi.RemoteException re) {
             throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re);
@@ -470,7 +487,7 @@ public class Round4XSDTestTestCase extends junit.framework.TestCase {
     public void test19Round4XSDTestSoapEchoChoice() {
         test.wsdl.interop4.groupi.Round4XSDTestSoap binding;
         try {
-            binding = new test.wsdl.interop4.groupi.Round4XSDTestLocator().getRound4XSDTestSoap();
+            binding = new test.wsdl.interop4.groupi.Round4XSDTestLocator().getRound4XSDTestSoap(url);
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -486,7 +503,7 @@ public class Round4XSDTestTestCase extends junit.framework.TestCase {
             //input.setName1("World");
             test.wsdl.interop4.groupi.xsd.ChoiceComplexType value = null;
             value = binding.echoChoice(input);
-            assertTrue(input.equals(value));
+            assertEquals(input, value);
         }
         catch (java.rmi.RemoteException re) {
             throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re);
@@ -496,7 +513,7 @@ public class Round4XSDTestTestCase extends junit.framework.TestCase {
     public void test20Round4XSDTestSoapEchoEnum() {
         test.wsdl.interop4.groupi.Round4XSDTestSoap binding;
         try {
-            binding = new test.wsdl.interop4.groupi.Round4XSDTestLocator().getRound4XSDTestSoap();
+            binding = new test.wsdl.interop4.groupi.Round4XSDTestLocator().getRound4XSDTestSoap(url);
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -509,7 +526,7 @@ public class Round4XSDTestTestCase extends junit.framework.TestCase {
             test.wsdl.interop4.groupi.xsd.Enum input = test.wsdl.interop4.groupi.xsd.Enum.BitOne;
             test.wsdl.interop4.groupi.xsd.Enum value = null;
             value = binding.echoEnum(input);
-            assertTrue(input.equals(value));
+            assertEquals(input, value);
         }
         catch (java.rmi.RemoteException re) {
             throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re);
@@ -519,7 +536,7 @@ public class Round4XSDTestTestCase extends junit.framework.TestCase {
     public void test21Round4XSDTestSoapRetAnyType() {
         test.wsdl.interop4.groupi.Round4XSDTestSoap binding;
         try {
-            binding = new test.wsdl.interop4.groupi.Round4XSDTestLocator().getRound4XSDTestSoap();
+            binding = new test.wsdl.interop4.groupi.Round4XSDTestLocator().getRound4XSDTestSoap(url);
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -542,7 +559,7 @@ public class Round4XSDTestTestCase extends junit.framework.TestCase {
     public void test22Round4XSDTestSoapRetAny() {
         test.wsdl.interop4.groupi.Round4XSDTestSoap binding;
         try {
-            binding = new test.wsdl.interop4.groupi.Round4XSDTestLocator().getRound4XSDTestSoap();
+            binding = new test.wsdl.interop4.groupi.Round4XSDTestLocator().getRound4XSDTestSoap(url);
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -568,7 +585,7 @@ public class Round4XSDTestTestCase extends junit.framework.TestCase {
     public void test23Round4XSDTestSoapEchoVoidSoapHeader() {
         test.wsdl.interop4.groupi.Round4XSDTestSoap binding;
         try {
-            binding = new test.wsdl.interop4.groupi.Round4XSDTestLocator().getRound4XSDTestSoap();
+            binding = new test.wsdl.interop4.groupi.Round4XSDTestLocator().getRound4XSDTestSoap(url);
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)

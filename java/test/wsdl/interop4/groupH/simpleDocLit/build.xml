@@ -65,7 +65,7 @@ Copyright:
         
         <copy file="SimpleDocLitBindingImpl.java" overwrite="true"
             todir="${root.dir}/build/work/test/wsdl/interop4/groupH/${testname}"/>
-        <copy file="SimpleDocLitServiceTestCase.java"
+        <copy file="SimpleDocLitServiceTestCase.java" overwrite="true"
             todir="${root.dir}/build/work/test/wsdl/interop4/groupH/${testname}"/>
         
         <!-- compile the code -->
