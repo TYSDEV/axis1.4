@@ -45,7 +45,7 @@ import java.util.List;
 /**
  * This is Wsdl2java's skeleton writer.  It writes the <BindingName>Skeleton.java
  * file which contains the <bindingName>Skeleton class.
- * 
+ *
  * @author Ias (iasandcb@tmax.co.kr)
  */
 public class J2eeSkelWriter extends JavaClassWriter {
@@ -116,16 +116,13 @@ public class J2eeSkelWriter extends JavaClassWriter {
                     || type == OperationType.SOLICIT_RESPONSE) {
                 continue;
             }
-
             Parameters parameters =
                     bEntry.getParameters(bindingOper.getOperation());
-
             if (parameters != null) {
                 // The invoked java name of the bindingOper is stored.
                 String opName = bindingOper.getOperation().getName();
                 String javaOpName = Utils.xmlNameToJava(opName);
                 pw.println("        _params = new org.apache.axis.description.ParameterDesc [] {");
-
                 for (int j = 0; j < parameters.list.size(); j++) {
                     Parameter p = (Parameter) parameters.list.get(j);
                     String modeStr;
@@ -160,7 +157,6 @@ public class J2eeSkelWriter extends JavaClassWriter {
                             ", " + inHeader +
                             ", " + outHeader + "), ");
                 }
-
                 pw.println("        };");
 
                 // Get the return name QName and type
@@ -170,7 +166,6 @@ public class J2eeSkelWriter extends JavaClassWriter {
                     retName = parameters.returnParam.getQName();
                     retType = Utils.getXSIType(parameters.returnParam);
                 }
-
                 String returnStr;
                 if (retName != null) {
                     returnStr = Utils.getNewQName(retName);
@@ -179,7 +174,6 @@ public class J2eeSkelWriter extends JavaClassWriter {
                 }
                 pw.println("        _oper = new org.apache.axis.description.OperationDesc(\"" +
                         javaOpName + "\", _params, " + returnStr + ");");
-
                 if (retType != null) {
                     pw.println("        _oper.setReturnType(" +
                             Utils.getNewQName(retType) + ");");
@@ -226,7 +220,6 @@ public class J2eeSkelWriter extends JavaClassWriter {
                         }
                     }
                 }
-
                 pw.println("        _myOperationsList.add(_oper);");
                 pw.println("        if (_myOperations.get(\"" + javaOpName + "\") == null) {");
                 pw.println("            _myOperations.put(\"" + javaOpName + "\", new java.util.ArrayList());");
@@ -238,7 +231,6 @@ public class J2eeSkelWriter extends JavaClassWriter {
             if (bEntry.getFaults() != null) {
                 ArrayList faults = (ArrayList) bEntry.getFaults().get(bindingOper);
                 if (faults != null) {
-
                     // Operation was not created if there were no parameters
                     if (parameters == null) {
                         String opName = bindingOper.getOperation().getName();
@@ -410,12 +402,10 @@ public class J2eeSkelWriter extends JavaClassWriter {
             else
                 needComma = true;
             Parameter p = (Parameter) parms.list.get(i);
-
             call = call + Utils.xmlNameToJava(p.getName());
         }
         call = call + ")";
         pw.println(call + ";");
-
         if (parms.returnParam != null) {
             pw.println("        return ret;");
         }

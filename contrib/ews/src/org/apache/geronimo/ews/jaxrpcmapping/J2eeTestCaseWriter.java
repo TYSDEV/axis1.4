@@ -40,7 +40,7 @@ import java.util.Map;
 
 /**
  * This is Wsdl2java's TestCase writer.  It writes the <serviceName>TestCase.java file.
- * 
+ *
  * @author Ias (iasandcb@tmax.co.kr)
  * @deprecated no more used by J2eeGeneratorFactory
  */
@@ -80,7 +80,6 @@ public class J2eeTestCaseWriter extends JavaClassWriter {
         // get ports
         Map portMap = sEntry.getService().getPorts();
         Iterator portIterator = portMap.values().iterator();
-
         while (portIterator.hasNext()) {
             Port p = (Port) portIterator.next();
             Binding binding = p.getBinding();
@@ -103,9 +102,7 @@ public class J2eeTestCaseWriter extends JavaClassWriter {
             if (!JavaUtils.isJavaId(portName)) {
                 portName = Utils.xmlNameToJavaClass(portName);
             }
-
             PortType portType = binding.getPortType();
-
             writeComment(pw, p.getDocumentationElement(), true);
             writeServiceTestCode(pw, portName, portType, bEntry);
         }
@@ -135,14 +132,11 @@ public class J2eeTestCaseWriter extends JavaClassWriter {
                 pw.println("    " + params.signature);
                 continue;
             }
-
             String javaOpName = Utils.xmlNameToJavaClass(op.getName());
             String testMethodName = "test" + counter++ + portName + javaOpName;
             pw.println("    public void " + testMethodName + "() throws Exception {");
-
             String bindingType = bEntry.getName() + "Stub";
             writeBindingAssignment(pw, bindingType, portName);
-
             pw.println("        // Test operation");
             String indent = "";
             Map faultMap = op.getFaults();
@@ -156,7 +150,6 @@ public class J2eeTestCaseWriter extends JavaClassWriter {
                 pw.print("        " + indent);
                 pw.print(Utils.getParameterTypeName(params.returnParam));
                 pw.print(" value = ");
-
                 if (params.returnParam.getMIMEInfo() == null &&
                         Utils.isPrimitiveType(returnType)) {
                     if ("boolean".equals(returnType.getName())) {
@@ -168,27 +161,21 @@ public class J2eeTestCaseWriter extends JavaClassWriter {
                     pw.println("null;");
                 }
             }
-
             pw.print("        " + indent);
-
             if (params.returnParam != null) {
                 pw.print("value = ");
             }
-
             pw.print("binding.");
             pw.print(Utils.xmlNameToJava(op.getName()));
             pw.print("(");
-
             Iterator iparam = params.list.iterator();
             boolean isFirst = true;
-
             while (iparam.hasNext()) {
                 if (isFirst) {
                     isFirst = false;
                 } else {
                     pw.print(", ");
                 }
-
                 Parameter param = (Parameter) iparam.next();
                 String suffix = "";
 
@@ -206,17 +193,13 @@ public class J2eeTestCaseWriter extends JavaClassWriter {
                 }
                 pw.print(suffix);
             }
-
             pw.println(");");
-
             if (faultMap != null && faultMap.size() > 0) {
                 pw.println("        }");
             }
-
             if (faultMap != null) {
                 Iterator i = faultMap.values().iterator();
                 int count = 0;
-
                 while (i.hasNext()) {
                     count++;
                     Fault f = (Fault) i.next();
@@ -228,7 +211,6 @@ public class J2eeTestCaseWriter extends JavaClassWriter {
                     pw.println("        }");
                 }
             }
-
             pw.println("        " + indent + "// TBD - validate results");
 
             /*
@@ -260,7 +242,6 @@ public class J2eeTestCaseWriter extends JavaClassWriter {
         pw.println("                jre.getLinkedCause().printStackTrace();");
         pw.println("            throw new junit.framework.AssertionFailedError(\"JAX-RPC ServiceException caught: \" + jre);");
         pw.println("        }");
-
         pw.println("        assertNotNull(\"" +
                 Messages.getMessage("null00", "binding") +
                 "\", binding);");

@@ -30,18 +30,20 @@ import org.apache.geronimo.ews.ws4j2ee.toWs.UnrecoverableGenerationFault;
 /**
  * <p>This class decouple the concreate implementations of the
  * class from the rest of the code</p>
+ *
  * @author Srinath Perera(hemapani@opensource.lk)
  */
-public class ContextFactoryImpl implements ContextFactory{
+public class ContextFactoryImpl implements ContextFactory {
     private J2EEWebServiceContext currentContext;
+
     public WSDLContext createWSDLContext(Object info) {
         if (info instanceof SymbolTable)
             return new AxisWSDLContext((SymbolTable) info);
         throw new UnrecoverableGenerationFault("unknown context type");
     }
 
-    public JaxRpcMapperContext createJaxRpcMapperContext(JaxRpcMapper mapper,J2eeEmitter emitter) {
-            return new JaxRpcMapperImpl(mapper,emitter);
+    public JaxRpcMapperContext createJaxRpcMapperContext(JaxRpcMapper mapper, J2eeEmitter emitter) {
+        return new JaxRpcMapperImpl(mapper, emitter);
     }
 
 //    public WSCFContext createWSCFContext(InputStream in)
@@ -66,5 +68,4 @@ public class ContextFactoryImpl implements ContextFactory{
         return currentContext;
     }
 
-    
 }

@@ -16,6 +16,10 @@
 
 package org.apache.geronimo.ews.ws4j2ee.module;
 
+import org.apache.geronimo.ews.ws4j2ee.toWs.GenerationFault;
+import org.apache.geronimo.ews.ws4j2ee.utils.FileUtils;
+import org.apache.geronimo.ews.ws4j2ee.utils.TemporaryRepository;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -23,42 +27,36 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 
-import org.apache.geronimo.ews.ws4j2ee.toWs.GenerationFault;
-import org.apache.geronimo.ews.ws4j2ee.utils.FileUtils;
-import org.apache.geronimo.ews.ws4j2ee.utils.TemporaryRepository;
-
 /**
  * @author Srinath Perera(hemapani@opensource.lk)
  */
 public class WARModule extends AbstractModule {
     private ArrayList urls;
     private ClassLoader cl;
+
     /**
      * @param jarFile
      * @throws GenerationFault
      */
-    public WARModule(String jarFile,  ClassLoader parentCL)
-        throws GenerationFault {
-        super(jarFile,parentCL);
+    public WARModule(String jarFile, ClassLoader parentCL)
+            throws GenerationFault {
+        super(jarFile, parentCL);
         try {
-            urls = FileUtils.uncompressWar(TemporaryRepository.getEntry(),new File(zip.getName()));
-            
+            urls = FileUtils.uncompressWar(TemporaryRepository.getEntry(), new File(zip.getName()));
             URL[] aurls = new URL[urls.size()];
             for (int i = 0; i < aurls.length; i++) {
                 aurls[i] = ((File) urls.get(i)).toURL();
                 System.out.println(aurls[i]);
             }
-            cl = new URLClassLoader(aurls,Thread.currentThread().getContextClassLoader());
-            
+            cl = new URLClassLoader(aurls, Thread.currentThread().getContextClassLoader());
             wscfFile = getInputStreamForJarEntry(jarFile, "WEB-INF/webservices.xml");
             if (wscfFile == null) {
                 wscfFile = getInputStreamForJarEntry(jarFile, "webservices.xml");
             }
-
             webddfile = getInputStreamForJarEntry(jarFile, "WEB-INF/web.xml");
             if (webddfile == null)
                 webddfile = getInputStreamForJarEntry(jarFile, "web.xml");
-            if (wscfFile == null )
+            if (wscfFile == null)
                 throw new GenerationFault("wscf file must not be null");
         } catch (MalformedURLException e) {
             throw GenerationFault.createGenerationFault(e);
@@ -66,7 +64,7 @@ public class WARModule extends AbstractModule {
             throw GenerationFault.createGenerationFault(e);
         } catch (GenerationFault e) {
             throw GenerationFault.createGenerationFault(e);
-       }
+        }
     }
 
     /* (non-Javadoc)
@@ -75,8 +73,9 @@ public class WARModule extends AbstractModule {
     public ClassLoader getClassLoaderWithPackageLoaded() throws GenerationFault {
         return cl;
     }
-	public ArrayList getClassPathElements() {
-		return urls;
-	}
+
+    public ArrayList getClassPathElements() {
+        return urls;
+    }
 
 }

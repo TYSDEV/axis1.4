@@ -28,7 +28,7 @@ import java.io.IOException;
 /**
  * This is Wsdl2java's Binding Writer.  It writes the following files, as appropriate:
  * <bindingName>Stub.java, <bindingName>Skeleton.java, <bindingName>Impl.java.
- * 
+ *
  * @author Ias (iasandcb@tmax.co.kr)
  */
 public class J2eeBindingWriter implements Generator {
@@ -103,7 +103,7 @@ public class J2eeBindingWriter implements Generator {
 //		}else{
 //			return new J2eeImplWriter(emitter, bEntry, st);		
 //		}
-        return new J2eeImplWriter(emitter, bEntry, st); 
+        return new J2eeImplWriter(emitter, bEntry, st);
     }
 
     /**
@@ -140,7 +140,6 @@ public class J2eeBindingWriter implements Generator {
         if (ptEntry.isReferenced()) {
             interfaceWriter = getJavaInterfaceWriter(emitter, ptEntry, bEntry, symbolTable);
         }
-
         if (bEntry.isReferenced()) {
             // Stub writer
             stubWriter = getJavaStubWriter(emitter, bEntry, symbolTable);

@@ -86,21 +86,18 @@ public interface SchemaType {
 
     /**
      * @return the restricion base of this type or return null.
-     * @throws SAXException 
+     * @throws SAXException
      */
-
     public QName getRestrictionBase() throws ParserFault;
 
     /**
      * @return get the extension type if this is extended or null
-     * @throws SAXException 
+     * @throws SAXException
      */
-
     public QName getExtentionBase() throws ParserFault;
 
     public QName getArrayType();
 
     public boolean isSimpleTypeOrSimpleContent();
-
 
 }

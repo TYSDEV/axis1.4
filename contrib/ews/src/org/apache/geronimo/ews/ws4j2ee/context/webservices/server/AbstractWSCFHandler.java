@@ -15,64 +15,63 @@
  */
 package org.apache.geronimo.ews.ws4j2ee.context.webservices.server;
 
-import java.util.HashMap;
-import java.util.Vector;
-
 import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.interfaces.WSCFHandler;
 import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.interfaces.WSCFInitParam;
 import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.interfaces.WSCFSOAPHeader;
 
+import java.util.HashMap;
+import java.util.Vector;
+
 /**
  * This encapsulates the layer 3 handler element of the webservices.xml. This
  * is also the concrete implementation of the WSCFHandler.
- *
  */
 public abstract class AbstractWSCFHandler extends WSCFElement implements WSCFHandler {
 
-	/**
-	 * handler derscription 
-	 */
-	protected String description;
-	
-	/**
-	 * handler display name
-	 */
-	protected String displayName;
-	
-	/**
-	 * handler small icon
-	 */
-	protected String smallIcon;
-	
-	/**
-	 * handler  large icon
-	 */
-	protected String largeIcon;
-	
-	/**
-	 * handler name
-	 */
-	protected String handlerName;
-	
-	/**
-	 * handler class
-	 */
-	protected String handlerClass;
-	
-	/**
-	 * handler init parameters as a collection
-	 */
-	protected HashMap initParam = new HashMap();
-	
-	/**
-	 * handler soap headers as a collection
-	 */
-	protected Vector soapHeader = new Vector();
-	
-	/**
-	 * handler soap roles as a collection
-	 */
-	protected Vector soapRole = new Vector();
+    /**
+     * handler derscription
+     */
+    protected String description;
+
+    /**
+     * handler display name
+     */
+    protected String displayName;
+
+    /**
+     * handler small icon
+     */
+    protected String smallIcon;
+
+    /**
+     * handler  large icon
+     */
+    protected String largeIcon;
+
+    /**
+     * handler name
+     */
+    protected String handlerName;
+
+    /**
+     * handler class
+     */
+    protected String handlerClass;
+
+    /**
+     * handler init parameters as a collection
+     */
+    protected HashMap initParam = new HashMap();
+
+    /**
+     * handler soap headers as a collection
+     */
+    protected Vector soapHeader = new Vector();
+
+    /**
+     * handler soap roles as a collection
+     */
+    protected Vector soapRole = new Vector();
 	
 	
 	
@@ -131,89 +130,98 @@ public abstract class AbstractWSCFHandler extends WSCFElement implements WSCFHan
 		
 	
 
-	/**
-	 * Gets the description of the handler element
-	 * @return description
-	 */
-	public String getDescription() {
-		return description;
-	}
+    /**
+     * Gets the description of the handler element
+     *
+     * @return description
+     */
+    public String getDescription() {
+        return description;
+    }
 
-	/**
-	 * Gets the display name of the handler element
-	 * @return display-name
-	 */
-	public String getDisplayName() {
-		return displayName;
-	}
+    /**
+     * Gets the display name of the handler element
+     *
+     * @return display-name
+     */
+    public String getDisplayName() {
+        return displayName;
+    }
 
-	/**
-	 * Gets the class of the handler element
-	 * @return handler-class
-	 */
-	public String getHandlerClass() {
-		return handlerClass;
-	}
+    /**
+     * Gets the class of the handler element
+     *
+     * @return handler-class
+     */
+    public String getHandlerClass() {
+        return handlerClass;
+    }
 
-	/**
-	 * Gets the name of the handler element
-	 * @return handler-name
-	 */
-	public String getHandlerName() {
-		return handlerName;
-	}
+    /**
+     * Gets the name of the handler element
+     *
+     * @return handler-name
+     */
+    public String getHandlerName() {
+        return handlerName;
+    }
 
-	/**
-	 * Gets the init paramaeters of the handler element as a array
-	 * @return init-parameters
-	 */
-	public WSCFInitParam[] getInitParam() {
-		WSCFInitParam[] initparam = new WSCFInitParam[this.initParam.size()];
-		this.initParam.values().toArray(initparam);
-		return initparam;
-	}
+    /**
+     * Gets the init paramaeters of the handler element as a array
+     *
+     * @return init-parameters
+     */
+    public WSCFInitParam[] getInitParam() {
+        WSCFInitParam[] initparam = new WSCFInitParam[this.initParam.size()];
+        this.initParam.values().toArray(initparam);
+        return initparam;
+    }
 
-	/**
-	 * Gets the large icon of the handler element
-	 * @return large-icon
-	 */
-	public String getLargeIcon() {
-		return largeIcon;
-	}
+    /**
+     * Gets the large icon of the handler element
+     *
+     * @return large-icon
+     */
+    public String getLargeIcon() {
+        return largeIcon;
+    }
 
-	/**
-	 * Gets the small icon of the handler element
-	 * @return small-icon
-	 */
-	public String getSmallIcon() {
-		return smallIcon;
-	}
+    /**
+     * Gets the small icon of the handler element
+     *
+     * @return small-icon
+     */
+    public String getSmallIcon() {
+        return smallIcon;
+    }
 
-	/**
-	 * Gets the soap headers of the handler element
-	 * @return soap-headers
-	 */
-	public WSCFSOAPHeader[] getSoapHeader() {
-		WSCFSOAPHeader[] soapheader = new WSCFSOAPHeader[this.soapHeader.size()];
-		int size = soapHeader.size();
-		for(int i = 0;i<size;i++){
-			soapheader[i] = ((WSCFSOAPHeader)soapHeader.get(i));
-		}
-		return soapheader;
-	}
+    /**
+     * Gets the soap headers of the handler element
+     *
+     * @return soap-headers
+     */
+    public WSCFSOAPHeader[] getSoapHeader() {
+        WSCFSOAPHeader[] soapheader = new WSCFSOAPHeader[this.soapHeader.size()];
+        int size = soapHeader.size();
+        for (int i = 0; i < size; i++) {
+            soapheader[i] = ((WSCFSOAPHeader) soapHeader.get(i));
+        }
+        return soapheader;
+    }
 
-	/**
-	 * Gets the soap roles of the handler element
-	 * @return soap-roles
-	 */
-	public String[] getSoapRole() {
-		String[] soaprole = new String[this.soapRole.size()];
-		int size = soapRole.size();
-		for(int i = 0;i<size;i++){
-			soaprole[i] = (String)soapRole.get(i);
-		}
-		return soaprole;
-	}
+    /**
+     * Gets the soap roles of the handler element
+     *
+     * @return soap-roles
+     */
+    public String[] getSoapRole() {
+        String[] soaprole = new String[this.soapRole.size()];
+        int size = soapRole.size();
+        for (int i = 0; i < size; i++) {
+            soaprole[i] = (String) soapRole.get(i);
+        }
+        return soaprole;
+    }
 
 //	/**
 //	 * @return

@@ -74,28 +74,28 @@ public class ElementInfo {
     }
 
     /**
-     * @return 
+     * @return
      */
     public int getMaxOccurs() {
         return maxOccurs;
     }
 
     /**
-     * @return 
+     * @return
      */
     public int getMinOccurs() {
         return minOccurs;
     }
 
     /**
-     * @param i 
+     * @param i
      */
     public void setMaxOccurs(int i) {
         maxOccurs = i;
     }
 
     /**
-     * @param i 
+     * @param i
      */
     public void setMinOccurs(int i) {
         minOccurs = i;

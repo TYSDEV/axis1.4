@@ -16,8 +16,6 @@
 
 package org.apache.geronimo.ews.ws4j2ee.parsers.impl;
 
-import java.io.InputStream;
-
 import org.apache.geronimo.ews.ws4j2ee.context.J2EEWebServiceContext;
 import org.apache.geronimo.ews.ws4j2ee.context.j2eeDD.EJBContext;
 import org.apache.geronimo.ews.ws4j2ee.context.j2eeDD.WebContext;
@@ -31,33 +29,30 @@ import org.apache.geronimo.ews.ws4j2ee.parsers.ServiceReferanceParser;
 import org.apache.geronimo.ews.ws4j2ee.parsers.WebDDParser;
 import org.apache.geronimo.ews.ws4j2ee.toWs.GenerationFault;
 
-
+import java.io.InputStream;
 
 /**
  * @author hemapani@opensource.lk
  */
 public class ParserFactoryImpl implements ParserFactory {
-	
 
     /* (non-Javadoc)
      * @see org.apache.geronimo.ews.ws4j2ee.parsers.ParserFactory#parseEJBDDContext(org.apache.geronimo.ews.ws4j2ee.context.J2EEWebServiceContext, java.io.InputStream)
      */
-    public EJBContext parseEJBDDContext(
-        J2EEWebServiceContext context,
-        InputStream inputStream)
-        throws GenerationFault {
-			DomEJBDDParser ejbDDparser = new DomEJBDDParser(context);
-			ejbDDparser.parse(inputStream);
-        	return ejbDDparser.getContext();
+    public EJBContext parseEJBDDContext(J2EEWebServiceContext context,
+                                        InputStream inputStream)
+            throws GenerationFault {
+        DomEJBDDParser ejbDDparser = new DomEJBDDParser(context);
+        ejbDDparser.parse(inputStream);
+        return ejbDDparser.getContext();
     }
 
     /* (non-Javadoc)
      * @see org.apache.geronimo.ews.ws4j2ee.parsers.ParserFactory#parseServiceReferance(org.apache.geronimo.ews.ws4j2ee.context.J2EEWebServiceContext, java.io.InputStream)
      */
-    public ServiceReferanceContext parseServiceReferance(
-        J2EEWebServiceContext context,
-        InputStream inputStream)
-        throws GenerationFault {
+    public ServiceReferanceContext parseServiceReferance(J2EEWebServiceContext context,
+                                                         InputStream inputStream)
+            throws GenerationFault {
         ServiceReferanceParser parser = new ServiceReferanceParser(inputStream);
         return parser.getRef();
     }
@@ -65,27 +60,25 @@ public class ParserFactoryImpl implements ParserFactory {
     /* (non-Javadoc)
      * @see org.apache.geronimo.ews.ws4j2ee.parsers.ParserFactory#parseWebDD(org.apache.geronimo.ews.ws4j2ee.context.J2EEWebServiceContext, java.io.InputStream)
      */
-    public WebContext parseWebDD(
-        J2EEWebServiceContext context,
-        InputStream inputStream)
-        throws GenerationFault {
-        	WebDDParser parser = new WebDDParser(context);
-			parser.parse(inputStream);
-	        return parser.getContext();
+    public WebContext parseWebDD(J2EEWebServiceContext context,
+                                 InputStream inputStream)
+            throws GenerationFault {
+        WebDDParser parser = new WebDDParser(context);
+        parser.parse(inputStream);
+        return parser.getContext();
     }
 
     /* (non-Javadoc)
      * @see org.apache.geronimo.ews.ws4j2ee.parsers.ParserFactory#parseWSCF(org.apache.geronimo.ews.ws4j2ee.context.J2EEWebServiceContext, java.io.InputStream)
      */
-    public WSCFContext parseWSCF(
-        J2EEWebServiceContext context,
-        InputStream inputStream)
-        throws GenerationFault {
-			try {
-                return new WSCFContextImpl(inputStream,context);
-            } catch (WSCFException e) {
-                throw GenerationFault.createGenerationFault(e);
-            }
+    public WSCFContext parseWSCF(J2EEWebServiceContext context,
+                                 InputStream inputStream)
+            throws GenerationFault {
+        try {
+            return new WSCFContextImpl(inputStream, context);
+        } catch (WSCFException e) {
+            throw GenerationFault.createGenerationFault(e);
+        }
     }
 
 }

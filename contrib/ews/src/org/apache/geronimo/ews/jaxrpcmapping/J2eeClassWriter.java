@@ -25,13 +25,12 @@ public abstract class J2eeClassWriter extends JavaClassWriter {
 
     /**
      * Constructor.
-     * 
+     *
      * @param emitter The emitter instance
      * @param fullClassName The fully qualified class name of the class
      * to be generated.
      * @param type
      */
-
     protected JaxRpcMapper jaxRpcMapper;
 
     protected J2eeClassWriter(J2eeEmitter emitter,

@@ -15,27 +15,11 @@
  */
 package org.apache.geronimo.ews.ws4j2ee.utils;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Vector;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 
-import org.apache.geronimo.ews.ws4j2ee.toWs.GenerationFault;
 
 /**
  * @author Srinath Perera(hemapani@opensource.lk)
  */
 public class UncompressingJarClassLoader {
-    
+
 }

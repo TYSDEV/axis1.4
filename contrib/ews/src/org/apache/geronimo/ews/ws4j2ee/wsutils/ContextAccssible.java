@@ -22,5 +22,5 @@ import org.apache.axis.MessageContext;
  * @author Srinath Perera(hemapani@opensource.lk)
  */
 public interface ContextAccssible {
-	public void setMessageContext(MessageContext context);
+    public void setMessageContext(MessageContext context);
 }

@@ -15,57 +15,56 @@
  */
 package org.apache.geronimo.ews.ws4j2ee.context.webservices.server;
 
-import java.util.HashMap;
-
 import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.interfaces.WSCFPortComponent;
 import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.interfaces.WSCFWebserviceDescription;
+
+import java.util.HashMap;
 
 /**
  * This represents a level 1 element in the Element tree :webservice-description. This is the concrete implementation of the
  * WSCFWebServiceDescription interface
- *
  */
-public class AbstractWSCFWebserviceDescription extends WSCFElement implements WSCFWebserviceDescription{
+public class AbstractWSCFWebserviceDescription extends WSCFElement implements WSCFWebserviceDescription {
 
-	/**
-	 * This will refer to the multiple port components that can be there in the webservice-description Element.
-	 */
-	protected HashMap portComponent = new HashMap();
-	
-	/**
-	 * Webservice-description - description
-	 */
-	protected String description;
-	
-	/**
-	 * Webservice-description - display name
-	 */
-	protected String displayName;
-	
-	/**
-	 * Webservice-description - small icon
-	 */
-	protected String smallIcon;
-	
-	/**
-	 * Webservice-description - large icon
-	 */
-	protected String largeIcon;
-	
-	/**
-	 * Webservice-description - name
-	 */
-	protected String webserviceDescriptionName;
-	
-	/**
-	 * Webservice-description - wsdl file
-	 */
-	protected String wsdlFile;
-	
-	/**
-	 * Webservice-description - jaxrpc mapping file
-	 */
-	protected String jaxrpcMappingFile;
+    /**
+     * This will refer to the multiple port components that can be there in the webservice-description Element.
+     */
+    protected HashMap portComponent = new HashMap();
+
+    /**
+     * Webservice-description - description
+     */
+    protected String description;
+
+    /**
+     * Webservice-description - display name
+     */
+    protected String displayName;
+
+    /**
+     * Webservice-description - small icon
+     */
+    protected String smallIcon;
+
+    /**
+     * Webservice-description - large icon
+     */
+    protected String largeIcon;
+
+    /**
+     * Webservice-description - name
+     */
+    protected String webserviceDescriptionName;
+
+    /**
+     * Webservice-description - wsdl file
+     */
+    protected String wsdlFile;
+
+    /**
+     * Webservice-description - jaxrpc mapping file
+     */
+    protected String jaxrpcMappingFile;
 	
 	
 //	////////////////////////////////////jaxb interfacing block /////////////////////////////////////////////
@@ -158,71 +157,79 @@ public class AbstractWSCFWebserviceDescription extends WSCFElement implements WS
 //	}
 		
 		
-	/**
-	 * Gets the description of the webservices-description Element
-	 * @return description
-	 */
-	public String getDescription() {
-		return description;
-	}
+    /**
+     * Gets the description of the webservices-description Element
+     *
+     * @return description
+     */
+    public String getDescription() {
+        return description;
+    }
 
-	/**
-	 * Gets the display name of the webservices-description Element
-	 * @return display-name
-	 */
-	public String getDisplayName() {
-		return displayName;
-	}
+    /**
+     * Gets the display name of the webservices-description Element
+     *
+     * @return display-name
+     */
+    public String getDisplayName() {
+        return displayName;
+    }
 
-	/**
-	 * Gets the JAXRPC mapping file of the webservices-description Element
-	 * @return JAXRPC-mapping-file
-	 */
-	public String getJaxrpcMappingFile() {
-		return jaxrpcMappingFile;
-	}
+    /**
+     * Gets the JAXRPC mapping file of the webservices-description Element
+     *
+     * @return JAXRPC-mapping-file
+     */
+    public String getJaxrpcMappingFile() {
+        return jaxrpcMappingFile;
+    }
 
-	/**
-	 * Gets the large icon of the webservices-description Element
-	 * @return large-icon
-	 */
-	public String getLargeIcon() {
-		return largeIcon;
-	}
+    /**
+     * Gets the large icon of the webservices-description Element
+     *
+     * @return large-icon
+     */
+    public String getLargeIcon() {
+        return largeIcon;
+    }
 
-	/**
-	 * Gets the port compoments of the webservices-description Element as an array
-	 * @return port components
-	 */
-	public WSCFPortComponent[] getPortComponent() {
-		WSCFPortComponent[] portComponents = new WSCFPortComponent[this.portComponent.size()];
-		this.portComponent.values().toArray(portComponents);
-		return portComponents;
-	}
+    /**
+     * Gets the port compoments of the webservices-description Element as an array
+     *
+     * @return port components
+     */
+    public WSCFPortComponent[] getPortComponent() {
+        WSCFPortComponent[] portComponents = new WSCFPortComponent[this.portComponent.size()];
+        this.portComponent.values().toArray(portComponents);
+        return portComponents;
+    }
 
-	/**
-	 * Gets the small icon of the webservices-description Element
-	 * @return small-icon
-	 */
-	public String getSmallIcon() {
-		return smallIcon;
-	}
+    /**
+     * Gets the small icon of the webservices-description Element
+     *
+     * @return small-icon
+     */
+    public String getSmallIcon() {
+        return smallIcon;
+    }
 
-	/**
-	 * Gets the name of the webservices-description Element
-	 * @return webservice-description-name
-	 */
-	public String getWebserviceDescriptionName() {
-		return webserviceDescriptionName;
-	}
+    /**
+     * Gets the name of the webservices-description Element
+     *
+     * @return webservice-description-name
+     */
+    public String getWebserviceDescriptionName() {
+        return webserviceDescriptionName;
+    }
 
-	/**
-	 * Gets the wsdl file of the webservices-description Element
-	 * @return wsdl-file
-	 */
-	public String getWsdlFile() {
-		return wsdlFile;
-	}
+    /**
+     * Gets the wsdl file of the webservices-description Element
+     *
+     * @return wsdl-file
+     */
+    public String getWsdlFile() {
+        return wsdlFile;
+    }
 
 //	/**
 //	 * @return

@@ -20,7 +20,7 @@ import java.util.ArrayList;
 
 /**
  * represent a operation in the SEI.
- * 
+ *
  * @author Srinath Perera(hemapani@opensource.lk)
  */
 public interface SEIOperation {
@@ -30,8 +30,8 @@ public interface SEIOperation {
      * @return a Map in which key is the parameter name and the Type is the value.
      */
     public ArrayList getParameterNames();
-    
-	public String getParameterType(String name);
+
+    public String getParameterType(String name);
 
     /**
      * @return ArrayList of Strings

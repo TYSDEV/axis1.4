@@ -16,25 +16,34 @@
 
 package org.apache.geronimo.ews.ws4j2ee.module;
 
+import org.apache.geronimo.ews.ws4j2ee.toWs.GenerationFault;
+
 import java.io.InputStream;
 import java.util.ArrayList;
-
-import org.apache.geronimo.ews.ws4j2ee.toWs.GenerationFault;
 
 /**
  * <p>This reprsents a packaged module jar,WAR,EAR file. the implementation
  * classes of this interface should provide the acsses to the DD files and give
  * a class loader that load the class files in the jar file.</p>
+ *
  * @author hemapani
  */
 public interface Module {
     public InputStream getEjbJarfile() throws GenerationFault;
-    public InputStream getWebddfile() throws GenerationFault; 
+
+    public InputStream getWebddfile() throws GenerationFault;
+
     public InputStream getWscfFile() throws GenerationFault;
+
     public void setEjbJarfile(InputStream stream) throws GenerationFault;
+
     public void setWebddfile(InputStream stream) throws GenerationFault;
+
     public void setWscfFile(InputStream stream) throws GenerationFault;
+
     public ClassLoader getClassLoaderWithPackageLoaded() throws GenerationFault;
+
     public ArrayList getClassPathElements() throws GenerationFault;
-    public InputStream findFileInModule(String path)throws GenerationFault;
+
+    public InputStream findFileInModule(String path) throws GenerationFault;
 }

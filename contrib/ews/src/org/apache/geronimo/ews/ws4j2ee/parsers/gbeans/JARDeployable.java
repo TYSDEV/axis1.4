@@ -16,7 +16,6 @@
 
 package org.apache.geronimo.ews.ws4j2ee.parsers.gbeans;
 
-
 //import javax.enterprise.deploy.model.exceptions.DDBeanCreateException;
 //import javax.enterprise.deploy.shared.ModuleType;
 //
@@ -25,7 +24,7 @@ package org.apache.geronimo.ews.ws4j2ee.parsers.gbeans;
 /**
  * @author Srinath Perera(Hemapani@opensource.lk)
  */
-public class JARDeployable /* extends AbstractDeployable */{
+public class JARDeployable /* extends AbstractDeployable */ {
 //	private final ClassLoader webLoader;
 //
 //	public JARDeployable(URL moduleURL) throws DDBeanCreateException {

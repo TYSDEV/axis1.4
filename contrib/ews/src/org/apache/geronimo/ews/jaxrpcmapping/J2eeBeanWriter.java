@@ -1,4 +1,3 @@
-
 /*
  * Copyright 2001-2004 The Apache Software Foundation.
  * 
@@ -14,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
- package org.apache.geronimo.ews.jaxrpcmapping;
+
+package org.apache.geronimo.ews.jaxrpcmapping;
 
 import org.apache.axis.Constants;
 import org.apache.axis.utils.JavaUtils;
@@ -36,7 +35,7 @@ import java.util.Vector;
 
 /**
  * This is Wsdl2java's Complex Type Writer.  It writes the <typeName>.java file.
- * 
+ *
  * @author Ias (iasandcb@tmax.co.kr)
  * @deprecated no more used by J2eeGeneratorFactory
  */
@@ -66,8 +65,8 @@ public class J2eeBeanWriter extends J2eeClassWriter {
 
     /**
      * Constructor.
-     * 
-     * @param emitter    
+     *
+     * @param emitter
      * @param type       The type representing this class
      * @param elements   Vector containing the Type and name of each property
      * @param extendType The type representing the extended class (or null)
@@ -110,7 +109,6 @@ public class J2eeBeanWriter extends J2eeClassWriter {
      * Generate the binding for the given complex type.
      */
     protected void writeFileBody(PrintWriter pw) throws IOException {
-
         this.pw = pw;
 
         // Populate Names Vector with the names and types of the members.
@@ -210,7 +208,6 @@ public class J2eeBeanWriter extends J2eeClassWriter {
                 }
             }
         }
-
         if (extendType != null && extendType.getDimensions().equals("[]")) {
             String typeName = extendType.getName();
             String elemName = extendType.getQName().getLocalPart();
@@ -222,7 +219,7 @@ public class J2eeBeanWriter extends J2eeClassWriter {
 
     /**
      * Returns the appropriate extends text
-     * 
+     *
      * @return "" or "abstract "
      */
     protected String getClassModifiers() {
@@ -237,7 +234,7 @@ public class J2eeBeanWriter extends J2eeClassWriter {
 
     /**
      * Returns the appropriate extends text
-     * 
+     *
      * @return "" or " extends <class> "
      */
     protected String getExtendsText() {
@@ -251,7 +248,7 @@ public class J2eeBeanWriter extends J2eeClassWriter {
 
     /**
      * Returns the appropriate implements text
-     * 
+     *
      * @return " implements <classes> "
      */
     protected String getImplementsText() {
@@ -263,7 +260,6 @@ public class J2eeBeanWriter extends J2eeClassWriter {
         
         // need to call this to find out whether the type contains any elements
         preprocess();
-
         if (isAny) {
             implementsText += ", org.apache.axis.encoding.AnyContentType";
         }
@@ -358,7 +354,7 @@ public class J2eeBeanWriter extends J2eeClassWriter {
                 for (int j = 0; j < elements.size(); j++) {
                     ElementDecl elem = (ElementDecl) elements.get(j);
                     paramTypes.add(elem.getType().getName());
-                    paramNames.add(mangle +elem.getName());
+                    paramNames.add(mangle + elem.getName());
                 }
             }
         }
@@ -442,7 +438,6 @@ public class J2eeBeanWriter extends J2eeClassWriter {
     protected void writeSimpleTypeGetter(String simpleValueType, String name, String returnString) {
         // Make sure we wrap base types with its Object type
         String wrapper = JavaUtils.getWrapper(simpleValueType);
-
         if (wrapper != null) {
             pw.println("        " + returnString + " new " + wrapper +
                     "(value)." + simpleValueType + "Value();");
@@ -534,11 +529,9 @@ public class J2eeBeanWriter extends J2eeClassWriter {
             String typeName = (String) names.get(i);
             String name = (String) names.get(i + 1);
             String capName = Utils.capitalizeFirstChar(name);
-
             String get = "get";
             if (typeName.equals("boolean"))
                 get = "is";
-
             if (enableGetters) {
                 pw.println("    public " + typeName + " " +
                         get + capName + "() {");
@@ -620,7 +613,6 @@ public class J2eeBeanWriter extends J2eeClassWriter {
      * Writes a general purpose equals method
      */
     protected void writeEqualsMethod() {
-
         // The __equalsCalc field and synchronized method are necessary
         // in case the object has direct or indirect references to itself.
         pw.println("    private java.lang.Object __equalsCalc = null;");
@@ -655,10 +647,8 @@ public class J2eeBeanWriter extends J2eeClassWriter {
                 String variableType = (String) names.get(i);
                 String variable = (String) names.get(i + 1);
                 String get = "get";
-
                 if (variableType.equals("boolean"))
                     get = "is";
-
                 if (variableType.equals("int") ||
                         variableType.equals("long") ||
                         variableType.equals("short") ||
@@ -677,7 +667,6 @@ public class J2eeBeanWriter extends J2eeClassWriter {
                     pw.print("              java.util.Arrays.equals(this." + variable +
                             ", other." + get +
                             Utils.capitalizeFirstChar(variable) + "())))");
-
                 } else {
                     pw.println("            ((this." + variable +
                             "==null && other." + get +
@@ -727,10 +716,8 @@ public class J2eeBeanWriter extends J2eeClassWriter {
             String variableType = (String) names.get(i);
             String variable = (String) names.get(i + 1);
             String get = "get";
-
             if (variableType.equals("boolean"))
                 get = "is";
-
             if (variableType.equals("int") ||
                     variableType.equals("short") ||
                     variableType.equals("byte")) {

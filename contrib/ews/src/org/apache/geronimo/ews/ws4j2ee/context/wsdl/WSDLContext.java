@@ -16,13 +16,6 @@
 
 package org.apache.geronimo.ews.ws4j2ee.context.wsdl;
 
-import java.util.Collection;
-import java.util.Map;
-
-import javax.wsdl.Port;
-import javax.wsdl.Service;
-import javax.xml.namespace.QName;
-
 import org.apache.axis.wsdl.symbolTable.BindingEntry;
 import org.apache.axis.wsdl.symbolTable.Element;
 import org.apache.axis.wsdl.symbolTable.PortEntry;
@@ -31,11 +24,16 @@ import org.apache.axis.wsdl.symbolTable.ServiceEntry;
 import org.apache.axis.wsdl.symbolTable.TypeEntry;
 import org.apache.geronimo.ews.ws4j2ee.context.wsdl.type.SchemaType;
 
+import javax.wsdl.Port;
+import javax.wsdl.Service;
+import javax.xml.namespace.QName;
+import java.util.Collection;
+import java.util.Map;
+
 /**
  * <p>This interface expose the information contains in the WSDL.
  * This interface exposed the information. It does not expose how the
  * the information is parsed.</p>
- * <p/>
  * <p>This interface and related interfaces has both getter and setter methods
  * but who ever implements this interface might not need the both.
  * e.g. there can be two concreate implementations for this class
@@ -45,6 +43,7 @@ import org.apache.geronimo.ews.ws4j2ee.context.wsdl.type.SchemaType;
  * <li>do not have WSDL</li>
  * </ul>
  * <p>if some method is not requried please throw java.lang.UnsupportedOperationException</p>
+ *
  * @author Srinath Perera(hemapani@opensource.lk)
  */
 public interface WSDLContext {
@@ -54,7 +53,7 @@ public interface WSDLContext {
     public Collection getPortTypes();
 
     /**
-     * @param portname 
+     * @param portname
      * @return PortType whose name is equal to portname.
      *         return null if no PortType with this name.
      */
@@ -66,7 +65,7 @@ public interface WSDLContext {
     public Collection getBindings();
 
     /**
-     * @param bindingname 
+     * @param bindingname
      * @return Binding whose name is equal to bindingname.
      *         return null if no Binding with this name.
      */
@@ -78,7 +77,7 @@ public interface WSDLContext {
     public Collection getServices();
 
     /**
-     * @param servicename 
+     * @param servicename
      * @return Service whose name is equal to servicename.
      *         return null if no Service with this name.
      */
@@ -86,8 +85,8 @@ public interface WSDLContext {
 
     /**
      * add Service information
-     * 
-     * @param service 
+     *
+     * @param service
      */
     public void addService(Service service);
 
@@ -97,7 +96,7 @@ public interface WSDLContext {
     public Map getTypes();
 
     /**
-     * @param typename 
+     * @param typename
      * @return Type whose name is equal to typename.
      *         return null if no Type with this name.
      */
@@ -105,8 +104,8 @@ public interface WSDLContext {
 
     /**
      * add a Type
-     * 
-     * @param type 
+     *
+     * @param type
      */
     public void addType(SchemaType type);
 
@@ -115,24 +114,30 @@ public interface WSDLContext {
     public PortEntry getPort(QName name);
 
     public String getTargetNSURI();
-    
-	/**
-	 * WSDL artifacts correponds to the current WSCF port.
-	 * If one element is in the wsdl theu are used. How to select them 
-	 * if there is more than one is still to do.   
-	 * @return
-	 */
-	public ServiceEntry gettargetService();
-	public void settargetService(ServiceEntry service);
 
-	public BindingEntry gettargetBinding();
-	public void settargetBinding(BindingEntry binding);
+    /**
+     * WSDL artifacts correponds to the current WSCF port.
+     * If one element is in the wsdl theu are used. How to select them
+     * if there is more than one is still to do.
+     *
+     * @return
+     */
+    public ServiceEntry gettargetService();
 
-	public PortTypeEntry getTargetPortType();
-	public void setTargetPortType(PortTypeEntry port);
+    public void settargetService(ServiceEntry service);
 
-	public void setTargetPort(Port port);
-	public Port getTargetPort();
-	public void validate();
+    public BindingEntry gettargetBinding();
+
+    public void settargetBinding(BindingEntry binding);
+
+    public PortTypeEntry getTargetPortType();
+
+    public void setTargetPortType(PortTypeEntry port);
+
+    public void setTargetPort(Port port);
+
+    public Port getTargetPort();
+
+    public void validate();
 
 }

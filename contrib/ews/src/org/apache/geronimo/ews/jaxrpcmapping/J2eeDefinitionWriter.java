@@ -41,7 +41,7 @@ import java.util.Vector;
  * This is Wsdl2java's Definition Writer.
  * It currently writes the following files:
  * Faults as needed.
- * 
+ *
  * @author Ias (iasandcb@tmax.co.kr)
  * @deprecated no more used by J2eeGeneratorFactory
  */

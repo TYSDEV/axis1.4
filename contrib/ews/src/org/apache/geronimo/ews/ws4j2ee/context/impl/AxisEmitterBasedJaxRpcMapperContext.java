@@ -16,15 +16,6 @@
 
 package org.apache.geronimo.ews.ws4j2ee.context.impl;
 
-import java.io.InputStream;
-import java.io.Writer;
-import java.lang.reflect.Method;
-import java.util.HashMap;
-
-import javax.wsdl.Operation;
-import javax.wsdl.Port;
-import javax.xml.namespace.QName;
-
 import org.apache.axis.wsdl.fromJava.Emitter;
 import org.apache.axis.wsdl.symbolTable.BindingEntry;
 import org.apache.axis.wsdl.symbolTable.PortTypeEntry;
@@ -35,10 +26,18 @@ import org.apache.geronimo.ews.ws4j2ee.toWs.GenerationFault;
 import org.apache.geronimo.ews.ws4j2ee.toWs.UnrecoverableGenerationFault;
 import org.apache.geronimo.ews.ws4j2ee.toWs.dd.JaxRpcMappingFileWriter;
 
+import javax.wsdl.Operation;
+import javax.wsdl.Port;
+import javax.xml.namespace.QName;
+import java.io.InputStream;
+import java.io.Writer;
+import java.lang.reflect.Method;
+import java.util.HashMap;
+
 /**
  * This class wrap the JAXRPCMapper and only expose a interface to
  * the rest of the WS4j2ee.
- * 
+ *
  * @author hemapani
  */
 public class AxisEmitterBasedJaxRpcMapperContext implements JaxRpcMapperContext {
@@ -53,12 +52,11 @@ public class AxisEmitterBasedJaxRpcMapperContext implements JaxRpcMapperContext 
         for (int i = 0; i < methods.length; i++) {
             this.methods.put(methods[i].getName(), methods[i]);
         }
-
     }
 
     /**
-     * @param messageQName 
-     * @return 
+     * @param messageQName
+     * @return
      */
     public String getExceptionType(QName messageQName) {
         throw new UnsupportedOperationException();
@@ -66,23 +64,23 @@ public class AxisEmitterBasedJaxRpcMapperContext implements JaxRpcMapperContext 
     }
 
     /**
-     * @param bEntry    
-     * @param operation 
-     * @return 
+     * @param bEntry
+     * @param operation
+     * @return
      */
     public String getJavaMethodName(BindingEntry bEntry, Operation operation) {
         return operation.getName();
     }
 
     /**
-     * @param bEntry    
-     * @param operation 
-     * @param position  
-     * @return 
+     * @param bEntry
+     * @param operation
+     * @param position
+     * @return
      */
     public String getJavaMethodParamType(BindingEntry bEntry,
                                          Operation operation,
-                                         int position,QName type) {
+                                         int position, QName type) {
         Method m = (Method) this.methods.get(operation.getName());
         //axis do not map the method names or types
         //so this should do 
@@ -93,9 +91,9 @@ public class AxisEmitterBasedJaxRpcMapperContext implements JaxRpcMapperContext 
     }
 
     /**
-     * @param bEntry    
-     * @param operation 
-     * @return 
+     * @param bEntry
+     * @param operation
+     * @return
      */
     public String getJavaMethodReturnType(BindingEntry bEntry,
                                           Operation operation) {
@@ -109,27 +107,26 @@ public class AxisEmitterBasedJaxRpcMapperContext implements JaxRpcMapperContext 
     }
 
     /**
-     * @param typeQName 
-     * @return 
+     * @param typeQName
+     * @return
      */
     public String getJavaType(QName typeQName) {
         throw new UnsupportedOperationException();
         // return jaxrpcmapper.getJavaType(typeQName);
     }
 
-
     /**
-     * @param port 
-     * @return 
+     * @param port
+     * @return
      */
     public String getPortName(Port port) {
         return emitter.getServicePortName();
     }
 
     /**
-     * @param ptEntry 
-     * @param bEntry  
-     * @return 
+     * @param ptEntry
+     * @param bEntry
+     * @return
      */
     public String getServiceEndpointInterfaceName(PortTypeEntry ptEntry,
                                                   BindingEntry bEntry) {
@@ -137,29 +134,29 @@ public class AxisEmitterBasedJaxRpcMapperContext implements JaxRpcMapperContext 
     }
 
     /**
-     * @param entry 
-     * @return 
+     * @param entry
+     * @return
      */
     public String getServiceInterfaceName(ServiceEntry entry) {
         return emitter.getServiceElementName();
     }
 
     /**
-     * @param path 
+     * @param path
      */
     public void loadMappingFromDir(String path) {
         throw new UnsupportedOperationException();
     }
 
     /**
-     * @param is 
+     * @param is
      */
     public void loadMappingFromInputStream(InputStream is) {
         throw new UnsupportedOperationException();
     }
 
     public void serialize(Writer out) throws GenerationFault {
-        JaxRpcMappingFileWriter w = new JaxRpcMappingFileWriter(out,emitter,j2eewscontext);
+        JaxRpcMappingFileWriter w = new JaxRpcMappingFileWriter(out, emitter, j2eewscontext);
         w.write();
 //
 //        try {
@@ -398,6 +395,7 @@ public class AxisEmitterBasedJaxRpcMapperContext implements JaxRpcMapperContext 
 //            throw GenerationFault.createGenerationFault(e);
 //        }
     }
+
     public String getPackageMappingClassName(int index) {
         throw new UnsupportedOperationException();
     }

@@ -21,37 +21,29 @@ import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.interfaces.WSC
 
 /**
  * This encapsulates the level 2 Elemenr PortComponent which is a child element of the webservice-description element.
- * It is also the concrete implmentation of the WSCFPortComponent. 
- *
+ * It is also the concrete implmentation of the WSCFPortComponent.
  */
 public class WSCFPortComponentImpl extends AbstractWSCFPortComponent implements WSCFPortComponent {
-	public WSCFPortComponentImpl(PortComponentType jaxbPortComponent){
+    public WSCFPortComponentImpl(PortComponentType jaxbPortComponent) {
 //		/////////////assigning the values //////////////
-		if(null != jaxbPortComponent.getDescription())
-			this.description =jaxbPortComponent.getDescription().getValue();
-		
-		if(null != jaxbPortComponent.getDisplayName())			
-			this.displayName =jaxbPortComponent.getDisplayName().getValue();
-		
-		if(null != jaxbPortComponent.getIcon())	
-			this.smallIcon =((PathType)(jaxbPortComponent.getIcon()).getSmallIcon()).getValue();
-		
-		if(null != jaxbPortComponent.getIcon())
-			this.largeIcon =((PathType)(jaxbPortComponent.getIcon()).getLargeIcon()).getValue();
-		
-		if(null != jaxbPortComponent.getPortComponentName())
-			this.portComponentName = jaxbPortComponent.getPortComponentName().getValue();
-		
-		if(null != jaxbPortComponent.getServiceEndpointInterface())
-			this.serviceEndpointInterface = (jaxbPortComponent.getServiceEndpointInterface()).getValue();
-			
-				
-		this.wsdlPort = new WSCFWSDLPortImpl(jaxbPortComponent.getWsdlPort());
-		this.serviceImplBean = new WSCFServiceImplBeanImpl(jaxbPortComponent.getServiceImplBean());
-		java.util.List list = jaxbPortComponent.getHandler();
-		for(int i=0; i < list.size(); i++){
-			WSCFHandler handler = new WSCFHandlerImpl(((PortComponentHandlerType)list.get(i)));
-			this.handlers.put(handler.getHandlerName(), handler);
-		}
-	}
+        if (null != jaxbPortComponent.getDescription())
+            this.description = jaxbPortComponent.getDescription().getValue();
+        if (null != jaxbPortComponent.getDisplayName())
+            this.displayName = jaxbPortComponent.getDisplayName().getValue();
+        if (null != jaxbPortComponent.getIcon())
+            this.smallIcon = ((PathType) (jaxbPortComponent.getIcon()).getSmallIcon()).getValue();
+        if (null != jaxbPortComponent.getIcon())
+            this.largeIcon = ((PathType) (jaxbPortComponent.getIcon()).getLargeIcon()).getValue();
+        if (null != jaxbPortComponent.getPortComponentName())
+            this.portComponentName = jaxbPortComponent.getPortComponentName().getValue();
+        if (null != jaxbPortComponent.getServiceEndpointInterface())
+            this.serviceEndpointInterface = (jaxbPortComponent.getServiceEndpointInterface()).getValue();
+        this.wsdlPort = new WSCFWSDLPortImpl(jaxbPortComponent.getWsdlPort());
+        this.serviceImplBean = new WSCFServiceImplBeanImpl(jaxbPortComponent.getServiceImplBean());
+        java.util.List list = jaxbPortComponent.getHandler();
+        for (int i = 0; i < list.size(); i++) {
+            WSCFHandler handler = new WSCFHandlerImpl(((PortComponentHandlerType) list.get(i)));
+            this.handlers.put(handler.getHandlerName(), handler);
+        }
+    }
 }

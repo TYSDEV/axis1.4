@@ -16,28 +16,26 @@
 
 package org.apache.geronimo.ews.ws4j2ee.utils;
 
-import java.io.InputStream;
-
 import org.apache.geronimo.ews.ws4j2ee.context.InputOutputFile;
 import org.apache.geronimo.ews.ws4j2ee.context.impl.InputOutputFileImpl;
 import org.apache.geronimo.ews.ws4j2ee.toWs.GenerationFault;
+
+import java.io.InputStream;
 
 /**
  * @author hemapani@opensource.lk
  */
 public class MiscFactory {
-	public static InputOutputFile getInputFile(
-			String fileName,
-			InputStream instream) {
-			return new InputOutputFileImpl(fileName, instream);
-		}
-    
-		public static InputOutputFile getInputFile(
-			String fileName) throws GenerationFault {
-			return new InputOutputFileImpl(fileName);
-		}
-		public static InputOutputFile getInputFile(
-			InputStream instream) {
-			return new InputOutputFileImpl(instream);
-		}	
+    public static InputOutputFile getInputFile(String fileName,
+                                               InputStream instream) {
+        return new InputOutputFileImpl(fileName, instream);
+    }
+
+    public static InputOutputFile getInputFile(String fileName) throws GenerationFault {
+        return new InputOutputFileImpl(fileName);
+    }
+
+    public static InputOutputFile getInputFile(InputStream instream) {
+        return new InputOutputFileImpl(instream);
+    }
 }

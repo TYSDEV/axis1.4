@@ -23,7 +23,9 @@ import org.apache.geronimo.ews.ws4j2ee.parsers.ParserFactory;
  * @author hemapani@opensource.lk
  */
 public interface Ws4J2eeFactory {
-	public ContextFactory getContextFactory();
-	public GenerationFactory getGenerationFactory();
-	public ParserFactory getParserFactory();
+    public ContextFactory getContextFactory();
+
+    public GenerationFactory getGenerationFactory();
+
+    public ParserFactory getParserFactory();
 }

@@ -23,22 +23,23 @@ import org.apache.geronimo.ews.ws4j2ee.toWs.Generator;
 import org.apache.geronimo.ews.ws4j2ee.toWs.Writer;
 
 /**
- * <p>This genarated theWrapper WS required in the 
- * Axis.</p> 
+ * <p>This genarated theWrapper WS required in the
+ * Axis.</p>
+ *
  * @author Srinath Perera(hemapani@opensource.lk)
  */
 public class WrapperWsGenerator implements Generator {
-	private J2EEWebServiceContext j2eewscontext;
-	private Writer writer;
-	protected static Log log =
-					LogFactory.getLog(WrapperWsGenerator.class.getName());
-    
-	public WrapperWsGenerator(J2EEWebServiceContext j2eewscontext) throws GenerationFault {
-		this.j2eewscontext = j2eewscontext;
-		writer = WrapperClassGeneratorFactory.createInstance(j2eewscontext);
-	}
-    
-	public void generate() throws GenerationFault {
-		writer.write();
-	}
+    private J2EEWebServiceContext j2eewscontext;
+    private Writer writer;
+    protected static Log log =
+            LogFactory.getLog(WrapperWsGenerator.class.getName());
+
+    public WrapperWsGenerator(J2EEWebServiceContext j2eewscontext) throws GenerationFault {
+        this.j2eewscontext = j2eewscontext;
+        writer = WrapperClassGeneratorFactory.createInstance(j2eewscontext);
+    }
+
+    public void generate() throws GenerationFault {
+        writer.write();
+    }
 }

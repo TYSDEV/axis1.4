@@ -16,6 +16,12 @@
 
 package org.apache.geronimo.ews.ws4j2ee.module;
 
+import org.apache.geronimo.ews.ws4j2ee.toWs.GenerationFault;
+import org.apache.geronimo.ews.ws4j2ee.toWs.UnrecoverableGenerationFault;
+import org.apache.geronimo.ews.ws4j2ee.utils.FileUtils;
+import org.apache.geronimo.ews.ws4j2ee.utils.TemporaryRepository;
+import org.apache.geronimo.ews.ws4j2ee.utils.UncompressingJarClassLoader;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,51 +31,47 @@ import java.util.Vector;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import org.apache.geronimo.ews.ws4j2ee.toWs.GenerationFault;
-import org.apache.geronimo.ews.ws4j2ee.toWs.UnrecoverableGenerationFault;
-import org.apache.geronimo.ews.ws4j2ee.utils.FileUtils;
-import org.apache.geronimo.ews.ws4j2ee.utils.TemporaryRepository;
-import org.apache.geronimo.ews.ws4j2ee.utils.UncompressingJarClassLoader;
-
 /**
  * @author hemapani@opensource.lk
  */
 public class EARModule implements Module {
     private Module pkgModule;
     private UncompressingJarClassLoader cl;
-	private Vector classPathElements;
-	private ClassLoader parentCL;
+    private Vector classPathElements;
+    private ClassLoader parentCL;
+
     /**
      * @param jarFile
      * @throws GenerationFault
      */
     public EARModule(String jarFile)
-        throws GenerationFault {
+            throws GenerationFault {
         try {
             ZipFile earFile = new ZipFile(jarFile);
             Enumeration enumeration = earFile.entries();
-            while(enumeration.hasMoreElements()){
-                ZipEntry entry = (ZipEntry)enumeration.nextElement();
-                
-                if(entry.getName().endsWith(".war") || entry.getName().endsWith(".jar") ){
-                    File outWar = new File(TemporaryRepository.getEntry(),entry.getName());
-                    FileUtils.uncompressFile(earFile.getInputStream(entry),outWar);
+            while (enumeration.hasMoreElements()) {
+                ZipEntry entry = (ZipEntry) enumeration.nextElement();
+                if (entry.getName().endsWith(".war") || entry.getName().endsWith(".jar")) {
+                    File outWar = new File(TemporaryRepository.getEntry(), entry.getName());
+                    FileUtils.uncompressFile(earFile.getInputStream(entry), outWar);
                     pkgModule = ModuleFactory.createPackageModule(outWar.getAbsolutePath());
                 }
             }
         } catch (UnrecoverableGenerationFault e) {
-           throw GenerationFault.createGenerationFault(e);
+            throw GenerationFault.createGenerationFault(e);
         } catch (IOException e) {
             throw GenerationFault.createGenerationFault(e);
         }
-    }   
-        /**
+    }
+
+    /**
      * @return
      * @throws GenerationFault
      */
     public ClassLoader getClassLoaderWithPackageLoaded() throws GenerationFault {
         return pkgModule.getClassLoaderWithPackageLoaded();
     }
+
     /**
      * @return
      * @throws GenerationFault
@@ -77,9 +79,11 @@ public class EARModule implements Module {
     public ArrayList getClassPathElements() throws GenerationFault {
         return pkgModule.getClassPathElements();
     }
-public boolean equals(Object obj) {
+
+    public boolean equals(Object obj) {
         return pkgModule.equals(obj);
     }
+
     /**
      * @param path
      * @return
@@ -88,6 +92,7 @@ public boolean equals(Object obj) {
     public InputStream findFileInModule(String path) throws GenerationFault {
         return pkgModule.findFileInModule(path);
     }
+
     /**
      * @return
      * @throws GenerationFault
@@ -95,6 +100,7 @@ public boolean equals(Object obj) {
     public InputStream getEjbJarfile() throws GenerationFault {
         return pkgModule.getEjbJarfile();
     }
+
     /**
      * @return
      * @throws GenerationFault
@@ -102,6 +108,7 @@ public boolean equals(Object obj) {
     public InputStream getWebddfile() throws GenerationFault {
         return pkgModule.getWebddfile();
     }
+
     /**
      * @return
      * @throws GenerationFault
@@ -109,12 +116,14 @@ public boolean equals(Object obj) {
     public InputStream getWscfFile() throws GenerationFault {
         return pkgModule.getWscfFile();
     }
+
     /* (non-Javadoc)
      * @see java.lang.Object#hashCode()
      */
     public int hashCode() {
         return pkgModule.hashCode();
     }
+
     /**
      * @param stream
      * @throws GenerationFault
@@ -122,6 +131,7 @@ public boolean equals(Object obj) {
     public void setEjbJarfile(InputStream stream) throws GenerationFault {
         pkgModule.setEjbJarfile(stream);
     }
+
     /**
      * @param stream
      * @throws GenerationFault
@@ -129,6 +139,7 @@ public boolean equals(Object obj) {
     public void setWebddfile(InputStream stream) throws GenerationFault {
         pkgModule.setWebddfile(stream);
     }
+
     /**
      * @param stream
      * @throws GenerationFault
@@ -136,6 +147,7 @@ public boolean equals(Object obj) {
     public void setWscfFile(InputStream stream) throws GenerationFault {
         pkgModule.setWscfFile(stream);
     }
+
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
      */

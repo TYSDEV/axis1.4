@@ -29,75 +29,64 @@ import org.apache.geronimo.ews.ws4j2ee.toWs.Ws4J2eeFactory;
  * <p>This genarated the Server side SEI and other classes required in the
  * Axis.</p>
  * <h3>Service Endpoint Interface</h3>
- *	<p>The JAX-RPC specification requires that a JAX-RPC service endpoint interface must
- *	follow the following rules:</p>
- *   <ol>
- *	    <li>Service endpoint interface must extend java.rmi.Remote either directly or indirectly</li>
- *	    <li>All methods in the interface must throw java.rmi.RemoteException. Methods may
- *			throw service specific exceptions in addition to the RemoteException.</li>
- *		<li>Method parameters and return types must be the JAX-RPC supported Java types
- *			(refer to the section 5.1, �JAX-RPC Supported Java Types�). At runtime, values of a
- *			supported Java type must be serializable to and from the corresponding XML
- *	        representation.
- *	    </li>
- *	    <li>Holder classes may be used as method parameters. These Holder classes are either
- *		generated or those packaged in the standard javax.xml.rpc.holders package.</li>
- *		<li>Service endpoint interface must not include constant (as public final static)
- *		declarations. WSDL 1.1 specification does not define any standard representation for
- *		constants in a wsdl:portType definition.</li>
- *	</ol>
- * 
+ * <p>The JAX-RPC specification requires that a JAX-RPC service endpoint interface must
+ * follow the following rules:</p>
+ * <ol>
+ * <li>Service endpoint interface must extend java.rmi.Remote either directly or indirectly</li>
+ * <li>All methods in the interface must throw java.rmi.RemoteException. Methods may
+ * throw service specific exceptions in addition to the RemoteException.</li>
+ * <li>Method parameters and return types must be the JAX-RPC supported Java types
+ * (refer to the section 5.1, �JAX-RPC Supported Java Types�). At runtime, values of a
+ * supported Java type must be serializable to and from the corresponding XML
+ * representation.
+ * </li>
+ * <li>Holder classes may be used as method parameters. These Holder classes are either
+ * generated or those packaged in the standard javax.xml.rpc.holders package.</li>
+ * <li>Service endpoint interface must not include constant (as public final static)
+ * declarations. WSDL 1.1 specification does not define any standard representation for
+ * constants in a wsdl:portType definition.</li>
+ * </ol>
+ *
  * @author Srinath Perera(hemapani@opensource.lk)
  */
 public class ServerSideWsGenerator implements Generator {
     private J2EEWebServiceContext j2eewscontext;
-	private Ws4J2eeFactory factory;
+    private Ws4J2eeFactory factory;
     protected static Log log =
-        LogFactory.getLog(ServerSideWsGenerator.class.getName());
+            LogFactory.getLog(ServerSideWsGenerator.class.getName());
 
     public ServerSideWsGenerator(J2EEWebServiceContext j2eewscontext) {
         this.j2eewscontext = j2eewscontext;
-		factory = j2eewscontext.getFactory();
+        factory = j2eewscontext.getFactory();
     }
 
     public void generate() throws GenerationFault {
         try {
-
             String mappingfile =
-                j2eewscontext.getMiscInfo().getJaxrpcfile().fileName();
+                    j2eewscontext.getMiscInfo().getJaxrpcfile().fileName();
             String wsdlfile =
-                j2eewscontext.getMiscInfo().getWsdlFile().fileName();
+                    j2eewscontext.getMiscInfo().getWsdlFile().fileName();
 			
 //            J2eeEmitter j2ee = new J2eeEmitter(true,
 //            	!j2eewscontext.getMiscInfo().isSEIExists(),j2eewscontext);
             J2eeGeneratorFactory genFac = new J2eeGeneratorFactory();
-            J2eeEmitter j2ee = new J2eeEmitter(j2eewscontext,genFac);
-            
-
+            J2eeEmitter j2ee = new J2eeEmitter(j2eewscontext, genFac);
             if (j2eewscontext.getMiscInfo().isVerbose()) {
                 log.info("wsdl file = " + wsdlfile);
                 log.info("jaxrpc mapping file = " + mappingfile);
                 log.info("calling the jaxrpcmapper >> ");
             }
-
             j2ee.setMappingFilePath(mappingfile);
             j2ee.setOutputDir(j2eewscontext.getMiscInfo().getOutPutPath());
             j2ee.setServerSide(true);
             j2ee.setVerbose(j2eewscontext.getMiscInfo().isVerbose());
-			//j2ee.setUsedbyws4j2ee(true);
+            //j2ee.setUsedbyws4j2ee(true);
             j2ee.setHelperWanted(true);
-            
             j2ee.runServerSide(wsdlfile);
-
             SymbolTable axisSymboltable = j2ee.getSymbolTable();
-            j2eewscontext.setWSDLContext(
-				factory.getContextFactory().createWSDLContext(axisSymboltable));
-
+            j2eewscontext.setWSDLContext(factory.getContextFactory().createWSDLContext(axisSymboltable));
             JaxRpcMapper mapper = j2ee.getJaxRpcMapper();
-            j2eewscontext.setJAXRPCMappingContext(
-				factory.getContextFactory().createJaxRpcMapperContext(
-                   mapper, j2ee));
-
+            j2eewscontext.setJAXRPCMappingContext(factory.getContextFactory().createJaxRpcMapperContext(mapper, j2ee));
         } catch (Exception e) {
             if (e instanceof RuntimeException) {
                 throw (RuntimeException) e;

@@ -16,11 +16,11 @@
 
 package org.apache.geronimo.ews.ws4j2ee.toWs;
 
-import java.util.List;
-
 import org.apache.axis.utils.CLArgsParser;
 import org.apache.axis.utils.CLOption;
 import org.apache.axis.utils.CLOptionDescriptor;
+
+import java.util.List;
 
 /**
  * @author hemapani
@@ -41,8 +41,8 @@ public class Ws4J2eeCLOptionParser {
     protected static final int HELPER_CLASS_OPT = 'H';
     protected static final int USERNAME_OPT = 'U';
     protected static final int PASSWORD_OPT = 'P';
-	protected static final int IMPL_STYLE_OPT = 'E';
-	protected static final int CONTAINER_OPT = 'J';
+    protected static final int IMPL_STYLE_OPT = 'E';
+    protected static final int CONTAINER_OPT = 'J';
 
     private String wscffile;
     private String outputDirectory = ".";
@@ -69,18 +69,17 @@ public class Ws4J2eeCLOptionParser {
                 CLOptionDescriptor.ARGUMENT_REQUIRED,
                 PASSWORD_OPT,
                 "password"),
-		new CLOptionDescriptor("implStyle",
-					   CLOptionDescriptor.ARGUMENT_REQUIRED,
-					   IMPL_STYLE_OPT,
-					   "impelemtation Style"),  
-		new CLOptionDescriptor("container",
-							   CLOptionDescriptor.ARGUMENT_REQUIRED,
-							   CONTAINER_OPT,
-							   "the J2EE contianer")   					         
+        new CLOptionDescriptor("implStyle",
+                CLOptionDescriptor.ARGUMENT_REQUIRED,
+                IMPL_STYLE_OPT,
+                "impelemtation Style"),
+        new CLOptionDescriptor("container",
+                CLOptionDescriptor.ARGUMENT_REQUIRED,
+                CONTAINER_OPT,
+                "the J2EE contianer")
     };
 
     public Ws4J2eeCLOptionParser(String[] args) {
-
         CLArgsParser argsParser = new CLArgsParser(args, options);
 
         // Print parser errors, if any
@@ -92,7 +91,6 @@ public class Ws4J2eeCLOptionParser {
         // Get a list of parsed options
         List clOptions = argsParser.getArguments();
         int size = clOptions.size();
-
         try {
             // Parse the options and configure the emitter as appropriate.
             for (int i = 0; i < size; i++) {
@@ -111,28 +109,22 @@ public class Ws4J2eeCLOptionParser {
             t.printStackTrace();
             System.exit(1);
         }
-
     }
 
     protected void parseOption(CLOption option) {
         switch (option.getId()) {
             case SERVER_OPT:
                 isServerSide = true;
-
                 break;
-
             case OUTPUT_OPT:
                 outputDirectory = option.getArgument();
                 break;
-
             case USERNAME_OPT:
                 userName = option.getArgument();
                 break;
-
             case PASSWORD_OPT:
                 password = option.getArgument();
                 break;
-
             case CLOption.TEXT_ARGUMENT:
                 if (wscffile != null) {
                     throw new UnrecoverableGenerationFault("Only one arguement allowed ");
@@ -140,112 +132,113 @@ public class Ws4J2eeCLOptionParser {
                 }
                 wscffile = option.getArgument();
                 break;
-            case IMPL_STYLE_OPT: 
-            	this.implStyle = option.getArgument();
-				break;	 
-			case CONTAINER_OPT: 
-				this.contanier = option.getArgument();
-				break;	 	 
+            case IMPL_STYLE_OPT:
+                this.implStyle = option.getArgument();
+                break;
+            case CONTAINER_OPT:
+                this.contanier = option.getArgument();
+                break;
             default:
                 throw new UnrecoverableGenerationFault("unknown option");
         }
     } // parseOption
 
     /**
-     * @return 
+     * @return
      */
     public String getWscffile() {
         return wscffile;
     }
 
     /**
-     * @param string 
+     * @param string
      */
     public void setWscffile(String string) {
         wscffile = string;
     }
 
     /**
-     * @return 
+     * @return
      */
     public boolean isServerSide() {
         return isServerSide;
     }
 
     /**
-     * @return 
+     * @return
      */
     public String getOutputDirectory() {
         return outputDirectory;
     }
 
     /**
-     * @return 
+     * @return
      */
     public String getPassword() {
         return password;
     }
 
     /**
-     * @return 
+     * @return
      */
     public String getUserName() {
         return userName;
     }
 
     /**
-     * @param b 
+     * @param b
      */
     public void setServerSide(boolean b) {
         isServerSide = b;
     }
 
     /**
-     * @param string 
+     * @param string
      */
     public void setOutputDirectory(String string) {
         outputDirectory = string;
     }
 
     /**
-     * @param string 
+     * @param string
      */
     public void setPassword(String string) {
         password = string;
     }
 
     /**
-     * @param string 
+     * @param string
      */
     public void setUserName(String string) {
         userName = string;
     }
-	/**
-	 * @return
-	 */
-	public String getImplStyle() {
-		return implStyle;
-	}
 
-	/**
-	 * @param string
-	 */
-	public void setImplStyle(String string) {
-		implStyle = string;
-	}
+    /**
+     * @return
+     */
+    public String getImplStyle() {
+        return implStyle;
+    }
 
-	/**
-	 * @return
-	 */
-	public String getContanier() {
-		return contanier;
-	}
+    /**
+     * @param string
+     */
+    public void setImplStyle(String string) {
+        implStyle = string;
+    }
 
-	/**
-	 * @param string
-	 */
-	public void setContanier(String string) {
-		contanier = string;
-	}
+    /**
+     * @return
+     */
+    public String getContanier() {
+        return contanier;
+    }
+
+    /**
+     * @param string
+     */
+    public void setContanier(String string) {
+        contanier = string;
+    }
 
 }

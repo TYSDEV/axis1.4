@@ -36,68 +36,65 @@ public class ModulePackager {
     private JarOutputStream jarFile;
     private byte[] buf = new byte[1024];
     private HashMap entries = new HashMap();
-    
-    public ModulePackager(File outjarName)throws IOException{
-        BufferedOutputStream bo =
-                 new BufferedOutputStream(new FileOutputStream(outjarName));
-        jarFile = new JarOutputStream(bo);
 
+    public ModulePackager(File outjarName) throws IOException {
+        BufferedOutputStream bo =
+                new BufferedOutputStream(new FileOutputStream(outjarName));
+        jarFile = new JarOutputStream(bo);
     }
-    
-    public void addJarFile(File file)throws IOException{
+
+    public void addJarFile(File file) throws IOException {
         JarFile infile = new JarFile(file);
         Enumeration enu = infile.entries();
-        while(enu.hasMoreElements()){
-            ZipEntry zipentry  = (ZipEntry)enu.nextElement();
+        while (enu.hasMoreElements()) {
+            ZipEntry zipentry = (ZipEntry) enu.nextElement();
             InputStream in = infile.getInputStream(zipentry);
-            addFileToJar(zipentry.getName(),in);
+            addFileToJar(zipentry.getName(), in);
         }
-    
     }
-    
-    public void addClassFiles(File dir)throws IOException{
-        addClassFiles(dir,null);
+
+    public void addClassFiles(File dir) throws IOException {
+        addClassFiles(dir, null);
     }
-    
-    private void addClassFiles(File file,String path)throws IOException{
-        if(file.isDirectory()){
-            if(path == null){
+
+    private void addClassFiles(File file, String path) throws IOException {
+        if (file.isDirectory()) {
+            if (path == null) {
                 path = "";
-            }else if("".equals(path)){
+            } else if ("".equals(path)) {
                 path = file.getName();
-            }else{
-                path = path+"/"+file.getName();
-            } 
+            } else {
+                path = path + "/" + file.getName();
+            }
             File[] files = file.listFiles();
-            if(files != null){
-                for(int i = 0;i<files.length;i++){
-                    addClassFiles(files[i],path);
+            if (files != null) {
+                for (int i = 0; i < files.length; i++) {
+                    addClassFiles(files[i], path);
                 }
             }
-        }else{
-            path = path + "/"+file.getName(); 
-            addFileToJar(path,new FileInputStream(file));
+        } else {
+            path = path + "/" + file.getName();
+            addFileToJar(path, new FileInputStream(file));
         }
     }
-    
-    public void addFileToJar(String path,File input)throws IOException{
-        
-        addFileToJar(path,new FileInputStream(input));
-    }
-    
-    private void addFileToJar(String entry,InputStream instream)throws IOException{
-        if(entries.containsKey(entry)){
-            entries.remove(entry);            
-        }
-        entries.put(entry,instream);
-    }
-    public void finalizeJar()throws IOException{
-        Iterator jarentries = entries.keySet().iterator();
-        while(jarentries.hasNext()){
-            String entryName = (String)jarentries.next();
-            ZipEntry entry = new ZipEntry(entryName);
 
-            InputStream instream = (InputStream)entries.get(entryName);
+    public void addFileToJar(String path, File input) throws IOException {
+        addFileToJar(path, new FileInputStream(input));
+    }
+
+    private void addFileToJar(String entry, InputStream instream) throws IOException {
+        if (entries.containsKey(entry)) {
+            entries.remove(entry);
+        }
+        entries.put(entry, instream);
+    }
+
+    public void finalizeJar() throws IOException {
+        Iterator jarentries = entries.keySet().iterator();
+        while (jarentries.hasNext()) {
+            String entryName = (String) jarentries.next();
+            ZipEntry entry = new ZipEntry(entryName);
+            InputStream instream = (InputStream) entries.get(entryName);
             jarFile.putNextEntry(entry);
             int anz;
             while ((anz = instream.read(buf)) != -1) {
@@ -106,9 +103,7 @@ public class ModulePackager {
             jarFile.flush();
             jarFile.closeEntry();
             instream.close();
-
         }
-
         jarFile.close();
     }
 

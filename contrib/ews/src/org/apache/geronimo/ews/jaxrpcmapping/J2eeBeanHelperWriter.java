@@ -1,4 +1,3 @@
-
 /*
  * Copyright 2001-2004 The Apache Software Foundation.
  * 
@@ -30,7 +29,7 @@ import java.util.Vector;
 
 /**
  * This is Wsdl2java's Helper Type Writer.  It writes the <typeName>.java file.
- * 
+ *
  * @author Ias (iasandcb@tmax.co.kr)
  * @deprecated no more used by J2eeGeneratorFactory
  */
@@ -45,8 +44,8 @@ public class J2eeBeanHelperWriter extends J2eeClassWriter {
 
     /**
      * Constructor.
-     * 
-     * @param emitter    
+     *
+     * @param emitter
      * @param type       The type representing this class
      * @param elements   Vector containing the Type and name of each property
      * @param extendType The type representing the extended class (or null)
@@ -77,7 +76,6 @@ public class J2eeBeanHelperWriter extends J2eeClassWriter {
         } else {
             this.canSearchParents = true;
         }
-
     } // ctor
 
     /**
@@ -200,7 +198,6 @@ public class J2eeBeanHelperWriter extends J2eeClassWriter {
                 // the correct way.
                 if (elementMetaData == null)
                     elementMetaData = new Vector();
-
                 elementMetaData.add(elem);
                 //}
             }
@@ -213,7 +210,6 @@ public class J2eeBeanHelperWriter extends J2eeClassWriter {
                 + (this.canSearchParents ? "true" : "false")
                 + ");");
         pw.println();
-
         pw.println("    static {");
         pw.println("        typeDesc.setXmlType(" + Utils.getNewQName(type.getQName()) + ");");
 
@@ -221,7 +217,6 @@ public class J2eeBeanHelperWriter extends J2eeClassWriter {
         if (attributes != null || elementMetaData != null) {
             if (attributes != null) {
                 boolean wroteAttrDecl = false;
-
                 for (int i = 0; i < attributes.size(); i += 2) {
                     TypeEntry te = (TypeEntry) attributes.get(i);
                     QName attrName = (QName) attributes.get(i + 1);
@@ -243,24 +238,19 @@ public class J2eeBeanHelperWriter extends J2eeClassWriter {
                     pw.println("        typeDesc.addFieldDesc(attrField);");
                 }
             }
-
             if (elementMetaData != null) {
                 boolean wroteElemDecl = false;
-
                 for (int i = 0; i < elementMetaData.size(); i++) {
                     ElementDecl elem = (ElementDecl) elementMetaData.elementAt(i);
-
                     if (elem.getAnyElement()) {
                         continue;
                     }
-
                     String fieldName = getAsFieldName(elem.getName());
                     QName xmlName = elem.getQName();
                     
                     // Some special handling for arrays.
                     TypeEntry elemType = elem.getType();
                     QName xmlType = null;
-
                     if (elemType.getDimensions().length() > 1 &&
                             (elemType.getClass() == DefinedType.class)) {
                         // If we have a DefinedType with dimensions, it must
@@ -275,7 +265,6 @@ public class J2eeBeanHelperWriter extends J2eeClassWriter {
                         }
                         xmlType = elemType.getQName();
                     }
-
                     pw.print("        ");
                     if (!wroteElemDecl) {
                         pw.print("org.apache.axis.description.ElementDesc ");
@@ -294,10 +283,8 @@ public class J2eeBeanHelperWriter extends J2eeClassWriter {
                 }
             }
         }
-
         pw.println("    }");
         pw.println();
-
         pw.println("    /**");
         pw.println("     * " + Messages.getMessage("returnTypeMeta"));
         pw.println("     */");
@@ -325,7 +312,6 @@ public class J2eeBeanHelperWriter extends J2eeClassWriter {
                 Character.isUpperCase(fieldName.charAt(1))) {
             return Utils.capitalizeFirstChar(fieldName);
         }
-
         return fieldName;
     }
 

@@ -27,7 +27,7 @@ import java.util.Vector;
 
 /**
  * This is Wsdl2java's Complex Type Writer.  It writes the <typeName>.java file.
- * 
+ *
  * @author Ias (iasandcb@tmax.co.kr)
  * @deprecated no more used by J2eeGeneratorFactory
  */
@@ -186,7 +186,6 @@ public class J2eeEnumTypeWriter extends JavaClassWriter {
             pw.println("            throw new java.lang.IllegalStateException();");
             pw.println("        }");
         }
-
         pw.println("    }");
 
         // Equals == to determine equality value.
@@ -204,9 +203,7 @@ public class J2eeEnumTypeWriter extends JavaClassWriter {
         } else {
             pw.println("    public java.lang.String toString() { return java.lang.String.valueOf(_value_);}");
         }
-
         pw.println("    public java.lang.Object readResolve() throws java.io.ObjectStreamException { return fromValue(_value_);}");
-
         pw.println("    public static org.apache.axis.encoding.Serializer getSerializer(");
         pw.println("           java.lang.String mechType, ");
         pw.println("           java.lang.Class _javaType,  ");
@@ -223,13 +220,11 @@ public class J2eeEnumTypeWriter extends JavaClassWriter {
         pw.println("          new org.apache.axis.encoding.ser.EnumDeserializer(");
         pw.println("            _javaType, _xmlType);");
         pw.println("    }");
-
         pw.println("    // " + Messages.getMessage("typeMeta"));
         pw.println("    private static org.apache.axis.description.TypeDesc typeDesc =");
         pw.println("        new org.apache.axis.description.TypeDesc(" +
                 Utils.getJavaLocalName(type.getName()) + ".class);");
         pw.println();
-
         pw.println("    static {");
         pw.println("        typeDesc.setXmlType(" + Utils.getNewQName(type.getQName()) + ");");
         pw.println("    }");
@@ -240,14 +235,13 @@ public class J2eeEnumTypeWriter extends JavaClassWriter {
         pw.println("        return typeDesc;");
         pw.println("    }");
         pw.println();
-
     } // writeFileBody
 
     /**
      * Get the enumeration names for the values.
      * The name is affected by whether all of the values of the enumeration
      * can be expressed as valid java identifiers.
-     * 
+     *
      * @param bv Vector base and values vector from getEnumerationBaseAndValues
      * @return Vector names of enum value identifiers.
      */

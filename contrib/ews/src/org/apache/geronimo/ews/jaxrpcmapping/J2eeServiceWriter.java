@@ -25,7 +25,7 @@ import java.io.IOException;
 /**
  * This is Wsdl2java's Service Writer.  It writes the following files, as appropriate:
  * <serviceName>.java, <serviceName>TestCase.java.
- * 
+ *
  * @author Ias (iasandcb@tmax.co.kr)
  * @deprecated no more used by J2eeGeneratorFactory
  */

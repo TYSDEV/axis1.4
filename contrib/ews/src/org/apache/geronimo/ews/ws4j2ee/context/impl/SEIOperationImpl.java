@@ -16,14 +16,14 @@
 
 package org.apache.geronimo.ews.ws4j2ee.context.impl;
 
+import org.apache.geronimo.ews.ws4j2ee.context.SEIOperation;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import org.apache.geronimo.ews.ws4j2ee.context.SEIOperation;
-
 /**
- * @see SEIOperation
  * @author Srinath Perera(hemapani@opensource.lk)
+ * @see SEIOperation
  */
 public class SEIOperationImpl implements SEIOperation {
     private String methodName;
@@ -49,7 +49,7 @@ public class SEIOperationImpl implements SEIOperation {
     }
 
     public void addParameter(String type, String name) {
-		parmNames.add(name);
+        parmNames.add(name);
         parameters.put(name, type);
     }
 
@@ -69,7 +69,7 @@ public class SEIOperationImpl implements SEIOperation {
      * @see org.apache.geronimo.ews.ws4j2ee.context.SEIOperation#getParameterTypes()
      */
     public String getParameterType(String name) {
-        return (String)parameters.get(name);
+        return (String) parameters.get(name);
     }
 
 }

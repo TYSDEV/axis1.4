@@ -21,20 +21,20 @@ import org.apache.geronimo.ews.ws4j2ee.utils.Utils;
 
 /**
  * abstract class writer
- * 
+ *
  * @author Srianth Perera(hemapani@opensource.lk)
  */
 public abstract class JavaInterfaceWriter extends AbstractWriter {
-	protected String qulifiedName;
+    protected String qulifiedName;
     protected String classname;
     protected String packageName;
     private String pacakgesatement;
     private String targetDirectory;
 
     public JavaInterfaceWriter(J2EEWebServiceContext j2eewscontext, String qulifiedName) throws GenerationFault {
-        super(j2eewscontext,Utils.getFileNamefromClass(j2eewscontext,qulifiedName));
-        if(qulifiedName == null){
-        	throw new GenerationFault("the class qualified name must not be null");
+        super(j2eewscontext, Utils.getFileNamefromClass(j2eewscontext, qulifiedName));
+        if (qulifiedName == null) {
+            throw new GenerationFault("the class qualified name must not be null");
         }
         this.qulifiedName = qulifiedName;
         packageName = Utils.getPackageNameFromQuallifiedName(qulifiedName);
@@ -42,8 +42,8 @@ public abstract class JavaInterfaceWriter extends AbstractWriter {
     }
 
     public void writeCode() throws GenerationFault {
-		if(out == null)
-			return;
+        if (out == null)
+            return;
         out.write((packageName != null) ? ("package " + packageName + ";\n") : "");
         writeImportStatements();
         writeClassComment();
@@ -51,7 +51,6 @@ public abstract class JavaInterfaceWriter extends AbstractWriter {
                 + classname
                 + getExtendsPart()
                 + "{\n");
-
         writeAttributes();
         writeMethods();
         out.write("}\n");

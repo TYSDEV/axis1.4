@@ -22,14 +22,14 @@ import org.apache.geronimo.ews.ws4j2ee.toWs.wrapperWs.SimpleRemoteInterfaceBased
 /**
  * @author hemapani
  */
-public class RemoteInterfacedBasedWrapperClassWriter4Geronimo extends SimpleRemoteInterfaceBasedWrapperClassWriter{
+public class RemoteInterfacedBasedWrapperClassWriter4Geronimo extends SimpleRemoteInterfaceBasedWrapperClassWriter {
 
     /**
      * @param j2eewscontext
      * @throws GenerationFault
      */
     public RemoteInterfacedBasedWrapperClassWriter4Geronimo(J2EEWebServiceContext j2eewscontext)
-        throws GenerationFault {
+            throws GenerationFault {
         super(j2eewscontext);
     }
 

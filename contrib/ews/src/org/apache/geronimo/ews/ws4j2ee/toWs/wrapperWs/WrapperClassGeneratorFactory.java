@@ -29,38 +29,34 @@ import org.apache.geronimo.ews.ws4j2ee.toWs.wrapperWs.jonas.RemoteInterfacedBase
  * @author Srinath Perera(hemapani@opensource.lk)
  */
 public class WrapperClassGeneratorFactory {
-	public static Writer createInstance(J2EEWebServiceContext context) throws GenerationFault{
-		
-		String implStyle = context.getMiscInfo().getImplStyle();
-		String container = context.getMiscInfo().getTargetJ2EEContainer();
-
-		
-		if(!context.getMiscInfo().isImplwithEJB()){
-			return new WebEndpointWrapperClassWriter(context);
-		}else if(GenerationConstants.USE_REMOTE.equals(implStyle)
-			||GenerationConstants.USE_LOCAL_AND_REMOTE.equals(implStyle)){
-				if(GenerationConstants.JBOSS_CONTAINER.equals(container))
-					return new RemoteInterfacedBasedWrapperClassWriter4JBoss(context);
-				else if(GenerationConstants.GERONIMO_CONTAINER.equals(container))
-					return new RemoteInterfacedBasedWrapperClassWriter4Geronimo(context);
-				else if(GenerationConstants.JONAS_CONTAINER.equals(container))
-					return new RemoteInterfacedBasedWrapperClassWriter4JOnAS(context);	
-				else	
-					throw new UnrecoverableGenerationFault("No proper Wrapper Class generator found");	
-
-		}else if(GenerationConstants.USE_LOCAL.equals(implStyle)){
-				return new SimpleLocalInterfaceBasedWrapperClassWriter(context);
-		}else if(GenerationConstants.USE_INTERNALS.equals(implStyle)){
-			if(GenerationConstants.JBOSS_CONTAINER.equals(container)){
-				//jboss internals
-				throw new UnrecoverableGenerationFault("This combination not supported"+implStyle+"|"+container);
-			}else if(GenerationConstants.GERONIMO_CONTAINER.equals(container)){
-				return new InternalBasedWrapperClassWriter(context);
-			}else if(GenerationConstants.JONAS_CONTAINER.equals(container))
-				throw new UnrecoverableGenerationFault("This combination not supported"+implStyle+"|"+container);	
-			else	
-				throw new UnrecoverableGenerationFault("No proper Wrapper Class generator found");
-		}
-		throw new UnrecoverableGenerationFault("No proper Wrapper Class generator found for "+implStyle+"|"+container);	
-	}	
+    public static Writer createInstance(J2EEWebServiceContext context) throws GenerationFault {
+        String implStyle = context.getMiscInfo().getImplStyle();
+        String container = context.getMiscInfo().getTargetJ2EEContainer();
+        if (!context.getMiscInfo().isImplwithEJB()) {
+            return new WebEndpointWrapperClassWriter(context);
+        } else if (GenerationConstants.USE_REMOTE.equals(implStyle)
+                || GenerationConstants.USE_LOCAL_AND_REMOTE.equals(implStyle)) {
+            if (GenerationConstants.JBOSS_CONTAINER.equals(container))
+                return new RemoteInterfacedBasedWrapperClassWriter4JBoss(context);
+            else if (GenerationConstants.GERONIMO_CONTAINER.equals(container))
+                return new RemoteInterfacedBasedWrapperClassWriter4Geronimo(context);
+            else if (GenerationConstants.JONAS_CONTAINER.equals(container))
+                return new RemoteInterfacedBasedWrapperClassWriter4JOnAS(context);
+            else
+                throw new UnrecoverableGenerationFault("No proper Wrapper Class generator found");
+        } else if (GenerationConstants.USE_LOCAL.equals(implStyle)) {
+            return new SimpleLocalInterfaceBasedWrapperClassWriter(context);
+        } else if (GenerationConstants.USE_INTERNALS.equals(implStyle)) {
+            if (GenerationConstants.JBOSS_CONTAINER.equals(container)) {
+                //jboss internals
+                throw new UnrecoverableGenerationFault("This combination not supported" + implStyle + "|" + container);
+            } else if (GenerationConstants.GERONIMO_CONTAINER.equals(container)) {
+                return new InternalBasedWrapperClassWriter(context);
+            } else if (GenerationConstants.JONAS_CONTAINER.equals(container))
+                throw new UnrecoverableGenerationFault("This combination not supported" + implStyle + "|" + container);
+            else
+                throw new UnrecoverableGenerationFault("No proper Wrapper Class generator found");
+        }
+        throw new UnrecoverableGenerationFault("No proper Wrapper Class generator found for " + implStyle + "|" + container);
+    }
 }

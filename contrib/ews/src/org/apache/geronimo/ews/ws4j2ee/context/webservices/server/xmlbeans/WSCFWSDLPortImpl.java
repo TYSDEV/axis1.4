@@ -15,24 +15,22 @@
  */
 package org.apache.geronimo.ews.ws4j2ee.context.webservices.server.xmlbeans;
 
+import com.sun.java.xml.ns.j2Ee.XsdQNameType;
 import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.AbstractWSCFWSDLPort;
 import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.interfaces.WSCFWSDLPort;
 
-import com.sun.java.xml.ns.j2Ee.XsdQNameType;
-
 /**
  * This encapsulates the Qname wsdlport name and this is the concrete implementation of the WSCFWSDLPort
- *
  */
 public class WSCFWSDLPortImpl extends AbstractWSCFWSDLPort implements WSCFWSDLPort {
-	
-	public WSCFWSDLPortImpl(XsdQNameType wsdlport){
-		
-		if(null == wsdlport){return;}
-		
-		if(null != wsdlport.getQNameValue()){
-			this.localpart = wsdlport.getQNameValue().getLocalPart();
-			this.namespaceURI = wsdlport.getQNameValue().getNamespaceURI();
-		}
-	}
+
+    public WSCFWSDLPortImpl(XsdQNameType wsdlport) {
+        if (null == wsdlport) {
+            return;
+        }
+        if (null != wsdlport.getQNameValue()) {
+            this.localpart = wsdlport.getQNameValue().getLocalPart();
+            this.namespaceURI = wsdlport.getQNameValue().getNamespaceURI();
+        }
+    }
 }

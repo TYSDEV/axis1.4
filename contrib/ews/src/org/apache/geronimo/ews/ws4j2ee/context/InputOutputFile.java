@@ -16,17 +16,19 @@
 
 package org.apache.geronimo.ews.ws4j2ee.context;
 
+import org.apache.geronimo.ews.ws4j2ee.toWs.GenerationFault;
+
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import org.apache.geronimo.ews.ws4j2ee.toWs.GenerationFault;
-
 /**
- * <p>Input file can be a file or a input stream this class hide the both behind the 
+ * <p>Input file can be a file or a input stream this class hide the both behind the
  * same interface</p>
  */
 public interface InputOutputFile {
-    public String fileName()throws GenerationFault;
-    public InputStream getInputStream()throws GenerationFault;
-	public OutputStream getOutStream() throws GenerationFault; 
+    public String fileName() throws GenerationFault;
+
+    public InputStream getInputStream() throws GenerationFault;
+
+    public OutputStream getOutStream() throws GenerationFault;
 }

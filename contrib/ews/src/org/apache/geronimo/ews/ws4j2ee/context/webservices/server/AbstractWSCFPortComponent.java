@@ -15,67 +15,66 @@
  */
 package org.apache.geronimo.ews.ws4j2ee.context.webservices.server;
 
-import java.util.HashMap;
-
 import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.interfaces.WSCFHandler;
 import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.interfaces.WSCFPortComponent;
 import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.interfaces.WSCFServiceImplBean;
 import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.interfaces.WSCFWSDLPort;
 
+import java.util.HashMap;
+
 /**
  * This encapsulates the level 2 Elemenr PortComponent which is a child element of the webservice-description element.
- * It is also the concrete implmentation of the WSCFPortComponent. 
- *
+ * It is also the concrete implmentation of the WSCFPortComponent.
  */
 public abstract class AbstractWSCFPortComponent extends WSCFElement implements WSCFPortComponent {
+
+    /**
+     * port-component description
+     */
+    protected String description;
+
+    /**
+     * port-component display name
+     */
+    protected String displayName;
+
+    /**
+     * port-component small icon
+     */
+    protected String smallIcon;
+
+    /**
+     * port-component large icon
+     */
+    protected String largeIcon;
+
+    /**
+     * port-component name
+     */
+    protected String portComponentName;
+
+    /**
+     * port-component wsdl port
+     */
+    protected WSCFWSDLPort wsdlPort;
+
+    /**
+     * port-component service endpoint interface
+     */
+    protected String serviceEndpointInterface;
+
+    /**
+     * port-component service implementation bean
+     */
+    protected WSCFServiceImplBean serviceImplBean;
+
+    /**
+     * port-component handlers
+     */
+    protected HashMap handlers = new HashMap();
 	
-	/**
-	 * port-component description 
-	 */
-	protected String description;
 	
-	/**
-	 * port-component display name
-	 */
-	protected String displayName;
-	
-	/**
-	 * port-component small icon
-	 */
-	protected String smallIcon;
-	
-	/**
-	 * port-component large icon
-	 */
-	protected String largeIcon;
-	
-	/**
-	 * port-component name
-	 */
-	protected String portComponentName;
-	
-	/**
-	 * port-component wsdl port
-	 */
-	protected WSCFWSDLPort wsdlPort;
-	
-	/**
-	 * port-component service endpoint interface
-	 */
-	protected String serviceEndpointInterface;
-	
-	/**
-	 * port-component service implementation bean
-	 */
-	protected WSCFServiceImplBean serviceImplBean;
-	
-	/**
-	 * port-component handlers
-	 */
-	protected HashMap handlers = new HashMap();
-	
-	
-	//////////////////////////////jaxb interfacing block///////////////////////////////////
+    //////////////////////////////jaxb interfacing block///////////////////////////////////
 	
 //	public WSCFPortComponentImpl(PortComponentType jaxbPortComponent){
 //		this.jaxbPortComponent = jaxbPortComponent;		
@@ -110,7 +109,7 @@ public abstract class AbstractWSCFPortComponent extends WSCFElement implements W
 //	}
 	
 	
-	///////////////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////
 	
 	
 //	/**
@@ -164,79 +163,88 @@ public abstract class AbstractWSCFPortComponent extends WSCFElement implements W
 	
 
 
-	/**
-	 * Gets the description of the port component Element
-	 * @return description
-	 */
-	public String getDescription() {
-		return description;
-	}
+    /**
+     * Gets the description of the port component Element
+     *
+     * @return description
+     */
+    public String getDescription() {
+        return description;
+    }
 
-	/**
-	 * Gets the display name of the port component Element
-	 * @return display name
-	 */
-	public String getDisplayName() {
-		return displayName;
-	}
+    /**
+     * Gets the display name of the port component Element
+     *
+     * @return display name
+     */
+    public String getDisplayName() {
+        return displayName;
+    }
 
-	/**
-	 * Gets the handlers of the port component Element as an array
-	 * @return handlers
-	 */
-	public WSCFHandler[] getHandlers() {
-		WSCFHandler[] handler = new WSCFHandler[this.handlers.size()];
-		this.handlers.values().toArray(handler);
-		return handler;
-	}
+    /**
+     * Gets the handlers of the port component Element as an array
+     *
+     * @return handlers
+     */
+    public WSCFHandler[] getHandlers() {
+        WSCFHandler[] handler = new WSCFHandler[this.handlers.size()];
+        this.handlers.values().toArray(handler);
+        return handler;
+    }
 
-	/**
-	 * Gets the large icon of the port component Element
-	 * @return large icon
-	 */
-	public String getLargeIcon() {
-		return largeIcon;
-	}
+    /**
+     * Gets the large icon of the port component Element
+     *
+     * @return large icon
+     */
+    public String getLargeIcon() {
+        return largeIcon;
+    }
 
-	/**
-	 * Gets the port componenet name of the port component Element
-	 * @return name
-	 */
-	public String getPortComponentName() {
-		return portComponentName;
-	}
+    /**
+     * Gets the port componenet name of the port component Element
+     *
+     * @return name
+     */
+    public String getPortComponentName() {
+        return portComponentName;
+    }
 
-	/**
-	 * Gets the SEI of the port component Element
-	 * @return SEI
-	 */
-	public String getServiceEndpointInterface() {
-		return serviceEndpointInterface;
-	}
+    /**
+     * Gets the SEI of the port component Element
+     *
+     * @return SEI
+     */
+    public String getServiceEndpointInterface() {
+        return serviceEndpointInterface;
+    }
 
-	/**
-	 * Gets the service implimentation bean of the port component Element
-	 * @return service inplinmentation bean
-	 */
-	public WSCFServiceImplBean getServiceImplBean() {
-		return serviceImplBean;
-	}
+    /**
+     * Gets the service implimentation bean of the port component Element
+     *
+     * @return service inplinmentation bean
+     */
+    public WSCFServiceImplBean getServiceImplBean() {
+        return serviceImplBean;
+    }
 
-	/**
-	 * Gets the small icon of the port component Element
-	 * @return small icon
-	 */
-	public String getSmallIcon() {
-		return smallIcon;
-	}
+    /**
+     * Gets the small icon of the port component Element
+     *
+     * @return small icon
+     */
+    public String getSmallIcon() {
+        return smallIcon;
+    }
 
-	/**
-	 * Gets the wsdl port of the port component Element
-	 * @return wsd; port
-	 */
-	public WSCFWSDLPort getWsdlPort() {
-		return wsdlPort;
-	}
+    /**
+     * Gets the wsdl port of the port component Element
+     *
+     * @return wsd; port
+     */
+    public WSCFWSDLPort getWsdlPort() {
+        return wsdlPort;
+    }
 
 //	/**
 //	 * @return

@@ -15,45 +15,45 @@
  */
 package org.apache.geronimo.ews.ws4j2ee.context.webservices.server;
 
-import java.util.HashMap;
-
 import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.interfaces.WSCFWebserviceDescription;
 import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.interfaces.WSCFWebservices;
 
+import java.util.HashMap;
+
 /**
- * This is the class that will represent the webservices element in the runtime. 
- * This is the root element of the webservices.xml file. The parsing of elements will be initiated from here and will be 
+ * This is the class that will represent the webservices element in the runtime.
+ * This is the root element of the webservices.xml file. The parsing of elements will be initiated from here and will be
  * parsed in a depth first manner
  */
-public class AbstractWSCFWebservices extends WSCFElement implements WSCFWebservices{
+public class AbstractWSCFWebservices extends WSCFElement implements WSCFWebservices {
 
-	//TODO figure out how the id should be encapsulated
+    //TODO figure out how the id should be encapsulated
 	
-	/**
-	 * This will refer to the multiple webservice descriptions elements that the
-	 * webservice element can support
-	 */
-	protected HashMap webServiceDescriptions = new HashMap();
-	
-	/**
-	 * Webservice description.
-	 */
-	protected String description;
-	
-	/**
-	 * Webservice display name
-	 */
-	protected String displayName;
-	
-	/**
-	 * Webservice small Icon.
-	 */
-	protected String smallIcon;
-	
-	/**
-	 * Webservice large icon.
-	 */
-	protected String largeIcon;
+    /**
+     * This will refer to the multiple webservice descriptions elements that the
+     * webservice element can support
+     */
+    protected HashMap webServiceDescriptions = new HashMap();
+
+    /**
+     * Webservice description.
+     */
+    protected String description;
+
+    /**
+     * Webservice display name
+     */
+    protected String displayName;
+
+    /**
+     * Webservice small Icon.
+     */
+    protected String smallIcon;
+
+    /**
+     * Webservice large icon.
+     */
+    protected String largeIcon;
 
 ////////////////////////////////////////////jaxb interfacing block/////////////////////////////////////////
 //
@@ -141,50 +141,55 @@ public class AbstractWSCFWebservices extends WSCFElement implements WSCFWebservi
 //	}
 
 
-	/**
-	 * Gets all the webservice descriptions as a array of such elements
-	 * @return Webservice description array.
-	 */
-	public WSCFWebserviceDescription[] getWebServiceDescriptions() {
-		WSCFWebserviceDescription[] wsdescArray = new WSCFWebserviceDescription[this.webServiceDescriptions.size()];
-		this.webServiceDescriptions.values().toArray(wsdescArray);
-		return wsdescArray;
-	}	
+    /**
+     * Gets all the webservice descriptions as a array of such elements
+     *
+     * @return Webservice description array.
+     */
+    public WSCFWebserviceDescription[] getWebServiceDescriptions() {
+        WSCFWebserviceDescription[] wsdescArray = new WSCFWebserviceDescription[this.webServiceDescriptions.size()];
+        this.webServiceDescriptions.values().toArray(wsdescArray);
+        return wsdescArray;
+    }	
 
 
 //TODO *throw an exception appropreately if the value is null
 
-	/**
-	 * Gets the description of the webservices Element
-	 * @return The description
-	 */
-	public String getDescription() {
-		return description;
-	}
+    /**
+     * Gets the description of the webservices Element
+     *
+     * @return The description
+     */
+    public String getDescription() {
+        return description;
+    }
 
-	/**
-	 * Gets the displayname of the webservices element
-	 * @return The Display name
-	 */
-	public String getDisplayName() {
-		return displayName;
-	}
+    /**
+     * Gets the displayname of the webservices element
+     *
+     * @return The Display name
+     */
+    public String getDisplayName() {
+        return displayName;
+    }
 
-	/**
-	 * Gets the description of the large icon Element
-	 * @return The large icon
-	 */
-	public String getLargeIcon() {
-		return largeIcon;
-	}
+    /**
+     * Gets the description of the large icon Element
+     *
+     * @return The large icon
+     */
+    public String getLargeIcon() {
+        return largeIcon;
+    }
 
-	/**
-	 * Gets the description of the small icon Element
-	 * @return The small icon
-	 */
-	public String getSmallIcon() {
-		return smallIcon;
-	}
+    /**
+     * Gets the description of the small icon Element
+     *
+     * @return The small icon
+     */
+    public String getSmallIcon() {
+        return smallIcon;
+    }
 
 //	/**
 //	 * @param description - Description of the webservice
