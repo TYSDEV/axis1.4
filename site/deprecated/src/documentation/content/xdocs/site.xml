@@ -26,6 +26,7 @@ See http://xml.apache.org/forrest/linking.html for more info
   <mailinglist label="Mailing Lists" href="mail.html"/>
   <library label="Reference Library" href="ref.html" target="body"/>
   <bugs label="Bugs" href="bugs.html"/>
+  <buildsite label="HowToBuildSite" href="howtobuild.html"/>
  </getinvolved>
  <axisjava label="Axis (Java)">
   <documentation label="Documentation" href="java/index.html"/>
