@@ -83,6 +83,7 @@ import java.beans.IntrospectionException;
  * handler/service registries and loading properties.
  *
  * @author Glen Daniels (gdaniels@macromedia.com)
+ * @author Glyn Normington (glyn@apache.org)
  */
 public abstract class AxisEngine extends BasicHandler
 {
@@ -102,9 +103,7 @@ public abstract class AxisEngine extends BasicHandler
     private static final String DEFAULT_ADMIN_PASSWORD = "admin";
 
     /** Our go-to guy for configuration... */
-    protected transient ConfigurationProvider configProvider;
-
-    protected DeploymentRegistry myRegistry;
+    protected EngineConfiguration config;
 
     /** Has the user changed the password yet? */
     protected boolean _hasSafePassword = false;
@@ -151,22 +150,19 @@ public abstract class AxisEngine extends BasicHandler
     }
 
     /**
-     * No-arg constructor.
+     * No-arg constructor. Not used.
      *
      */
-    private AxisEngine()
-    {
-        // !!! Set up default configuration?
-        init();
+    private AxisEngine() {}
 
-        if (category.isDebugEnabled()) {
-            category.debug(JavaUtils.getMessage("exit01", "AxisEngine"));
-        }
-    }
-
-    public AxisEngine(ConfigurationProvider configProvider)
+    /**
+     * Construct an AxisEngine using the specified engine configuration.
+     *
+     * @param config the EngineConfiguration for this engine
+     */
+    public AxisEngine(EngineConfiguration config)
     {
-        this.configProvider = configProvider;
+        this.config = config;
         init();
     }
 
@@ -178,17 +174,13 @@ public abstract class AxisEngine extends BasicHandler
             category.debug(JavaUtils.getMessage("enter00", "AxisEngine::init"));
         }
 
-        myRegistry = configProvider.getDeploymentRegistry();
-
         getTypeMappingRegistry().setParent(SOAPTypeMappingRegistry.getSingleton());
 
         try {
-            configProvider.configureEngine(this);
+            config.configureEngine(this);
         } catch (Exception e) {
             throw new InternalException(e);
         }
-
-
         
         if (category.isDebugEnabled()) {
             category.debug(JavaUtils.getMessage("exit00", "AxisEngine::init"));
@@ -203,7 +195,7 @@ public abstract class AxisEngine extends BasicHandler
             return;
 
         try {
-            configProvider.writeEngineConfig(this);
+            config.writeEngineConfig(this);
         } catch (Exception e) {
             System.err.println(JavaUtils.getMessage("saveConfigFail00"));
             e.printStackTrace();
@@ -227,42 +219,48 @@ public abstract class AxisEngine extends BasicHandler
         this.shouldSaveConfig = shouldSaveConfig;
     }
     
-    /**
-     * (should throw more specific exceptions)
-     */ 
     public Handler getHandler(String name) throws AxisFault
     {
-        return myRegistry.getHandler(new QName(null, name));
+        try {
+            return config.getHandler(new QName(null, name));
+        } catch (ConfigurationException e) {
+            throw new AxisFault(e);
+        }
     }
     
-    /**
-     * (should throw more specific exceptions)
-     */ 
     public Handler getService(String name) throws AxisFault
     {
-        return myRegistry.getService(new QName(null, name));
+        try {
+            return config.getService(new QName(null, name));
+        } catch (ConfigurationException e) {
+            throw new AxisFault(e);
+        }
     }
     
     public Handler getTransport(String name) throws AxisFault
     {
-        return myRegistry.getTransport(new QName(null, name));
+        try {
+            return config.getTransport(new QName(null, name));
+        } catch (ConfigurationException e) {
+            throw new AxisFault(e);
+        }
     }
 
     public DeploymentRegistry getDeploymentRegistry()
     {
-        return myRegistry;
+        return config.getDeploymentRegistry();
     }
 
     public TypeMappingRegistry getTypeMappingRegistry()
     {
         TypeMappingRegistry tmr = null;
         try {
-            tmr = myRegistry.getTypeMappingRegistry("");
+            tmr = config.getTypeMappingRegistry("");
             if (tmr == null) {
                 tmr = new TypeMappingRegistry();
-                myRegistry.addTypeMappingRegistry("", tmr);
+                config.getDeploymentRegistry().addTypeMappingRegistry("", tmr);
             }
-        } catch (DeploymentException e) {
+        } catch (ConfigurationException e) {
             category.error(e);
         }
         
@@ -270,15 +268,15 @@ public abstract class AxisEngine extends BasicHandler
     }
     
     public Handler getGlobalRequest()
-        throws Exception
+        throws ConfigurationException
     {
-        return myRegistry.getGlobalRequest();
+        return config.getGlobalRequest();
     }
     
     public Handler getGlobalResponse()
-        throws Exception
+        throws ConfigurationException
     {
-        return myRegistry.getGlobalResponse();
+        return config.getGlobalResponse();
     }
     
     public ArrayList getActorURIs()
@@ -392,8 +390,8 @@ public abstract class AxisEngine extends BasicHandler
     /**
      * (Re-)load the global options from the registry.
      */
-    public void refreshGlobalOptions() throws DeploymentException {
-        Hashtable globalOptions = myRegistry.getGlobalOptions();
+    public void refreshGlobalOptions() throws ConfigurationException {
+        Hashtable globalOptions = config.getGlobalOptions();
         if (globalOptions != null)
             setOptions(globalOptions);
 
@@ -404,55 +402,55 @@ public abstract class AxisEngine extends BasicHandler
      * Deploy a Handler into our handler registry.
      */
     public void deployHandler(String key, Handler handler)
-        throws DeploymentException
+        throws ConfigurationException
     {
-        myRegistry.deployHandler(key, handler);
+        config.getDeploymentRegistry().deployHandler(key, handler);
     }
 
     /**
      * Undeploy (remove) a Handler from our handler registry.
      */
     public void undeployHandler(String key)
-        throws DeploymentException
+        throws ConfigurationException
     {
-        myRegistry.undeployHandler(key);
+        config.getDeploymentRegistry().undeployHandler(key);
     }
 
     /**
      * Deploy a Service into our service registry
      */
     public void deployService(String key, SOAPService service)
-        throws DeploymentException
+        throws ConfigurationException
     {
         service.setEngine(this);
-        myRegistry.deployService(key, service);
+        config.getDeploymentRegistry().deployService(key, service);
     }
 
     /**
      * Undeploy (remove) a Service from the handler registry
      */
     public void undeployService(String key)
-        throws DeploymentException
+        throws ConfigurationException
     {
-        myRegistry.undeployService(key);
+        config.getDeploymentRegistry().undeployService(key);
     }
 
     /**
      * Deploy a Transport
      */
     public void deployTransport(String key, SimpleTargetedChain transport)
-        throws DeploymentException
+        throws ConfigurationException
     {
-        myRegistry.deployTransport(key, transport);
+        config.getDeploymentRegistry().deployTransport(key, transport);
     }
 
     /**
      * Undeploy (remove) a client Transport
      */
     public void undeployTransport(String key)
-        throws DeploymentException
+        throws ConfigurationException
     {
-        myRegistry.undeployTransport(key);
+        config.getDeploymentRegistry().undeployTransport(key);
     }
 
     /**

@@ -56,9 +56,9 @@
  package org.apache.axis.configuration;
 
 import org.apache.axis.AxisEngine;
-import org.apache.axis.ConfigurationProvider;
+import org.apache.axis.deployment.BasicEngineConfiguration;
+import org.apache.axis.ConfigurationException;
 import org.apache.axis.deployment.wsdd.WSDDDocument;
-import org.apache.axis.deployment.wsdd.SimpleWsddDeploymentManager;
 import org.apache.axis.deployment.DeploymentRegistry;
 import org.apache.axis.utils.Admin;
 import org.apache.axis.utils.XMLUtils;
@@ -77,7 +77,7 @@ import java.util.Properties;
  *
  * @author Glen Daniels (gdaniels@macromedia.com)
  */
-public class FileProvider implements ConfigurationProvider
+public class FileProvider extends BasicEngineConfiguration
 {
     protected String sep = System.getProperty("file.separator");
 
@@ -131,36 +131,32 @@ public class FileProvider implements ConfigurationProvider
         this.searchClasspath = searchClasspath;
     }
 
-    public DeploymentRegistry getDeploymentRegistry()
+     public void configureEngine(AxisEngine engine) throws ConfigurationException
     {
-        if (deploymentRegistry == null) {
-            deploymentRegistry = new SimpleWsddDeploymentManager();
-        }
-        return deploymentRegistry;
-    }
-
-    public void configureEngine(AxisEngine engine) throws Exception
-    {
-        if (myInputStream == null) {
-            try {
-                myInputStream = new FileInputStream(basepath + sep + filename);
-            } catch (Exception e) {
-                if (searchClasspath) {
-                    myInputStream = engine.
-                                    getClass().getResourceAsStream(filename);
+        try {
+            if (myInputStream == null) {
+                try {
+                    myInputStream = new FileInputStream(basepath + sep + filename);
+                } catch (Exception e) {
+                    if (searchClasspath) {
+                        myInputStream = engine.
+                            getClass().getResourceAsStream(filename);
+                    }
                 }
             }
+            
+            if (myInputStream == null) {
+                throw new ConfigurationException("No engine configuration file - aborting!");
+            }
+            
+            WSDDDocument doc = new WSDDDocument(XMLUtils.newDocument(myInputStream));
+            engine.getDeploymentRegistry().deploy(doc);
+            engine.refreshGlobalOptions();
+            
+            myInputStream = null;
+        } catch (Exception e) {
+            throw new ConfigurationException(e);
         }
-        
-        if (myInputStream == null) {
-            throw new Exception("No engine configuration file - aborting!");
-        }
-
-        WSDDDocument doc = new WSDDDocument(XMLUtils.newDocument(myInputStream));
-        engine.getDeploymentRegistry().deploy(doc);
-        engine.refreshGlobalOptions();
-        
-        myInputStream = null;
     }
 
     /**
@@ -168,18 +164,22 @@ public class FileProvider implements ConfigurationProvider
      * write it to a string before saving it out to the actual file so
      * we don't screw up the file.
      */ 
-    public void writeEngineConfig(AxisEngine engine) throws Exception
+    public void writeEngineConfig(AxisEngine engine) throws ConfigurationException
     {
-        // If there's no filename then we must have created this with just
-        // an InputStream - in which case the config stuff is read-only
-        if ( filename == null ) return ;
-
-        Document doc = Admin.listConfig(engine);
-        StringWriter writer = new StringWriter();
-        XMLUtils.DocumentToWriter(doc, writer);
-        writer.close();
-        FileOutputStream fos = new FileOutputStream(basepath + sep + filename);
-        fos.write(writer.getBuffer().toString().getBytes());
-        fos.close();
+        try {
+            // If there's no filename then we must have created this with just
+            // an InputStream - in which case the config stuff is read-only
+            if ( filename == null ) return ;
+            
+            Document doc = Admin.listConfig(engine);
+            StringWriter writer = new StringWriter();
+            XMLUtils.DocumentToWriter(doc, writer);
+            writer.close();
+            FileOutputStream fos = new FileOutputStream(basepath + sep + filename);
+            fos.write(writer.getBuffer().toString().getBytes());
+            fos.close();
+        } catch (Exception e) {
+            throw new ConfigurationException(e);
+        }
     }
 }

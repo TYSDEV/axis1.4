@@ -418,7 +418,7 @@ public class SimpleDeploymentManager
             WSDDTransport transport = (WSDDTransport)i.next();
             transport.writeToContext(context);
         }
-        
+    
         TypeMappingRegistry tmr = getTypeMappingRegistry("");
         tmr.dumpToSerializationContext(context);
         
@@ -546,30 +546,38 @@ public class SimpleDeploymentManager
      * Returns a global request handler.
      */
     public Handler getGlobalRequest()
-        throws Exception
+        throws DeploymentException
     {
-        Handler h = null;
-        if (globalConfig != null) {
-            WSDDRequestFlow reqFlow = globalConfig.getRequestFlow();
-            if (reqFlow != null)
-                h = reqFlow.getInstance(this);
+        try {
+            Handler h = null;
+            if (globalConfig != null) {
+                WSDDRequestFlow reqFlow = globalConfig.getRequestFlow();
+                if (reqFlow != null)
+                    h = reqFlow.getInstance(this);
+            }
+            return h;
+        } catch(Exception e) {
+            throw new DeploymentException(e);
         }
-        return h;
     }
 
    /**
      * Returns a global response handler.
      */
     public Handler getGlobalResponse()
-        throws Exception
+        throws DeploymentException
     {
-        Handler h = null;
-        if (globalConfig != null) {
-            WSDDResponseFlow respFlow = globalConfig.getResponseFlow();
-            if (respFlow != null)
-                h = respFlow.getInstance(this);
+        try {
+            Handler h = null;
+            if (globalConfig != null) {
+                WSDDResponseFlow respFlow = globalConfig.getResponseFlow();
+                if (respFlow != null)
+                    h = respFlow.getInstance(this);
+            }
+            return h;
+        } catch (Exception e) {
+            throw new DeploymentException(e);
         }
-        return h;
     }
 
     /**

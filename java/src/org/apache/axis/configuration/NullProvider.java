@@ -56,32 +56,21 @@
 package org.apache.axis.configuration;
 
 import org.apache.axis.AxisEngine;
-import org.apache.axis.ConfigurationProvider;
-import org.apache.axis.deployment.wsdd.SimpleWsddDeploymentManager;
-import org.apache.axis.deployment.DeploymentRegistry;
+import org.apache.axis.deployment.BasicEngineConfiguration;
+import org.apache.axis.ConfigurationException;
 
 /**
  * A do-nothing ConfigurationProvider
  *
  * @author Glen Daniels (gdaniels@macromedia.com)
  */
-public class NullProvider implements ConfigurationProvider
+public class NullProvider extends BasicEngineConfiguration
 {
-    private DeploymentRegistry deploymentRegistry;
-
-    public DeploymentRegistry getDeploymentRegistry()
-    {
-        if (deploymentRegistry == null) {
-            deploymentRegistry = new SimpleWsddDeploymentManager();
-        }
-        return deploymentRegistry;
-    }
-
-    public void configureEngine(AxisEngine engine) throws Exception
+    public void configureEngine(AxisEngine engine) throws ConfigurationException
     {
     }
 
-    public void writeEngineConfig(AxisEngine engine) throws Exception
+    public void writeEngineConfig(AxisEngine engine) throws ConfigurationException
     {
     }
 }

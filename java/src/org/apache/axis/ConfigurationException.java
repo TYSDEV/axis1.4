@@ -2,7 +2,7 @@
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 2001 The Apache Software Foundation.  All rights
+ * Copyright (c) 2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -53,57 +53,46 @@
  * <http://www.apache.org/>.
  */
 
- package org.apache.axis.configuration;
+package org.apache.axis;
 
-import org.apache.axis.AxisEngine;
-import org.apache.axis.deployment.BasicEngineConfiguration;
-import org.apache.axis.ConfigurationException;
-import org.apache.axis.deployment.DeploymentRegistry;
-import org.apache.axis.utils.Admin;
-import org.apache.axis.utils.XMLUtils;
-import org.w3c.dom.Document;
-import org.xml.sax.InputSource;
-
-import java.io.StringReader;
+import org.apache.log4j.Category;
+import java.io.StringWriter;
+import java.io.PrintWriter;
+import java.io.IOException;
 
 /**
- * A simple ConfigurationProvider that uses the Admin class to
- * configure the engine from a String containing XML.
+ * ConfigurationException is thrown when an error occurs trying to
+ * use an EngineConfiguration.
  *
- * This provider does not write configuration to persistent storage.
- *
- * @author Glen Daniels (gdaniels@macromedia.com)
+ * @author Glyn Normington (glyn@apache.org)
  */
-public class XMLStringProvider extends BasicEngineConfiguration
-{
-    String xmlConfiguration;
+public class ConfigurationException extends IOException {
+
+    private static Category category =
+                Category.getInstance(ConfigurationException.class.getName());
 
     /**
-     * Constructor
-     *
-     * @param xmlConfiguration a String containing an engine configuration
-     *        in XML.
+     * Construct a ConfigurationException from a String.  The string is wrapped
+     * in an exception, enabling a stack traceback to be obtained.
+     * @param message String form of the error
      */
-    public XMLStringProvider(String xmlConfiguration)
-    {
-        this.xmlConfiguration = xmlConfiguration;
+    public ConfigurationException(String message) {
+        this(new Exception(message));
     }
 
-    public void configureEngine(AxisEngine engine) throws ConfigurationException
-    {
-        try {
-            InputSource is = new InputSource(new StringReader(xmlConfiguration));
-            
-            Document doc = XMLUtils.newDocument(is);
-            
-            Admin.processEngineConfig(doc, engine);
-        } catch (Exception e) {
-            throw new ConfigurationException(e);
+    /**
+     * Construct a ConfigurationException from an Exception.
+     * @param exception original exception which was unexpected
+     */
+    public ConfigurationException(Exception e) {
+        super(e.toString());
+
+        // Log the exception the first time it appears.
+        if (!(e instanceof ConfigurationException)) {
+            category.debug(e);
+            StringWriter writer = new StringWriter();
+            e.printStackTrace(new PrintWriter(writer));
+            category.debug(writer.getBuffer().toString());
         }
-    }
-
-    public void writeEngineConfig(AxisEngine engine) throws ConfigurationException
-    {
-        // NOOP
     }
 }

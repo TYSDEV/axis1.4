@@ -182,7 +182,7 @@ public class WSDDDocument
             throws DeploymentException {
 
         if (deployment == null)
-            throw new DeploymentException();
+            throw new DeploymentException("No deployment");
 
         WSDDHandler[]     handlers   = deployment.getHandlers();
         WSDDTransport[]   transports = deployment.getTransports();
