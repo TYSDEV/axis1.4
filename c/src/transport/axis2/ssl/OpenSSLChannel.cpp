@@ -20,12 +20,6 @@
  */
 
 #include "OpenSSLChannel.hpp"
-#include <openssl/ssl.h>
-#include <openssl/err.h>
-
-char* m_pcError;
-SSL_CTX* m_sslContext;
-SSL* m_sslHandle;
 
 /* "global" init done? */
 static bool g_InitSSL = false;
@@ -65,14 +59,12 @@ OpenSSLChannel::~OpenSSLChannel()
 {
 }
 
-bool OpenSSLChannel::open() throw (AxisTransportException&)
+bool OpenSSLChannel::SSLInit()
 {
-    Channel::open();
-    openSecureSocket(); 
     return true;
 }
 
-int OpenSSLChannel::openSecureSocket()
+bool OpenSSLChannel::openSSLConnection(unsigned int* pSock)
 {
     SSL_METHOD* req_method = SSLv23_client_method();
     SSL_SESSION* ssl_sessionid = NULL;
@@ -86,7 +78,7 @@ int OpenSSLChannel::openSecureSocket()
         /* OpenSSL documents that this must be at least 120 bytes long. */
         char error_buffer[120];
         ERR_error_string(sslerror, error_buffer);
-        closeSecureSocket();
+        closeSSLChannel();
         throw AxisSSLChannelException(CLIENT_SSLCHANNEL_CONTEXT_CREATE_ERROR, error_buffer);
     }
 
@@ -100,7 +92,7 @@ int OpenSSLChannel::openSecureSocket()
     SSL_set_connect_state(m_sslHandle);
 
     /* pass the raw socket into the SSL layers */
-    SSL_set_fd(m_sslHandle, m_Sock);
+    SSL_set_fd(m_sslHandle, *pSock);
 
     int iError = SSL_connect(m_sslHandle);
     /*
@@ -109,30 +101,15 @@ int OpenSSLChannel::openSecureSocket()
      *  <0  is "handshake was not successful, because a fatal error occurred"
      */
      if(iError <= 0)
-         setSecureError(iError);
+         setSSLError(iError);
 
-    return 0;
+    return true;
 }
 
-const Channel & SecureChannel::operator << (const char * msg) throw (AxisTransportException)
-{
-    writeSecureSocket(msg);
-    return *this;
-}
-
-const Channel &SecureChannel::operator >> (std::string & msg) throw (AxisTransportException)
-{
-    int iBuffSize = 4096;
-    char buff[iBuffSize];
-    readSecureSocket(buff, iBuffSize);
-    msg = buff;
-    return *this;
-}
-
-bool OpenSSLChannel::readSecureSocket(char* pcMsg, int piSize)
+int OpenSSLChannel::SSLRead(std::string& msg)
 {
     int nByteRecv = 0;
-    //const int BUF_SIZE = 4096;
+    const int BUF_SIZE = 4096;
     char buf[BUF_SIZE];
     nByteRecv = SSL_read(m_sslHandle, buf, BUF_SIZE - 1);
     if(nByteRecv < 0)
@@ -140,42 +117,47 @@ bool OpenSSLChannel::readSecureSocket(char* pcMsg, int piSize)
         char error_string[256];
         /* failed SSL_read */
         int iError = SSL_get_error(m_sslHandle, nByteRecv);
-        setSecureError(iError);
-        closeSecureSocket();
+        setSSLError(iError);
+        closeSSLChannel();
     }
     if(nByteRecv)
     {
        buf[nByteRecv] = '\0';  
        /* got a part of the message, so add it to form */
-       pcMsg = buf;
+       msg = buf;
     }
     else
        printf("execution break\n");
     return true;
 }
 
-bool OpenSSLChannel::writeSecureSocket(const char* pcMsg)
+int OpenSSLChannel::SSLWrite(const std::string& msg, unsigned int* pSock)
 {
-    if(INVALID_SOCKET == m_Sock)
+    if(INVALID_SOCKET == *pSock)
     {
         throw AxisSSLChannelException(CLIENT_SSLCHANNEL_INVALID_SOCKET_ERROR,"");
     }
-    int size = strlen(pcMsg), nByteSent;
+    int size = msg.size(), nByteSent;
 
-    nByteSent = SSL_write(m_sslHandle, (char *)pcMsg, size);
+    nByteSent = SSL_write(m_sslHandle, (char *)msg.c_str(), size);
 
     if(nByteSent < 0)
     {
         char error_string[256];
         int iError = SSL_get_error(m_sslHandle, nByteSent);
-        setSecureError(iError);
-        closeSecureSocket();
+        setSSLError(iError);
+        closeSSLChannel();
     }
 
     return true;
 }
 
-void OpenSSLChannel::setSecureError(int iError)
+/*void OpenSSLChannel::setSSLError(char* pcError)
+{
+    strcpy(m_pcError, pcError);
+}*/
+
+void OpenSSLChannel::setSSLError(int iError)
 {
     switch(iError)
     {
@@ -192,7 +174,7 @@ void OpenSSLChannel::setSecureError(int iError)
                 iError =  errno;
             #endif
 
-            closeSecureSocket();
+            closeSSLChannel();
             throw AxisSSLChannelException(CLIENT_SSLCHANNEL_ERROR, "SSL_ERROR_SYSCALL");
 
         }
@@ -209,7 +191,7 @@ void OpenSSLChannel::setSecureError(int iError)
              char error_buffer[120];
 
              ERR_error_string(sslerror, error_buffer);
-             closeSecureSocket();
+             closeSSLChannel();
              throw AxisSSLChannelException(CLIENT_SSLCHANNEL_ERROR, error_buffer);
         }
         default: 
@@ -226,14 +208,14 @@ void OpenSSLChannel::setSecureError(int iError)
             char error_buffer[120];
 
             ERR_error_string(sslerror, error_buffer);
-            closeSecureSocket();
+            closeSSLChannel();
             throw AxisSSLChannelException(CLIENT_SSLCHANNEL_ERROR, error_buffer);
 
         }
     }
 }
 
-char* OpenSSLChannel::getSecureError()
+char* OpenSSLChannel::getSSLError()
 {
     return m_pcError;    
 }
@@ -244,7 +226,7 @@ char* OpenSSLChannel::getSecureError()
  *
  */
 
-int OpenSSLChannel::closeSecureSocket()
+void OpenSSLChannel::closeSSLChannel()
 {
     if(m_sslHandle)
     {

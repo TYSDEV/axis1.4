@@ -29,14 +29,14 @@
 #include "../../platforms/PlatformAutoSense.hpp"
 
 #include <axis/GDefine.hpp>
-//#include "../SSLChannel.hpp"
-#include "SecureChannel.hpp"
+#include "../SSLChannel.hpp"
+//#include "SecureChannel.hpp"
 
 #define CREATE_FUNCTION3 "CreateInstance"
 #define DELETE_FUNCTION3 "DestroyInstance"
 
-typedef int (* CREATE_OBJECT3) (SecureChannel** inst);
-typedef int (* DELETE_OBJECT3) (SecureChannel* inst);
+typedef int (* CREATE_OBJECT3) (SSLChannel** inst);
+typedef int (* DELETE_OBJECT3) (SSLChannel* inst);
 AXIS_CPP_NAMESPACE_START
 class ChannelFactory  
 {
@@ -59,11 +59,11 @@ public:
 	/**
 	 * Used to create a parser object 
 	 */
-	static SecureChannel* getSecureChannelObject();
+	static SSLChannel* getSSLChannelObject();
 	/**
 	 * Destroys the parser object 
 	 */
-	static void destroySecureChannelObject(SecureChannel* pObject);
+	static void destroySSLChannelObject(SSLChannel* pObject);
 
 	static int loadLib();
 	static int unloadLib();
