@@ -36,7 +36,7 @@ import org.apache.geronimo.ews.ws4j2ee.toWs.Ws4J2eeFactory;
  *	    <li>All methods in the interface must throw java.rmi.RemoteException. Methods may
  *			throw service specific exceptions in addition to the RemoteException.</li>
  *		<li>Method parameters and return types must be the JAX-RPC supported Java types
- *			(refer to the section 5.1, “JAX-RPC Supported Java Types”). At runtime, values of a
+ *			(refer to the section 5.1, ï¿½JAX-RPC Supported Java Typesï¿½). At runtime, values of a
  *			supported Java type must be serializable to and from the corresponding XML
  *	        representation.
  *	    </li>

@@ -15,6 +15,21 @@
  */
 package org.apache.geronimo.ews.jaxrpcmapping;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Collection;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Vector;
+
+import javax.wsdl.Binding;
+import javax.wsdl.Definition;
+import javax.xml.namespace.QName;
+
 import org.apache.axis.i18n.Messages;
 import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.wsdl.gen.Generator;
@@ -31,25 +46,8 @@ import org.apache.axis.wsdl.symbolTable.TypeEntry;
 import org.apache.axis.wsdl.toJava.Emitter;
 import org.apache.axis.wsdl.toJava.Namespaces;
 import org.apache.axis.wsdl.toJava.Utils;
-import org.apache.geronimo.ews.jaxrpcmapping.descriptor.FullyQualifiedClassType;
-import org.apache.geronimo.ews.jaxrpcmapping.descriptor.PackageMappingType;
-import org.apache.geronimo.ews.jaxrpcmapping.descriptor.XsdAnyURIType;
 import org.apache.geronimo.ews.ws4j2ee.context.J2EEWebServiceContext;
-
-import javax.wsdl.Binding;
-import javax.wsdl.Definition;
-import javax.xml.namespace.QName;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Collection;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Vector;
+import org.apache.geronimo.ews.ws4j2ee.toWs.GenerationFault;
 
 /**
  * @author Ias (iasandcb@tmax.co.kr)
@@ -94,21 +92,19 @@ public class J2eeEmitter extends Emitter {
         this.mappingFilePath = mappingFilePath;
     }
 
-    private void loadMapping() {
-        jaxRpcMapper = new JaxRpcMapper();
+    private void loadMapping()throws GenerationFault {
+        //jaxRpcMapper = new JAXBJaxRpcMapper();
+        jaxRpcMapper = new XMLBeansJaxRpcMapper();
         if (mappingFilePath == null) {
             jaxRpcMapper.loadMappingFromInputStream(mappingFileInputStream);
         } else {
             jaxRpcMapper.loadMappingFromDir(mappingFilePath);
         }
 
-        List packageList = jaxRpcMapper.getMapping().getPackageMapping();
+        int length = jaxRpcMapper.getPackageMappingCount();
         Map namespaceMap = getNamespaceMap();
-        for (Iterator i = packageList.iterator(); i.hasNext();) {
-            PackageMappingType pack = (PackageMappingType) i.next();
-            FullyQualifiedClassType qPack = pack.getPackageType();
-            XsdAnyURIType namespace = pack.getNamespaceURI();
-            namespaceMap.put(namespace.getValue(), qPack.getValue());
+        for (int i = 0;i < length; i++) {
+            namespaceMap.put(jaxRpcMapper.getPackageMappingURI(i), jaxRpcMapper.getPackageMappingClassName(i));
         }
     }
 
@@ -141,25 +137,29 @@ public class J2eeEmitter extends Emitter {
         return symbolTable;
     }
 
-    private void setup() throws IOException {
-        if (baseTypeMapping == null) {
-            setTypeMappingVersion(typeMappingVersion);
-        }
-        getFactory().setBaseTypeMapping(baseTypeMapping);
-
-        namespaces = new Namespaces(getOutputDir());
-
-        if (getPackageName() != null) {
-            namespaces.setDefaultPackage(getPackageName());
-        } else {
-            // First, read the namespace mapping file - configurable, by default
-            // NStoPkg.properties - if it exists, and load the namespaceMap HashMap
-            // with its data.
-            getNStoPkgFromPropsFile(namespaces);
-            loadMapping();
-            if (getNamespaceMap() != null) {
-                namespaces.putAll(getNamespaceMap());
+    private void setup() throws GenerationFault {
+        try {
+            if (baseTypeMapping == null) {
+                setTypeMappingVersion(typeMappingVersion);
             }
+            getFactory().setBaseTypeMapping(baseTypeMapping);
+            
+            namespaces = new Namespaces(getOutputDir());
+            
+            if (getPackageName() != null) {
+                namespaces.setDefaultPackage(getPackageName());
+            } else {
+                // First, read the namespace mapping file - configurable, by default
+                // NStoPkg.properties - if it exists, and load the namespaceMap HashMap
+                // with its data.
+                getNStoPkgFromPropsFile(namespaces);
+                loadMapping();
+                if (getNamespaceMap() != null) {
+                    namespaces.putAll(getNamespaceMap());
+                }
+            }
+        } catch (IOException e) {
+            throw GenerationFault.createGenerationFault(e);
         }
     } // setup
 

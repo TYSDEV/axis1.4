@@ -143,12 +143,6 @@ public class AxisEmitterBasedJaxRpcMapperContext implements JaxRpcMapperContext 
         // return jaxrpcmapper.getJavaType(typeQName);
     }
 
-    /**
-     * @return 
-     */
-    public JavaWsdlMapping getMapping() {
-        throw new UnsupportedOperationException();
-    }
 
     /**
      * @param port 
@@ -426,4 +420,16 @@ public class AxisEmitterBasedJaxRpcMapperContext implements JaxRpcMapperContext 
             throw GenerationFault.createGenerationFault(e);
         }
     }
+    public String getPackageMappingClassName(int index) {
+        throw new UnsupportedOperationException();
+    }
+
+    public int getPackageMappingCount() {
+        throw new UnsupportedOperationException();
+    }
+
+    public String getPackageMappingURI(int index) {
+        throw new UnsupportedOperationException();
+    }
+
 }

@@ -17,7 +17,7 @@ package org.apache.geronimo.ews.ws4j2ee.context.webservices.server.jaxb;
 
 import java.util.List;
 
-import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.AbstractWSCFHandlerImpl;
+import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.AbstractWSCFHandler;
 import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.interfaces.WSCFHandler;
 import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.interfaces.WSCFInitParam;
 import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.jaxb.impl.ParamValueTypeImpl;
@@ -28,7 +28,7 @@ import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.jaxb.impl.Stri
  * is also the concrete implementation of the WSCFHandler.
  *
  */
-public class WSCFHandlerImpl extends AbstractWSCFHandlerImpl implements WSCFHandler {
+public class WSCFHandlerImpl extends AbstractWSCFHandler implements WSCFHandler {
 	public WSCFHandlerImpl(PortComponentHandlerType jaxbHandler){
 		//////////asigning the values/////////////////
 	

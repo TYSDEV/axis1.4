@@ -15,7 +15,7 @@
  */
 package org.apache.geronimo.ews.ws4j2ee.context.webservices.server.xmlbeans;
 
-import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.AbstractWSCFInitParamImpl;
+import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.AbstractWSCFInitParam;
 import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.interfaces.WSCFInitParam;
 
 import com.sun.java.xml.ns.j2Ee.ParamValueType;
@@ -25,7 +25,7 @@ import com.sun.java.xml.ns.j2Ee.ParamValueType;
  * using the interface published.
  *
  */
-public class WSCFInitParamImpl extends AbstractWSCFInitParamImpl implements WSCFInitParam {
+public class WSCFInitParamImpl extends AbstractWSCFInitParam implements WSCFInitParam {
 	
 	public WSCFInitParamImpl(ParamValueType param){
 		this.paramName = XMLBeansUtils.getStringValue(param.getParamName());

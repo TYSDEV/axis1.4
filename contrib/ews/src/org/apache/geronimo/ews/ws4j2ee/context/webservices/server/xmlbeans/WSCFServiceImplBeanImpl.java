@@ -15,7 +15,7 @@
  */
 package org.apache.geronimo.ews.ws4j2ee.context.webservices.server.xmlbeans;
 
-import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.AbstractWSCFServiceImplBeanImpl;
+import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.AbstractWSCFServiceImplBean;
 import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.interfaces.WSCFServiceImplBean;
 
 import com.sun.java.xml.ns.j2Ee.ServiceImplBeanType;
@@ -25,7 +25,7 @@ import com.sun.java.xml.ns.j2Ee.ServiceImplBeanType;
  * WSCFServiceImplBean
  *
  */
-public class WSCFServiceImplBeanImpl extends AbstractWSCFServiceImplBeanImpl implements WSCFServiceImplBean {
+public class WSCFServiceImplBeanImpl extends AbstractWSCFServiceImplBean implements WSCFServiceImplBean {
 	public WSCFServiceImplBeanImpl(ServiceImplBeanType implbean){
 		if(null == implbean){return;}
 		this.ejblink = XMLBeansUtils.getStringValue(implbean.getEjbLink());

@@ -21,7 +21,7 @@ import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.interfaces.WSC
  * This encapsulates the soap header of the handler element. The information about this element can be accessed uaing the interface published.
  * Basically this is  a Qname
  */
-public abstract class AbstractWSCFSOAPHeaderImpl extends WSCFElement implements WSCFSOAPHeader {
+public abstract class AbstractWSCFSOAPHeader extends WSCFElement implements WSCFSOAPHeader {
 	
 	/**
 	 * SOAP header namespace

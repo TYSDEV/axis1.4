@@ -17,7 +17,7 @@ package org.apache.geronimo.ews.ws4j2ee.context.webservices.server.jaxb;
 
 import java.util.List;
 
-import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.AbstractWSCFInitParamImpl;
+import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.AbstractWSCFInitParam;
 import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.interfaces.WSCFInitParam;
 
 /**
@@ -25,7 +25,7 @@ import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.interfaces.WSC
  * using the interface published.
  *
  */
-public class WSCFInitParamImpl extends AbstractWSCFInitParamImpl implements WSCFInitParam {
+public class WSCFInitParamImpl extends AbstractWSCFInitParam implements WSCFInitParam {
 
 	public WSCFInitParamImpl(ParamValueType jaxbInitParameter){
 		/////////////////asigning values///////////////////
