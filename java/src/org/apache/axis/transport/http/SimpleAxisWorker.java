@@ -93,7 +93,7 @@ public class SimpleAxisWorker implements Runnable {
 
     // HTTP status codes
     private static byte OK[] = ("200 " + Messages.getMessage("ok00")).getBytes();
-    private static byte NOCONTENT[] = ("202" + Messages.getMessage("ok00")).getBytes();
+    private static byte NOCONTENT[] = ("202 " + Messages.getMessage("ok00") + "\n\n").getBytes();
     private static byte UNAUTH[] = ("401 " + Messages.getMessage("unauth00")).getBytes();
     private static byte SENDER[] = "400".getBytes();
     private static byte ISE[] = ("500 " + Messages.getMessage("internalError01")).getBytes();
@@ -289,6 +289,7 @@ public class SimpleAxisWorker implements Runnable {
                         fileName.toString());
                 msgContext.setProperty(Constants.MC_JWS_CLASSDIR,
                         "jwsClasses");
+                msgContext.setProperty(Constants.MC_HOME_DIR, ".");
 
                 // !!! Fix string concatenation
                 String url = "http://" + getLocalHost() + ":" +
@@ -425,7 +426,7 @@ public class SimpleAxisWorker implements Runnable {
                         // fake one up!
                         // make it be an arbitrarily increasing number
                         // (no this is not thread safe because ++ isn't atomic)
-                        int i = server.sessionIndex++;
+                        int i = SimpleAxisServer.sessionIndex++;
                         cooky = "" + i;
                     }
 
@@ -513,7 +514,7 @@ public class SimpleAxisWorker implements Runnable {
             } catch (Exception e) {
             }
         }
-        if (msgContext.getProperty(msgContext.QUIT_REQUESTED) != null) {
+        if (msgContext.getProperty(MessageContext.QUIT_REQUESTED) != null) {
             // why then, quit!
             try {
                 server.stop();

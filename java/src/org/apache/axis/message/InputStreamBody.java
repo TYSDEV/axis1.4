@@ -58,6 +58,7 @@ package org.apache.axis.message;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.utils.Messages;
+import org.apache.axis.utils.IOUtils;
 import org.apache.commons.logging.Log;
 
 import java.io.IOException;
@@ -80,7 +81,7 @@ public class InputStreamBody extends SOAPBodyElement
     {
         try {
             byte[]  buf = new byte[ inputStream.available() ];
-            inputStream.read( buf );
+            IOUtils.readFully(inputStream,buf);
             String contents = new String(buf);
             context.writeString(contents);
         }
