@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="Shift_JIS"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.2//EN" "./dtd/document-v12.dtd">
+<document>
+  <header>
+    <title>WebServices - Axis</title>
+  </header>
+  <body>
+
+<section>
+<title>日本語コミュニティ整備について</title>
+
+<div align="center"><h1>『アパッチ財団初の日本語コミュニティ開設!』</h1></div>
+
+<p>　2004年12月15日から、日本語メーリングリストを含むApache Axisの日本語コミュニティを正式に運営いたします。詳しくは<a href="AxisNewsRelease.html">こちら</a>の報道発表をご覧下さい。また、日本語メーリングリストへの参加方法については、<a href="mail.html">こちら</a>を参照して登録お願いします。</p>
+
+<div align="right"><b>Apache Axis Committer: Toshi / 木村 利幸</b></div>
+
+<hr/>
+
+</section>
+
+
+<a name="Introduction"/>
+<section>
+<title>はじめに</title>
+
+<p>お知らせ (2004年12月16日) : Axis C++ <a href="cpp/download.html">1.4 Final</a> が利用できます。</p>
+<p>お知らせ (2004年12月15日) : Axis <a href="mail.html">日本語メーリングリスト</a> が運用開始されます。</p>
+<p>お知らせ (2004年12月14日) : Axis <a href="AxisNewsRelease.html">日本語コミュニティ</a> が開設されます。[<a href="AxisNewsRelease.pdf">PDF形式</a>]</p>
+<p>お知らせ (2004年12月03日) : Axis C++ <a href="cpp/download.html">1.4 Alpha</a> が利用できます。</p>
+<p>お知らせ (2004年11月16日) : Axis <a href="http://www.apache.org/dyn/closer.cgi/ws/axis/1_2RC2/">1.2 RC2</a> [英語] が利用できます。</p>
+<p>お知らせ (2004年10月29日) : Axis C++ <a href="cpp/download.html">1.3 Final</a> が利用できます。</p>
+<p>お知らせ (2004年09月30日) : Axis <a href="http://www.apache.org/dyn/closer.cgi/ws/axis/1_2RC1/">1.2 RC1</a> [英語] が利用できます。</p>
+<p>お知らせ (2004年09月15日) : Axis C++ <a href="cpp/download.html">1.3 Beta</a> が利用できます。</p>
+<p>お知らせ (2004年08月18日) : Axis C++ <a href="cpp/download.html">1.3 Alpha</a> が利用できます。</p>
+<p>お知らせ (2004年08月17日) : Axis <a href="http://www.apache.org/dyn/closer.cgi/ws/axis/1_2beta3/">1.2 beta 3</a> [英語] が利用できます。</p>
+<p>お知らせ (2004年07月14日) : Axis <a href="http://www.apache.org/dyn/closer.cgi/ws/axis/1_2beta2/">1.2 beta 2</a> [英語] が利用できます。</p>
+<p>お知らせ (2004年07月09日) : Axis C++ <a href="cpp/download.html">1.2</a> が利用できます。</p>
+<p>お知らせ (2004年06月29日) : Axis C++ <a href="cpp/download.html">1.2 Beta</a> が利用できます。</p>
+<p>お知らせ (2004年06月15日) : Axis C++ <a href="cpp/download.html">1.2 Alpha</a> が利用できます。</p>
+<p>お知らせ (2004年05月07日) : Axis C++ <a href="cpp/download.html">1.1.1</a> が利用できます。</p>
+<p>お知らせ (2004年04月16日) : Axis C++ <a href="cpp/download.html">1.1</a> が利用できます。</p>
+<p>お知らせ (2004年03月31日) : Axis <a href="http://www.apache.org/dyn/closer.cgi/ws/axis/1_2beta/">1.2 Beta </a> [英語] が利用できます。</p>
+<p>お知らせ (2003年12月01日) : Axis <a href="http://ws.apache.org/axis/download.cgi">1.2 Alpha</a> [英語] が利用できます。</p>
+<p>お知らせ (2003年06月16日) : Axis <a href="http://ws.apache.org/axis/download.cgi">1.1 Final</a> [英語]  は現在でも最新の安定版です (<a href="http://cvs.apache.org/viewcvs/%7Echeckout%7E/ws-axis/java/release-notes.html">リリースノート</a> [英語] をご覧下さい)。</p>
+
+<hr/>
+
+<p>Apache Axis は W3C <a href="http://www.w3.org/TR/SOAP" target="_top">提案</a> [英語] の SOAP ("Simple Object Access Protocol") の実装です。</p>
+
+<p>W3C 仕様書の草案より引用 : <blockquote>SOAP は非集中、分散環境における情報交換のための軽量プロトコルです。SOAP は XML に基づいたプロトコルであり、3つの部分から構成されています。1つ目は、メッセージの中に何があり、それをどう処理するのかということを記述するためのフレームワークを定義したエンベロープ、2つ目は、アプリケーションが定義したデータ型のインスタンスを表現するための符号化規則の集合、そして3つ目は、RPC (Remote Procedure Call) とそれへのレスポンスを表現するための規約です。</blockquote></p>
+
+<p>このプロジェクトは <a href="http://ws.apache.org/soap">Apache SOAP プロジェクト</a> [英語] の後続プロジェクトです。</p>
+
+<p>技術資料のリストについては<a href="ref.html">リファレンスライブラリ</a>をご覧下さい。</p>
+
+</section>
+
+
+<a name="Axis1.2AndBeyond"/>
+<section>
+<title>Axis 1.2 以降について</title>
+
+<p>Java によるWebサービスを実装する際に、Axis 1.1 は信頼性と安定性がある基盤であることが実証されました。<a href="http://ws.apache.org/axis/mail.html">ユーザコミュニティ</a> [英語] はとても活動的であり、また、多くの会社が自社製品のWebサービスのサポートに Axis を使用しています。</p>
+
+<p>Axis 1.2 では <a href="http://www.ws-i.org/Profiles/BasicProfile-1.0.html">WS-I Basic Profile 1.0</a> [英語] と <a href="http://java.sun.com/xml/downloads/jaxrpc.html">JAX-RPC 1.1</a> [英語] 仕様により対応するため、document/literal のサポートに焦点を合わせています。そしてできるだけ多くのバグを直しています。</p>
+
+<p>私達はいつでも<b>あなたの</b>助けを借りることができます。あなたが私達を助けるためのいくつかのリンクをここに示します。
+<ul>
+<li><a href="bugs.html">バグ報告の仕方</a></li>
+<li><a href="http://wiki.apache.org/ws/SubmitPatches">Axis にパッチを投稿する方法</a></li> [英語]
+<li><a href="http://cvs.apache.org/snapshots/ws-axis/">最新 CVS のスナップショットの場所</a> [英語]</li> 
+</ul>
+</p>
+
+</section>
+
+
+<a name="Credits"/>
+<section>
+<title>著作権</title>
+
+<p>The Axis Development Team</p>
+
+<p>【翻訳】川田 洋平(Kawada Youhei)   : NTTデータ勤務<br/>【監修】木村 利幸(Kimura Toshiyuki): NTTデータ勤務 / Apache Axisコミッタ<br/></p>
+
+</section>
+
+
+  </body>
+</document>

@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="Shift_JIS"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.2//EN" "./dtd/document-v12.dtd">
+<document>
+  <header>
+    <title>WebServices - Axis</title>
+  </header>
+  <body>
+
+<a name="WhoWeAre"/>
+<section>
+<title>メンバ紹介</title>
+
+<p>Axis プロジェクトは能力主義で運営されています。つまり、より多くのことを行えば、より多くの責任が与えられることになります。このページでは、著しい活躍をしてコミッタになった全ての方を掲載しています。もし、あなたもこのプロジェクトに関与したいのであれば、まずはメーリングリストに参加してください。</p>
+
+<p>お願いですから、サポートを求めて私達個人に電子メールを送らないで下さい。私達は、プロジェクトを運営する無償のボランティアであり、必ずしも個人レベルで人を助ける時間やエネルギーをもっているわけではありません。私達は、その代わりに何百という個人が参加しているメーリングリストを設け、要望に対してきめ細やかな対応ができるようにしました。私信メールに勝るメーリングリスト利用のメリットは、メーリングリストが共有の資源であり、他の方が既に経験した内容から学ぶことができ、コミュニティとして全員が成長することができる点です。</p>
+
+<a name="ActiveCommittersJava"/>
+<section><title>現役コミッタ (Java)</title>
+
+<p>
+<ul class="noindent">
+  <li>
+    <b>Andras Avar</b>
+    &lt;<a href="mailto:Andras.Avar@nokia.com">andras.avar@nokia.com</a>&gt;
+  </li>
+  <li>
+    <b>David Chappell</b>
+    &lt;<a href="mailto:chappell@sonicsoftware.com">chappell@sonicsoftware.com</a>&gt;
+  </li>
+  <li>
+    <b>Glen Daniels</b>
+    &lt;<a href="mailto:gdaniels@apache.org">gdaniels@apache.org</a>&gt;
+  </li>
+  <li>
+    <b>Doug Davis</b>
+    &lt;<a href="mailto:dug@apache.org">dug@apache.org</a>&gt;
+  </li>
+  <li>
+    <b>Eric Friedman</b>
+    &lt;<a href="mailto:ericf@apache.org">ericf@apache.org</a>&gt;
+  </li>
+  <li>
+    <b>Chris Haddad</b>
+    &lt;<a href="mailto:haddadc@apache.org">haddadc@apache.org</a>&gt;
+  </li>
+  <li>
+    <b>Tom Jordahl</b>
+    &lt;<a href="mailto:tomj@macromedia.com">tomj@macromedia.com</a>&gt;
+  </li>
+  <li>
+    <b>Dominik Kacprzak</b>
+    &lt;<a href="mailto:dominik@apache.org">dominik@apache.org</a>&gt;
+  </li>
+  <li>
+    <b>Rick Kellogg
+    &lt;</b><a href="mailto:rmkellogg@comcast.net">rmkellogg@comcast.net</a>
+    <b>&gt;</b>
+  </li>
+  <li>
+    <b><a href="http://ws.apache.org/~toshi/jp/">Toshiyuki Kimura (Toshi) / 木村 利幸</a></b>
+    &lt;<a href="mailto:kimuratsy@nttdata.co.jp">kimuratsy@nttdata.co.jp</a>&gt;
+  </li>
+  <li>
+    <b>Steve Loughran</b>
+  </li>
+  <li>
+    <b>Jaime Meritt</b>
+    &lt;<a href="mailto:jmeritt@sonicsoftware.com">jmeritt@sonicsoftware.com</a>&gt;
+  </li>
+  <li>
+    <b>Yuhichi Nakamura</b>
+    &lt;<a href="mailto:nakamury@apache.org">nakamury@apache.org</a>&gt;
+  </li>
+  <li>
+    <b>Thomas Sandholm</b>
+    &lt;<a href="mailto:sandholm@mcs.anl.gov">sandholm@mcs.anl.gov</a>&gt;
+  </li>
+  <li>
+    <b>Igor Sedukhin</b>
+    &lt;<a href="mailto:igors@apache.org">igors@apache.org</a>&gt;
+  </li>
+  <li>
+    <b><a href="http://ws.apache.org/~dims/">Davanum Srinivas</a></b> [英語]
+    &lt;<a href="mailto:dims@yahoo.com">dims@yahoo.com</a>&gt;
+  </li>
+  <li>
+    <b>Sanjiva Weerawarana</b>
+    &lt;<a href="mailto:sanjiva@watson.ibm.com">sanjiva@watson.ibm.com</a>&gt;
+  </li>
+  <li>
+    <b><a href="http://www.iasandcb.pe.kr">Changshin Lee (a.k.a. Ias)</a></b> [英語]
+    &lt;<a href="mailto:iasandcb@tmax.co.kr">iasandcb@tmax.co.kr</a>&gt;
+  </li>
+  <li>
+   <b>Srinath Perera</b>
+   &lt;<a href="mailto:hemapani@opensource.lk">hemapani@opensource.lk</a>&gt;
+   </li>
+  <li>
+    <b>Venkat Reddy</b>
+    &lt;<a href="mailto:venkat@apache.org">venkat@apache.org</a>&gt;
+  </li>
+  <li>
+    <b>Jarek Gawor</b>
+    &lt;<a href="mailto:gawor@apache.org">gawor@apache.org</a>&gt;
+  </li>
+</ul>
+</p>
+
+</section>
+
+<a name="ActiveCommittersC++"/>
+<section><title>現役コミッタ (C++)</title>
+
+<p>
+<ul class="noindent">
+  <li>
+    <b>Chaminda Divitotawela</b>
+    &lt;<a href="mailto:chadiv@opensource.lk">chadiv@opensource.lk</a>&gt;
+  </li>
+  <li>
+    <b>Nuwan Gurusinghe</b>
+    &lt;<a href="mailto:nuwan@opensouce.lk">nuwan@opensouce.lk</a>&gt;
+  </li>
+  <li>
+    <b>Susantha Kumara</b>
+    &lt;<a href="mailto:susantha@opensource.lk">susantha@opensource.lk</a>&gt;
+  </li>
+  <li>
+    <b>Damitha Kumarage</b>
+    &lt;<a href="mailto:damitha@opensource.lk">damitha@opensource.lk</a>&gt;
+  </li>
+  <li>
+    <b>Nadika Ranasinghe</b>
+    &lt;<a href="mailto:nadika@opensource.lk">nadika@opensource.lk</a>&gt;
+  </li>
+  <li>
+    <b>Sanjaya Sinharage</b>
+    &lt;<a href="mailto:sanjayasing@opensource.lk">sanjayasing@opensource.lk</a>&gt;
+  </li>
+  <li>
+    <b>Roshan Weerasuriya</b>
+    &lt;<a href="mailto:roshan@opensource.lk">roshan@opensource.lk</a>&gt;
+  </li>
+  <li>
+    <b>Sanjiva Weerawarana</b>
+    &lt;<a href="mailto:sanjiva@watson.ibm.com">sanjiva@watson.ibm.com</a>&gt;
+  </li>
+</ul>
+</p>
+
+</section>
+
+<a name="CommittersEmeritiCommittersThatHaveBeenInactiveFor3MonthsOrMore)"/>
+<section>
+<title>名誉退職コミッタ (3ヶ月以上活動していないコミッタ)</title>
+
+<p>
+<ul class="noindent">
+  <li>
+    <b>Vahe Amirbekyan</b>
+    &lt;<a href="mailto:avahe@apache.org">avahe@apache.org</a>&gt;
+  </li>
+  <li>
+    <b>Russell Butek</b>
+    &lt;<a href="mailto:butek@us.ibm.com">butek@us.ibm.com</a>&gt;
+  </li>
+  <li>
+    <b>Wouter Cloetens</b>
+    &lt;<a href="mailto:wouter@mind.be">wouter@mind.be</a>&gt;
+  </li>
+  <li>
+    <b>Matt Duftler</b>
+    &lt;<a href="mailto:duftler@apache.org">duftler@apache.org</a>&gt;
+  </li>
+  <li>
+    <b>Steve Graham</b>
+    &lt;<a href="mailto:sggraham@us.ibm.com">sggraham@us.ibm.com</a>&gt;
+  </li>
+  <li>
+    <b>Rob Jellinghaus</b>
+    &lt;<a href="mailto:robj@helium.com">robj@helium.com</a>&gt;
+  </li>
+  <li>
+    <b>Jacek Kopecky</b>
+    &lt;<a href="mailto:jacek@idoox.com">jacek@idoox.com</a>&gt;
+  </li>
+  <li>
+    <b>Ravi Kumar</b>
+    &lt;<a href="mailto:rkumar@borland.com">rkumar@borland.com</a>&gt;
+  </li>
+  <li>
+    <b>Berin Loritsch</b>
+    &lt;<a href="mailto:bloritsch@apache.org">bloritsch@apache.org</a>&gt;
+  </li>
+  <li>
+    <b>George Matkovits</b>
+    &lt;<a href="mailto:matkovitsg@apache.org">matkovitsg@apache.org</a>&gt;
+  </li>
+  <li>
+    <b>Kevin Mitchell</b>
+    &lt;<a href="mailto:kmitchell@apache.org">kmitchell@apache.org</a>&gt;
+  </li>
+  <li>
+    <b>Vidyanand Murunikkara</b>
+    &lt;<a href="mailto:Vidyanand@infravio.com">vidyanand@infravio.com</a>&gt;
+  </li>
+  <li>
+    <b>Bill Nagy</b>
+    &lt;<a href="mailto:wnagy@us.ibm.com">wnagy@us.ibm.com</a>&gt;
+  </li>
+  <li>
+    <b>Christopher Nelson</b>
+    &lt;<a href="mailto:cnelson@synchrony.net">cnelson@synchrony.net</a>&gt;
+  </li>
+  <li>
+    <b>Ryo Neyama</b>
+    &lt;<a href="mailto:neyama@apache.org">neyama@apache.org</a>&gt;
+  </li>
+  <li>
+    <b>Glyn Normington</b>
+    &lt;<a href="mailto:glyn@apache.org">glyn@apache.org</a>&gt;
+    [<a href="http://cvs.apache.org/~glyn">Apache ホームページ</a> [英語]]
+  </li>
+  <li>
+    <b>Rick Rineholt
+    &lt;</b><a href="mailto:rineholt@us.ibm.com">rineholt@us.ibm.com</a>
+    <b>&gt;</b>
+  </li>
+  <li>
+    <b><a href="http://www.intertwingly.net/blog/">Sam Ruby</a></b> [英語]
+    &lt;<a href="mailto:rubys@us.ibm.com">rubys@us.ibm.com</a>&gt;
+  </li>
+  <li>
+    <b>Rich Scheuerle</b>
+    &lt;<a href="mailto:scheu@us.ibm.com">scheu@us.ibm.com</a>&gt;
+  </li>
+  <li>
+    <b>Matt Seibert</b>
+    &lt;<a href="mailto:mseibert@us.ibm.com">mseibert@us.ibm.com</a>&gt;
+  </li>
+  <li>
+    <b>Richard Sitze</b>
+    &lt;<a href="mailto:rsitze@apache.org">rsitze@apache.org</a>&gt;
+  </li>
+  <li>
+    <b>James Snell</b>
+    &lt;<a href="mailto:jasnell@us.ibm.com">jasnell@us.ibm.com</a>&gt;
+  </li>
+</ul>
+</p>
+
+</section>
+
+
+</section>
+
+
+  </body>
+</document>

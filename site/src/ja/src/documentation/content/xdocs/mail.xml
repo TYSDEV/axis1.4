@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="Shift_JIS"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.2//EN" "./dtd/document-v12.dtd">
+<document>
+  <header>
+    <title>WebServices - Axis</title>
+  </header>
+  <body>
+
+
+<a name="AxisJapaneseMailingList"/>
+<section>
+<title>Axis 日本語メーリングリスト</title>
+
+<p><b>下記の注意点を読んで確実に理解してから、メーリングリストに参加してください。</b></p>
+
+
+<a name="UsageNotice"/>
+<section>
+<title>利用上の注意</title>
+
+<p>
+<ul>
+<li><b>件名(Subject)は、<font color="red">半角英数字のみ</font>としてください。</b></li><br/>　現在、スパム対策として、日本語の件名を利用できないように設定しています。勿論、本文は日本語で大丈夫です。
+<p/>
+<li><b>メーリングリストに <font color="red">HTML メールを送らない</font>でください。</b></li><br/>　あなたが Outlook/Outlook Express/Eudora といったメールソフトを利用していいる場合、HTML メールを送っている可能性があります。テキスト形式(プレーンテキスト)でメールを送るように設定してください。
+</ul>
+</p>
+
+</section>
+
+
+<a name="HowToSubscribe"/>
+<section>
+<title>参加方法</title>
+
+<p>
+<b>中程度の流通量</b>
+<a href="mailto:axis-user-ja-subscribe@ws.apache.org">[参加]</a>
+<a href="mailto:axis-user-ja-unsubscribe@ws.apache.org">[退会]</a>
+<a href="mailto:axis-user-ja-digest-subscribe@ws.apache.org">[参加(ダイジェスト)]</a>
+<a href="mailto:axis-user-ja-digest-unsubscribe@ws.apache.org">[退会(ダイジェスト)]</a>
+<a href="mailto:axis-user-ja@ws.apache.org">[メーリングリストにメールを送る]</a><br/>
+</p>
+
+<p>このメーリングリストは、<font color="red"><b>日本語で</b></font>Axis の使用方法等について質問をしたい、知識を共有したい、問題を議論したい開発者のためのものです。もし、英語のメーリングリストに参加したい場合は、<a href="mail-en.html">こちら</a>をご覧下さい。</p>
+
+<p>【参加手順】
+<ol>
+<li> 参加申込みメールの送信</li><br/>
+<a href="mailto:axis-user-ja-subscribe@ws.apache.org">axis-user-ja-subscribe@ws.apache.org</a>に空のメールを送ります。
+
+<p/>
+
+<li> 申請受付メールの受信</li><br/>
+件名が「confirm subscribe to axis-user-ja@ws.apache.org」という、下記のようなメールを受領します。
+<table width="100%">
+<tr><td bgcolor="#ccccff"><pre>
+From: axis-user-ja-help@ws.apache.org
+Sent: Wednesday, November 24, 2004 2:17 PM
+To: toshi@apache.org
+Subject: confirm subscribe to axis-user-ja@ws.apache.org
+
+Hi! This is the ezmlm program. I'm managing the
+axis-user-ja@ws.apache.org mailing list.
+
+To confirm that you would like
+
+   toshi@apache.org
+
+added to the axis-user-ja mailing list, please send
+an empty reply to this address:
+
+   axis-user-ja-sc.1101273444.oieeppnodmhnilnnfhmg-toshi=apache.org@ws.apache.org
+
+Usually, this happens when you just hit the "reply" button.
+If this does not work, simply copy the address and paste it into
+the "To:" field of a new message.
+               :
+</pre></td></tr>
+</table>
+
+<p/>
+
+<li> 意思確認メールの送信</li><br/>
+「返信ボタン」を利用し、上記メールに対して空のメールを返信して下さい。
+
+<p/>
+
+<li> 登録完了メールの受信</li><br/>
+メーリングリストに登録が完了すると、下記のメールが送られてきます。
+<table width="100%">
+<tr><td bgcolor="#ccccff"><pre>
+From: axis-user-ja-help@ws.apache.org
+[mailto:axis-user-ja-help@ws.apache.org]
+Sent: Wednesday, November 24, 2004 2:18 PM
+To: toshi@apache.org
+Subject: WELCOME to axis-user-ja@ws.apache.org
+
+Hi! This is the ezmlm program. I'm managing the
+axis-user-ja@ws.apache.org mailing list.
+
+Acknowledgment: I have added the address
+
+   toshi@apache.org
+
+to the axis-user-ja mailing list.
+
+Welcome to axis-user-ja@ws.apache.org!
+
+Please save this message so that you know the address you are
+subscribed under, in case you later want to unsubscribe or change your
+subscription address.
+                  :
+</pre></td></tr>
+</table>
+<p/>
+以上で、メーリングリストへの参加手続きは終了です。
+
+</ol>
+</p>
+
+</section>
+
+
+</section>
+
+
+  </body>
+</document>

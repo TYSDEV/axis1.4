@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="Shift_JIS"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.2//EN" "./dtd/document-v12.dtd">
+<document>
+  <header>
+    <title>WebServices - Axis</title>
+  </header>
+  <body>
+
+<a name="AxisC++1.4Final"/>
+<section>
+<title>Axis C++ 1.4 最終版</title>
+<p><a href="download.html">Axis C++ のダウンロード</a></p>
+
+</section>
+
+<a name="KeyFeaturesOfAxisC++1.4Final"/>
+<section>
+<title>Axis C++ 1.4 最終版の主要機能</title>
+
+<p><b>SSL 実装</b></p>
+<p>Axis C++ SSL セキュアクライアントは、セキュアなWebサービスにホストされたWebサービスにアクセスすることができます。Axis C++ のクライアントの SSL 実装はオープンソースライブラリである openssl を利用しています。</p>
+
+<p><b>クライアント側の、Cookieに基づくセッションのサポート</b></p>
+<p>クライアントは、サービスのレスポンスと共に送られてくる'Set-Cookie' HTTP ヘッダ を探知し、送出するリクエストの中に状況に応じて'Cookie' HTTP ヘッダを設定することができます。</p>
+
+<p><b>クライアント側の、SOAP ヘッダに基づくセッションのサポート</b></p>
+<p>これにより Axis C++ クライアントは、セッションスコープ内の Axis Java Webサービスとセッション通信ができるようになります。</p>
+
+</section>
+
+<a name="TheImprovements"/>
+<section>
+  <title>改善点</title>
+
+<p><b>Axis エンジンは純粋な C++</b></p>
+<ul>
+  <li>mallocs/frees/strdups を news/deletes に変更しました。</li>
+  <li>.h ヘッダファイルは .hpp に変更しました。</li>
+  <li>structs は classes に変更しました。</li>
+</ul>
+
+<p><b>WSDL2WS をリファクタリング</b></p>
+<ul>
+  <li>クラスパス順序に関する問題を修正しました。順序はもはや重要ではありません。</li>
+  <li>使われていないクラスを特定し、削除しました。</li>
+  <li>全ての重複したクラスを特定し、削除しました。</li>
+  <li>クラス継承を再設計し、全ての重複したメソッドを削除しました。</li>
+  <li>いくつかの大きなメソッドを、小さくてより扱いやすいメソッドに分解しました。</li>
+  <li>全てのコンパイル警告を取り除きました。</li>
+  <li>コードの可読性を向上させました。</li>
+  <li>クラス名やメソッドのスペルミスを訂正しました。</li>
+</ul>
+
+<p><b>クライアントとサーバの共通インクルードを分割</b></p>
+<p>共通のヘッダファイルは include/axis に移行されました。</p>
+
+<p><b>Axis CPP Conf ライブラリ名から事前に定義されたパスを削除</b></p>
+<p>完全修飾パスは削除され、ライブラリ名のみが残りました。</p>
+
+<p><b>警告を除去</b></p>
+
+<p><b>ハンドラチュートリアル</b></p>
+<p>ハンドラは Axis C++ のプラグ可能なコンポーネントです。このガイドは自分用のハンドラを作成する方法の詳細について扱っています。</p>
+
+<p><b>SOAP メッセージの本体へのアクセスを提供</b></p>
+<p>ハンドラを書く人は SOAP Body にアクセスすることができます。</p>
+
+<p><b>Basic Node オブジェクトに対する const/non-const メソッド呼び出し内の衝突を解決</b></p>
+
+<p><b>Complex Object プロパティを保持するサポートを追加</b></p>
+<p>MessageData 内の複雑なオブジェクトを保持するサポートを追加しました。</p>
+
+<p><b>ハンドラから DeSerializer に新しい SOAP 本体を設定する機構を追加</b></p>
+<p>一度ハンドラが SOAP 本体にアクセスすれば、SoapDeSerializer の"setNewSoapBody"メソッドを通じて新しい SOAP 本体をリセットするのはそのハンドラの義務となります。</p>
+
+<p><b>IPV6 をサポートするトランスポートを追加</b></p>
+<p>これは IPV6 プロトコルをサポートします。IPV6 の標準 API が IPV6 トランスポート実装で使われています。このトランスポートは IPV6 と IPV4 の両方に対して機能することができます。</p> 
+
+<p><b>トランスポートに対する Keep Alive のサポート</b></p>
+
+<br/>
+
+<p>私たちは Axis C++ を楽しみながら利用してくれることを望んでいます。</p>
+<p>Axis C++ 全体を改善するために多大な努力が現在注がれています。Axis C++ の 1.5 計画については <a href="http://wiki.apache.org/ws/FrontPage/AxisC_2b_2b">TODO ページ</a> [英語] をご覧下さい。</p>
+<p>私たちはあなたのフィードバックを高く評価します。</p>
+<p>どんなバグでも <a href="http://issues.apache.org/jira/secure/Dashboard.jspa">Jira</a> [英語] に報告してください。また、<a href="mailto:axis-c-user@ws.apache.org">axis-c-user@ws.apache.org</a> であなたの考えや問題を遠慮せずに教えてください。</p>
+<p>私たちはあなたが Axis C++ に貢献してくれることを歓迎します。<a href="mailto:axis-c-dev@ws.apache.org">axis-c-dev@ws.apache.org</a> での議論に参加してください。</p>
+
+</section>
+
+  </body>
+</document>
