@@ -306,6 +306,7 @@ public class SymbolTable {
         populate(contextURL, def, doc);
         setReferences(def, doc);
         checkForUndefined();
+        populateParameters();
     } // add
 
     /**
@@ -404,11 +405,8 @@ public class SymbolTable {
                 }
             }
             populateMessages(def);
-            // XXX binding must be before portType so we collect use info.
-            // XXX This will change when we generate parameters after the symbol
-            // XXX table is populated.
-            populateBindings(def);
             populatePortTypes(def);
+            populateBindings(def);
             populateServices(def);
         }
     } // populate
@@ -745,35 +743,53 @@ public class SymbolTable {
             // that didn't contain a portType, merely a binding that referred
             // to a non-existent port type.  Don't bother with it.
             if (!portType.isUndefined()) {
-                HashMap parameters = new HashMap();
-
-                // Remove Duplicates - happens with only a few WSDL's. No idea why!!! 
-                // (like http://www.xmethods.net/tmodels/InteropTest.wsdl) 
-                // TODO: Remove this patch...
-                // NOTE from RJB:  this is a WSDL4J bug and the WSDL4J guys have been notified.
-                Iterator operations = (new HashSet(portType.getOperations())).iterator();
- 
-                while(operations.hasNext()) {
-                    Operation operation = (Operation) operations.next();
-                    String namespace = portType.getQName().getNamespaceURI();
-                    Parameters parms = parameters(operation, 
-                                                  namespace, 
-                                                  getBindingEntryForPortType(def, portType));
-                    parameters.put(operation.getName(), parms);
-                }
-                PortTypeEntry ptEntry = new PortTypeEntry(portType, parameters);
+                PortTypeEntry ptEntry = new PortTypeEntry(portType);
                 symbolTablePut(ptEntry);
             }
         }
     } // populatePortTypes
 
     /**
+     * Create the parameters and store them in the bindingEntry.
+     */ 
+    private void populateParameters() throws IOException {
+        Iterator it = symbolTable.values().iterator();
+        while (it.hasNext()) {
+            Vector v = (Vector) it.next();
+            for (int i = 0; i < v.size(); ++i) {
+                if (v.get(i) instanceof BindingEntry) {
+                    BindingEntry bEntry = (BindingEntry) v.get(i);
+                    
+                    Binding binding = bEntry.getBinding();
+                    PortType portType = binding.getPortType();
+                    
+                    HashMap parameters = new HashMap();
+                    Iterator operations = portType.getOperations().iterator();
+                    
+                    // get parameters
+                    while(operations.hasNext()) {
+                        Operation operation = (Operation) operations.next();
+                        String namespace = portType.getQName().getNamespaceURI();
+                        Parameters parms = getOperationParameters(operation, 
+                                                                  namespace, 
+                                                                  bEntry);
+                        parameters.put(operation.getName(), parms);
+                    }
+                    bEntry.setParameters(parameters);
+                }
+            }
+        }
+    } // populate Parameters
+    
+    /**
      * For the given operation, this method returns the parameter info conveniently collated.
      * There is a bit of processing that is needed to write the interface, stub, and skeleton.
      * Rather than do that processing 3 times, it is done once, here, and stored in the
      * Parameters object.
      */
-    private Parameters parameters(Operation operation, String namespace, BindingEntry bindingEntry) throws IOException {
+    private Parameters getOperationParameters(Operation operation, 
+                                              String namespace, 
+                                              BindingEntry bindingEntry) throws IOException {
         Parameters parameters = new Parameters();
 
         // The input and output Vectors, when filled in, will be of the form:
@@ -966,19 +982,23 @@ public class SymbolTable {
                     
                     // Get the Element
                     Element e = getElement((elementName));
+                    Node node = getTypeEntry(elementName, true).getNode();
+                    
+                    // Check if this element is of the form:
+                    //    <element name="foo" type="tns:foo_type"/> 
+                    QName type = Utils.getNodeTypeRefQName(e.getNode(), "type");
+                    if (type != null)
+                        node = getTypeEntry(type, false).getNode();
                     
                     // Get the nested type entries.
                     Vector vTypes = SchemaUtils.getComplexElementTypesAndNames(
-                            getTypeEntry(elementName, true).getNode(), 
+                            //getTypeEntry(elementName, true).getNode(), 
+                            node, 
                             this);
                     
                     if (vTypes != null) {
                         // add the elements in this list
                         v.addAll(vTypes);
-                        // turn off generation of the element type
-                        // XXX is there a better way to do this?
-                        symbolTable.remove(elementName);
-                        types.remove(e);
                     } else {
                         // XXX - This should be a SOAPElement/SOAPBodyElement
                         v.add(getElement(elementName));
@@ -1130,7 +1150,7 @@ public class SymbolTable {
                     if (stuff.isEmpty()) {
                         for (int i = 0; i < types.size(); ++i) {
                             TypeEntry type = (TypeEntry) types.get(i);
-                            setTypeReferences(type, doc);
+                            setTypeReferences(type, doc, false);
                         }
                     }
                     else {
@@ -1139,7 +1159,7 @@ public class SymbolTable {
                             Message message = (Message) i.next();
                             MessageEntry mEntry =
                                     getMessageEntry(message.getQName());
-                            setMessageReferences(mEntry, def, doc);
+                            setMessageReferences(mEntry, def, doc, false);
                         }
                     }
                 }
@@ -1149,7 +1169,7 @@ public class SymbolTable {
                         PortType portType = (PortType) i.next();
                         PortTypeEntry ptEntry =
                                 getPortTypeEntry(portType.getQName());
-                        setPortTypeReferences(ptEntry, def, doc);
+                        setPortTypeReferences(ptEntry, null, def, doc);
                     }
                 }
             }
@@ -1172,7 +1192,21 @@ public class SymbolTable {
         }
     } // setReferences
 
-    private void setTypeReferences(TypeEntry entry, Document doc) {
+    private void setTypeReferences(TypeEntry entry, Document doc,
+            boolean literal) {
+
+        // If this type is ONLY referenced from a literal usage in a binding,
+        // then isOnlyLiteralReferenced should return true.
+        if (!entry.isReferenced() && literal) {
+            entry.setOnlyLiteralReference(true);
+        }
+        // If this type was previously only referenced as a literal type,
+        // but now it is referenced in a non-literal manner, turn off the
+        // onlyLiteralReference flag.
+        else if (entry.isOnlyLiteralReferenced() && !literal) {
+            entry.setOnlyLiteralReference(false);
+        }
+
         // If we don't want to emit stuff from imported files, only set the
         // isReferenced flag if this entry exists in the immediate WSDL file.
         Node node = entry.getNode();
@@ -1184,7 +1218,8 @@ public class SymbolTable {
                 if (referentName != null) {
                     TypeEntry referent = getTypeEntry(referentName, forElement.value);
                     if (referent != null) {
-                        setTypeReferences(referent, doc);
+                        //setTypeReferences(referent, doc, literal);
+                        setTypeReferences(referent, doc, false);
                     }
                 }
             }
@@ -1195,7 +1230,8 @@ public class SymbolTable {
         while (it.hasNext()) {
             TypeEntry nestedType = (TypeEntry) it.next();
             if (!nestedType.isReferenced()) {
-                setTypeReferences(nestedType, doc);
+                //setTypeReferences(nestedType, doc, literal);
+                setTypeReferences(nestedType, doc, false);
             }
         }
     } // setTypeReferences
@@ -1204,7 +1240,7 @@ public class SymbolTable {
      * Set the isReferenced flag to true on all SymTabEntries that the given Meesage refers to.
      */
     private void setMessageReferences(
-            MessageEntry entry, Definition def, Document doc) {
+            MessageEntry entry, Definition def, Document doc, boolean literal) {
         // If we don't want to emit stuff from imported files, only set the
         // isReferenced flag if this entry exists in the immediate WSDL file.
         Message message = entry.getMessage();
@@ -1227,11 +1263,16 @@ public class SymbolTable {
             Part part = (Part) parts.next();
             TypeEntry type = getType(part.getTypeName());
             if (type != null) {
-                setTypeReferences(type, doc);
+                setTypeReferences(type, doc, literal);
             }
             type = getElement(part.getElementName());
             if (type != null) {
-                setTypeReferences(type, doc);
+                setTypeReferences(type, doc, literal);
+                //QName ref = Utils.getNodeTypeRefQName(type.getNode(), "type");
+                TypeEntry refType = type.getRefType();
+                if (refType != null) {
+                  setTypeReferences(refType, doc, literal);
+                }
             }
         }
     } // setMessageReference
@@ -1240,7 +1281,8 @@ public class SymbolTable {
      * Set the isReferenced flag to true on all SymTabEntries that the given PortType refers to.
      */
     private void setPortTypeReferences(
-            PortTypeEntry entry, Definition def, Document doc) {
+            PortTypeEntry entry, BindingEntry bEntry,
+            Definition def, Document doc) {
         // If we don't want to emit stuff from imported files, only set the
         // isReferenced flag if this entry exists in the immediate WSDL file.
         PortType portType = entry.getPortType();
@@ -1264,26 +1306,37 @@ public class SymbolTable {
         while (operations.hasNext()) {
             Operation operation = (Operation) operations.next();
 
-            // Query the input message
             Input input = operation.getInput();
+            Output output = operation.getOutput();
+
+            // Find out if this reference is a literal reference or not.
+            boolean literalInput = false;
+            boolean literalOutput = false;
+            if (bEntry != null) {
+                literalInput = bEntry.getInputBodyType(operation) ==
+                        BindingEntry.USE_LITERAL;
+                literalOutput = bEntry.getOutputBodyType(operation) ==
+                        BindingEntry.USE_LITERAL;
+            }
+
+            // Query the input message
             if (input != null) {
                 Message message = input.getMessage();
                 if (message != null) {
                     MessageEntry mEntry = getMessageEntry(message.getQName());
                     if (mEntry != null) {
-                        setMessageReferences(mEntry, def, doc);
+                        setMessageReferences(mEntry, def, doc, literalInput);
                     }
                 }
             }
 
             // Query the output message
-            Output output = operation.getOutput();
             if (output != null) {
                 Message message = output.getMessage();
                 if (message != null) {
                     MessageEntry mEntry = getMessageEntry(message.getQName());
                     if (mEntry != null) {
-                        setMessageReferences(mEntry, def, doc);
+                        setMessageReferences(mEntry, def, doc, literalOutput);
                     }
                 }
             }
@@ -1296,7 +1349,7 @@ public class SymbolTable {
                 if (message != null) {
                     MessageEntry mEntry = getMessageEntry(message.getQName());
                     if (mEntry != null) {
-                        setMessageReferences(mEntry, def, doc);
+                        setMessageReferences(mEntry, def, doc, false);
                     }
                 }
             }
@@ -1328,7 +1381,7 @@ public class SymbolTable {
         PortType portType = binding.getPortType();
         PortTypeEntry ptEntry = getPortTypeEntry(portType.getQName());
         if (ptEntry != null) {
-            setPortTypeReferences(ptEntry, def, doc);
+            setPortTypeReferences(ptEntry, entry, def, doc);
         }
     } // setBindingReferences
 
@@ -1447,33 +1500,5 @@ public class SymbolTable {
                     JavaUtils.getMessage("alreadyExists00", "" + name));
         }
     } // symbolTablePut
-
-    /**
-     * Utility function to get the BindingEntry for the given portType.
-     * Does a reverse lookup of the portType in all the bindings.
-     */ 
-    public BindingEntry getBindingEntryForPortType(Definition def, PortType port) throws IOException {
-        BindingEntry b = null;
-        Iterator i = def.getBindings().values().iterator();
-        while (i.hasNext()) {
-            Binding binding = ((Binding) i.next());
-            QName bindingPort = binding.getPortType().getQName();
-            if (bindingPort.equals(port.getQName())) {
-                if (b != null) {
-                    // XXX - if more than one binding matches the portType
-                    // we can't do the right thing since interfaces are generated
-                    // from portTypes and the literal/encoded switch is in the
-                    // binding.
-                    throw new IOException(JavaUtils.getMessage("multipleBindings00"));
-                }
-                b = getBindingEntry(binding.getQName());
-            }
-        }
-        // DEBUG
-//        if ( b == null) {
-//            System.out.println("Lookup: can't find binding for portType " + port.getQName());
-//        }
-        return b;
-    }
 
 } // class SymbolTable

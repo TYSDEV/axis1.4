@@ -58,7 +58,7 @@ package org.apache.axis.client ;
 import javax.wsdl.extensions.soap.SOAPAddress;
 import org.apache.axis.AxisEngine;
 import org.apache.axis.Constants;
-import org.apache.axis.ConfigurationProvider;
+import org.apache.axis.EngineConfiguration;
 import org.apache.axis.AxisFault;
 import org.apache.axis.configuration.FileProvider;
 import org.apache.axis.utils.JavaUtils;
@@ -106,7 +106,7 @@ public class Service implements javax.xml.rpc.Service {
     private javax.wsdl.Service  wsdlService     = null ;
     private boolean             maintainSession = false ;
 
-    private ConfigurationProvider configProvider =
+    private EngineConfiguration config =
             new FileProvider(Constants.CLIENT_CONFIG_FILE);
 
     Definition getWSDLDefinition() {
@@ -119,7 +119,7 @@ public class Service implements javax.xml.rpc.Service {
 
     protected AxisClient getAxisClient()
     {
-        return new AxisClient(configProvider);
+        return new AxisClient(config);
     }
 
     /**
@@ -133,11 +133,11 @@ public class Service implements javax.xml.rpc.Service {
 
     /**
      * Constructs a new Service object as above, but also passing in
-     * the ConfigurationProvider which should be used to set up the
+     * the EngineConfiguration which should be used to set up the
      * AxisClient.
      */
-    public Service(ConfigurationProvider configProvider) {
-        this.configProvider = configProvider;
+    public Service(EngineConfiguration config) {
+        this.config = config;
         engine = getAxisClient();
     }
 
@@ -211,7 +211,8 @@ public class Service implements javax.xml.rpc.Service {
             // Start by reading in the WSDL using WSDL4J
             WSDLReader           reader = WSDLFactory.newInstance()
                                                      .newWSDLReader();
-            reader.setFeature("verbose", false);
+            // No longer supported
+            //reader.setFeature("verbose", false);
             Definition           def    = reader.readWSDL( null, doc );
 
             this.wsdlLocation   = null ;
@@ -244,6 +245,18 @@ public class Service implements javax.xml.rpc.Service {
     public java.rmi.Remote getPort(QName portName, Class proxyInterface)
                            throws JAXRPCException {
         return( null );
+    }
+
+    /**
+     * Not implemented yet
+     *
+     * @param  proxyInterface  ...
+     * @return java.rmi.Remote ...
+     * @throws JAXRPCException If there's an error
+     */
+    public java.rmi.Remote getPort(Class proxyInterface)
+            throws JAXRPCException {
+        return null;
     }
 
     /**
@@ -345,6 +358,25 @@ public class Service implements javax.xml.rpc.Service {
 
         org.apache.axis.client.Call call=new org.apache.axis.client.Call(this);
         call.setOperation( portName, operationName );
+        return( call );
+    }
+
+    /**
+     * Creates a new Call object - will prefill as much info from the WSDL
+     * as it can.  Right now it's target URL, SOAPAction, Parameter types,
+     * and return type of the Web Service.
+     *
+     * @param  portName        PortName in the WSDL doc to search for
+     * @param  operationName   Operation(method) that's going to be invoked
+     * @return Call            Used for invoking the Web Service
+     * @throws JAXRPCException If there's an error
+     */
+    public javax.xml.rpc.Call createCall(QName portName,
+                                         QName operationName)
+                           throws JAXRPCException {
+
+        org.apache.axis.client.Call call=new org.apache.axis.client.Call(this);
+        call.setOperation( portName, operationName.getLocalPart() );
         return( call );
     }
 
@@ -461,17 +493,17 @@ public class Service implements javax.xml.rpc.Service {
     }
 
     /**
-     * Set this Service's configuration provider.
+     * Set this Service's engine configuration.
      *
      * Note that since all of the constructors create the AxisClient right
      * now, this is basically a no-op.  Putting it in now so that we can make
      * lazy engine instantiation work, and not have to duplicate every single
-     * Service constructor with a ConfigurationProvider argument.
+     * Service constructor with a EngineConfiguration argument.
      *
-     * @param configProvider the ConfigurationProvider we want to use.
+     * @param config the EngineConfiguration we want to use.
      */
-    public void setConfigProvider(ConfigurationProvider configProvider) {
-        this.configProvider = configProvider;
+    public void setEngineConfiguration(EngineConfiguration config) {
+        this.config = config;
     }
 
     /**
