@@ -71,7 +71,9 @@ import javax.wsdl.Operation;
 import javax.wsdl.OperationType;
 import javax.wsdl.Part;
 import javax.wsdl.PortType;
+import javax.wsdl.BindingFault;
 import javax.wsdl.extensions.soap.SOAPOperation;
+import javax.wsdl.extensions.soap.SOAPFault;
 import javax.xml.namespace.QName;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -402,11 +404,15 @@ public class JavaStubWriter extends JavaClassWriter {
      * This function returns the faults in an operation
      */
     private void writeFaultInfo(PrintWriter pw, PortType portType) {
+        // Where we remember which QName we have already written out
+        Vector emitted = new Vector();
         // Get all the faults from all the operations
         List operations = portType.getOperations();
         for (int i = 0; i < operations.size(); ++i) {
             Operation operation = (Operation) operations.get(i);
             Map faults = operation.getFaults();
+            BindingOperation bindOp = 
+                    binding.getBindingOperation(operation.getName(), null, null);
             
             if (faults != null) {
                 Iterator it = faults.values().iterator();
@@ -418,15 +424,28 @@ public class JavaStubWriter extends JavaClassWriter {
                     Map parts = message.getParts();
                     String partName = (String) parts.keySet().iterator().next();
 
-                    // Hack alert!
-                    // We need a QName for the exception part that we are going to
-                    // serialize, but <part name=""> isn't NOT a QName - go figure
-                    // So we will use the namespace of the Message, and the name of the part
+                    // Use the namespace in the binding for this fault
                     // NOTE: we do the same thing when writing the fault in JavaFaultWriter
-                    String namespace = message.getQName().getNamespaceURI();
+                    BindingFault bindFault = bindOp.getBindingFault(fault.getName());
+                    List extList = bindFault.getExtensibilityElements();
+                    String namespace = "";
+                    for (Iterator iterator = extList.iterator(); iterator.hasNext();) {
+                        Object o = (Object) iterator.next();
+                        if (o instanceof SOAPFault) {
+                            SOAPFault sf = (SOAPFault) o;
+                            namespace = sf.getNamespaceURI();
+                        }
+                    }
 
                     // Now make a QName
                     QName qname = new QName(namespace, partName);
+                    
+                    if (emitted.contains(qname)) {
+                        continue;
+                    }
+                    
+                    // Remember that we have already registered this name
+                    emitted.add(qname);
                     
                     // Get the Exception class name
                     String className = Utils.getFullExceptionName(fault, symbolTable);
