@@ -538,8 +538,7 @@ generated. The skeletons and stubs will be generated in
 <br>
 Run the following command to generate the client stubs.<br>
 <br>
-Java -classpath %classpath%;. org.apache.axis.wsdl.wsdl2ws.WSDL2Ws
-Calculator.wsdl -o./ClientOut -lc++ -sclient<br>
+Java -classpath .; %classpath% org.apache.axis.wsdl.wsdl2ws.WSDL2Ws Calculator.wsdl -o./ClientOut -lc++ -sclient<br>
 <br>
 The generated client stubs will be in [SKELSTUB_HOME]\ClientOut<br>
 
