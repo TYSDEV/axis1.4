@@ -36,7 +36,7 @@ void destroy_InteropTestPortTypeB_stub(void* p){
 /*
  * This method wrap the service methodechoStructAsSimpleTypes
  */
-void echoStructAsSimpleTypes(void* pStub, SOAPStruct* Value0, AXIS_OUT_PARAM  float *OutValue0, AXIS_OUT_PARAM  int *OutValue1, AXIS_OUT_PARAM  xsd__string *OutValue2)
+void echoStructAsSimpleTypes(void* pStub, SOAPStruct* Value0, AXIS_OUT_PARAM  xsd__string *OutValue0, AXIS_OUT_PARAM  int *OutValue1, AXIS_OUT_PARAM float  *OutValue2)
 {
 	Call* pCall = (Call*)pStub;
 	/* Following will establish the connections with the server too */
@@ -49,9 +49,9 @@ void echoStructAsSimpleTypes(void* pStub, SOAPStruct* Value0, AXIS_OUT_PARAM  fl
 	{
 		if(AXIS_SUCCESS == pCall->_functions->checkMessage(pCall->_object, "echoStructAsSimpleTypesResponse", "http://soapinterop.org/"))
 		{
-			*OutValue0 = pCall->_functions->getElementAsFloat(pCall->_object, "outputFloat", 0);
+			*OutValue0 = pCall->_functions->getElementAsString(pCall->_object, "outputString", 0);
 			*OutValue1 = pCall->_functions->getElementAsInt(pCall->_object, "outputInteger", 0);
-			*OutValue2 = pCall->_functions->getElementAsString(pCall->_object, "outputString", 0);
+            *OutValue2 = pCall->_functions->getElementAsFloat(pCall->_object, "outputFloat", 0);
 		}
 	}
 	pCall->_functions->unInitialize(pCall->_object);
@@ -61,7 +61,7 @@ void echoStructAsSimpleTypes(void* pStub, SOAPStruct* Value0, AXIS_OUT_PARAM  fl
 /*
  * This method wrap the service methodechoSimpleTypesAsStruct
  */
-SOAPStruct* echoSimpleTypesAsStruct(void* pStub, float Value0, int Value1, xsd__string Value2)
+SOAPStruct* echoSimpleTypesAsStruct(void* pStub, xsd__string Value0, int Value1, float Value2)
 {
 	Call* pCall = (Call*)pStub;
 	SOAPStruct* pReturn = NULL;
