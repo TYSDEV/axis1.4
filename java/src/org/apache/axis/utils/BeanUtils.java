@@ -122,7 +122,7 @@ public class BeanUtils {
                                 result = Introspector.
                                         getBeanInfo(secJavaType,Exception.class).
                                         getPropertyDescriptors();
-                            } else if (superClass == AxisFault.class) {
+                            } else if (AxisFault.class.isAssignableFrom(secJavaType)) {
                                 // Don't include AxisFault data
                                 result = Introspector.
                                         getBeanInfo(secJavaType,AxisFault.class).

@@ -364,12 +364,25 @@ public class OperationDesc {
         if (faults == null || cls == null) {
             return null;
         }
-        for (Iterator iterator = faults.iterator(); iterator.hasNext();) {
-            FaultDesc desc = (FaultDesc) iterator.next();
-            if (cls.getName().equals(desc.getClassName())) {
-                return desc;
+
+        while (cls != null) {
+            // Check each class in the inheritance hierarchy, stopping at
+            // java.* or javax.* classes.
+
+            for (Iterator iterator = faults.iterator(); iterator.hasNext();) {
+                FaultDesc desc = (FaultDesc) iterator.next();
+                if (cls.getName().equals(desc.getClassName())) {
+                    return desc;
+                }
+            }
+
+            cls = cls.getSuperclass();
+            if (cls != null && (cls.getName().startsWith("java.") ||
+                    cls.getName().startsWith("javax."))) {
+                cls = null;
             }
         }
+
         return null;
     }
 

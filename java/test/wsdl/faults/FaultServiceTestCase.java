@@ -76,12 +76,12 @@ public class FaultServiceTestCase extends junit.framework.TestCase {
         // that it throws a DerivedFault, but we know the impl actually
         // throws DerivedFault2 which extends DerivedFault)
         catch (DerivedFault2 e) {
-            //assertEquals("Param A in DerivedFault2 doesn't match original", 
-            //        a, e.getA());
-            //assertEquals("Param B in DerivedFault2 doesn't match original", 
-            //        b, e.getB());
-            //assertEquals("Param C in DerivedFault2 doesn't match original", 
-            //        c, e.getC(), 0.01F);
+            assertEquals("Param A in DerivedFault2 doesn't match original",
+                    a, e.getA());
+            assertEquals("Param B in DerivedFault2 doesn't match original",
+                    b, e.getB());
+            assertEquals("Param C in DerivedFault2 doesn't match original",
+                    c, e.getC(), 0.01F);
         }
         catch (DerivedFault e) {
             throw new junit.framework.
