@@ -69,7 +69,6 @@ public class PropertyStore {
 		File baseDir = new File(".");
 
 		String path = baseDir.getCanonicalPath();
-        System.out.println(path);
 
 		if(path.endsWith("geronimo")
 
