@@ -489,6 +489,7 @@ public class DeserializerImpl extends SOAPHandler
                            DeserializationContext context)
         throws SAXException
     {
+        super.endElement(namespace, localName, context);
 
         isEnded = true;
         if (!isHref) {

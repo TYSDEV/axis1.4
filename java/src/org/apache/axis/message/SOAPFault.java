@@ -129,6 +129,9 @@ public class SOAPFault extends SOAPBodyElement implements javax.xml.soap.SOAPFau
             Element[] faultDetails = axisFault.getFaultDetails();
             if (faultDetails != null) {
                 context.startElement(Constants.QNAME_FAULTDETAILS, null);
+                // Allow the fault to write its data, if any
+                axisFault.writeDetails(context);
+                // Then output any other elements
                 for (int i = 0; i < faultDetails.length; i++) {
                     context.writeDOMElement(faultDetails[i]);
                 }

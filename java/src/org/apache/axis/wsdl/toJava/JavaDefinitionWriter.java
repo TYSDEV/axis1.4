@@ -199,7 +199,7 @@ public class JavaDefinitionWriter implements Generator {
                         Fault f = (Fault) fi.next();
                         String name = Utils.getFullExceptionName(
                                 f,
-                                emitter);
+                                symbolTable);
                         // prevent duplicates
                         if (! faultList.contains(name) ) {
                             faultList.add(name);
