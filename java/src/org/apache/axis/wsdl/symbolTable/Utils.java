@@ -56,7 +56,6 @@ package org.apache.axis.wsdl.symbolTable;
 
 import org.apache.axis.Constants;
 import org.apache.axis.utils.JavaUtils;
-import org.apache.axis.utils.XMLUtils;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
@@ -67,7 +66,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Vector;
-import java.util.StringTokenizer;
 
 /**
  * This class contains static utility methods for the emitter.
@@ -360,20 +358,6 @@ public class Utils {
             qName = getTypeQNameFromAttr(node, "base");
         }
         return qName;
-    }
-
-    public static QName[] getMemberTypeQNames(Node node) {
-        String attribute = getAttribute(node, "memberTypes");
-	if (attribute == null) {
-	    return null;
-        }
-	StringTokenizer tokenizer = new StringTokenizer(attribute, " ");
-	QName[] memberTypes = new QName[tokenizer.countTokens()];
-	for (int i = 0; tokenizer.hasMoreElements(); i++) {
-	    String element = (String) tokenizer.nextElement(); 
-	    memberTypes[i] = XMLUtils.getFullQNameFromString(element, node);
-	}
-	return memberTypes;
     }
 
     /**

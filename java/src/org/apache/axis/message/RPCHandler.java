@@ -247,9 +247,6 @@ public class RPCHandler extends SOAPHandler
             }
 
             destClass = paramDesc.getJavaType();
-            if ((destClass != null) && (destClass.isArray())) {
-                context.setDestinationClass(destClass);
-            }
             
             // Keep the association so we can use it later
             // (see RPCProvider.processMessage())
@@ -297,9 +294,6 @@ public class RPCHandler extends SOAPHandler
 
               }
               if (dser == null) {
-                dser = context.getDeserializerForClass(destClass);
-              } 
-              if (dser == null) {
                   throw new SAXException(Messages.getMessage(
                           "noDeser01", localName,"" + type));
               }
@@ -314,9 +308,10 @@ public class RPCHandler extends SOAPHandler
                   }
               }
           } else {
-              dser = context.getDeserializerForClass(destClass);
+              dser = new DeserializerImpl();
               if (dser == null) {
-                  dser = new DeserializerImpl();
+                  throw new SAXException(Messages.getMessage(
+                          "noDeser01", localName,"" + type));
               }
           }
         }

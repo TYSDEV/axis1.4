@@ -190,9 +190,6 @@ public class TypeDesc {
                     FieldDesc [] parentFields = superDesc.getFields(true);
 // START FIX http://nagoya.apache.org/bugzilla/show_bug.cgi?id=17188
                     if (parentFields != null) {
-		      if (fields == null) {
-			  fields = new FieldDesc[0];
-		      }
                       FieldDesc [] ret = new FieldDesc[parentFields.length + fields.length];
                       System.arraycopy(parentFields, 0, ret, 0, parentFields.length);
                       System.arraycopy(fields, 0, ret, parentFields.length, fields.length);

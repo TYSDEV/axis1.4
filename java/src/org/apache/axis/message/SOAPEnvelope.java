@@ -448,7 +448,6 @@ public class SOAPEnvelope extends MessageElement
     public javax.xml.soap.SOAPBody addBody() throws SOAPException {
         if (body == null) {
             body = new SOAPBody(this, soapConstants);
-            _isDirty = true;
             return body;
         } else {
             throw new SOAPException(Messages.getMessage("bodyPresent"));

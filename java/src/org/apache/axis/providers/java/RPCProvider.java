@@ -269,9 +269,7 @@ public class RPCProvider extends JavaProvider {
 
                 if (holderClass != null &&
                         Holder.class.isAssignableFrom(holderClass)) {
-                    if (argValues[numArgs + i] == null) { 
-                        argValues[numArgs + i] = holderClass.newInstance();
-		    }
+                    argValues[numArgs + i] = holderClass.newInstance();
                     // Store an RPCParam in the outs collection so we
                     // have an easy and consistent way to write these
                     // back to the client below

@@ -132,9 +132,8 @@ public class SerializationContextImpl implements SerializationContext
 
     private boolean pretty = false;
     private static QName multirefQName = new QName("","multiRef");
-    private static Class[] SERIALIZER_CLASSES =
+    private static Class[] getSerializerClasses =
             new Class[] {String.class, Class.class, QName.class};
-    private static final String SERIALIZER_METHOD = "getSerializer";
 
     /**
      * Should I write out objects as multi-refs?
@@ -1232,38 +1231,30 @@ public class SerializationContextImpl implements SerializationContext
 
             // if no serializer was configured try to find one dynamically using WSDLJava
             // generated metadata
-            Class cls = value.getClass();
-            Serializer serializer = getSerializerFromClass(cls, elemQName);
-            if (serializer != null) {
-                TypeDesc typedesc = TypeDesc.getTypeDescForClass(value.getClass());
-                if (typedesc != null) {
-                    QName qname = typedesc.getXmlType();
-                    if (qname != null) {
-                        attributes = setTypeAttribute(attributes,
-                                                      qname);
+            try {
+                Method method = value.getClass().getMethod(
+                        "getSerializer", getSerializerClasses);
+                if (method != null) {
+                    Serializer serializer = (Serializer) method.invoke(value,
+                            new Object[] {"", value.getClass(), elemQName});
+                    TypeDesc typedesc = TypeDesc.getTypeDescForClass(value.getClass());
+                    if (typedesc != null) {
+                        QName qname = typedesc.getXmlType();
+                        if (qname != null) {
+                            attributes = setTypeAttribute(attributes,
+                                                          qname);
+                        }
                     }
+                    serializer.serialize(elemQName, attributes, value, this);
+                    return;
                 }
-                serializer.serialize(elemQName, attributes, value, this);
-                return;
+            } catch (Exception e) {
             }
+
             throw new IOException(Messages.getMessage("noSerializer00",
                     value.getClass().getName(), "" + tm));
         }
         // !!! Write out a generic null, or get type info from somewhere else?
-    }
-
-    private Serializer getSerializerFromClass(Class javaType, QName qname) {
-        Serializer serializer = null;
-        try {
-            Method method = javaType.getMethod(
-                    SERIALIZER_METHOD, SERIALIZER_CLASSES);
-            if (method != null) {
-                serializer = (Serializer) method.invoke(null,
-                     new Object[] {msgContext.getEncodingStyle(), javaType, qname});
-            }
-       } catch (Exception e) {
-       }
-       return serializer;
     }
 
     /**
@@ -1357,11 +1348,7 @@ public class SerializationContextImpl implements SerializationContext
     }
 
     public String getValueAsString(Object value, QName xmlType) throws IOException {
-        Class cls = value.getClass();
-        Serializer ser = getSerializer(cls, xmlType, null);
-        if (ser == null) {
-            ser = getSerializerFromClass(cls, xmlType);
-        }
+        Serializer ser = getSerializer(value.getClass(), xmlType, null);
         if (!(ser instanceof SimpleValueSerializer)) {
             throw new IOException(
                     Messages.getMessage("needSimpleValueSer",
