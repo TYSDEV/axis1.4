@@ -155,6 +155,7 @@ IHeaderBlock* SoapDeSerializer::getHeaderBlock(const AxisChar* pName,
                                                
 int SoapDeSerializer::getHeader()
 {
+
     if (m_pHeader) return m_nStatus;
     m_pNode = m_pParser->next();
     if (!m_pNode)  /* this means a SOAP error */
@@ -181,7 +182,7 @@ int SoapDeSerializer::getHeader()
 
         while (blnConStatus)
         {
-            m_pNode = m_pParser->next();
+            m_pNode = m_pParser->next(true);
             if (!m_pNode) 
             {
                 m_nStatus = AXIS_FAIL;
@@ -199,11 +200,12 @@ int SoapDeSerializer::getHeader()
             else
             {
                 pComplexElement = new ComplexElement();
-                pHeaderBlock = new HeaderBlock();
+                
                 if (START_ELEMENT == m_pNode->m_type)
                 {
                     if (iLevel == HEADER_LEVEL)
                     {
+						pHeaderBlock = new HeaderBlock();
                         if (m_pNode->m_pchNamespace)
 							pHeaderBlock->setUri(m_pNode->m_pchNamespace);
                         pHeaderBlock->setLocalName(m_pNode->m_pchNameOrValue);
