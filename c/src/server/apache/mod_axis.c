@@ -25,8 +25,17 @@ extern unsigned char chEBuf[1024];
 /*Should dispatch the headers from within this method*/
 int send_transport_information(Ax_soapstream* hdr)
 {
-      ap_send_http_header((request_rec*)hdr->str.op_stream);
-	  return 0;
+	int i;
+	Ax_header* pHeaders = hdr->so.http.op_headers;
+	if (pHeaders)
+	{
+		for (i=0; i<hdr->so.http.op_headercount; i++)
+		{
+			ap_table_set(((request_rec*)hdr->str.op_stream)->headers_out, pHeaders->headername, pHeaders->headervalue);
+		}
+	}
+	ap_send_http_header((request_rec*)hdr->str.op_stream);
+	return 0;
 }
 
 /*Call initialize_module() [of Packet.h] from within this method*/
@@ -129,7 +138,8 @@ static int axis_handler(request_rec *req_rec)
 		return OK;
 	}
 
-
+	if (sstr->so.http.op_headers)
+		free(sstr->so.http.op_headers);
 	free(sstr);
 	/*free(arr);*/
 	return OK;
