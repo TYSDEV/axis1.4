@@ -118,6 +118,7 @@ public abstract class WSDDDeployableItem
     /**
      *
      * @param e (Element) XXX
+     * @param n (String) XXX
      * @throws WSDDException XXX
      */
     public WSDDDeployableItem(Element e)
@@ -293,24 +294,12 @@ public abstract class WSDDDeployableItem
         if (scope == SCOPE_SINGLETON) {
              synchronized (this) {
                 if (singletonInstance == null)
-                    singletonInstance = getNewInstance(registry);
+                    singletonInstance = makeNewInstance(registry);
             }
             return singletonInstance;
         }
         
-        return getNewInstance(registry);
-    }
-
-    private Handler getNewInstance(EngineConfiguration registry)
-        throws ConfigurationException
-    {
-        QName type = getType();
-        if (type == null ||
-            WSDDConstants.URI_WSDD_JAVA.equals(type.getNamespaceURI())) {
-            return makeNewInstance(registry);
-        } else {
-            return registry.getHandler(type);
-        }
+        return makeNewInstance(registry);
     }
 
     /**
@@ -334,6 +323,7 @@ public abstract class WSDDDeployableItem
         }
 
         if (c != null) {
+
             try {
                 h = (Handler)createInstance(c);
             } catch (Exception e) {
@@ -357,7 +347,6 @@ public abstract class WSDDDeployableItem
                 }
             }
         } else {
-            // !!! Should never get here!
             h = registry.getHandler(getType());
         }
         
@@ -368,6 +357,7 @@ public abstract class WSDDDeployableItem
      *
      * @param _class XXX
      * @return XXX
+     * @throws Exception XXX
      */
     Object createInstance(Class _class)
         throws InstantiationException, IllegalAccessException
@@ -377,6 +367,7 @@ public abstract class WSDDDeployableItem
 
     /**
      *
+     * @param type XXX
      * @return XXX
      * @throws ClassNotFoundException XXX
      */
