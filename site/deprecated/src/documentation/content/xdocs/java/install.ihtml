@@ -4,29 +4,21 @@
 <HEAD>
   <META name="generator" content=
   "HTML Tidy for Windows (vers 1st October 2003), see www.w3.org">
+  <META http-equiv="Content-Type" content=
+  "text/html; charset=us-ascii">
 
   <TITLE>Axis installation instructions</TITLE>
   <LINK href="axis.css" rel="stylesheet" type="text/css">
 </HEAD>
 
 <BODY>
-  <TABLE cellspacing="0" width="100%" border="0">
- <TBODY>
-   <TR>
-  <TD colspan="2">
-    <A href="http://ws.apache.org/axis"><IMG border="0"
-    align="left" src="images/axis.jpg"></A>
+  <CENTER>
+    <H1><IMG src="images/axis.jpg" height="96" width="176"></H1>
+  </CENTER>
 
-    <H1>Installing and deploying web applications using
-    xml-axis</H1>
-  </TD>
-   </TR>
- </TBODY>
-  </TABLE>
   <H1>Axis installation instructions</H1>
-  <HR size="1" noshade="noshade">
 
-  <P><STRONG>Contents</STRONG></P>
+  <P><B>Contents</B></P>
 
   <UL>
  <LI><A href="#intro">Introduction</A></LI>
@@ -50,6 +42,9 @@
  <LI><A href="#broken">What if it doesn't work?</A></LI>
 
  <LI><A href="#summary">Summary</A></LI>
+
+ <LI><a href="#soapmon">Appendix: Enabling the SOAP Monitor</a></LI>
+
   </UL>
 
   <P><A name="intro"></A></P>
@@ -124,7 +119,10 @@
   you have enough of a foundation to be able to work with Axis. It
   is also useful to have written a simple web application, as this
   will give you some knowledge of how HTTP works, and how Java
-  application servers integrate with HTTP.</P>
+  application servers integrate with HTTP. You may find the course notes from 
+  <a href="http://www.cs.indiana.edu/classes/a348-dger/fall2002/notes/"> 
+  Mastering the World Wide Web</a> useful in this regard, even though Axis 
+  is only introduced in lecture 28.</P>
 
   <P>Be aware that there is a lot more needed to be learned in
   order to use Axis and SOAP effectively than the listing above.
@@ -202,7 +200,9 @@
   form the basis for the URL by which clients will access your
   service. The rest of this document assumes that the default
   webapp name, "axis" has been used; rename these references if
-  appropriate. <A name="depend"></A></P>
+  appropriate. </P>
+
+  <P><A name="depend"></A></P>
 
   <H2>Step 2: Setting up the libraries</H2>
 
@@ -239,7 +239,9 @@
   javax packages, so they may not get picked up. If happyaxis.jsp
   (see below) cannot find the relevant packages, copy them from
   axis/WEB-INF/lib to CATALINA_HOME/common/lib and restart Tomcat.
-  <A name="start"></A></P>
+  </P>
+
+  <P><A name="start"></A></P>
 
   <H2>Step 3: starting the web server</H2>
 
@@ -305,8 +307,8 @@
   testing. First let's retrieve the version of Axis from the
   version endpoint, calling the <CODE>getVersion</CODE> method:<BR>
   <BR>
-  <A href=
-  "http://localhost:8080/axis/services/Version?method=getVersion">http://localhost:8080/axis/services/Version?method=getVersion</A><BR>
+  <A href="http://localhost:8080/axis/services/Version?method=getVersion">
+  http://localhost:8080/axis/services/Version?method=getVersion</A><BR>
 
   <BR>
   This should return something like:</P>
@@ -344,8 +346,8 @@
   directory).</P>
 
   <P>Point your browser at <A href=
-  "http://localhost:8080/axis/EchoHeaders.jws?method=list">http://localhost:8080/axis/EchoHeaders.jws?method=list</A>
-  .</P>
+  "http://localhost:8080/axis/EchoHeaders.jws?method=list">
+  http://localhost:8080/axis/EchoHeaders.jws?method=list</A>.</P>
 
   <P>This should return an XML listing of your application headers,
   such as</P>
@@ -375,7 +377,9 @@
 
   <P>Again, the exact return values will be different, and you may
   need to change URLs to correct any host, port and webapp
-  specifics. <A name="websvc"></A></P>
+  specifics. </P>
+
+  <P><A name="websvc"></A></P>
 
   <H2>Step 5: Installing new Web Services</H2>
 
@@ -436,7 +440,9 @@
   here we are going to use one from the Axis samples: the stock
   quote service.</P>
 
-  <H3><A name="Classpath_setup"></A>Classpath setup</H3>
+  <P><A name="Classpath_setup"></A></A>
+
+  <H3>Classpath setup</H3>
 
   <P>In order for these examples to work, java must be able to find
   axis.jar, commons-discovery.jar, commons-logging.jar, jaxrpc.jar,
@@ -527,18 +533,16 @@ java -cp "$AXISCLASSPATH" ...
   "java.io.FileNotFoundException: deploy.wsdd (The system cannot
   find the file specified)" exception.</P>
 
-  <BLOCKQUOTE>
+<table>
+<tr><td>
  <B>On Windows</B><BR>
- <PRE>java -cp %AXISCLASSPATH%
- org.apache.axis.client.AdminClient
- -lhttp://localhost:8080/axis/services/AdminService
- deploy.wsdd<BR></PRE>  <B><BR>
- On UNIX</B><BR>
- <PRE>java -cp $AXISCLASSPATH
- org.apache.axis.client.AdminClient<BR>
- -lhttp://localhost:8080/axis/services/AdminService
- deploy.wsdd</PRE>
-  </BLOCKQUOTE>
+ <PRE>java -cp %AXISCLASSPATH% org.apache.axis.client.AdminClient
+     -lhttp://localhost:8080/axis/services/AdminService deploy.wsdd<BR></PRE><BR>
+ <B>On UNIX</B><BR>
+ <PRE>java -cp $AXISCLASSPATH org.apache.axis.client.AdminClient
+     -lhttp://localhost:8080/axis/services/AdminService deploy.wsdd</PRE>
+</td></tr>
+</table>
 
   <P>If you get some java client error (like
   ClassNotFoundException), then you haven't set up your
@@ -579,18 +583,20 @@ java -cp "$AXISCLASSPATH" ...
  <LI>Change directory to the distribution directory for xml-axis
  and execute the following command (or its Unix equivalent):
 
-   <BLOCKQUOTE>
-  <B>On Windows</B> <PRE><BR>
-  java -cp .;%AXISCLASSPATH% samples.stock.GetQuote
-  -lhttp://localhost:8080/axis/servlet/AxisServlet -uuser1
-  -wpass1 XXX</PRE><BR>
-  <BR>
-  <SPAN style="font-weight: bold;">On UNIX</SPAN><BR>
-  <PRE>java -cp $AXISCLASSPATH
-  samples.stock.GetQuote
-  -lhttp://localhost:8080/axis/servlet/AxisServlet -uuser1
-  -wpass1 XXX</PRE> 
-   </BLOCKQUOTE><BR>
+<table>
+<tr><td>
+  <B>On Windows</B><BR>
+  <PRE>java -cp .;%AXISCLASSPATH% samples.stock.GetQuote
+     -lhttp://localhost:8080/axis/servlet/AxisServlet
+     -uuser1 -wpass1 XXX
+  </PRE>
+  <B>On UNIX</B><BR>
+  <PRE>java -cp $AXISCLASSPATH samples.stock.GetQuote
+     -lhttp://localhost:8080/axis/servlet/AxisServlet
+     -uuser1 -wpass1 XXX
+  </PRE>
+</td></tr>
+</table>
  </LI>
 
  <LI>You should get back "55.25" as a result.</LI>
@@ -629,8 +635,8 @@ java -cp "$AXISCLASSPATH" ...
   <P>The process is also covered in Chapter 15 of <A href=
   "http://manning.com/antbook">Java Development with Ant</A>, which
   can be downloaded as a <A href=
-  "http://www.manning.com/hatcher/chap15.pdf">PDF file</A>.
-  <A name="broken"></A></P>
+  "http://www.manning.com/hatcher/chap15.pdf">PDF file</A>.</P>
+  <P><A name="broken"></A></P>
 
   <H2>What if it doesn't work?</H2>
 
@@ -746,9 +752,9 @@ java -cp "$AXISCLASSPATH" ...
   for people new to server side Java development, and that you will
   need to be somewhat self sufficient in this regard. It is not a
   silver bullet. However, knowing how to make effective use of the
-  list will help you develop better with Axis. <A name=
-  "summary"></A></P>
+  list will help you develop better with Axis. </A></P>
 
+  <P><A name="summary"></A></P>
   <H2>Summary</H2>
 
   <P>Axis is simply an implementation of SOAP which can be added to
@@ -758,6 +764,105 @@ java -cp "$AXISCLASSPATH" ...
   process, including testing along the way, using happyaxis and the
   bundled test services, you will find it easier to get started
   with Axis.</P>
+
+  <P><a NAME="soapmon"></a></P>
+  <H2> Appendix: Enabling the SOAP Monitor </H2>
+   <P> 
+   SOAP Monitor allows for the monitoring of SOAP requests and responses via 
+   a web browser with Java plug-in 1.3 or higher. For a more comprehensive 
+   explanation of its usage, read <a href="user-guide.html#soapmon">Using the 
+   SOAP Monitor</a> in the User's Guide. 
+   </P>
+   <P>
+   By default, the SOAP Monitor is not enabled. The basic steps for enabling 
+   it are compiling the SOAP Monitor java applet, deploying the SOAP Monitor 
+   web service and adding request and response flow definitions for each monitored 
+   web service. In more detail: 
+   <ol> 
+   <li> Go to $AXIS_HOME/webapps/axis (or %AXIS_HOME%\webapps\axis) 
+           and compile SOAPMonitorApplet.java.<BR>
+
+<table>
+<tr><td>
+           <B>On Windows</B><BR>
+           <code class="java"> 
+   javac -classpath %AXIS_HOME%\lib\axis.jar SOAPMonitorApplet.java</code><br> 
+           <br> 
+           <B>On Unix</B><BR> 
+           <code class="java">
+   javac -classpath $AXIS_HOME/lib/axis.jar SOAPMonitorApplet.java</code><br>
+</tr></td>
+</table>
+
+            <P>Copy all resulting class files (i.e. SOAPMonitorApplet*.class) to the root 
+            directory of the web application using the SOAP Monitor 
+            (e.g. .../tomcat/webapps/axis)</P>
+   </li> 
+   <li> Deploy the SOAPMonitorService web service with the admin client and the 
+            deploy-monitor.wsdd file (shown below).<BR> 
+<PRE>
+    Go to the directory deploy-monitor.wsdd is located and execute 
+    the command below. The command assume that /axis is the intended 
+    web application and it is available on port 8080.<br>
+
+
+<table>
+<tr><td>
+    <b>On Windows</b><BR>
+     <code class="java"><PRE>java -cp %AXISCLASSPATH% org.apache.axis.client.AdminClient 
+   -lhttp://localhost:8080/axis/services/AdminService deploy-monitor.wsdd<br></PRE></code><br>
+   <b>On UNIX</b><BR>
+     <code class="java"><PRE>java -cp $AXISCLASSPATH org.apache.axis.client.AdminClient <br/> 
+   -lhttp://localhost:8080/axis/services/AdminService deploy-monitor.wsdd</PRE></code>
+</tr></td>
+</table>
+
+   <B>SOAPMonitorService Deployment Descriptor (deploy-monitor.wsdd)</B>
+   <pre class="xml">&lt;deployment xmlns=&quot;http://xml.apache.org/axis/wsdd/&quot; 
+       xmlns:java=&quot;http://xml.apache.org/axis/wsdd/providers/java&quot;&gt; 
+     &lt;handler name=&quot;soapmonitor&quot; 
+         type=&quot;java:org.apache.axis.handlers.SOAPMonitorHandler&quot;&gt; 
+       &lt;parameter name=&quot;wsdlURL&quot; 
+         value=&quot;/axis/SOAPMonitorService-impl.wsdl&quot;/&gt; 
+       &lt;parameter name=&quot;namespace&quot; 
+         value=&quot;http://tempuri.org/wsdl/2001/12/SOAPMonitorService-impl.wsdl&quot;/&gt; 
+       &lt;parameter name=&quot;serviceName&quot; value=&quot;SOAPMonitorService&quot;/&gt; 
+       &lt;parameter name=&quot;portName&quot; value=&quot;Demo&quot;/&gt; 
+     &lt;/handler&gt; 
+     &lt;service name=&quot;SOAPMonitorService&quot; provider=&quot;java:RPC&quot;&gt; 
+       &lt;parameter name=&quot;allowedMethods&quot; value=&quot;publishMessage&quot;/&gt; 
+       &lt;parameter name=&quot;className&quot; 
+         value=&quot;org.apache.axis.monitor.SOAPMonitorService&quot;/&gt; 
+       &lt;parameter name=&quot;scope&quot; value=&quot;Application&quot;/&gt; 
+     &lt;/service&gt; 
+   &lt;/deployment&gt; 
+   </pre> 
+   </li> 
+   <li>For each service that is to be monitored, add request and response flow definitions 
+   to the service's deployment descriptor and deploy (or redeploy) the service. The 
+   <span style="font-weight: bold;">requestFlow</span> and <span style="font-weight: bold;"> 
+   responseFlow</span> definitions follow the start tag of the <span style="font-weight: bold;"> 
+   &lt;service&gt;</span> element. If a service is already deployed, undeploy it and deploy 
+   it with the modified deployment descriptor. An example is shown below: 
+   <pre class="xml">... 
+   &lt;service name=&quot;xmltoday-delayed-quotes&quot; provider=&quot;java:RPC&quot;&gt; 
+       &lt;requestFlow&gt; 
+         &lt;handler type=&quot;soapmonitor&quot;/&gt; 
+       &lt;/requestFlow&gt; 
+       &lt;responseFlow&gt; 
+         &lt;handler type=&quot;soapmonitor&quot;/&gt; 
+       &lt;/responseFlow&gt; 
+       ...</pre> 
+   </li> 
+   <li>With a web browser, go to http[s]://host[:port][/webapp]/SOAPMonitor 
+   (e.g. http://localhost:8080/axis/SOAPMonitor) substituting the correct values 
+   for your web application. This will show the SOAP Monitor applet for viewing service 
+   requests and responses. Any requests to services that have been configured 
+   and deployed correctly should show up in the applet. 
+   </li> 
+   <ol> 
+   </P> 
+
   <HR size="1" noshade="noshade">
 
   <DIV class="copyright" align="center">
