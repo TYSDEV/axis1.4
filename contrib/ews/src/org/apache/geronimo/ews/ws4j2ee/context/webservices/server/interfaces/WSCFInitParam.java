@@ -54,7 +54,6 @@
  */
 package org.apache.geronimo.ews.ws4j2ee.context.webservices.server.interfaces;
 
-import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.jaxb.ParamValueType;
 
 
 
@@ -82,7 +81,4 @@ public interface WSCFInitParam {
 	 * @return value
 	 */
 	public String getParamValue();
-	
-	
-	public ParamValueType getJaxbInitParameter() ;
 }

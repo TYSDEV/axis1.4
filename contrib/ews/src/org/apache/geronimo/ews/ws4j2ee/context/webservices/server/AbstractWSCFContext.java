@@ -17,8 +17,10 @@
 package org.apache.geronimo.ews.ws4j2ee.context.webservices.server;
 
 import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.interfaces.WSCFContext;
+import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.interfaces.WSCFDocument;
 import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.interfaces.WSCFPortComponent;
 import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.interfaces.WSCFWebserviceDescription;
+import org.apache.geronimo.ews.ws4j2ee.toWs.GenerationFault;
 
 /**
  * @author hemapani@opensource.lk
@@ -26,6 +28,11 @@ import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.interfaces.WSC
 public abstract class AbstractWSCFContext implements WSCFContext{
 	protected WSCFWebserviceDescription wscfdWsDesxription;
 	protected WSCFPortComponent wscfport;
+    /**
+     * This reference will be the pointer to the element tree.
+     */
+    protected WSCFDocument document;
+
 
 	/**
 	 * @return 
@@ -54,6 +61,45 @@ public abstract class AbstractWSCFContext implements WSCFContext{
 	public void setWscfport(WSCFPortComponent component) {
 		wscfport = component;
 	}
+    
+    /**
+     * Interface support method. This will get the description element of the webservices.xml
+     */
+    public String getDescription(){
+        return this.document.getWebservices().getDescription();
+    }
+    
+    /**
+     * Interface support method. This will get the display name element of the webservices.xml
+     */
+    public String getDisplayName(){
+        return this.document.getWebservices().getDisplayName();
+    }
+    
+    /**
+     * Interface support method. This will get the small icon element of the webservices.xml
+     */
+    public String getSmallIcon(){
+        return this.document.getWebservices().getSmallIcon();
+    }
+    
+    /**
+     * Interface support method. This will get the large icon element of the webservices.xml
+     */
+    public String getLargeIcon(){
+        return this.document.getWebservices().getLargeIcon();
+    }
+    
+    /**
+     * Interface support method. This will get the webservice description elements of the webservices.xml as an array.
+     */
+    public WSCFWebserviceDescription[] getWebServicesDescription(){
+        return this.document.getWebservices().getWebServiceDescriptions();
+    }
+    public void serialize(java.io.Writer out) throws GenerationFault {
+          throw new UnsupportedOperationException();
+      }
+
 
 
 }

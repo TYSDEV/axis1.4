@@ -16,30 +16,25 @@
 
 package org.apache.geronimo.ews.ws4j2ee.parsers.gbeans;
 
-import java.net.URL;
-import java.net.URLClassLoader;
 
-import javax.enterprise.deploy.model.exceptions.DDBeanCreateException;
-import javax.enterprise.deploy.shared.ModuleType;
-
-import org.apache.geronimo.deployment.tools.loader.AbstractDeployable;
+//import javax.enterprise.deploy.model.exceptions.DDBeanCreateException;
+//import javax.enterprise.deploy.shared.ModuleType;
+//
+//import org.apache.geronimo.deployment.tools.loader.AbstractDeployable;
 
 /**
- * @author Administrator
- *
- * To change the template for this generated type comment go to
- * Window>Preferences>Java>Code Generation>Code and Comments
+ * @author Srinath Perera(Hemapani@opensource.lk)
  */
-public class JARDeployable extends AbstractDeployable {
-	private final ClassLoader webLoader;
-
-	public JARDeployable(URL moduleURL) throws DDBeanCreateException {
-		super(ModuleType.WAR, moduleURL, "META-INF/ejb-jar.xml");
-		ClassLoader parent = super.getModuleLoader();
-		webLoader = new URLClassLoader(new URL[]{moduleURL}, parent);
-	}
-
-	protected ClassLoader getModuleLoader() {
-		return webLoader;
-	}
+public class JARDeployable /* extends AbstractDeployable */{
+//	private final ClassLoader webLoader;
+//
+//	public JARDeployable(URL moduleURL) throws DDBeanCreateException {
+//		super(ModuleType.WAR, moduleURL, "META-INF/ejb-jar.xml");
+//		ClassLoader parent = super.getModuleLoader();
+//		webLoader = new URLClassLoader(new URL[]{moduleURL}, parent);
+//	}
+//
+//	protected ClassLoader getModuleLoader() {
+//		return webLoader;
+//	}
 }

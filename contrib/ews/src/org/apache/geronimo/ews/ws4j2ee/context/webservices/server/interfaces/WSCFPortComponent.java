@@ -16,7 +16,6 @@
 
 package org.apache.geronimo.ews.ws4j2ee.context.webservices.server.interfaces;
 
-import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.jaxb.PortComponentType;
 /**
  * This interfaces the port component element of the webservices.xml. 
  *
@@ -76,6 +75,4 @@ public interface WSCFPortComponent {
 	 * @return handlers
 	 */
 	public WSCFHandler[] getHandlers();
-	
-	public PortComponentType getJaxbPortComponent();
 }

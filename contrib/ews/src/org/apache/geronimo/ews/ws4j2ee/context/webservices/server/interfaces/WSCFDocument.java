@@ -15,7 +15,6 @@
  */
 package org.apache.geronimo.ews.ws4j2ee.context.webservices.server.interfaces;
 
-import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.jaxb.Webservices;
 
 /**
  * This will interface the webservices.xml document itself. it represents teh he
@@ -29,7 +28,4 @@ public interface WSCFDocument {
 	 * @return webservices Element
 	 */
 	public WSCFWebservices getWebservices()  ;
-	
-	
-	public Webservices getJaxbWebservices();
 }

@@ -15,7 +15,6 @@
  */
 package org.apache.geronimo.ews.ws4j2ee.context.webservices.server.interfaces;
 
-import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.jaxb.XsdQNameType;
 
 
 
@@ -36,7 +35,4 @@ public interface WSCFWSDLPort {
 	 * @return
 	 */
 	public String getNamespaceURI();
-	
-	public XsdQNameType getJaxbWSDLPort();
-
 }

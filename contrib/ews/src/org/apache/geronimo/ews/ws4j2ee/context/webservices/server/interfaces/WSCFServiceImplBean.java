@@ -16,7 +16,6 @@
 
 package org.apache.geronimo.ews.ws4j2ee.context.webservices.server.interfaces;
 
-import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.jaxb.ServiceImplBeanType;
 
 
 
@@ -33,7 +32,4 @@ public interface WSCFServiceImplBean {
 	public String getEjblink() ;
 	
 	public String getServletlink();
-	
-	public ServiceImplBeanType getJaxbServiceImplBean();
-
 }
