@@ -222,7 +222,7 @@ public class WrapWriter extends CFileWriter{
 			else{
 				outparamType = returntype.getLangName();
 			}
-			returntypeissimple = CPPUtils.isSimpleType(outparamType);
+			returntypeissimple = CUtils.isSimpleType(outparamType);
 		}
 		//create and populate variables for each parameter
 		String paraTypeName;
@@ -241,7 +241,7 @@ public class WrapWriter extends CFileWriter{
 		for (int i = 0; i < paramsB.size(); i++) {
 			if (i>0) writer.write(",");
 			paraTypeName = ((ParameterInfo)paramsB.get(i)).getLangName();
-			if((CPPUtils.isSimpleType(paraTypeName))){
+			if((CUtils.isSimpleType(paraTypeName))){
 				//for simple types	
 				writer.write(paraTypeName);
 			}else if((type = this.wscontext.getTypemap().getType(((ParameterInfo)paramsB.get(i)).getSchemaName())) != null && type.isArray()){
@@ -265,14 +265,14 @@ public class WrapWriter extends CFileWriter{
 		writer.write("\tpIWSSZ->createSoapMethod(\""+methodName+"Response\", pIWSSZ->getNewNamespacePrefix(), \""+wscontext.getWrapInfo().getTargetNameSpaceOfWSDL()+"\");\n");
 		for (int i = 0; i < paramsB.size(); i++) {
 			paraTypeName = ((ParameterInfo)paramsB.get(i)).getLangName();
-			if((CPPUtils.isSimpleType(((ParameterInfo)paramsB.get(i)).getLangName()))){
+			if((CUtils.isSimpleType(((ParameterInfo)paramsB.get(i)).getLangName()))){
 				//for simple types	
 				writer.write("\t"+paraTypeName+" v"+i+" = pIWSDZ->"+CPPUtils.getParameterGetValueMethodName(paraTypeName)+"();\n");
 			}else if((type = this.wscontext.getTypemap().getType(((ParameterInfo)paramsB.get(i)).getSchemaName())) != null && type.isArray()){
 				QName qname = type.getTypNameForAttribName("item");
 				String containedType = null;
-				if (CPPUtils.isSimpleType(qname)){
-					containedType = CPPUtils.getclass4qname(qname);
+				if (CUtils.isSimpleType(qname)){
+					containedType = CUtils.getclass4qname(qname);
 					writer.write("\t"+paraTypeName+" v"+i+";\n"); 
 					writer.write("\tv"+i+".m_Size = pIWSDZ->GetArraySize();\n");
 					writer.write("\tif (v"+i+".m_Size < 1) return AXIS_FAIL;\n");
@@ -296,13 +296,13 @@ public class WrapWriter extends CFileWriter{
 		writer.write("\tif (AXIS_SUCCESS != pIWSDZ->GetStatus())\n\t{\n");
 		for (int i = 0; i < paramsB.size(); i++) {
 			paraTypeName = ((ParameterInfo)paramsB.get(i)).getLangName();
-			if((CPPUtils.isSimpleType(((ParameterInfo)paramsB.get(i)).getLangName()))){
+			if((CUtils.isSimpleType(((ParameterInfo)paramsB.get(i)).getLangName()))){
 				//for simple types nothing is done	
 			}else if((type = this.wscontext.getTypemap().getType(((ParameterInfo)paramsB.get(i)).getSchemaName())) != null && type.isArray()){
 				QName qname = type.getTypNameForAttribName("item");
 				String containedType = null;
-				if (CPPUtils.isSimpleType(qname)){ //array of simple types
-					containedType = CPPUtils.getclass4qname(qname);
+				if (CUtils.isSimpleType(qname)){ //array of simple types
+					containedType = CUtils.getclass4qname(qname);
 					writer.write("\t\tdelete [] v"+i+".m_Array;\n");
 				}
 				else{
@@ -333,8 +333,8 @@ public class WrapWriter extends CFileWriter{
 			}else if(returntypeisarray){
 				QName qname = retType.getTypNameForAttribName("item");
 				String containedType = null;
-				if (CPPUtils.isSimpleType(qname)){
-					containedType = CPPUtils.getclass4qname(qname);
+				if (CUtils.isSimpleType(qname)){
+					containedType = CUtils.getclass4qname(qname);
 					writer.write("\treturn pIWSSZ->AddOutputParam(\""+methodName+"Return\", (Axis_Array*)(&ret),"+CPPUtils.getXSDTypeForBasicType(containedType)+");\n");
 				}
 				else{
