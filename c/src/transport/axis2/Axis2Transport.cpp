@@ -49,7 +49,7 @@ Axis2Transport::Axis2Transport ():m_bReopenConnection (false),
     m_iContentLength = 0;
     m_pcReceived = 0;
     m_pChannel = new Channel ();
-    m_pFactory = new ChannelFactory();
+    m_pFactory = new SSLChannelFactory();
     m_bChannelSecure = false;
 	m_bMimeTrue = false;
     m_viCurrentHeader = m_vHTTPHeaders.begin();
@@ -117,8 +117,8 @@ throw (AxisTransportException)
             // (as it may not be secure) and create a new secure channel.
             delete m_pChannel;
 
-            //m_pChannel = (Channel *) new SecureChannel ();
-            m_pChannel = m_pFactory->getSecureChannelObject();
+            m_pChannel = (Channel *) new SecureChannel ();
+            //m_pChannel = m_pFactory->getSecureChannelObject();
 
             m_pChannel->setURL (pcEndpointUri);
 
@@ -734,8 +734,8 @@ throw (AxisTransportException)
     {
         if (m_bChannelSecure)
         {
-             //((SecureChannel *) m_pChannel)->setTransportProperty (type, value);
-             m_pFactory->initialize(value);
+             ((SecureChannel *) m_pChannel)->setTransportProperty (type, value);
+             //m_pFactory->initialize(value);
         }
         break;
     }

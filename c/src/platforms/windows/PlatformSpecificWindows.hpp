@@ -32,7 +32,7 @@
   #define PLATFORM_XMLPARSER_PATH      "AxisXMLParser.dll"
   #define PLATFORM_TRANSPORTHTTP_PATH  "AxisTransport.dll"
 #endif
-#define PLATFORM_SSLCHANNEL_PATH  "????"
+#define PLATFORM_SSLCHANNEL_PATH  "Axis2SSLChannel.dll"
 
 #define PLATFORM_LOG_PATH            ""
 #define PLATFORM_CLIENTLOG_PATH      ""

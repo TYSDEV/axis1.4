@@ -6,6 +6,10 @@ java -classpath $AXISCPP_HOME/lib/axis/wsdl2ws.jar:$CLASSPATH org.apache.axis.ws
 2. Compile the code
 g++ -ouddi_client -I$AXISCPP_HOME/include/ -I./ -L$AXISCPP_DEPLOY/lib/ Client.cpp gen_src/*.cpp -laxiscpp_client -ldl
 
+In Windows -
+
+Comment pthread.h and unistd.h in Client.cpp file.
+
 3. Run the progrem
 ./uddi_client <service url>
 
