@@ -83,376 +83,144 @@ public class JavaTypeWriter implements Generator {
     /** Field symbolTable */
     private SymbolTable symbolTable = null;
 
-    /**
-     * Constructor.
-     * <p/>
-     * JAXME_REFACTOR///////////////////////////////////////////////////////////////    public JavaTypeWriter(
-     * Emitter emitter,
-     * TypeEntry type,
-     * SymbolTable symbolTable) {
-     * <p/>
-     * if (type.isReferenced() && !type.isOnlyLiteralReferenced()) {
-     * <p/>
-     * // Determine what sort of type this is and instantiate
-     * // the appropriate Writer.
-     * Node node = type.getNode();
-     * <p/>
-     * // If it's an array, don't emit a class
-     * if (!type.getName().endsWith("[]")) {
-     * <p/>
-     * // Generate the proper class for either "complex" or "enumeration" types
-     * Vector v = Utils.getEnumerationBaseAndValues(
-     * node, symbolTable);
-     * if (v != null) {
-     * typeWriter = getEnumTypeWriter(emitter, type, v);
-     * }
-     * else {
-     * TypeEntry base = SchemaUtils.getComplexElementExtensionBase(
-     * node, symbolTable);
-     * if (base == null) {
-     * QName baseQName = SchemaUtils.getSimpleTypeBase(
-     * node);
-     * if (baseQName != null) {
-     * base = symbolTable.getType(baseQName);
-     * }
-     * }
-     * <p/>
-     * typeWriter = getBeanWriter(
-     * emitter,
-     * type,
-     * SchemaUtils.getContainedElementDeclarations(
-     * node,
-     * symbolTable),
-     * base,
-     * SchemaUtils.getContainedAttributeTypes(
-     * node,
-     * symbolTable));
-     * }
-     * }
-     * <p/>
-     * // If the holder is needed (ie., something uses this type as an out or inout
-     * // parameter), instantiate the holder writer.
-     * if (holderIsNeeded(type)) {
-     * holderWriter = getHolderWriter(emitter, type);
-     * }
-     * }
-     * } // ctor
-     * <p/>
-     * TODO
-     * NEW CODE///////////////////////////////////////////////////////////////////////////////////
-     * <p/>
-     * JAXME_REFACTOR///////////////////////////////////////////////////////////////    public JavaTypeWriter(
-     * Emitter emitter,
-     * TypeEntry type,
-     * SymbolTable symbolTable) {
-     * <p/>
-     * if (type.isReferenced() && !type.isOnlyLiteralReferenced()) {
-     * <p/>
-     * // Determine what sort of type this is and instantiate
-     * // the appropriate Writer.
-     * Node node = type.getNode();
-     * <p/>
-     * // If it's an array, don't emit a class
-     * if (!type.getName().endsWith("[]")) {
-     * <p/>
-     * // Generate the proper class for either "complex" or "enumeration" types
-     * Vector v = Utils.getEnumerationBaseAndValues(
-     * node, symbolTable);
-     * if (v != null) {
-     * typeWriter = getEnumTypeWriter(emitter, type, v);
-     * }
-     * else {
-     * TypeEntry base = SchemaUtils.getComplexElementExtensionBase(
-     * node, symbolTable);
-     * if (base == null) {
-     * QName baseQName = SchemaUtils.getSimpleTypeBase(
-     * node);
-     * if (baseQName != null) {
-     * base = symbolTable.getType(baseQName);
-     * }
-     * }
-     * <p/>
-     * typeWriter = getBeanWriter(
-     * emitter,
-     * type,
-     * SchemaUtils.getContainedElementDeclarations(
-     * node,
-     * symbolTable),
-     * base,
-     * SchemaUtils.getContainedAttributeTypes(
-     * node,
-     * symbolTable));
-     * }
-     * }
-     * <p/>
-     * // If the holder is needed (ie., something uses this type as an out or inout
-     * // parameter), instantiate the holder writer.
-     * if (holderIsNeeded(type)) {
-     * holderWriter = getHolderWriter(emitter, type);
-     * }
-     * }
-     * } // ctor
-     * <p/>
-     * TODO
-     * NEW CODE///////////////////////////////////////////////////////////////////////////////////
-     * 
-     * @param emitter     
-     * @param type        
-     * @param symbolTable 
-     * @throws SAXException JAXME_REFACTOR///////////////////////////////////////////////////////////////
-     *                      public JavaTypeWriter(
-     *                      Emitter emitter,
-     *                      TypeEntry type,
-     *                      SymbolTable symbolTable) {
-     *                      <p/>
-     *                      if (type.isReferenced() && !type.isOnlyLiteralReferenced()) {
-     *                      <p/>
-     *                      // Determine what sort of type this is and instantiate
-     *                      // the appropriate Writer.
-     *                      Node node = type.getNode();
-     *                      <p/>
-     *                      // If it's an array, don't emit a class
-     *                      if (!type.getName().endsWith("[]")) {
-     *                      <p/>
-     *                      // Generate the proper class for either "complex" or "enumeration" types
-     *                      Vector v = Utils.getEnumerationBaseAndValues(
-     *                      node, symbolTable);
-     *                      if (v != null) {
-     *                      typeWriter = getEnumTypeWriter(emitter, type, v);
-     *                      }
-     *                      else {
-     *                      TypeEntry base = SchemaUtils.getComplexElementExtensionBase(
-     *                      node, symbolTable);
-     *                      if (base == null) {
-     *                      QName baseQName = SchemaUtils.getSimpleTypeBase(
-     *                      node);
-     *                      if (baseQName != null) {
-     *                      base = symbolTable.getType(baseQName);
-     *                      }
-     *                      }
-     *                      <p/>
-     *                      typeWriter = getBeanWriter(
-     *                      emitter,
-     *                      type,
-     *                      SchemaUtils.getContainedElementDeclarations(
-     *                      node,
-     *                      symbolTable),
-     *                      base,
-     *                      SchemaUtils.getContainedAttributeTypes(
-     *                      node,
-     *                      symbolTable));
-     *                      }
-     *                      }
-     *                      <p/>
-     *                      // If the holder is needed (ie., something uses this type as an out or inout
-     *                      // parameter), instantiate the holder writer.
-     *                      if (holderIsNeeded(type)) {
-     *                      holderWriter = getHolderWriter(emitter, type);
-     *                      }
-     *                      }
-     *                      } // ctor
-     *                      <p/>
-     *                      TODO
-     *                      NEW CODE////////////////////////////////////////////////////////////////////////////////////
-     *                      <p/>
-     *                      JAXME_REFACTOR///////////////////////////////////////////////////////////////
-     *                      public JavaTypeWriter(
-     *                      Emitter emitter,
-     *                      TypeEntry type,
-     *                      SymbolTable symbolTable) {
-     *                      <p/>
-     *                      if (type.isReferenced() && !type.isOnlyLiteralReferenced()) {
-     *                      <p/>
-     *                      // Determine what sort of type this is and instantiate
-     *                      // the appropriate Writer.
-     *                      Node node = type.getNode();
-     *                      <p/>
-     *                      // If it's an array, don't emit a class
-     *                      if (!type.getName().endsWith("[]")) {
-     *                      <p/>
-     *                      // Generate the proper class for either "complex" or "enumeration" types
-     *                      Vector v = Utils.getEnumerationBaseAndValues(
-     *                      node, symbolTable);
-     *                      if (v != null) {
-     *                      typeWriter = getEnumTypeWriter(emitter, type, v);
-     *                      }
-     *                      else {
-     *                      TypeEntry base = SchemaUtils.getComplexElementExtensionBase(
-     *                      node, symbolTable);
-     *                      if (base == null) {
-     *                      QName baseQName = SchemaUtils.getSimpleTypeBase(
-     *                      node);
-     *                      if (baseQName != null) {
-     *                      base = symbolTable.getType(baseQName);
-     *                      }
-     *                      }
-     *                      <p/>
-     *                      typeWriter = getBeanWriter(
-     *                      emitter,
-     *                      type,
-     *                      SchemaUtils.getContainedElementDeclarations(
-     *                      node,
-     *                      symbolTable),
-     *                      base,
-     *                      SchemaUtils.getContainedAttributeTypes(
-     *                      node,
-     *                      symbolTable));
-     *                      }
-     *                      }
-     *                      <p/>
-     *                      // If the holder is needed (ie., something uses this type as an out or inout
-     *                      // parameter), instantiate the holder writer.
-     *                      if (holderIsNeeded(type)) {
-     *                      holderWriter = getHolderWriter(emitter, type);
-     *                      }
-     *                      }
-     *                      } // ctor
-     *                      <p/>
-     *                      TODO
-     *                      NEW CODE////////////////////////////////////////////////////////////////////////////////////
-     */
+	/**
+	 * Constructor.
+	 */
+	//	JAXME_REFACTOR///////////////////////////////////////////////////////////////
+	/*	public JavaTypeWriter(
+				 Emitter emitter,
+				 TypeEntry type,
+				 SymbolTable symbolTable) {
+    
+			 if (type.isReferenced() && !type.isOnlyLiteralReferenced()) {
+    
+				 // Determine what sort of type this is and instantiate 
+				 // the appropriate Writer.
+				 Node node = type.getNode();
+    
+				 // If it's an array, don't emit a class
+				 if (!type.getName().endsWith("[]")) {
+    
+					 // Generate the proper class for either "complex" or "enumeration" types
+					 Vector v = Utils.getEnumerationBaseAndValues(
+							 node, symbolTable);
+					 if (v != null) {
+						 typeWriter = getEnumTypeWriter(emitter, type, v);
+					 }
+					 else {
+						 TypeEntry base = SchemaUtils.getComplexElementExtensionBase(
+							node, symbolTable);
+						 if (base == null) {
+							 QName baseQName = SchemaUtils.getSimpleTypeBase(
+								node);
+							 if (baseQName != null) {
+								 base = symbolTable.getType(baseQName);
+							 }
+						 }
+    
+						 typeWriter = getBeanWriter(
+								 emitter, 
+								 type, 
+								 SchemaUtils.getContainedElementDeclarations(
+									 node, 
+									 symbolTable),
+								 base,
+								 SchemaUtils.getContainedAttributeTypes(
+									  node, 
+									  symbolTable));
+					 }
+				 }
+    
+				 // If the holder is needed (ie., something uses this type as an out or inout
+				 // parameter), instantiate the holder writer.
+				 if (holderIsNeeded(type)) {
+					 holderWriter = getHolderWriter(emitter, type);
+				 }
+			 }
+		 } // ctor
+	*/
+	//	TODO
+	//	NEW CODE////////////////////////////////////////////////////////////////////////////////////        					
+	public JavaTypeWriter(
+		Emitter emitter,
+		TypeEntry type,
+		SymbolTable symbolTable)
+		throws SAXException {
 
-    // JAXME_REFACTOR///////////////////////////////////////////////////////////////
+		this.symbolTable = symbolTable;
+		SchemaType sType = symbolTable.getSchemaType(type.getQName());
+        
 
-    /*
-     *  public JavaTypeWriter(
-     *            Emitter emitter,
-     *            TypeEntry type,
-     *            SymbolTable symbolTable) {
-     *
-     *        if (type.isReferenced() && !type.isOnlyLiteralReferenced()) {
-     *
-     *            // Determine what sort of type this is and instantiate
-     *            // the appropriate Writer.
-     *            Node node = type.getNode();
-     *
-     *            // If it's an array, don't emit a class
-     *            if (!type.getName().endsWith("[]")) {
-     *
-     *                // Generate the proper class for either "complex" or "enumeration" types
-     *                Vector v = Utils.getEnumerationBaseAndValues(
-     *                        node, symbolTable);
-     *                if (v != null) {
-     *                    typeWriter = getEnumTypeWriter(emitter, type, v);
-     *                }
-     *                else {
-     *                    TypeEntry base = SchemaUtils.getComplexElementExtensionBase(
-     *                       node, symbolTable);
-     *                    if (base == null) {
-     *                        QName baseQName = SchemaUtils.getSimpleTypeBase(
-     *                           node);
-     *                        if (baseQName != null) {
-     *                            base = symbolTable.getType(baseQName);
-     *                        }
-     *                    }
-     *
-     *                    typeWriter = getBeanWriter(
-     *                            emitter,
-     *                            type,
-     *                            SchemaUtils.getContainedElementDeclarations(
-     *                                node,
-     *                                symbolTable),
-     *                            base,
-     *                            SchemaUtils.getContainedAttributeTypes(
-     *                                 node,
-     *                                 symbolTable));
-     *                }
-     *            }
-     *
-     *            // If the holder is needed (ie., something uses this type as an out or inout
-     *            // parameter), instantiate the holder writer.
-     *            if (holderIsNeeded(type)) {
-     *                holderWriter = getHolderWriter(emitter, type);
-     *            }
-     *        }
-     *    } // ctor
-     */
+		/*
+		 * What does the above algorithm suppose to do ?
+		 * if -- is it an enumeration create a EnumTypewriter 
+		 * else -- look for a base.
+		 * Then put it all intoBean  writer
+		 */
 
-    // TODO
-    // NEW CODE////////////////////////////////////////////////////////////////////////////////////
-    public JavaTypeWriter(
-            Emitter emitter, TypeEntry type, SymbolTable symbolTable)
-            throws SAXException {
+		if (type.isReferenced() && !type.isOnlyLiteralReferenced()) {
 
-        this.symbolTable = symbolTable;
+			if (!type.getName().endsWith("[]")) {
 
-        SchemaType sType = symbolTable.getSchemaType(type.getQName());
+				TypeEntry base = null;
 
-        /*
-         * What does the above algorithm suppose to do ?
-         * if -- is it an enumeration create a EnumTypewriter
-         * else -- look for a base.
-         * Then put it all intoBean  writer
-         */
-        if (type.isReferenced() && !type.isOnlyLiteralReferenced()) {
-            if (!type.getName().endsWith("[]")) {
-                TypeEntry base = null;
+            
+                						 
+				if (sType.getJaxmetype() != null
+					&& sType.getJaxmetype().isSimple() == true
+					&& sType.getJaxmetype().getSimpleType().getEnumerations()
+						!= null) {
+					typeWriter = getEnumTypeWriter(emitter, type);
+				} else {
+					QName baseQname = sType.getExtentionBase();
+					if (baseQname != null) {
+						base = symbolTable.getType(baseQname);
+					}
+				}
 
-                System.out.print(type.getQName());
-                System.out.print(sType);
+				//The even indices are the element types (TypeEntry) and
+				//the odd indices are the corresponding names (Strings).
 
-                if ((sType.getJaxmetype() != null)
-                        && (sType.getJaxmetype().isSimple() == true)
-                        && (sType.getJaxmetype().getSimpleType().getEnumerations()
-                        != null)) {
-                    typeWriter = getEnumTypeWriter(emitter, type);
-                } else {
-                    QName baseQname = sType.getExtentionBase();
+				typeWriter =
+					getBeanWriter(
+						emitter,
+						type,
+						sType.getElementInfo(),
+						base,
+						sType.getAttributeInfo());
+				// If the holder is needed (ie., something uses this type as an out or inout
+				// parameter), instantiate the holder writer.
+			}
+			//in anycase check for 
+			if (holderIsNeeded(type)) {
+				holderWriter = getHolderWriter(emitter, type);
+			}
 
-                    if (baseQname != null) {
-                        base = symbolTable.getType(baseQname);
-                    }
-                }
+		}
 
-                // The even indices are the element types (TypeEntry) and
-                // the odd indices are the corresponding names (Strings).
-                typeWriter = getBeanWriter(emitter, type,
-                        sType.getElementInfo(), base,
-                        sType.getAttributeInfo());
+	} // ctor
 
-                // If the holder is needed (ie., something uses this type as an out or inout
-                // parameter), instantiate the holder writer.
-            }
+	///////////////////////////////////////////////////////////////////////////////////////        
+	/**
+	 * Write all the service bindnigs:  service and testcase.
+	 */
+	public void generate() throws IOException{
+		if (typeWriter != null) {
+			typeWriter.generate();
+		}
+		if (holderWriter != null) {
+			holderWriter.generate();
+		}
+	} // generate
 
-            // in anycase check for
-            if (holderIsNeeded(type)) {
-                holderWriter = getHolderWriter(emitter, type);
-            }
-        }
-    }    // ctor
-
-    // /////////////////////////////////////////////////////////////////////////////////////
-
-    /**
-     * Write all the service bindnigs:  service and testcase.
-     * 
-     * @throws IOException  
-     * @throws SAXException 
-     */
-    public void generate() throws IOException, SAXException {
-
-        if (typeWriter != null) {
-            typeWriter.generate();
-        }
-
-        if (holderWriter != null) {
-            holderWriter.generate();
-        }
-    }    // generate
-
-    /**
-     * Does anything use this type as an inout/out parameter?  Query the Type dynamicVar
-     * 
-     * @param entry 
-     * @return 
-     */
-    private boolean holderIsNeeded(SymTabEntry entry) {
-
-        Boolean holderIsNeeded =
-                (Boolean) entry.getDynamicVar(HOLDER_IS_NEEDED);
-
-        return ((holderIsNeeded != null) && holderIsNeeded.booleanValue());
-    }    // holderIsNeeded
+	/**
+	 * Does anything use this type as an inout/out parameter?  Query the Type dynamicVar
+	 */
+	private boolean holderIsNeeded(SymTabEntry entry) {
+		Boolean holderIsNeeded =
+			(Boolean) entry.getDynamicVar(HOLDER_IS_NEEDED);
+		return (holderIsNeeded != null && holderIsNeeded.booleanValue());
+	} // holderIsNeeded
 
     /**
      * getEnumWriter
@@ -504,174 +272,72 @@ public class JavaTypeWriter implements Generator {
         return new JavaEnumTypeWriter(this.symbolTable, emitter, type);
     }
 
-    // ///////////////////////////////////////////////////////////////////////////////////////
+//	///////////////////////////////////////////////////////////////////////////////////////
 
-    /**
-     * getBeanWriter
-     * <p/>
-     * JAXME_REFACTOR///////////////////////////////////////////////////////////////    protected JavaWriter getBeanWriter(Emitter emitter, TypeEntry type,
-     * Vector elements, TypeEntry base,
-     * Vector attributes) {
-     * JavaWriter helperWriter = getBeanHelperWriter(emitter, type, elements, base,
-     * attributes);
-     * // If this complexType is referenced in a
-     * // fault context, emit a bean-like exception
-     * // class
-     * Boolean isComplexFault = (Boolean)
-     * type.getDynamicVar(
-     * JavaGeneratorFactory.COMPLEX_TYPE_FAULT);
-     * if (isComplexFault != null &&
-     * isComplexFault.booleanValue()) {
-     * return new JavaBeanFaultWriter(emitter, type,
-     * elements, base, attributes,
-     * helperWriter);
-     * }
-     * return new JavaBeanWriter(emitter, type,
-     * elements, base, attributes,
-     * helperWriter);
-     * }
-     * <p/>
-     * <p/>
-     * TODO
-     * NEW CODE/////////////////////////////////////////////////////////////////////
-     * <p/>
-     * JAXME_REFACTOR///////////////////////////////////////////////////////////////    protected JavaWriter getBeanWriter(Emitter emitter, TypeEntry type,
-     * Vector elements, TypeEntry base,
-     * Vector attributes) {
-     * JavaWriter helperWriter = getBeanHelperWriter(emitter, type, elements, base,
-     * attributes);
-     * // If this complexType is referenced in a
-     * // fault context, emit a bean-like exception
-     * // class
-     * Boolean isComplexFault = (Boolean)
-     * type.getDynamicVar(
-     * JavaGeneratorFactory.COMPLEX_TYPE_FAULT);
-     * if (isComplexFault != null &&
-     * isComplexFault.booleanValue()) {
-     * return new JavaBeanFaultWriter(emitter, type,
-     * elements, base, attributes,
-     * helperWriter);
-     * }
-     * return new JavaBeanWriter(emitter, type,
-     * elements, base, attributes,
-     * helperWriter);
-     * }
-     * <p/>
-     * <p/>
-     * TODO
-     * NEW CODE/////////////////////////////////////////////////////////////////////
-     * 
-     * @param emitter    
-     * @param type       
-     * @param elements   
-     * @param base       
-     * @param attributes 
-     * @return 
-     * @throws SAXException JAXME_REFACTOR///////////////////////////////////////////////////////////////
-     *                      protected JavaWriter getBeanWriter(Emitter emitter, TypeEntry type,
-     *                      Vector elements, TypeEntry base,
-     *                      Vector attributes) {
-     *                      JavaWriter helperWriter = getBeanHelperWriter(emitter, type, elements, base,
-     *                      attributes);
-     *                      // If this complexType is referenced in a
-     *                      // fault context, emit a bean-like exception
-     *                      // class
-     *                      Boolean isComplexFault = (Boolean)
-     *                      type.getDynamicVar(
-     *                      JavaGeneratorFactory.COMPLEX_TYPE_FAULT);
-     *                      if (isComplexFault != null &&
-     *                      isComplexFault.booleanValue()) {
-     *                      return new JavaBeanFaultWriter(emitter, type,
-     *                      elements, base, attributes,
-     *                      helperWriter);
-     *                      }
-     *                      return new JavaBeanWriter(emitter, type,
-     *                      elements, base, attributes,
-     *                      helperWriter);
-     *                      }
-     *                      <p/>
-     *                      <p/>
-     *                      TODO
-     *                      NEW CODE//////////////////////////////////////////////////////////////////////
-     *                      <p/>
-     *                      JAXME_REFACTOR///////////////////////////////////////////////////////////////
-     *                      protected JavaWriter getBeanWriter(Emitter emitter, TypeEntry type,
-     *                      Vector elements, TypeEntry base,
-     *                      Vector attributes) {
-     *                      JavaWriter helperWriter = getBeanHelperWriter(emitter, type, elements, base,
-     *                      attributes);
-     *                      // If this complexType is referenced in a
-     *                      // fault context, emit a bean-like exception
-     *                      // class
-     *                      Boolean isComplexFault = (Boolean)
-     *                      type.getDynamicVar(
-     *                      JavaGeneratorFactory.COMPLEX_TYPE_FAULT);
-     *                      if (isComplexFault != null &&
-     *                      isComplexFault.booleanValue()) {
-     *                      return new JavaBeanFaultWriter(emitter, type,
-     *                      elements, base, attributes,
-     *                      helperWriter);
-     *                      }
-     *                      return new JavaBeanWriter(emitter, type,
-     *                      elements, base, attributes,
-     *                      helperWriter);
-     *                      }
-     *                      <p/>
-     *                      <p/>
-     *                      TODO
-     *                      NEW CODE//////////////////////////////////////////////////////////////////////
-     */
-    // JAXME_REFACTOR///////////////////////////////////////////////////////////////
+/**
+ * getBeanWriter
+ **/
+//	JAXME_REFACTOR///////////////////////////////////////////////////////////////
+/*	protected JavaWriter getBeanWriter(Emitter emitter, TypeEntry type, 
+									 Vector elements, TypeEntry base,
+									 Vector attributes) {
+		  JavaWriter helperWriter = getBeanHelperWriter(emitter, type, elements, base,
+													attributes);
+		  // If this complexType is referenced in a
+		  // fault context, emit a bean-like exception 
+		  // class
+		  Boolean isComplexFault = (Boolean)
+			  type.getDynamicVar(
+								 JavaGeneratorFactory.COMPLEX_TYPE_FAULT);
+		  if (isComplexFault != null && 
+			  isComplexFault.booleanValue()) {
+			  return new JavaBeanFaultWriter(emitter, type, 
+											 elements, base, attributes, 
+											 helperWriter);
+		  }
+		  return new JavaBeanWriter(emitter, type, 
+									elements, base, attributes, 
+									helperWriter);
+	  }
+    
+*/
 
-    /*
-     *  protected JavaWriter getBeanWriter(Emitter emitter, TypeEntry type,
-     *                                    Vector elements, TypeEntry base,
-     *                                    Vector attributes) {
-     *         JavaWriter helperWriter = getBeanHelperWriter(emitter, type, elements, base,
-     *                                                   attributes);
-     *         // If this complexType is referenced in a
-     *         // fault context, emit a bean-like exception
-     *         // class
-     *         Boolean isComplexFault = (Boolean)
-     *             type.getDynamicVar(
-     *                                JavaGeneratorFactory.COMPLEX_TYPE_FAULT);
-     *         if (isComplexFault != null &&
-     *             isComplexFault.booleanValue()) {
-     *             return new JavaBeanFaultWriter(emitter, type,
-     *                                            elements, base, attributes,
-     *                                            helperWriter);
-     *         }
-     *         return new JavaBeanWriter(emitter, type,
-     *                                   elements, base, attributes,
-     *                                   helperWriter);
-     *     }
-     *
-     */
-
-    // TODO
-    // NEW CODE//////////////////////////////////////////////////////////////////////
-    protected JavaWriter getBeanWriter(
-            Emitter emitter, TypeEntry type, HashMap elements, TypeEntry base, HashMap attributes)
-            throws SAXException {
-
-        JavaWriter helperWriter = getBeanHelperWriter(emitter, type, elements,
-                base, attributes);
-
-        // If this complexType is referenced in a
-        // fault context, emit a bean-like exception
-        // class
-        Boolean isComplexFault = (Boolean) type.getDynamicVar(
-                JavaGeneratorFactory.COMPLEX_TYPE_FAULT);
-
-        if ((isComplexFault != null) && isComplexFault.booleanValue()) {
-            return new JavaBeanFaultWriter(emitter, type, elements, base,
-                    attributes, helperWriter,
-                    symbolTable);
-        }
-
-        return new JavaBeanWriter(emitter, type, elements, base, attributes,
-                helperWriter, this.symbolTable);
-    }
+//	TODO
+//	NEW CODE//////////////////////////////////////////////////////////////////////       					
+protected JavaWriter getBeanWriter(
+	Emitter emitter,
+	TypeEntry type,
+	HashMap elements,
+	TypeEntry base,
+	HashMap attributes)
+	throws SAXException {
+	JavaWriter helperWriter =
+		getBeanHelperWriter(emitter, type, elements, base, attributes);
+	// If this complexType is referenced in a
+	// fault context, emit a bean-like exception 
+	// class   
+	Boolean isComplexFault =
+		(Boolean) type.getDynamicVar(
+			JavaGeneratorFactory.COMPLEX_TYPE_FAULT);
+	if (isComplexFault != null && isComplexFault.booleanValue()) {
+		return new JavaBeanFaultWriter(
+			emitter,
+			type,
+			elements,
+			base,
+			attributes,
+			helperWriter,
+			symbolTable);
+	}
+	return new JavaBeanWriter(
+		emitter,
+		type,
+		elements,
+		base,
+		attributes,
+		helperWriter,
+		this.symbolTable);
+}
 
     // //////////////////////////////////////////////////////////////////////////////
 

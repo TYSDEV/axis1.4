@@ -52,28 +52,68 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-package org.apache.axis.wsdl.gen;
 
-import java.io.IOException;
+package org.apache.axis.wsdl.jaxme;
+import java.util.HashMap;
+
+import javax.xml.namespace.QName;
+
+import org.apache.ws.jaxme.xs.parser.XSContext;
+import org.xml.sax.helpers.AttributesImpl;
+import org.xml.sax.helpers.NamespaceSupport;
+
 
 /**
- * This is the interface for all writers.  All writers, very simply, must
- * support a write method.
- * <p/>
- * Writer and WriterFactory are part of the Writer framework.  Folks who want
- * to use the emitter to generate stuff from WSDL should do 3 things:
- * 1.  Write implementations of the Writer interface, one each for PortType,
- * Binding, Service, and Type.  These implementations generate the stuff
- * for each of these WSDL types.
- * 2.  Write an implementation of the WriterFactory interface that returns
- * instantiations of these Writer implementations as appropriate.
- * 3.  Implement a class with a main method (like Wsdl2java) that instantiates
- * an emitter and passes it the WriterFactory implementation
+ * This class is extend from the JAXP org.xml.sax.helpers.AttributesImpl.
+ * It gives the namespace support for the parsing
+ * @author Srinath Perera(hemapani@opensource.lk)
  */
-public interface Generator {
+public class AxisAttributeImpl extends AttributesImpl {
+	private NamespaceSupport nssupport;
+	private HashMap map = new HashMap();
+	private XSContext context;
 
-    /**
-     * Generate something.
-     */
-    public void generate() throws IOException;
+	public AxisAttributeImpl(XSContext context){
+		this.context = context;
+		this.nssupport= context.getNamespaceSupport() ;
+	}
+	
+    public void addAttribute(
+        String uri,
+        String localName,
+        String qName,
+        String type,
+        String value) {
+        super.addAttribute(uri, localName, qName, type, value);
+        
+        if(localName == null){
+			localName = qName;
+        }
+        
+		int prefixIndex = localName.indexOf((int)':');
+		if(prefixIndex < 0){
+		}else{
+			localName =  localName.substring(prefixIndex+1);
+		} 
+		
+		QName qvalue = null;
+        
+		prefixIndex = value.indexOf((int)':');
+			
+			
+		if(prefixIndex < 0){
+			//set the default namespace
+			qvalue = new QName(nssupport.getURI(""),value);
+		}else{
+			String prefix =  value.substring(0,prefixIndex);
+			value =  value.substring(prefixIndex+1);
+			qvalue = new QName(nssupport.getURI(prefix),value);
+		}
+
+		this.map.put(localName,qvalue);
+    }
+    
+    public QName getValueAsQName(String name){
+    	return (QName)this.map.get(name);
+    }
 }

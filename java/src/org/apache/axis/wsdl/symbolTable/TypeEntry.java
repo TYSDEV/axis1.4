@@ -140,50 +140,7 @@ public abstract class TypeEntry extends SymTabEntry implements Serializable {
     /** Field onlyLiteralReference */
     protected boolean onlyLiteralReference = false;    // Indicates
 
-    // whether this type is only referenced
-    // via a binding's literal use.
 
-    /**
-     * Create a TypeEntry object for an xml construct that references another type.
-     * Defer processing until refType is known.
-     * 
-     * @param pqName  
-     * @param refType 
-     * @param pNode   
-     * @param dims    
-     */
-    protected TypeEntry(QName pqName, TypeEntry refType, Node pNode,
-                        String dims) {
-
-        super(pqName);
-
-        node = pNode;
-        this.undefined = refType.undefined;
-        this.refType = refType;
-
-        if (dims == null) {
-            dims = "";
-        }
-
-        this.dims = dims;
-
-        if (refType.undefined) {
-
-            // Need to defer processing until known.
-            TypeEntry uType = refType;
-
-            while (!(uType instanceof Undefined)) {
-                uType = uType.refType;
-            }
-
-            ((Undefined) uType).register(this);
-        } else {
-            isBaseType = (refType.isBaseType && refType.dims.equals("")
-                    && dims.equals(""));
-        }
-
-        // System.out.println(toString());
-    }
 
     /**
      * Create a TypeEntry object for an xml construct that is not a base type
@@ -221,14 +178,7 @@ public abstract class TypeEntry extends SymTabEntry implements Serializable {
         // System.out.println(toString());
     }
 
-    /**
-     * Query the node for this type.
-     * 
-     * @return 
-     */
-    public Node getNode() {
-        return node;
-    }
+
 
     /**
      * Returns the Base Type Name.
@@ -297,31 +247,25 @@ public abstract class TypeEntry extends SymTabEntry implements Serializable {
         onlyLiteralReference = set;
     }    // setOnlyLiteralRefeerence
 
-    /**
-     * getUndefinedTypeRef returns the Undefined TypeEntry that this entry depends on or NULL.
-     * 
-     * @return 
-     */
-    protected TypeEntry getUndefinedTypeRef() {
 
-        if (this instanceof Undefined) {
-            return this;
-        }
 
-        if (undefined && (refType != null)) {
-            if (refType.undefined) {
-                TypeEntry uType = refType;
-
-                while (!(uType instanceof Undefined)) {
-                    uType = uType.refType;
-                }
-
-                return uType;
-            }
-        }
-
-        return null;
-    }
+//    /**
+//     * getUndefinedTypeRef returns the Undefined TypeEntry that this entry depends on or NULL.
+//     */
+//    protected TypeEntry getUndefinedTypeRef() {
+//        if (this instanceof Undefined) 
+//            return this;
+//        if (undefined && refType != null) {
+//            if (refType.undefined) {
+//                TypeEntry uType = refType;
+//                while (!(uType instanceof Undefined)) {
+//                    uType = uType.refType;
+//                }
+//                return uType;
+//            }
+//        }
+//        return null;
+//    }
 
     /**
      * UpdateUndefined is called when the ref TypeEntry is finally known.
@@ -408,48 +352,53 @@ public abstract class TypeEntry extends SymTabEntry implements Serializable {
         return toString("");
     }
 
-    /**
-     * Get string representation with indentation
-     * 
-     * @param indent 
-     * @return 
+	/**
+	 * Get string representation with indentation
+	 */
+	protected String toString(String indent) {
+		String refString = indent + "RefType:       null \n";
+		if (refType != null)
+			refString = indent + "RefType:\n" + refType.toString(indent + "  ") + "\n";
+		String val ;
+		val = super.toString(indent) + 
+			indent + "Class:         " + this.getClass().getName() + "\n" + 
+			indent + "Base?:         " + isBaseType + "\n" + 
+			indent + "Undefined?:    " + undefined + "\n" + 
+			indent + "isSimpleType?  " + isSimpleType + "\n" +
+//			  indent + "Node:          " + getNode() + "\n" +
+			indent + "Dims:          " + dims + "\n" +
+			refString;
+
+    
+//		Iterator it1 = this.getAttributeNames();
+//		Iterator it2 = this.getElementNames();
+//		val = val
+//		+"isArray = " +this.isArray +"\n"
+//		+"name = " +this.name +"\n"
+//		+"jaxmetype = " +this.jaxmetype +"\n"
+//		+"attributes = " +"{";
+//			while(it1.hasNext()){
+//				QName qn = (QName)it1.next();
+//				val = val+ "(" + qn +"="+this.getAttributeTypeByName(qn)+")\n";
+//			}
+//		val = val+"}\n";
+//		val = val +"elements = " +"{\n";
+//			while(it2.hasNext()){
+//				QName qn = (QName)it2.next();
+//				val = val+ "(" + qn +"="+this.getElementTypeByName(qn)+")\n";
+//			}
+//		val = val +"}\n";	
+		return val;	
+	}
+    /* (non-Javadoc)
+     * @see org.apache.axis.wsdl.symbolTable.SymTabEntry#getName()
      */
-    protected String toString(String indent) {
+    public final String getName() {
+  		if(this.name == null)
+  			return null;
+  		if(name.startsWith(".")){
+			name = name.substring(1);
+  		}
 
-        String refString = indent + "RefType:       null \n";
-
-        if (refType != null) {
-            refString = indent + "RefType:\n" + refType.toString(indent + "  ")
-                    + "\n";
-        }
-
-        String val;
-
-        val = super.toString(indent) + indent + "Class:         "
-                + this.getClass().getName() + "\n" + indent + "Base?:         "
-                + isBaseType + "\n" + indent + "Undefined?:    " + undefined
-                + "\n" + indent + "isSimpleType?  " + isSimpleType + "\n"
-                + indent + "Node:          " + getNode() + "\n" + indent
-                + "Dims:          " + dims + "\n" + refString;
-
-        // Iterator it1 = this.getAttributeNames();
-        // Iterator it2 = this.getElementNames();
-        // val = val
-        // +"isArray = " +this.isArray +"\n"
-        // +"name = " +this.name +"\n"
-        // +"jaxmetype = " +this.jaxmetype +"\n"
-        // +"attributes = " +"{";
-        // while(it1.hasNext()){
-        // QName qn = (QName)it1.next();
-        // val = val+ "(" + qn +"="+this.getAttributeTypeByName(qn)+")\n";
-        // }
-        // val = val+"}\n";
-        // val = val +"elements = " +"{\n";
-        // while(it2.hasNext()){
-        // QName qn = (QName)it2.next();
-        // val = val+ "(" + qn +"="+this.getElementTypeByName(qn)+")\n";
-        // }
-        // val = val +"}\n";
-        return val;
-    }
-}
+ 		return name;  				
+    }}

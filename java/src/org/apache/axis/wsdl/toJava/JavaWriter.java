@@ -142,7 +142,7 @@ public abstract class JavaWriter implements Generator {
      * @throws IOException  
      * @throws SAXException 
      */
-    public void generate() throws IOException, SAXException {
+    public void generate() throws IOException{
 
         String file = getFileName();
 
@@ -242,16 +242,11 @@ public abstract class JavaWriter implements Generator {
             throws IOException {
     }    // writeFileHeader
 
-    /**
-     * This method must be implemented by a subclass.  This
-     * is where the body of a file is generated.
-     * 
-     * @param pw 
-     * @throws IOException  
-     * @throws SAXException 
-     */
-    protected abstract void writeFileBody(PrintWriter pw)
-            throws IOException, SAXException;
+	/**
+	 * This method must be implemented by a subclass.  This
+	 * is where the body of a file is generated.
+	 */
+	protected abstract void writeFileBody(PrintWriter pw) throws IOException;
 
     /**
      * You may want to override this method.  This default

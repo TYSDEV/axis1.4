@@ -54,29 +54,13 @@
  */
 package org.apache.axis.wsdl.toJava;
 
-import org.apache.axis.encoding.DefaultTypeMappingImpl;
-import org.apache.axis.encoding.TypeMapping;
-import org.apache.axis.utils.JavaUtils;
-import org.apache.axis.utils.Messages;
-import org.apache.axis.wsdl.gen.Generator;
-import org.apache.axis.wsdl.gen.GeneratorFactory;
-import org.apache.axis.wsdl.gen.NoopGenerator;
-import org.apache.axis.wsdl.symbolTable.BaseTypeMapping;
-import org.apache.axis.wsdl.symbolTable.BindingEntry;
-import org.apache.axis.wsdl.symbolTable.Element;
-import org.apache.axis.wsdl.symbolTable.FaultInfo;
-import org.apache.axis.wsdl.symbolTable.MessageEntry;
-import org.apache.axis.wsdl.symbolTable.Parameter;
-import org.apache.axis.wsdl.symbolTable.Parameters;
-import org.apache.axis.wsdl.symbolTable.PortTypeEntry;
-import org.apache.axis.wsdl.symbolTable.SchemaType;
-import org.apache.axis.wsdl.symbolTable.SchemaUtils;
-import org.apache.axis.wsdl.symbolTable.ServiceEntry;
-import org.apache.axis.wsdl.symbolTable.SymTabEntry;
-import org.apache.axis.wsdl.symbolTable.SymbolTable;
-import org.apache.axis.wsdl.symbolTable.Type;
-import org.apache.axis.wsdl.symbolTable.TypeEntry;
-import org.xml.sax.SAXException;
+import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Vector;
 
 import javax.wsdl.Binding;
 import javax.wsdl.Definition;
@@ -87,14 +71,29 @@ import javax.wsdl.OperationType;
 import javax.wsdl.PortType;
 import javax.wsdl.Service;
 import javax.xml.namespace.QName;
-import javax.xml.rpc.holders.BooleanHolder;
-import java.io.IOException;
-import java.lang.reflect.Constructor;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Vector;
+
+import org.apache.axis.encoding.DefaultTypeMappingImpl;
+import org.apache.axis.encoding.TypeMapping;
+import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
+import org.apache.axis.wsdl.gen.Generator;
+import org.apache.axis.wsdl.gen.GeneratorFactory;
+import org.apache.axis.wsdl.gen.NoopGenerator;
+import org.apache.axis.wsdl.jaxme.JAXMEInternalException;
+import org.apache.axis.wsdl.symbolTable.BaseTypeMapping;
+import org.apache.axis.wsdl.symbolTable.BindingEntry;
+import org.apache.axis.wsdl.symbolTable.FaultInfo;
+import org.apache.axis.wsdl.symbolTable.MessageEntry;
+import org.apache.axis.wsdl.symbolTable.Parameter;
+import org.apache.axis.wsdl.symbolTable.Parameters;
+import org.apache.axis.wsdl.symbolTable.PortTypeEntry;
+import org.apache.axis.wsdl.symbolTable.SchemaElement;
+import org.apache.axis.wsdl.symbolTable.SchemaType;
+import org.apache.axis.wsdl.symbolTable.ServiceEntry;
+import org.apache.axis.wsdl.symbolTable.SymTabEntry;
+import org.apache.axis.wsdl.symbolTable.SymbolTable;
+import org.apache.axis.wsdl.symbolTable.TypeEntry;
+import org.xml.sax.SAXException;
 
 /**
  * This is Wsdl2java's implementation of the GeneratorFactory
@@ -422,47 +421,34 @@ public class JavaGeneratorFactory implements GeneratorFactory {
             this.symbolTable = symbolTable;
         }    // addStuff
 
-        /**
-         * Method generate
-         * 
-         * @throws IOException  
-         * @throws SAXException 
-         */
-        public void generate() throws IOException, SAXException {
-
-            if (baseWriter != null) {
-                baseWriter.generate();
-            }
-
-            Class[] formalArgs = null;
-            Object[] actualArgs = null;
-
-            if (entry != null) {
-                formalArgs = new Class[]{Emitter.class, entry.getClass(),
-                                         SymbolTable.class};
-                actualArgs = new Object[]{emitter, entry, symbolTable};
-            } else {
-                formalArgs = new Class[]{Emitter.class, Definition.class,
-                                         SymbolTable.class};
-                actualArgs = new Object[]{emitter, def, symbolTable};
-            }
-
-            for (int i = 0; i < writers.size(); ++i) {
-                Class wClass = (Class) writers.get(i);
-                Generator gen = null;
-
-                try {
-                    Constructor ctor = wClass.getConstructor(formalArgs);
-
-                    gen = (Generator) ctor.newInstance(actualArgs);
-                } catch (Throwable t) {
-                    throw new IOException(Messages.getMessage("exception01",
-                            t.getMessage()));
-                }
-
-                gen.generate();
-            }
-        }    // generate
+		public void generate() throws IOException{
+			if (baseWriter != null) {
+				baseWriter.generate();
+			}
+			Class[] formalArgs = null;
+			Object[] actualArgs = null;
+			if (entry != null) {
+				formalArgs = new Class[] {Emitter.class, entry.getClass(), SymbolTable.class};
+				actualArgs = new Object[] {emitter, entry, symbolTable};
+			}
+			else {
+				formalArgs = new Class[] {Emitter.class, Definition.class, SymbolTable.class};
+				actualArgs = new Object[] {emitter, def, symbolTable};
+			}
+			for (int i = 0; i < writers.size(); ++i) {
+				Class wClass = (Class) writers.get(i);
+				Generator gen = null;
+				try {
+					Constructor ctor = wClass.getConstructor(formalArgs);
+					gen = (Generator) ctor.newInstance(actualArgs);
+				}
+				catch (Throwable t) {
+					throw new IOException(
+						Messages.getMessage("exception01", t.getMessage()));
+				}
+				gen.generate();
+			}
+		} // generate
     }    // class Writers
 
     /**
@@ -489,128 +475,274 @@ public class JavaGeneratorFactory implements GeneratorFactory {
         }
     }    // addGenerator
 
-    /**
-     * Fill in the names of each SymTabEntry with the javaified name.
-     * Note: This method also ensures that anonymous types are
-     * given unique java type names.
-     * 
-     * @param symbolTable 
-     */
-    protected void javifyNames(SymbolTable symbolTable) {
+	/**
+	 * Fill in the names of each SymTabEntry with the javaified name.
+	 * Note: This method also ensures that anonymous types are 
+	 * given unique java type names.
+	 */
+//////////JAXME_REFACTOR////////////////////////////    
+	protected void javifyNames(SymbolTable symbolTable) {
+		int uniqueNum = 0;
+		HashMap anonQNames = new HashMap();
+		Iterator it = symbolTable.getHashMap().values().iterator();
+		while (it.hasNext()) {
+			Vector v = (Vector) it.next();
+			for (int i = 0; i < v.size(); ++i) {
+				SymTabEntry entry = (SymTabEntry) v.elementAt(i);
+				 if(entry.getName() != null)
+					continue;
 
-        int uniqueNum = 0;
-        HashMap anonQNames = new HashMap();
-        Iterator it = symbolTable.getHashMap().values().iterator();
+				// Use the type or the referenced type's QName to generate the java name.
+				if (entry instanceof TypeEntry) {
+					TypeEntry tEntry = (TypeEntry) entry;
+					String dims = tEntry.getDimensions();
+					TypeEntry refType = tEntry.getRefType();
+					while (refType != null) {
+						tEntry = refType;
+						dims += tEntry.getDimensions();
+						refType = tEntry.getRefType();
+					}
 
-        while (it.hasNext()) {
-            Vector v = (Vector) it.next();
 
-            for (int i = 0; i < v.size(); ++i) {
-                SymTabEntry entry = (SymTabEntry) v.elementAt(i);
+					// Need to javify the ref'd TypeEntry if it was not
+					// already processed
+					if (tEntry.getName() == null) {
+						// Get the QName of the ref'd TypeEntry, which
+						// is will be used to javify the name
+						QName typeQName = tEntry.getQName();
+						if ((typeQName.getLocalPart().
+							 indexOf(SymbolTable.ANON_TOKEN) < 0)) {
+							// Normal Case: The ref'd type is not anonymous
+							// Simply construct the java name from
+							// the qName
+							tEntry.setName(emitter.getJavaName(typeQName));
+						} else {
+							// This is an anonymous type name.
+							// Axis uses '>' as a nesting token to generate
+							// unique qnames for anonymous types.
+							// Only consider the localName after the last '>' 
+							// when generating the java name
+                            
+                            
+//							  String localName = typeQName.getLocalPart();
+//							  localName = 
+//								  localName.substring(
+//									  localName.lastIndexOf(
+//										  SymbolTable.ANON_TOKEN)+1);
+//							  typeQName = new QName(typeQName.getNamespaceURI(), 
+//													localName);
+                                                  
+						   String localName = typeQName.getLocalPart();
 
-                if (entry.getName() != null) {
-                    continue;
-                }
+						   // Check to see if this is an anonymous type,
+						   // if it is, replace Axis' ANON_TOKEN with
+						   // an underscore to make sure we don't run
+						   // into name collisions with similarly named
+						   // non-anonymous types
+						   StringBuffer sb = new StringBuffer(localName);
+						   int aidx = -1;
+						   while (
+							 (aidx = sb.toString().indexOf(
+							   SymbolTable.ANON_TOKEN)) > -1) {
+								 sb.replace(aidx, aidx+SymbolTable.ANON_TOKEN.length(), "_");
+						   }
+						   localName = sb.toString();
 
-                // Use the type or the referenced type's QName to generate the java name.
-                if (entry instanceof TypeEntry) {
-                    TypeEntry tEntry = (TypeEntry) entry;
-                    String dims = tEntry.getDimensions();
-                    TypeEntry refType = tEntry.getRefType();
+						   typeQName = new QName(typeQName.getNamespaceURI(),
+												 localName);
 
-                    while (refType != null) {
-                        tEntry = refType;
-                        dims += tEntry.getDimensions();
-                        refType = tEntry.getRefType();
-                    }
+							// If there is already an existing type,
+							// there will be a collision.  
+							// If there is an existing anon type, 
+							// there will be a  collision.  
+							// In both cases, mangle the name.
+							symbolTable.getType(typeQName);
+							if (anonQNames.get(typeQName) != null) {
+								localName += "Type" + uniqueNum++;
+								typeQName = 
+									new QName(typeQName.getNamespaceURI(),
+											  localName);
+							} 
+							anonQNames.put(typeQName, typeQName);
 
-                    // Need to javify the ref'd TypeEntry if it was not
-                    // already processed
-                    if (tEntry.getName() == null) {
+							// Now set the name with the constructed qname
+							tEntry.setName(emitter.getJavaName(typeQName));
+						} 
+					}
+					// Set the entry with the same name as the ref'd entry
+					// but add the appropriate amount of dimensions
+					entry.setName(tEntry.getName() + dims);
+				}
 
-                        // Get the QName of the ref'd TypeEntry, which
-                        // is will be used to javify the name
-                        QName typeQName = tEntry.getQName();
+				// If it is not a type, then use this entry's QName to 
+				// generate its name.
+				else {
+					entry.setName(emitter.getJavaName(entry.getQName()));   
+				}
+			}
+		}
+	} // javifyNames
+//NEWCODE//////////////////////////////////////////////////////////////////////////////
+//	/**
+//	 * Fill in the names of each SymTabEntry with the javaified name.
+//	 * Note: This method also ensures that anonymous types are 
+//	 * given unique java type names.
+//	 */
+//	protected void javifyNames(SymbolTable symbolTable) {
+//		int uniqueNum = 0;
+//		HashMap anonQNames = new HashMap();
+//		Iterator it = symbolTable.getHashMap().values().iterator();
+//		while (it.hasNext()) {
+//			Vector v = (Vector) it.next();
+//			for (int i = 0; i < v.size(); ++i) {
+//				SymTabEntry entry = (SymTabEntry) v.elementAt(i);
+//				 if(entry.getName() != null)
+//					continue;
+//
+//				// If it is not a type, then use this entry's QName to 
+//				// generate its name.
+//				if(!(entry instanceof TypeEntry)){
+//					entry.setName(emitter.getJavaName(entry.getQName()));   
+//				}
+//				
+//				
+//			}
+//		}
+//		// Use the type or the referenced type's QName to generate the java name.
+//		it = symbolTable.getTypeIndex().values().iterator();
+//		while (it.hasNext()) {
+//			setTypeName((TypeEntry) it.next());
+//		}	
+//		it = symbolTable.getInbuildTypes();
+//		while (it.hasNext()) {
+//			setTypeName((TypeEntry) it.next());
+//		}	
+//			
+//					
+//			//let us set a name for the SchemaTypes as well this way we
+//			//do not need to get the type entry back from schema type
+//
+//			// Need to javify the ref'd TypeEntry if it was not
+//			// already processed
+////			if (tEntry.getName() == null) {
+////				// Get the QName of the ref'd TypeEntry, which
+////				// is will be used to javify the name
+////				QName typeQName = tEntry.getQName();
+////				if ((typeQName.getLocalPart().
+////					 indexOf(SymbolTable.ANON_TOKEN) < 0)) {
+////					// Normal Case: The ref'd type is not anonymous
+////					// Simply construct the java name from
+////					// the qName
+////
+////					javafyname = emitter.getJavaName(typeQName);
+////					tEntry.setName(javafyname);
+////					//set the value to the schematype as well:)
+////					setName(tEntry.getQName(),javafyname,symbolTable);
+////				} else {
+////					// This is an anonymous type name.
+////					// Axis uses '>' as a nesting token to generate
+////					// unique qnames for anonymous types.
+////					// Only consider the localName after the last '>' 
+////					// when generating the java name
+////                            
+////                            
+//////					  String localName = typeQName.getLocalPart();
+//////					  localName = 
+//////						  localName.substring(
+//////							  localName.lastIndexOf(
+//////								  SymbolTable.ANON_TOKEN)+1);
+//////					  typeQName = new QName(typeQName.getNamespaceURI(), 
+//////											localName);
+////                                                  
+////				   String localName = typeQName.getLocalPart();
+////
+////				   // Check to see if this is an anonymous type,
+////				   // if it is, replace Axis' ANON_TOKEN with
+////				   // an underscore to make sure we don't run
+////				   // into name collisions with similarly named
+////				   // non-anonymous types
+////				   StringBuffer sb = new StringBuffer(localName);
+////				   int aidx = -1;
+////				   while (
+////					 (aidx = sb.toString().indexOf(
+////					   SymbolTable.ANON_TOKEN)) > -1) {
+////						 sb.replace(aidx, aidx+SymbolTable.ANON_TOKEN.length(), "_");
+////				   }
+////				   localName = sb.toString();
+////
+////				   typeQName = new QName(typeQName.getNamespaceURI(),
+////										 localName);
+////
+////					// If there is already an existing type,
+////					// there will be a collision.  
+////					// If there is an existing anon type, 
+////					// there will be a  collision.  
+////					// In both cases, mangle the name.
+////					symbolTable.getType(typeQName);
+////					if (anonQNames.get(typeQName) != null) {
+////						localName += "Type" + uniqueNum++;
+////						typeQName = 
+////							new QName(typeQName.getNamespaceURI(),
+////									  localName);
+////					} 
+////					anonQNames.put(typeQName, typeQName);
+//
+//					// Now set the name with the constructed qname
+////					javafyname = emitter.getJavaName(typeQName);
+////      			tEntry.setName(javafyname);
+////					set the name to schema type as well
+////					setName(tEntry.getQName(),javafyname,symbolTable);
+////				} 
+////			}
+//			// Set the entry with the same name as the ref'd entry
+//			// but add the appropriate amount of dimensions		
+////			javafyname = tEntry.getName() + dims;
+////			tEntry.setName(javafyname);
+////			//set the name to schema type as well
+////			setName(tEntry.getQName(),javafyname,symbolTable);
+////		}
+//		System.out.println(
+//			"--------------------DUMPING JAXME----------------");
+//		it = symbolTable.getAllSchemaTypes();
+//		while (it.hasNext()) {
+//			SchemaType type = (SchemaType)it.next();
+//			if (symbolTable.isInbuildType(type.getQName()))
+//				System.out.println(type.toString());
+//		}
+//		System.out.println(
+//			"--------------------DUMPING JAXME----------------");
+//
+//
+//	} // javifyNames
+	
+	private void setTypeName(TypeEntry tEntry){
+		String javafyname; 
+					
+		String dims = tEntry.getDimensions();
+		TypeEntry refType = tEntry.getRefType();
+		TypeEntry ArefType = tEntry.getRefType();
+		while (refType != null) {
+			ArefType = refType;
+			dims += ArefType.getDimensions();
+			refType = ArefType.getRefType();
+		}
+			
+		QName typeQName;
+		if(ArefType != null){
+			typeQName = ArefType.getQName();
+		}else
+			typeQName = tEntry.getQName();
 
-                        if ((typeQName.getLocalPart().indexOf(
-                                SymbolTable.ANON_TOKEN) < 0)) {
-
-                            // Normal Case: The ref'd type is not anonymous
-                            // Simply construct the java name from
-                            // the qName
-                            tEntry.setName(emitter.getJavaName(typeQName));
-                        } else {
-
-                            // This is an anonymous type name.
-                            // Axis uses '>' as a nesting token to generate
-                            // unique qnames for anonymous types.
-                            // Only consider the localName after the last '>'
-                            // when generating the java name
-                            // String localName = typeQName.getLocalPart();
-                            // localName =
-                            // localName.substring(
-                            // localName.lastIndexOf(
-                            // SymbolTable.ANON_TOKEN)+1);
-                            // typeQName = new QName(typeQName.getNamespaceURI(),
-                            // localName);
-                            String localName = typeQName.getLocalPart();
-
-                            // Check to see if this is an anonymous type,
-                            // if it is, replace Axis' ANON_TOKEN with
-                            // an underscore to make sure we don't run
-                            // into name collisions with similarly named
-                            // non-anonymous types
-                            StringBuffer sb = new StringBuffer(localName);
-                            int aidx = -1;
-
-                            while ((aidx = sb.toString().indexOf(
-                                    SymbolTable.ANON_TOKEN)) > -1) {
-                                sb.replace(
-                                        aidx,
-                                        aidx + SymbolTable.ANON_TOKEN.length(),
-                                        "_");
-                            }
-
-                            localName = sb.toString();
-                            typeQName = new QName(typeQName.getNamespaceURI(),
-                                    localName);
-
-                            // If there is already an existing type,
-                            // there will be a collision.
-                            // If there is an existing anon type,
-                            // there will be a  collision.
-                            // In both cases, mangle the name.
-                            symbolTable.getType(typeQName);
-
-                            if (anonQNames.get(typeQName) != null) {
-                                localName += "Type" + uniqueNum++;
-                                typeQName =
-                                        new QName(typeQName.getNamespaceURI(),
-                                                localName);
-                            }
-
-                            anonQNames.put(typeQName, typeQName);
-
-                            // Now set the name with the constructed qname
-                            tEntry.setName(emitter.getJavaName(typeQName));
-                        }
-                    }
-
-                    // Set the entry with the same name as the ref'd entry
-                    // but add the appropriate amount of dimensions
-                    entry.setName(tEntry.getName() + dims);
-                }
-
-                // If it is not a type, then use this entry's QName to
-                // generate its name.
-                else {
-                    entry.setName(emitter.getJavaName(entry.getQName()));
-                }
-            }
-        }
-    }    // javifyNames
-
-    /**
+		javafyname = emitter.getJavaName(typeQName);			
+		javafyname = javafyname + dims;
+		tEntry.setName(javafyname);
+		
+	}
+	public void setName(QName name,String typename,SymbolTable symboltable){
+		SchemaType stype = symbolTable.getSchemaType(name);
+		if(stype!=null)
+			stype.setName(typename);
+	}    /**
      * setFaultContext:
      * Processes the symbol table and sets the COMPLEX_TYPE_FAULT
      * on each TypeEntry that is a complexType and is referenced in
@@ -655,162 +787,146 @@ public class JavaGeneratorFactory implements GeneratorFactory {
         }
     }    // setFaultContext
 
-    /**
-     * setFaultContext:
-     * Helper routine for the setFaultContext method above.
-     * Examines the indicated fault and sets COMPLEX_TYPE_FAULT
-     * EXCEPTION_DATA_TYPE and EXCEPTION_CLASS_NAME as appropriate.
-     * 
-     * @param fault       FaultInfo to analyze
-     * @param symbolTable SymbolTable
-     * @throws SAXException 
-     */
-    private void setFaultContext(FaultInfo fault, SymbolTable symbolTable)
-            throws SAXException {
+	/**
+	 * setFaultContext:
+	 * Helper routine for the setFaultContext method above.
+	 * Examines the indicated fault and sets COMPLEX_TYPE_FAULT
+	 * EXCEPTION_DATA_TYPE and EXCEPTION_CLASS_NAME as appropriate.
+	 * @param fault FaultInfo to analyze
+	 * @param symbolTable SymbolTable
+	 */
+	private void setFaultContext(FaultInfo fault,
+								 SymbolTable symbolTable)throws SAXException {
+		QName faultXmlType = null;
+        
+		Vector parts = new Vector();
+		// Get the parts of the fault's message.
+		// An IOException is thrown if the parts cannot be
+		// processed.  Skip such parts for this analysis
+		try {
+			symbolTable.getParametersFromParts(
+				parts, 
+				fault.getMessage().getOrderedParts(null),
+				false,
+				fault.getName(),
+				null);
+		} catch (IOException e) {}
+        
+		// Inspect each TypeEntry referenced in a Fault Message Part
+		String exceptionClassName = null;
+		for(int j=0; j < parts.size(); j++) {
+			TypeEntry te = ((Parameter)(parts.elementAt(j))).getType();
 
-        QName faultXmlType = null;
-        Vector parts = new Vector();
+			// If the TypeEntry is an element, advance to the type.
+			// This occurs if the message part uses the element= attribute
+			TypeEntry elementTE = null;
+			if (te instanceof SchemaElement) {
+				elementTE = te;
+				te = te.getRefType();
+			}
 
-        // Get the parts of the fault's message.
-        // An IOException is thrown if the parts cannot be
-        // processed.  Skip such parts for this analysis
-        try {
-            symbolTable.getParametersFromParts(
-                    parts, fault.getMessage().getOrderedParts(null), false,
-                    fault.getName(), null);
-        } catch (IOException e) {
-        }
+			// remember the QName of the type.
+			faultXmlType = te.getQName();
+            
+			// Determine if the te should be processed using the
+			// simple type mapping or the complex type mapping
+			// NOTE: treat array types as simple types
+			if (te.getBaseType() != null ||
+				te.isSimpleType() ||
+				  (te.getDimensions().length() > 0 && 
+					te.getRefType().getBaseType() != null) ) {
+				// Simple Type Exception
+			} else {
+				// Complex Type Exception
+				Boolean isComplexFault = (Boolean) te.getDynamicVar(
+					JavaGeneratorFactory.COMPLEX_TYPE_FAULT);
+				if (isComplexFault == null ||
+					!isComplexFault.booleanValue()) {
+					// Mark the type as a complex type fault
+					te.setDynamicVar(
+						JavaGeneratorFactory.COMPLEX_TYPE_FAULT, 
+						Boolean.TRUE);
+					if (elementTE != null) {
+						te.setDynamicVar(
+						   JavaGeneratorFactory.COMPLEX_TYPE_FAULT, 
+						   Boolean.TRUE);
+					}
 
-        // Inspect each TypeEntry referenced in a Fault Message Part
-        String exceptionClassName = null;
+					// Mark all derived types as Complex Faults
+					HashSet derivedSet =
+						org.apache.axis.wsdl.symbolTable.Utils.getDerivedTypes(
+							te, symbolTable);
+					Iterator derivedI = derivedSet.iterator();
+					while(derivedI.hasNext()) {
+						TypeEntry derivedTE = (TypeEntry)
+							derivedI.next();
+						derivedTE.setDynamicVar(
+							JavaGeneratorFactory.COMPLEX_TYPE_FAULT, 
+							Boolean.TRUE);
+					}
+//////JAXME_REFACTOR/////////////////////////////////////////////////////////////////                    
+//					  // Mark all base types as Complex Faults
+//					  TypeEntry base = SchemaUtils.getComplexElementExtensionBase(
+//						  te.getNode(),
+//						  symbolTable);
+//					  while (base != null) {
+//						  base.setDynamicVar(
+//							  JavaGeneratorFactory.COMPLEX_TYPE_FAULT, 
+//							  Boolean.TRUE);
+//						  base = SchemaUtils.getComplexElementExtensionBase(
+//							  base.getNode(),
+//							  symbolTable);
+//					  }
+//NEW CODE///////////////////////////////////////////////////////////////////////////////
+ // Mark all base types as Complex Faults
+					  QName baseName = null;
+					  SchemaType stype = null;
+					  if(te instanceof SchemaType){
+						stype = symbolTable.getSchemaType(te.getQName());
+					  }else{
+						throw new JAXMEInternalException("unexpected condition");
+					  }	
+					  baseName = stype.getExtentionBase();
 
-        for (int j = 0; j < parts.size(); j++) {
-            TypeEntry te = ((Parameter) (parts.elementAt(j))).getType();
+					  TypeEntry base = null;
 
-            // If the TypeEntry is an element, advance to the type.
-            // This occurs if the message part uses the element= attribute
-            TypeEntry elementTE = null;
-
-            if (te instanceof Element) {
-                elementTE = te;
-                te = te.getRefType();
-            }
-
-            // remember the QName of the type.
-            faultXmlType = te.getQName();
-
-            // Determine if the te should be processed using the
-            // simple type mapping or the complex type mapping
-            // NOTE: treat array types as simple types
-            if ((te.getBaseType() != null) || te.isSimpleType()
-                    || ((te.getDimensions().length() > 0)
-                    && (te.getRefType().getBaseType() != null))) {
-
-                // Simple Type Exception
-            } else {
-
-                // Complex Type Exception
-                Boolean isComplexFault = (Boolean) te.getDynamicVar(
-                        JavaGeneratorFactory.COMPLEX_TYPE_FAULT);
-
-                if ((isComplexFault == null) || !isComplexFault.booleanValue()) {
-
-                    // Mark the type as a complex type fault
-                    te.setDynamicVar(JavaGeneratorFactory.COMPLEX_TYPE_FAULT,
-                            Boolean.TRUE);
-
-                    if (elementTE != null) {
-                        te.setDynamicVar(
-                                JavaGeneratorFactory.COMPLEX_TYPE_FAULT,
-                                Boolean.TRUE);
-                    }
-
-                    // Mark all derived types as Complex Faults
-                    HashSet derivedSet =
-                            org.apache.axis.wsdl.symbolTable.Utils.getDerivedTypes(
-                                    te, symbolTable);
-                    Iterator derivedI = derivedSet.iterator();
-
-                    while (derivedI.hasNext()) {
-                        TypeEntry derivedTE = (TypeEntry) derivedI.next();
-
-                        derivedTE.setDynamicVar(
-                                JavaGeneratorFactory.COMPLEX_TYPE_FAULT,
-                                Boolean.TRUE);
-                    }
-
-                    // ////JAXME_REFACTOR/////////////////////////////////////////////////////////////////
-                    // // Mark all base types as Complex Faults
-                    // TypeEntry base = SchemaUtils.getComplexElementExtensionBase(
-                    // te.getNode(),
-                    // symbolTable);
-                    // while (base != null) {
-                    // base.setDynamicVar(
-                    // JavaGeneratorFactory.COMPLEX_TYPE_FAULT,
-                    // Boolean.TRUE);
-                    // base = SchemaUtils.getComplexElementExtensionBase(
-                    // base.getNode(),
-                    // symbolTable);
-                    // }
-                    // NEW CODE///////////////////////////////////////////////////////////////////////////////
-                    // you can replace this
-                    // 1) if you do not need to support for the complex content
-                    // 2) if jaxme do not suppot
-                    // Mark all base types as Complex Faults
-                    QName baseName = null;
-                    SchemaType stype =
-                            symbolTable.getSchemaType(te.getQName());
-
-                    if (stype != null) {
-                        baseName = stype.getExtentionBase();
-                    }
-
-                    TypeEntry base = null;
-
-                    while (baseName != null) {
-                        base = symbolTable.getType(baseName);
-
-                        if (base != null) {
-                            base.setDynamicVar(
-                                    JavaGeneratorFactory.COMPLEX_TYPE_FAULT,
-                                    Boolean.TRUE);
-                        }
-
-                        stype = symbolTable.getSchemaType(te.getQName());
-
-                        if (stype != null) {
-                            baseName = stype.getExtentionBase();
-                        }
-                    }
-
-                    // /////////////////////////////////////////////////////////////////////////////////////
-                }
-
-                // The exception class name is the name of the type
-                exceptionClassName = te.getName();
-            }
-        }
-
-        // Set the name of the exception and
-        // whether the exception is a complex type
-        MessageEntry me =
-                symbolTable.getMessageEntry(fault.getMessage().getQName());
-
-        if (me != null) {
-            me.setDynamicVar(JavaGeneratorFactory.EXCEPTION_DATA_TYPE,
-                    faultXmlType);
-
-            if (exceptionClassName != null) {
-                me.setDynamicVar(JavaGeneratorFactory.COMPLEX_TYPE_FAULT,
-                        Boolean.TRUE);
-                me.setDynamicVar(JavaGeneratorFactory.EXCEPTION_CLASS_NAME,
-                        exceptionClassName);
-            } else {
-                me.setDynamicVar(JavaGeneratorFactory.EXCEPTION_CLASS_NAME,
-                        emitter.getJavaName(me.getQName()));
-            }
-        }
-    }
+					  while (baseName != null) {
+						  base = symbolTable.getType(baseName);		
+							base.setDynamicVar(
+								JavaGeneratorFactory.COMPLEX_TYPE_FAULT, 
+								Boolean.TRUE);	
+						stype = symbolTable.getSchemaType(baseName);
+						baseName = stype.getExtentionBase();
+					  }
+///////////////////////////////////////////////////////////////////////////////////////                    
+				}
+				// The exception class name is the name of the type
+				exceptionClassName = te.getName();
+			}
+		}
+		// Set the name of the exception and
+		// whether the exception is a complex type
+		MessageEntry me = symbolTable.getMessageEntry(
+			fault.getMessage().getQName());
+		if (me != null) {
+			me.setDynamicVar(
+							 JavaGeneratorFactory.EXCEPTION_DATA_TYPE, 
+							 faultXmlType);
+			if (exceptionClassName != null) {
+				me.setDynamicVar(
+								 JavaGeneratorFactory.COMPLEX_TYPE_FAULT, 
+								 Boolean.TRUE);
+				me.setDynamicVar(
+								 JavaGeneratorFactory.EXCEPTION_CLASS_NAME, 
+								 exceptionClassName);
+			} else {
+				me.setDynamicVar(
+								 JavaGeneratorFactory.EXCEPTION_CLASS_NAME, 
+								 emitter.getJavaName(me.getQName()));
+			}
+            
+		}
+	}
 
     /**
      * Method determineInterfaceNames
@@ -845,188 +961,299 @@ public class JavaGeneratorFactory implements GeneratorFactory {
         }
     }    // determineInterfaceNames
 
-    /**
-     * Messages, PortTypes, Bindings, and Services can share the same name.  If they do in this
-     * Definition, force their names to be suffixed with _PortType and _Service, respectively.
-     * 
-     * @param symbolTable 
-     */
-    protected void resolveNameClashes(SymbolTable symbolTable) {
+//	/**
+//	 * Messages, PortTypes, Bindings, and Services can share the same name.  If they do in this
+//	 * Definition, force their names to be suffixed with _PortType and _Service, respectively.
+//	 */
+//	protected void resolveNameClashes(SymbolTable symbolTable) {
+//
+//		// Keep a list of anonymous types so we don't try to resolve them twice.
+//		HashSet anonTypes = new HashSet();
+//
+//		Iterator it = symbolTable.getHashMap().values().iterator();
+//		while (it.hasNext()) {
+//			Vector v = new Vector((Vector) it.next());  // New vector we can temporarily add to it
+//
+//			// Remove MessageEntries since they are not mapped
+//			int index = 0;
+//			while (index < v.size()) {
+//				if (v.elementAt(index) instanceof MessageEntry) {
+//					v.removeElementAt(index);
+//				} else {
+//					index++;
+//				}
+//			}
+//
+//			if (v.size() > 1) {
+//				boolean resolve = true;
+//				// Common Special Case:
+//				// If a Type and Element have the same QName, and the Element
+//				// references the Type, then they are the same class so 
+//				// don't bother mangling.
+//				if (v.size() == 2 &&
+//					((v.elementAt(0) instanceof Element &&
+//					  v.elementAt(1) instanceof Type) ||
+//					 (v.elementAt(1) instanceof Element &&
+//					  v.elementAt(0) instanceof Type))) {
+//					Element e = null;
+//					if (v.elementAt(0) instanceof Element) {
+//						e = (Element)v.elementAt(0);
+//					} else {
+//						e = (Element)v.elementAt(1);
+//					}
+//					BooleanHolder forElement = new BooleanHolder();
+//					QName eType = Utils.getTypeQName(e.getNode(), forElement, false);
+//					if (eType != null && 
+//						eType.equals(e.getQName()) &&
+//						!forElement.value)
+//						resolve = false;
+//				}
+//
+//				// Other Special Case:
+//				// If the names are already different, no mangling is needed.
+//				if (resolve) {
+//					resolve = false;  // Assume false
+//					String name = null;
+//					for (int i = 0; i < v.size() && !resolve; ++i) {
+//						SymTabEntry entry = (SymTabEntry) v.elementAt(i);
+//						 if (entry instanceof MessageEntry ||
+//							 entry instanceof BindingEntry) {
+//							 ; // Don't process these
+//						 } else if (name== null) {
+//							 name = entry.getName();
+//						 } else if (name.equals(entry.getName())) {
+//							 resolve = true;  // Need to do resolution
+//						 } 
+//
+//					}
+//				}
+//
+//				// Full Mangle if resolution is necessary.
+//				if (resolve) {
+//					boolean firstType = true;
+//					for (int i = 0; i < v.size(); ++i) {
+//						SymTabEntry entry = (SymTabEntry) v.elementAt(i);
+//						if (entry instanceof Element) {
+//							entry.setName(mangleName(entry.getName(),
+//									"_ElemType"));
+//
+//							// If this global element was defined using 
+//							// an anonymous type, then need to change the
+//							// java name of the anonymous type to match.
+//							QName anonQName = new QName(entry.getQName().getNamespaceURI(),
+//														SymbolTable.ANON_TOKEN +
+//														entry.getQName().getLocalPart());
+//							TypeEntry anonType = symbolTable.getType(anonQName);
+//							if (anonType != null) {
+//								anonType.setName(entry.getName());
+//								anonTypes.add(anonType);
+//							}
+//						}
+//						else if (entry instanceof TypeEntry) {
+//							// Search all other types for java names that match this one.
+//							// The sameJavaClass method returns true if the java names are
+//							// the same (ignores [] ).
+//							if (firstType) {
+//								firstType = false;
+//								Iterator types = symbolTable.getTypeIndex().values().iterator();
+//								while (types.hasNext()) {
+//									TypeEntry type = (TypeEntry)
+//											types.next();
+//									if (type != entry && type.getBaseType() == null &&
+//											sameJavaClass(entry.getName(), type.getName())) {
+//										v.add(type);  
+//									}
+//								}
+//							}
+//							// If this is an anonymous type, it's name was resolved in
+//							// the previous if block.  Don't reresolve it.
+//							if (!anonTypes.contains(entry)) {
+//								entry.setName(mangleName(entry.getName(), "_Type"));
+//							}
+//						}
+//						else if (entry instanceof PortTypeEntry) {
+//							entry.setName(mangleName(entry.getName(), "_Port"));
+//						}
+//						else if (entry instanceof ServiceEntry) {
+//							entry.setName(mangleName(entry.getName(),
+//									"_Service"));
+//						}
+//						// else if (entry instanceof MessageEntry) {
+//						//     we don't care about messages
+//						// }
+//						else if (entry instanceof BindingEntry) {
+//							BindingEntry bEntry = (BindingEntry) entry;
+//
+//							// If there is no literal use, then we never see a
+//							// class named directly from the binding name.  They
+//							// all have suffixes:  Stub, Skeleton, Impl.
+//							// If there IS literal use, then the SDI will be
+//							// named after the binding name, so there is the
+//							// possibility of a name clash.
+//							if (bEntry.hasLiteral()) {
+//								entry.setName(mangleName(entry.getName(),
+//										"_Binding"));
+//							}
+//						}
+//					}
+//				}
+//			}
+//		}
+//	} // resolveNameClashes
 
-        // Keep a list of anonymous types so we don't try to resolve them twice.
-        HashSet anonTypes = new HashSet();
-        Iterator it = symbolTable.getHashMap().values().iterator();
 
-        while (it.hasNext()) {
-            Vector v = new Vector(
-                    (Vector) it.next());    // New vector we can temporarily add to it
+	/**
+	 * Messages, PortTypes, Bindings, and Services can share the same name.  If they do in this
+	 * Definition, force their names to be suffixed with _PortType and _Service, respectively.
+	 */
+	protected void resolveNameClashes(SymbolTable symbolTable) {
 
-            // Remove MessageEntries since they are not mapped
-            int index = 0;
+		// Keep a list of anonymous types so we don't try to resolve them twice.
+		HashSet anonTypes = new HashSet();
 
-            while (index < v.size()) {
-                if (v.elementAt(index) instanceof MessageEntry) {
-                    v.removeElementAt(index);
-                } else {
-                    index++;
-                }
-            }
+		Iterator it = symbolTable.getHashMap().values().iterator();
+		while (it.hasNext()) {
+			Vector v = new Vector((Vector) it.next());  // New vector we can temporarily add to it
 
-            if (v.size() > 1) {
-                boolean resolve = true;
+			// Remove MessageEntries since they are not mapped
+			int index = 0;
+			while (index < v.size()) {
+				if (v.elementAt(index) instanceof MessageEntry) {
+					v.removeElementAt(index);
+				} else {
+					index++;
+				}
+			}
 
-                // Common Special Case:
-                // If a Type and Element have the same QName, and the Element
-                // references the Type, then they are the same class so
-                // don't bother mangling.
-                if ((v.size() == 2) && (((v.elementAt(
-                        0) instanceof Element) && (v.elementAt(
-                                1) instanceof Type)) || ((v.elementAt(
-                                        1) instanceof Element) && (v.elementAt(
-                                                0) instanceof Type)))) {
-                    Element e = null;
+			if (v.size() > 1) {
+				boolean resolve = true;
+				// Common Special Case:
+				// If a Type and Element have the same QName, and the Element
+				// references the Type, then they are the same class so 
+				// don't bother mangling.
+				if (v.size() == 2 &&
+					((v.elementAt(0) instanceof SchemaElement &&
+					  v.elementAt(1) instanceof SchemaType) ||
+					 (v.elementAt(1) instanceof SchemaElement &&
+					  v.elementAt(0) instanceof SchemaType))) {
+					SchemaElement e = null;
+					if (v.elementAt(0) instanceof SchemaElement) {
+						e = (SchemaElement)v.elementAt(0);
+					} else {
+						e = (SchemaElement)v.elementAt(1);
+					}
 
-                    if (v.elementAt(0) instanceof Element) {
-                        e = (Element) v.elementAt(0);
-                    } else {
-                        e = (Element) v.elementAt(1);
-                    }
+					QName eType = e.getType().getQName();
+					if (eType != null && 
+						eType.equals(e.getQName()))
+						resolve = false;
+				}
 
-                    BooleanHolder forElement = new BooleanHolder();
-                    QName eType = Utils.getTypeQName(e.getNode(),
-                            forElement, false);
+				// Other Special Case:
+				// If the names are already different, no mangling is needed.
+				if (resolve) {
+					resolve = false;  // Assume false
+					String name = null;
+					for (int i = 0; i < v.size() && !resolve; ++i) {
+						SymTabEntry entry = (SymTabEntry) v.elementAt(i);
+						 if (entry instanceof MessageEntry ||
+							 entry instanceof BindingEntry) {
+							 ; // Don't process these
+						 } else if (name== null) {
+							 name = entry.getName();
+						 } else if (name.equals(entry.getName())) {
+							 resolve = true;  // Need to do resolution
+						 } 
 
-                    if ((eType != null) && eType.equals(e.getQName())
-                            && !forElement.value) {
-                        resolve = false;
-                    }
-                }
+					}
+				}
 
-                // Other Special Case:
-                // If the names are already different, no mangling is needed.
-                if (resolve) {
-                    resolve = false;           // Assume false
+				// Full Mangle if resolution is necessary.
+				if (resolve) {
+					boolean firstType = true;
+					for (int i = 0; i < v.size(); ++i) {
+						SymTabEntry entry = (SymTabEntry) v.elementAt(i);
+						if (entry instanceof SchemaElement) {
+							entry.setName(mangleName(entry.getName(),
+									"_ElemType"));
 
-                    String name = null;
+							// If this global element was defined using 
+							// an anonymous type, then need to change the
+							// java name of the anonymous type to match.
+							QName anonQName = new QName(entry.getQName().getNamespaceURI(),
+														SymbolTable.ANON_TOKEN +
+														entry.getQName().getLocalPart());
+							TypeEntry anonType = symbolTable.getType(anonQName);
+							if (anonType != null) {
+								anonType.setName(entry.getName());
+								anonTypes.add(anonType);
+							}
+						}
+						else if (entry instanceof TypeEntry) {
+							// Search all other types for java names that match this one.
+							// The sameJavaClass method returns true if the java names are
+							// the same (ignores [] ).
+							if (firstType) {
+								firstType = false;
+								Iterator types = symbolTable.getTypeIndex().values().iterator();
+								while (types.hasNext()) {
+									TypeEntry type = (TypeEntry)
+											types.next();
+									if (type != entry && type.getBaseType() == null &&
+											sameJavaClass(entry.getName(), type.getName())) {
+										v.add(type);  
+									}
+								}
+							}
+							// If this is an anonymous type, it's name was resolved in
+							// the previous if block.  Don't reresolve it.
+							if (!anonTypes.contains(entry)) {
+								entry.setName(mangleName(entry.getName(), "_Type"));
+							}
+						}
+						else if (entry instanceof PortTypeEntry) {
+							entry.setName(mangleName(entry.getName(), "_Port"));
+						}
+						else if (entry instanceof ServiceEntry) {
+							entry.setName(mangleName(entry.getName(),
+									"_Service"));
+						}
+						// else if (entry instanceof MessageEntry) {
+						//     we don't care about messages
+						// }
+						else if (entry instanceof BindingEntry) {
+							BindingEntry bEntry = (BindingEntry) entry;
 
-                    for (int i = 0; (i < v.size()) && !resolve; ++i) {
-                        SymTabEntry entry = (SymTabEntry) v.elementAt(i);
+							// If there is no literal use, then we never see a
+							// class named directly from the binding name.  They
+							// all have suffixes:  Stub, Skeleton, Impl.
+							// If there IS literal use, then the SDI will be
+							// named after the binding name, so there is the
+							// possibility of a name clash.
+							if (bEntry.hasLiteral()) {
+								entry.setName(mangleName(entry.getName(),
+										"_Binding"));
+							}
+						}
+					}
+				}
+			}
+		}
+	} // resolveNameClashes
 
-                        if ((entry instanceof MessageEntry)
-                                || (entry instanceof BindingEntry)) {
-                            ;                  // Don't process these
-                        } else if (name == null) {
-                            name = entry.getName();
-                        } else if (name.equals(entry.getName())) {
-                            resolve = true;    // Need to do resolution
-                        }
-                    }
-                }
-
-                // Full Mangle if resolution is necessary.
-                if (resolve) {
-                    boolean firstType = true;
-
-                    for (int i = 0; i < v.size(); ++i) {
-                        SymTabEntry entry = (SymTabEntry) v.elementAt(i);
-
-                        if (entry instanceof Element) {
-                            entry.setName(mangleName(entry.getName(),
-                                    "_ElemType"));
-
-                            // If this global element was defined using
-                            // an anonymous type, then need to change the
-                            // java name of the anonymous type to match.
-                            QName anonQName =
-                                    new QName(entry.getQName().getNamespaceURI(),
-                                            SymbolTable.ANON_TOKEN
-                                    + entry.getQName().getLocalPart());
-                            TypeEntry anonType =
-                                    symbolTable.getType(anonQName);
-
-                            if (anonType != null) {
-                                anonType.setName(entry.getName());
-                                anonTypes.add(anonType);
-                            }
-                        } else if (entry instanceof TypeEntry) {
-
-                            // Search all other types for java names that match this one.
-                            // The sameJavaClass method returns true if the java names are
-                            // the same (ignores [] ).
-                            if (firstType) {
-                                firstType = false;
-
-                                Iterator types =
-                                        symbolTable.getTypeIndex().values().iterator();
-
-                                while (types.hasNext()) {
-                                    TypeEntry type = (TypeEntry) types.next();
-
-                                    if ((type != entry)
-                                            && (type.getBaseType() == null)
-                                            && sameJavaClass(entry.getName(),
-                                                    type.getName())) {
-                                        v.add(type);
-                                    }
-                                }
-                            }
-
-                            // If this is an anonymous type, it's name was resolved in
-                            // the previous if block.  Don't reresolve it.
-                            if (!anonTypes.contains(entry)) {
-                                entry.setName(mangleName(entry.getName(),
-                                        "_Type"));
-                            }
-                        } else if (entry instanceof PortTypeEntry) {
-                            entry.setName(mangleName(entry.getName(), "_Port"));
-                        } else if (entry instanceof ServiceEntry) {
-                            entry.setName(mangleName(entry.getName(),
-                                    "_Service"));
-                        }
-
-                        // else if (entry instanceof MessageEntry) {
-                        // we don't care about messages
-                        // }
-                        else if (entry instanceof BindingEntry) {
-                            BindingEntry bEntry = (BindingEntry) entry;
-
-                            // If there is no literal use, then we never see a
-                            // class named directly from the binding name.  They
-                            // all have suffixes:  Stub, Skeleton, Impl.
-                            // If there IS literal use, then the SDI will be
-                            // named after the binding name, so there is the
-                            // possibility of a name clash.
-                            if (bEntry.hasLiteral()) {
-                                entry.setName(mangleName(entry.getName(),
-                                        "_Binding"));
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }                                          // resolveNameClashes
-
-    /**
-     * Change the indicated type name into a mangled form using the mangle string.
-     * 
-     * @param name   
-     * @param mangle 
-     * @return 
-     */
-    private String mangleName(String name, String mangle) {
-
-        int index = name.indexOf("[");
-
-        if (index >= 0) {
-            String pre = name.substring(0, index);
-            String post = name.substring(index);
-
-            return pre + mangle + post;
-        } else {
-            return name + mangle;
-        }
-    }
+	/**
+	 * Change the indicated type name into a mangled form using the mangle string.
+	 */
+	private String mangleName(String name, String mangle) {
+		int index = name.indexOf("[");
+		if (index >= 0) {
+			String pre = name.substring(0, index);
+			String post = name.substring(index);
+			return pre + mangle + post;
+		}
+		else
+			return name + mangle;
+	}
 
     /**
      * Returns true if same java class, ignore []
@@ -1257,85 +1484,67 @@ public class JavaGeneratorFactory implements GeneratorFactory {
         return signature;
     }    // constructSignature
 
-    /**
-     * Find all inout/out parameters and add a flag to the Type of that parameter saying a holder
-     * is needed.
-     * 
-     * @param symbolTable 
-     */
-    protected void determineIfHoldersNeeded(SymbolTable symbolTable) {
-
-        Iterator it = symbolTable.getHashMap().values().iterator();
-
-        while (it.hasNext()) {
-            Vector v = (Vector) it.next();
-
-            for (int i = 0; i < v.size(); ++i) {
-                if (v.get(i) instanceof BindingEntry) {
-
-                    // If entry is a BindingEntry, look at all the Parameters
-                    // in its portType
-                    BindingEntry bEntry = (BindingEntry) v.get(i);
-
-                    // PortTypeEntry ptEntry =
-                    // symbolTable.getPortTypeEntry(bEntry.getBinding().getPortType().getQName());
-                    Iterator operations =
-                            bEntry.getParameters().values().iterator();
-
-                    while (operations.hasNext()) {
-                        Parameters parms = (Parameters) operations.next();
-
-                        for (int j = 0; j < parms.list.size(); ++j) {
-                            Parameter p = (Parameter) parms.list.get(j);
-
-                            // If the given parameter is an inout or out parameter, then
-                            // set a HOLDER_IS_NEEDED flag using the dynamicVar design.
-                            if (p.getMode() != Parameter.IN) {
-                                TypeEntry typeEntry = p.getType();
-
-                                typeEntry.setDynamicVar(
-                                        JavaTypeWriter.HOLDER_IS_NEEDED,
-                                        Boolean.TRUE);
-
-                                // If this is a complex then set the HOLDER_IS_NEEDED
-                                // for the reftype too.
-                                if (!typeEntry.isSimpleType()
-                                        && (typeEntry.getRefType() != null)) {
-                                    typeEntry.getRefType().setDynamicVar(
-                                            JavaTypeWriter.HOLDER_IS_NEEDED,
-                                            Boolean.TRUE);
-                                }
-
-                                // TODOJAXME_REFACTOR///////////////////////////////////////////////////////////////////////////////////
-                                // If the type is a DefinedElement, need to
-                                // set HOLDER_IS_NEEDED on the anonymous type.
-                                QName anonQName =
-                                        SchemaUtils.getElementAnonQName(
-                                                p.getType().getNode());
-
-                                // /NEWCODE//////////////////////////////////////////////////////////////////////////////////
-                                // by the time above code calles the schema havenot parsed,There was a null pointer exception
-                                // occured CHECK ???
-                                // QName anonQName =   symbolTable.
-                                // getTypeQNameAssociatedWithElement(p.getType().getQName());
-                                // ///////////////////////////////////////////////////////////////////////////////////////
-                                if (anonQName != null) {
-                                    TypeEntry anonType =
-                                            symbolTable.getType(anonQName);
-
-                                    if (anonType != null) {
-                                        anonType.setDynamicVar(
-                                                JavaTypeWriter.HOLDER_IS_NEEDED,
-                                                Boolean.TRUE);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }    // determineIfHoldersNeeded
+	/**
+	 * Find all inout/out parameters and add a flag to the Type of that parameter saying a holder
+	 * is needed.
+	 */
+	protected void determineIfHoldersNeeded(SymbolTable symbolTable) {
+		Iterator it = symbolTable.getHashMap().values().iterator();
+		while (it.hasNext()) {
+			Vector v = (Vector) it.next();
+			for (int i = 0; i < v.size(); ++i) {
+				if (v.get(i) instanceof BindingEntry) {
+					// If entry is a BindingEntry, look at all the Parameters
+					// in its portType
+					BindingEntry bEntry = (BindingEntry) v.get(i);
+//					  PortTypeEntry ptEntry = 
+//							  symbolTable.getPortTypeEntry(bEntry.getBinding().getPortType().getQName());
+					Iterator operations =
+							bEntry.getParameters().values().iterator();
+					while (operations.hasNext()) {
+						Parameters parms = (Parameters) operations.next();
+						for (int j = 0; j < parms.list.size(); ++j) {
+							Parameter p =
+									(Parameter)parms.list.get(j);
+                            
+							// If the given parameter is an inout or out parameter, then
+							// set a HOLDER_IS_NEEDED flag using the dynamicVar design.
+							if (p.getMode() != Parameter.IN) {
+								TypeEntry typeEntry = p.getType();
+								typeEntry.setDynamicVar(
+										JavaTypeWriter.HOLDER_IS_NEEDED,
+										Boolean.TRUE);
+								//If this is a complex then set the HOLDER_IS_NEEDED
+								//for the reftype too.
+								if(!typeEntry.isSimpleType() && typeEntry.getRefType()!=null){
+									typeEntry.getRefType().setDynamicVar(
+										JavaTypeWriter.HOLDER_IS_NEEDED,
+										Boolean.TRUE);
+								}
+//TODOJAXME_REFACTOR///////////////////////////////////////////////////////////////////////////////////
+//								  // If the type is a DefinedElement, need to 
+//								  // set HOLDER_IS_NEEDED on the anonymous type.
+//								  QName anonQName = SchemaUtils.
+//									  getElementAnonQName(p.getType().getNode());
+//								if (anonQName != null) {
+//									TypeEntry anonType = 
+//										symbolTable.getType(anonQName);
+//
+///NEWCODE//////////////////////////////////////////////////////////////////////////////////                                    
+								TypeEntry typeentry = p.getType();
+								if(typeentry instanceof SchemaElement){ 
+									((SchemaElement)typeentry).getType().setDynamicVar(
+											JavaTypeWriter.HOLDER_IS_NEEDED,
+											Boolean.TRUE); 
+								}
+/////////////////////////////////////////////////////////////////////////////////////                                
+							}
+						}
+					}
+				}
+			}
+		}
+	} // determineIfHoldersNeeded
 
     /**
      * Get TypeMapping to use for translating
@@ -1352,35 +1561,157 @@ public class JavaGeneratorFactory implements GeneratorFactory {
         this.btm = btm;
     }
 
-    /**
-     * Method getBaseTypeMapping
-     * 
-     * @return 
-     */
-    public BaseTypeMapping getBaseTypeMapping() {
-
-        if (btm == null) {
-            btm = new BaseTypeMapping() {
-
-                TypeMapping defaultTM = DefaultTypeMappingImpl.getSingleton();
-
-                public String getBaseName(QName qNameIn) {
-
-                    javax.xml.namespace.QName qName =
-                            new javax.xml.namespace.QName(qNameIn.getNamespaceURI(),
-                                    qNameIn.getLocalPart());
-                    Class cls =
-                            defaultTM.getClassForQName(qName);
-
-                    if (cls == null) {
-                        return null;
-                    } else {
-                        return JavaUtils.getTextClassName(cls.getName());
-                    }
-                }
-            };
-        }
-
-        return btm;
-    }
+	public BaseTypeMapping getBaseTypeMapping() {
+		if (btm == null) {
+			btm = new BaseTypeMapping() {
+					TypeMapping defaultTM = DefaultTypeMappingImpl.getSingleton();
+					public String getBaseName(QName qNameIn) {
+						javax.xml.namespace.QName qName = 
+							new javax.xml.namespace.QName(
+							  qNameIn.getNamespaceURI(),                                 
+							  qNameIn.getLocalPart());
+						Class cls = defaultTM.getClassForQName(qName);
+						if (cls == null)
+							return null;
+						else 
+							return JavaUtils.getTextClassName(cls.getName());
+					}
+				};    
+		}
+		return btm;
+	}
 }    // class JavaGeneratorFactory
+//NEWCODE//////////////////////////////////////////////////////////////////////////////
+//	/**
+//	 * Fill in the names of each SymTabEntry with the javaified name.
+//	 * Note: This method also ensures that anonymous types are 
+//	 * given unique java type names.
+//	 */
+//	protected void javifyNames(SymbolTable symbolTable) {
+//		int uniqueNum = 0;
+//		HashMap anonQNames = new HashMap();
+//		Iterator it = symbolTable.getHashMap().values().iterator();
+//		while (it.hasNext()) {
+//			Vector v = (Vector) it.next();
+//			for (int i = 0; i < v.size(); ++i) {
+//				SymTabEntry entry = (SymTabEntry) v.elementAt(i);
+//				 if(entry.getName() != null)
+//					continue;
+//
+//				// If it is not a type, then use this entry's QName to 
+//				// generate its name.
+//				if(!(entry instanceof TypeEntry)){
+//					entry.setName(emitter.getJavaName(entry.getQName()));   
+//				}
+//				
+//				
+//			}
+//		}
+//		// Use the type or the referenced type's QName to generate the java name.
+//		it = symbolTable.getTypeIndex().values().iterator();
+//		while (it.hasNext()) {
+//			setTypeName((TypeEntry) it.next());
+//		}	
+//		it = symbolTable.getInbuildTypes();
+//		while (it.hasNext()) {
+//			setTypeName((TypeEntry) it.next());
+//		}	
+//			
+//					
+//			//let us set a name for the SchemaTypes as well this way we
+//			//do not need to get the type entry back from schema type
+//
+//			// Need to javify the ref'd TypeEntry if it was not
+//			// already processed
+////			if (tEntry.getName() == null) {
+////				// Get the QName of the ref'd TypeEntry, which
+////				// is will be used to javify the name
+////				QName typeQName = tEntry.getQName();
+////				if ((typeQName.getLocalPart().
+////					 indexOf(SymbolTable.ANON_TOKEN) < 0)) {
+////					// Normal Case: The ref'd type is not anonymous
+////					// Simply construct the java name from
+////					// the qName
+////
+////					javafyname = emitter.getJavaName(typeQName);
+////					tEntry.setName(javafyname);
+////					//set the value to the schematype as well:)
+////					setName(tEntry.getQName(),javafyname,symbolTable);
+////				} else {
+////					// This is an anonymous type name.
+////					// Axis uses '>' as a nesting token to generate
+////					// unique qnames for anonymous types.
+////					// Only consider the localName after the last '>' 
+////					// when generating the java name
+////                            
+////                            
+//////					  String localName = typeQName.getLocalPart();
+//////					  localName = 
+//////						  localName.substring(
+//////							  localName.lastIndexOf(
+//////								  SymbolTable.ANON_TOKEN)+1);
+//////					  typeQName = new QName(typeQName.getNamespaceURI(), 
+//////											localName);
+////                                                  
+////				   String localName = typeQName.getLocalPart();
+////
+////				   // Check to see if this is an anonymous type,
+////				   // if it is, replace Axis' ANON_TOKEN with
+////				   // an underscore to make sure we don't run
+////				   // into name collisions with similarly named
+////				   // non-anonymous types
+////				   StringBuffer sb = new StringBuffer(localName);
+////				   int aidx = -1;
+////				   while (
+////					 (aidx = sb.toString().indexOf(
+////					   SymbolTable.ANON_TOKEN)) > -1) {
+////						 sb.replace(aidx, aidx+SymbolTable.ANON_TOKEN.length(), "_");
+////				   }
+////				   localName = sb.toString();
+////
+////				   typeQName = new QName(typeQName.getNamespaceURI(),
+////										 localName);
+////
+////					// If there is already an existing type,
+////					// there will be a collision.  
+////					// If there is an existing anon type, 
+////					// there will be a  collision.  
+////					// In both cases, mangle the name.
+////					symbolTable.getType(typeQName);
+////					if (anonQNames.get(typeQName) != null) {
+////						localName += "Type" + uniqueNum++;
+////						typeQName = 
+////							new QName(typeQName.getNamespaceURI(),
+////									  localName);
+////					} 
+////					anonQNames.put(typeQName, typeQName);
+//
+//					// Now set the name with the constructed qname
+////					javafyname = emitter.getJavaName(typeQName);
+////      			tEntry.setName(javafyname);
+////					set the name to schema type as well
+////					setName(tEntry.getQName(),javafyname,symbolTable);
+////				} 
+////			}
+//			// Set the entry with the same name as the ref'd entry
+//			// but add the appropriate amount of dimensions		
+////			javafyname = tEntry.getName() + dims;
+////			tEntry.setName(javafyname);
+////			//set the name to schema type as well
+////			setName(tEntry.getQName(),javafyname,symbolTable);
+////		}
+//		System.out.println(
+//			"--------------------DUMPING JAXME----------------");
+//		it = symbolTable.getAllSchemaTypes();
+//		while (it.hasNext()) {
+//			SchemaType type = (SchemaType)it.next();
+//			if (symbolTable.isInbuildType(type.getQName()))
+//				System.out.println(type.toString());
+//		}
+//		System.out.println(
+//			"--------------------DUMPING JAXME----------------");
+//
+//
+//	} // javifyNames
+	
+

@@ -52,28 +52,46 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-package org.apache.axis.wsdl.gen;
 
-import java.io.IOException;
+package org.apache.axis.wsdl.jaxme;
+import org.apache.ws.jaxme.xs.XSParser;
+import org.apache.ws.jaxme.xs.parser.XSContext;
+import org.apache.ws.jaxme.xs.xml.XsObject;
+import org.apache.ws.jaxme.xs.xml.impl.XsTAttributeImpl;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
 
 /**
- * This is the interface for all writers.  All writers, very simply, must
- * support a write method.
- * <p/>
- * Writer and WriterFactory are part of the Writer framework.  Folks who want
- * to use the emitter to generate stuff from WSDL should do 3 things:
- * 1.  Write implementations of the Writer interface, one each for PortType,
- * Binding, Service, and Type.  These implementations generate the stuff
- * for each of these WSDL types.
- * 2.  Write an implementation of the WriterFactory interface that returns
- * instantiations of these Writer implementations as appropriate.
- * 3.  Implement a class with a main method (like Wsdl2java) that instantiates
- * an emitter and passes it the WriterFactory implementation
+ * These classes are to extend the JAXME XSParser
+ * @author Srinath Perera(hemapani@opensource.lk)
  */
-public interface Generator {
+public class AxisXsTAttribute extends XsTAttributeImpl{
+	private AxisAttributeImpl attributes;
 
-    /**
-     * Generate something.
-     */
-    public void generate() throws IOException;
+	protected AxisXsTAttribute(XsObject pParent,XSContext context) {
+	  super(pParent);
+	  attributes = new AxisAttributeImpl(context);
+	}
+
+	public Attributes getOpenAttributes() {
+	  return attributes;
+	}
+
+	/** <p>This method receives all the attributes, including those from the
+	 * XML schema namespace. The method refuses to handle the attribute, if
+	 * it has the XML schema namespace by returning the value false. Otherwise,
+	 * the attribute is added to the list returned by {@link #getOpenAttributes()}
+	 * and the value true is returned.</p>
+	 */
+	public boolean setAttribute(String pQName, String pNamespaceURI, String pLocalName, String pValue)
+		throws SAXException {
+	  if (pNamespaceURI == null  ||  "".equals(pNamespaceURI)) {
+		return false;
+	  } else if (XSParser.XML_SCHEMA_URI.equals(pNamespaceURI)) {
+		throw new IllegalStateException("Unknown attribute in " + getClass().getName() + ": " + pQName);
+	  }
+	  attributes.addAttribute(pNamespaceURI, pLocalName,pQName,"CDATA", pValue);
+	  return true;
+	}
+
 }

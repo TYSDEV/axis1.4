@@ -60,12 +60,12 @@ import org.apache.axis.enum.Use;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.wsdl.symbolTable.BindingEntry;
-import org.apache.axis.wsdl.symbolTable.CollectionTE;
-import org.apache.axis.wsdl.symbolTable.Element;
 import org.apache.axis.wsdl.symbolTable.FaultInfo;
 import org.apache.axis.wsdl.symbolTable.MimeInfo;
 import org.apache.axis.wsdl.symbolTable.Parameter;
 import org.apache.axis.wsdl.symbolTable.Parameters;
+import org.apache.axis.wsdl.symbolTable.SchemaElement;
+import org.apache.axis.wsdl.symbolTable.SchemaType;
 import org.apache.axis.wsdl.symbolTable.SymbolTable;
 import org.apache.axis.wsdl.symbolTable.TypeEntry;
 import org.xml.sax.SAXException;
@@ -168,468 +168,381 @@ public class JavaStubWriter extends JavaClassWriter {
                 + bEntry.getDynamicVar(JavaBindingWriter.INTERFACE_NAME) + " ";
     }    // getImplementsText
 
-    /**
-     * Write the body of the binding's stub file.
-     * 
-     * @param pw 
-     * @throws IOException  
-     * @throws SAXException 
-     */
-    protected void writeFileBody(PrintWriter pw)
-            throws IOException, SAXException {
-
-        PortType portType = binding.getPortType();
-        HashSet types = getTypesInPortType(portType);
-        boolean hasMIME = Utils.hasMIME(bEntry);
-
-        if ((types.size() > 0) || hasMIME) {
-            pw.println(
-                    "    private java.util.Vector cachedSerClasses = new java.util.Vector();");
-            pw.println(
-                    "    private java.util.Vector cachedSerQNames = new java.util.Vector();");
-            pw.println(
-                    "    private java.util.Vector cachedSerFactories = new java.util.Vector();");
-            pw.println(
-                    "    private java.util.Vector cachedDeserFactories = new java.util.Vector();");
-        }
-
-        pw.println();
-        pw.println(
-                "    static org.apache.axis.description.OperationDesc [] _operations;");
-        pw.println();
-        writeOperationMap(pw);
-        pw.println();
-        pw.println("    public " + className
-                + "() throws org.apache.axis.AxisFault {");
-        pw.println("         this(null);");
-        pw.println("    }");
-        pw.println();
-        pw.println(
-                "    public " + className
-                + "(java.net.URL endpointURL, javax.xml.rpc.Service service) throws org.apache.axis.AxisFault {");
-        pw.println("         this(service);");
-        pw.println("         super.cachedEndpoint = endpointURL;");
-        pw.println("    }");
-        pw.println();
-        pw.println(
-                "    public " + className
-                + "(javax.xml.rpc.Service service) throws org.apache.axis.AxisFault {");
-        pw.println("        if (service == null) {");
-        pw.println(
-                "            super.service = new org.apache.axis.client.Service();");
-        pw.println("        } else {");
-        pw.println("            super.service = service;");
-        pw.println("        }");
-
-        // keep track of how many type mappings we write out
-        int typeMappingCount = 0;
-
-        if (types.size() > 0) {
-            Iterator it = types.iterator();
-
-            while (it.hasNext()) {
-                TypeEntry type = (TypeEntry) it.next();
-
-                // Note this same check is repeated in JavaDeployWriter.
-                // 1) Don't register types that are base (primitive) types.
-                // If the baseType != null && getRefType() != null this
-                // is a simpleType that must be registered.
-                // 2) Don't register the special types for collections
-                // (indexed properties) or elements
-                // 3) Don't register types that are not referenced
-                // or only referenced in a literal context.
-                if (((type.getBaseType() != null) && (type.getRefType() == null))
-                        || (type instanceof CollectionTE)
-                        || (type instanceof Element) || !type.isReferenced()
-                        || type.isOnlyLiteralReferenced()) {
-                    continue;
-                }
-
-                // Write out serializer declarations
-                if (typeMappingCount == 0) {
-                    writeSerializationDecls(
-                            pw, hasMIME, binding.getQName().getNamespaceURI());
-                }
-
-                // write the type mapping for this type
-                writeSerializationInit(pw, type);
-
-                // increase the number of type mappings count
-                typeMappingCount++;
-            }
-        }
-
-        // We need to write out the MIME mapping, even if we don't have
-        // any type mappings
-        if ((typeMappingCount == 0) && hasMIME) {
-            writeSerializationDecls(pw, hasMIME,
-                    binding.getQName().getNamespaceURI());
-
-            typeMappingCount++;
-        }
-
-        pw.println("    }");
-        pw.println();
-        pw.println(
-                "    private org.apache.axis.client.Call createCall() throws java.rmi.RemoteException {");
-        pw.println("        try {");
-        pw.println("            org.apache.axis.client.Call _call =");
-        pw.println(
-                "                    (org.apache.axis.client.Call) super.service.createCall();");
-        pw.println("            if (super.maintainSessionSet) {");
-        pw.println(
-                "                _call.setMaintainSession(super.maintainSession);");
-        pw.println("            }");
-        pw.println("            if (super.cachedUsername != null) {");
-        pw.println("                _call.setUsername(super.cachedUsername);");
-        pw.println("            }");
-        pw.println("            if (super.cachedPassword != null) {");
-        pw.println("                _call.setPassword(super.cachedPassword);");
-        pw.println("            }");
-        pw.println("            if (super.cachedEndpoint != null) {");
-        pw.println(
-                "                _call.setTargetEndpointAddress(super.cachedEndpoint);");
-        pw.println("            }");
-        pw.println("            if (super.cachedTimeout != null) {");
-        pw.println("                _call.setTimeout(super.cachedTimeout);");
-        pw.println("            }");
-        pw.println("            if (super.cachedPortName != null) {");
-        pw.println("                _call.setPortName(super.cachedPortName);");
-        pw.println("            }");
-        pw.println(
-                "            java.util.Enumeration keys = super.cachedProperties.keys();");
-        pw.println("            while (keys.hasMoreElements()) {");
-        pw.println(
-                "                java.lang.String key = (java.lang.String) keys.nextElement();");
-        pw.println(
-                "                _call.setProperty(key, super.cachedProperties.get(key));");
-        pw.println("            }");
-
-        if (typeMappingCount > 0) {
-            pw.println("            // " + Messages.getMessage("typeMap00"));
-            pw.println("            // " + Messages.getMessage("typeMap01"));
-            pw.println("            // " + Messages.getMessage("typeMap02"));
-            pw.println("            // " + Messages.getMessage("typeMap03"));
-            pw.println("            // " + Messages.getMessage("typeMap04"));
-            pw.println("            synchronized (this) {");
-            pw.println("                if (firstCall()) {");
-
-            // Hack alert - we need to establish the encoding style before we register type mappings due
-            // to the fact that TypeMappings key off of encoding style
-            pw.println("                    // "
-                    + Messages.getMessage("mustSetStyle"));
-
-            if (bEntry.hasLiteral()) {
-                pw.println("                    _call.setEncodingStyle(null);");
-            } else {
-                Iterator iterator =
-                        bEntry.getBinding().getExtensibilityElements().iterator();
-
-                while (iterator.hasNext()) {
-                    Object obj = iterator.next();
-
-                    if (obj instanceof SOAPBinding) {
-                        pw.println(
-                                "                    _call.setSOAPVersion(org.apache.axis.soap.SOAPConstants.SOAP11_CONSTANTS);");
-                        pw.println(
-                                "                    _call.setEncodingStyle(org.apache.axis.Constants.URI_SOAP11_ENC);");
-                    } else if (obj instanceof UnknownExtensibilityElement) {
-
-                        // TODO: After WSDL4J supports soap12, change this code
-                        UnknownExtensibilityElement unkElement =
-                                (UnknownExtensibilityElement) obj;
-                        QName name =
-                                unkElement.getElementType();
-
-                        if (name.getNamespaceURI().equals(
-                                Constants.URI_WSDL12_SOAP)
-                                && name.getLocalPart().equals("binding")) {
-                            pw.println(
-                                    "                    _call.setSOAPVersion(org.apache.axis.soap.SOAPConstants.SOAP12_CONSTANTS);");
-                            pw.println(
-                                    "                    _call.setEncodingStyle(org.apache.axis.Constants.URI_SOAP12_ENC);");
-                        }
-                    }
-                }
-            }
-
-            pw.println(
-                    "                    for (int i = 0; i < cachedSerFactories.size(); ++i) {");
-            pw.println(
-                    "                        java.lang.Class cls = (java.lang.Class) cachedSerClasses.get(i);");
-            pw.println(
-                    "                        javax.xml.namespace.QName qName =");
-            pw.println(
-                    "                                (javax.xml.namespace.QName) cachedSerQNames.get(i);");
-            pw.println(
-                    "                        java.lang.Class sf = (java.lang.Class)");
-            pw.println(
-                    "                                 cachedSerFactories.get(i);");
-            pw.println(
-                    "                        java.lang.Class df = (java.lang.Class)");
-            pw.println(
-                    "                                 cachedDeserFactories.get(i);");
-            pw.println(
-                    "                        _call.registerTypeMapping(cls, qName, sf, df, false);");
-            pw.println("                    }");
-            pw.println("                }");
-            pw.println("            }");
-        }
-
-        pw.println("            return _call;");
-        pw.println("        }");
-        pw.println("        catch (java.lang.Throwable t) {");
-        pw.println("            throw new org.apache.axis.AxisFault(\""
-                + Messages.getMessage("badCall01") + "\", t);");
-        pw.println("        }");
-        pw.println("    }");
-        pw.println();
-
-        List operations = binding.getBindingOperations();
-
-        for (int i = 0; i < operations.size(); ++i) {
-            BindingOperation operation = (BindingOperation) operations.get(i);
-            Parameters parameters =
-                    bEntry.getParameters(operation.getOperation());
-
-            // Get the soapAction from the <soap:operation>
-            String soapAction = "";
-            String opStyle = null;
-            Iterator operationExtensibilityIterator =
-                    operation.getExtensibilityElements().iterator();
-
-            for (; operationExtensibilityIterator.hasNext();) {
-                Object obj = operationExtensibilityIterator.next();
-
-                if (obj instanceof SOAPOperation) {
-                    soapAction = ((SOAPOperation) obj).getSoapActionURI();
-                    opStyle = ((SOAPOperation) obj).getStyle();
-
-                    break;
-                } else if (obj instanceof UnknownExtensibilityElement) {
-
-                    // TODO: After WSDL4J supports soap12, change this code
-                    UnknownExtensibilityElement unkElement =
-                            (UnknownExtensibilityElement) obj;
-                    QName name =
-                            unkElement.getElementType();
-
-                    if (name.getNamespaceURI().equals(Constants.URI_WSDL12_SOAP)
-                            && name.getLocalPart().equals("operation")) {
-                        if (unkElement.getElement().getAttribute("soapAction")
-                                != null) {
-                            soapAction = unkElement.getElement().getAttribute(
-                                    "soapAction");
-                        }
-
-                        opStyle = unkElement.getElement().getAttribute("style");
-                    }
-                }
-            }
-
-            Operation ptOperation = operation.getOperation();
-            OperationType type = ptOperation.getStyle();
-
-            // These operation types are not supported.  The signature
-            // will be a string stating that fact.
-            if ((type == OperationType.NOTIFICATION)
-                    || (type == OperationType.SOLICIT_RESPONSE)) {
-                pw.println(parameters.signature);
-                pw.println();
-            } else {
-                writeOperation(pw, operation, parameters, soapAction, opStyle,
-                        type == OperationType.ONE_WAY, i);
-            }
-        }
-    }    // writeFileBody
-
-    /**
-     * Method writeOperationMap
-     * 
-     * @param pw 
-     */
-    private void writeOperationMap(PrintWriter pw) {
-
-        List operations = binding.getBindingOperations();
-
-        pw.println("    static {");
-        pw.println(
-                "        _operations = new org.apache.axis.description.OperationDesc["
-                + operations.size() + "];");
-
-        for (int j = 0, k = 0; j < operations.size(); ++j) {
-            if ((j % OPERDESC_PER_BLOCK) == 0) {
-                k++;
-
-                pw.println("        _initOperationDesc" + k + "();");
-            }
-        }
-
-        for (int i = 0, k = 0; i < operations.size(); ++i) {
-            if ((i % OPERDESC_PER_BLOCK) == 0) {
-                k++;
-
-                pw.println("    }\n");
-                pw.println("    private static void _initOperationDesc" + k
-                        + "(){");
-                pw.println(
-                        "        org.apache.axis.description.OperationDesc oper;");
-            }
-
-            BindingOperation operation = (BindingOperation) operations.get(i);
-            Parameters parameters =
-                    bEntry.getParameters(operation.getOperation());
-
-            // Get the soapAction from the <soap:operation>
-            String opStyle = null;
-            Iterator operationExtensibilityIterator =
-                    operation.getExtensibilityElements().iterator();
-
-            for (; operationExtensibilityIterator.hasNext();) {
-                Object obj = operationExtensibilityIterator.next();
-
-                if (obj instanceof SOAPOperation) {
-                    opStyle = ((SOAPOperation) obj).getStyle();
-
-                    break;
-                } else if (obj instanceof UnknownExtensibilityElement) {
-
-                    // TODO: After WSDL4J supports soap12, change this code
-                    UnknownExtensibilityElement unkElement =
-                            (UnknownExtensibilityElement) obj;
-                    QName name =
-                            unkElement.getElementType();
-
-                    if (name.getNamespaceURI().equals(Constants.URI_WSDL12_SOAP)
-                            && name.getLocalPart().equals("operation")) {
-                        opStyle = unkElement.getElement().getAttribute("style");
-                    }
-                }
-            }
-
-            Operation ptOperation = operation.getOperation();
-            OperationType type = ptOperation.getStyle();
-
-            // These operation types are not supported.  The signature
-            // will be a string stating that fact.
-            if ((type == OperationType.NOTIFICATION)
-                    || (type == OperationType.SOLICIT_RESPONSE)) {
-                pw.println(parameters.signature);
-                pw.println();
-            }
-
-            String operName = operation.getName();
-            String indent = "        ";
-
-            pw.println(
-                    indent
-                    + "oper = new org.apache.axis.description.OperationDesc();");
-            pw.println(indent + "oper.setName(\"" + operName + "\");");
-
-            // loop over paramters and set up in/out params
-            for (int j = 0; j < parameters.list.size(); ++j) {
-                Parameter p = (Parameter) parameters.list.get(j);
-
-                // Get the QName representing the parameter type
-                QName paramType = Utils.getXSIType(p);
-
-                // Set the javaType to the name of the type
-                String javaType = null;
-
-                if (p.getMIMEInfo() != null) {
-                    MimeInfo mimeInfo = p.getMIMEInfo();
-
-                    javaType = JavaUtils.mimeToJava(mimeInfo.getType())
-                            + mimeInfo.getDimensions() + ".class, ";
-                } else {
-                    javaType = p.getType().getName();
-
-                    if (javaType != null) {
-                        javaType += ".class, ";
-                    } else {
-                        javaType = "null, ";
-                    }
-                }
-
-                // Get the text representing newing a QName for the name and type
-                String paramNameText = Utils.getNewQName(p.getQName());
-                String paramTypeText = Utils.getNewQName(paramType);
-
-                // Generate the addParameter call with the
-                // name qname, typeQName, optional javaType, and mode
-                boolean isInHeader = p.isInHeader();
-                boolean isOutHeader = p.isOutHeader();
-
-                pw.println("        oper.addParameter(" + paramNameText + ", "
-                        + paramTypeText + ", " + javaType
-                        + modeStrings[p.getMode()] + ", " + isInHeader
-                        + ", " + isOutHeader + ");");
-            }
-
-            // set output type
-            if (parameters.returnParam != null) {
-
-                // Get the QName for the return Type
-                QName returnType = Utils.getXSIType(parameters.returnParam);
-
-                // Get the javaType
-                String javaType = null;
-
-                if (parameters.returnParam.getMIMEInfo() != null) {
-                    MimeInfo mimeInfo = parameters.returnParam.getMIMEInfo();
-
-                    javaType = JavaUtils.mimeToJava(mimeInfo.getType())
-                            + mimeInfo.getDimensions();
-                } else {
-                    javaType = parameters.returnParam.getType().getName();
-                }
-
-                if (javaType == null) {
-                    javaType = "";
-                } else {
-                    javaType = javaType + ".class";
-                }
-
-                pw.println("        oper.setReturnType("
-                        + Utils.getNewQName(returnType) + ");");
-                pw.println("        oper.setReturnClass(" + javaType + ");");
-
-                QName returnQName = parameters.returnParam.getQName();
-
-                if (returnQName != null) {
-                    pw.println("        oper.setReturnQName("
-                            + Utils.getNewQName(returnQName) + ");");
-                }
-
-                if (parameters.returnParam.isOutHeader()) {
-                    pw.println("        oper.setReturnHeader(true);");
-                }
-            } else {
-                pw.println(
-                        "        oper.setReturnType(org.apache.axis.encoding.XMLType.AXIS_VOID);");
-            }
-
-            boolean hasMIME = Utils.hasMIME(bEntry, operation);
-            Style style = Style.getStyle(opStyle, bEntry.getBindingStyle());
-            Use use = bEntry.getInputBodyType(operation.getOperation());
-
-            if ((style == Style.DOCUMENT) && symbolTable.isWrapped()) {
-                style = Style.WRAPPED;
-            }
-
-            if (!hasMIME) {
-                pw.println("        oper.setStyle(" + styles.get(style) + ");");
-                pw.println("        oper.setUse(" + uses.get(use) + ");");
-            }
-
-            // Register fault/exception information for this operation
-            writeFaultInfo(pw, operation);
-            pw.println(indent + "_operations[" + i + "] = oper;");
-            pw.println("");
-        }
-
-        pw.println("    }");
-    }
+	/**
+	 * Write the body of the binding's stub file.
+	 */
+	protected void writeFileBody(PrintWriter pw) throws IOException{
+		PortType portType = binding.getPortType();
+
+		HashSet types = getTypesInPortType(portType);
+		boolean hasMIME = Utils.hasMIME(bEntry);
+		if (types.size() > 0  || hasMIME) {
+			pw.println("    private java.util.Vector cachedSerClasses = new java.util.Vector();");
+			pw.println("    private java.util.Vector cachedSerQNames = new java.util.Vector();");
+			pw.println("    private java.util.Vector cachedSerFactories = new java.util.Vector();");
+			pw.println("    private java.util.Vector cachedDeserFactories = new java.util.Vector();");
+		}
+		pw.println();
+
+		pw.println("    static org.apache.axis.description.OperationDesc [] _operations;");
+		pw.println();
+		writeOperationMap(pw);
+		pw.println();
+
+		pw.println("    public " + className + "() throws org.apache.axis.AxisFault {");
+		pw.println("         this(null);");
+		pw.println("    }");
+		pw.println();
+
+		pw.println("    public " + className + "(java.net.URL endpointURL, javax.xml.rpc.Service service) throws org.apache.axis.AxisFault {");
+		pw.println("         this(service);");
+		pw.println("         super.cachedEndpoint = endpointURL;");
+		pw.println("    }");
+		pw.println();
+
+		pw.println("    public " + className + "(javax.xml.rpc.Service service) throws org.apache.axis.AxisFault {");
+		pw.println("        if (service == null) {");
+		pw.println("            super.service = new org.apache.axis.client.Service();");
+		pw.println("        } else {");
+		pw.println("            super.service = service;");
+		pw.println("        }");
+
+		// keep track of how many type mappings we write out
+		int typeMappingCount = 0;
+		if (types.size() > 0) {
+			Iterator it = types.iterator();
+			while (it.hasNext()) {
+				TypeEntry type = (TypeEntry) it.next();
+				// Note this same check is repeated in JavaDeployWriter.
+
+				// 1) Don't register types that are base (primitive) types.
+				//    If the baseType != null && getRefType() != null this
+				//    is a simpleType that must be registered.
+				// 2) Don't register the special types for collections
+				//    (indexed properties) or elements
+				// 3) Don't register types that are not referenced
+				//    or only referenced in a literal context.
+//				  if ((type.getBaseType() != null && type.getRefType() == null) ||
+//					  type instanceof CollectionTE ||
+//					  type instanceof Element ||
+//					  !type.isReferenced() ||
+//					  type.isOnlyLiteralReferenced()) {
+//					  continue;
+//				  }
+				SchemaType stype = null;
+				if(type instanceof SchemaElement){
+					stype = ((SchemaElement)type).getType();
+				}else{
+					stype = ((SchemaType)type);
+				}
+				if(SymbolTable.isInbuildType(stype.getQName()) || stype.isArray() ||
+					!type.isReferenced() || type.isOnlyLiteralReferenced()) {
+					continue;	
+				}	
+
+				// Write out serializer declarations
+				if (typeMappingCount == 0) {
+					writeSerializationDecls(pw, hasMIME, binding.getQName().getNamespaceURI());
+				}
+
+				// write the type mapping for this type
+				writeSerializationInit(pw, type);
+
+				// increase the number of type mappings count
+				typeMappingCount++;
+			}
+		}
+		// We need to write out the MIME mapping, even if we don't have
+		// any type mappings
+		if (typeMappingCount == 0 && hasMIME) {
+			writeSerializationDecls(pw, hasMIME, binding.getQName().getNamespaceURI());
+			typeMappingCount++;
+		}
+
+		pw.println("    }");
+		pw.println();
+		pw.println("    private org.apache.axis.client.Call createCall() throws java.rmi.RemoteException {");
+		pw.println("        try {");
+		pw.println("            org.apache.axis.client.Call _call =");
+		pw.println("                    (org.apache.axis.client.Call) super.service.createCall();");
+		pw.println("            if (super.maintainSessionSet) {");
+		pw.println("                _call.setMaintainSession(super.maintainSession);");
+		pw.println("            }");
+		pw.println("            if (super.cachedUsername != null) {");
+		pw.println("                _call.setUsername(super.cachedUsername);");
+
+		pw.println("            }");
+		pw.println("            if (super.cachedPassword != null) {");
+		pw.println("                _call.setPassword(super.cachedPassword);");
+		pw.println("            }");
+		pw.println("            if (super.cachedEndpoint != null) {");
+		pw.println("                _call.setTargetEndpointAddress(super.cachedEndpoint);");
+		pw.println("            }");
+		pw.println("            if (super.cachedTimeout != null) {");
+		pw.println("                _call.setTimeout(super.cachedTimeout);");
+		pw.println("            }");
+		pw.println("            if (super.cachedPortName != null) {");
+		pw.println("                _call.setPortName(super.cachedPortName);");
+		pw.println("            }");
+		pw.println("            java.util.Enumeration keys = super.cachedProperties.keys();");
+		pw.println("            while (keys.hasMoreElements()) {");
+		pw.println("                java.lang.String key = (java.lang.String) keys.nextElement();");
+		pw.println("                _call.setProperty(key, super.cachedProperties.get(key));");
+		pw.println("            }");
+		if (typeMappingCount > 0) {
+			pw.println("            // " + Messages.getMessage("typeMap00"));
+			pw.println("            // " + Messages.getMessage("typeMap01"));
+			pw.println("            // " + Messages.getMessage("typeMap02"));
+			pw.println("            // " + Messages.getMessage("typeMap03"));
+			pw.println("            // " + Messages.getMessage("typeMap04"));
+			pw.println("            synchronized (this) {");
+			pw.println("                if (firstCall()) {");
+
+			// Hack alert - we need to establish the encoding style before we register type mappings due
+			// to the fact that TypeMappings key off of encoding style
+			pw.println("                    // "
+					+ Messages.getMessage("mustSetStyle"));
+			if (bEntry.hasLiteral()) {
+				pw.println("                    _call.setEncodingStyle(null);");
+			} else {
+				Iterator iterator = bEntry.getBinding().getExtensibilityElements().iterator();
+				while (iterator.hasNext()) {
+					Object obj = iterator.next();
+					if (obj instanceof SOAPBinding) {
+						pw.println("                    _call.setSOAPVersion(org.apache.axis.soap.SOAPConstants.SOAP11_CONSTANTS);");
+						pw.println("                    _call.setEncodingStyle(org.apache.axis.Constants.URI_SOAP11_ENC);");
+					} else if (obj instanceof UnknownExtensibilityElement) {
+						//TODO: After WSDL4J supports soap12, change this code
+						UnknownExtensibilityElement unkElement = (UnknownExtensibilityElement) obj;
+						QName name = unkElement.getElementType();
+						if(name.getNamespaceURI().equals(Constants.URI_WSDL12_SOAP) && 
+						   name.getLocalPart().equals("binding")){
+							pw.println("                    _call.setSOAPVersion(org.apache.axis.soap.SOAPConstants.SOAP12_CONSTANTS);");
+							pw.println("                    _call.setEncodingStyle(org.apache.axis.Constants.URI_SOAP12_ENC);");
+						}
+					}
+				}
+			}
+
+			pw.println("                    for (int i = 0; i < cachedSerFactories.size(); ++i) {");
+			pw.println("                        java.lang.Class cls = (java.lang.Class) cachedSerClasses.get(i);");
+			pw.println("                        javax.xml.namespace.QName qName =");
+			pw.println("                                (javax.xml.namespace.QName) cachedSerQNames.get(i);");
+			pw.println("                        java.lang.Class sf = (java.lang.Class)");
+			pw.println("                                 cachedSerFactories.get(i);");
+			pw.println("                        java.lang.Class df = (java.lang.Class)");
+			pw.println("                                 cachedDeserFactories.get(i);");
+			pw.println("                        _call.registerTypeMapping(cls, qName, sf, df, false);");
+			pw.println("                    }");
+			pw.println("                }");
+			pw.println("            }");
+		}
+		pw.println("            return _call;");
+		pw.println("        }");
+		pw.println("        catch (java.lang.Throwable t) {");
+		pw.println("            throw new org.apache.axis.AxisFault(\""
+				+ Messages.getMessage("badCall01") + "\", t);");
+		pw.println("        }");
+		pw.println("    }");
+		pw.println();
+
+		List operations = binding.getBindingOperations();
+		for (int i = 0; i < operations.size(); ++i) {
+			BindingOperation operation = (BindingOperation) operations.get(i);
+			Parameters parameters =
+					bEntry.getParameters(operation.getOperation());
+
+			// Get the soapAction from the <soap:operation>
+			String soapAction = "";
+			String opStyle = null;
+			Iterator operationExtensibilityIterator = operation.getExtensibilityElements().iterator();
+			for (; operationExtensibilityIterator.hasNext();) {
+				Object obj = operationExtensibilityIterator.next();
+				if (obj instanceof SOAPOperation) {
+					soapAction = ((SOAPOperation) obj).getSoapActionURI();
+					opStyle = ((SOAPOperation) obj).getStyle();
+					break;
+				} else if (obj instanceof UnknownExtensibilityElement) {
+					//TODO: After WSDL4J supports soap12, change this code
+					UnknownExtensibilityElement unkElement = (UnknownExtensibilityElement) obj;
+					QName name = unkElement.getElementType();
+					if(name.getNamespaceURI().equals(Constants.URI_WSDL12_SOAP) && 
+					   name.getLocalPart().equals("operation")){
+						if (unkElement.getElement().getAttribute("soapAction") != null) {
+							soapAction = unkElement.getElement().getAttribute("soapAction"); 
+						}
+						opStyle = unkElement.getElement().getAttribute("style");
+					}                    
+				}
+			}
+			Operation ptOperation = operation.getOperation();
+			OperationType type = ptOperation.getStyle();
+
+			// These operation types are not supported.  The signature
+			// will be a string stating that fact.
+			if (type == OperationType.NOTIFICATION
+					|| type == OperationType.SOLICIT_RESPONSE) {
+				pw.println(parameters.signature);
+				pw.println();
+			}
+			else {
+				writeOperation(pw, operation, parameters, soapAction, opStyle,
+						type == OperationType.ONE_WAY, i);
+			}
+		}
+	} // writeFileBody
+
+	private void writeOperationMap(PrintWriter pw) {
+		List operations = binding.getBindingOperations();
+		pw.println("    static {");
+		pw.println("        _operations = new org.apache.axis.description.OperationDesc[" +
+				operations.size() + "];");
+
+		for (int j = 0, k = 0; j < operations.size(); ++j) {
+			if((j%OPERDESC_PER_BLOCK) == 0) {
+				k++;
+				pw.println("        _initOperationDesc" + k + "();");
+			}
+		}
+		for (int i = 0, k = 0; i < operations.size(); ++i) {
+			if((i%OPERDESC_PER_BLOCK) == 0) {
+				k++;
+				pw.println("    }\n");
+				pw.println("    private static void _initOperationDesc" + k + "(){");
+				pw.println("        org.apache.axis.description.OperationDesc oper;");
+			}
+			BindingOperation operation = (BindingOperation) operations.get(i);
+			Parameters parameters =
+					bEntry.getParameters(operation.getOperation());
+
+			// Get the soapAction from the <soap:operation>
+			String opStyle = null;
+			Iterator operationExtensibilityIterator = operation.getExtensibilityElements().iterator();
+			for (; operationExtensibilityIterator.hasNext();) {
+				Object obj = operationExtensibilityIterator.next();
+				if (obj instanceof SOAPOperation) {
+					opStyle = ((SOAPOperation) obj).getStyle();
+					break;
+				} else if (obj instanceof UnknownExtensibilityElement) {
+					//TODO: After WSDL4J supports soap12, change this code
+					UnknownExtensibilityElement unkElement = (UnknownExtensibilityElement) obj;
+					QName name = unkElement.getElementType();
+					if(name.getNamespaceURI().equals(Constants.URI_WSDL12_SOAP) && 
+					   name.getLocalPart().equals("operation")){
+						opStyle = unkElement.getElement().getAttribute("style");
+					}                    
+				}
+			}
+			Operation ptOperation = operation.getOperation();
+			OperationType type = ptOperation.getStyle();
+
+			// These operation types are not supported.  The signature
+			// will be a string stating that fact.
+			if (type == OperationType.NOTIFICATION
+					|| type == OperationType.SOLICIT_RESPONSE) {
+				pw.println(parameters.signature);
+				pw.println();
+			}
+
+			String operName = operation.getName();
+			String indent = "        ";
+			pw.println(indent + "oper = new org.apache.axis.description.OperationDesc();");
+			pw.println(indent + "oper.setName(\"" + operName + "\");");
+
+			// loop over paramters and set up in/out params
+			for (int j = 0; j < parameters.list.size(); ++j) {
+				Parameter p = (Parameter) parameters.list.get(j);
+
+				// Get the QName representing the parameter type
+				QName paramType = Utils.getXSIType(p);
+
+				// Set the javaType to the name of the type
+				String javaType = null;
+				if (p.getMIMEInfo() != null) {
+					MimeInfo mimeInfo = p.getMIMEInfo();
+					javaType = JavaUtils.mimeToJava(mimeInfo.getType()) + mimeInfo.getDimensions() + ".class, ";
+				}
+				else {
+					javaType = p.getType().getName();
+					if (javaType != null) {
+						javaType += ".class, ";
+					} else {
+						javaType = "null, ";
+					}
+				}
+
+				// Get the text representing newing a QName for the name and type
+				String paramNameText = Utils.getNewQName(p.getQName());
+				String paramTypeText = Utils.getNewQName(paramType);
+
+				// Generate the addParameter call with the
+				// name qname, typeQName, optional javaType, and mode
+				boolean isInHeader = p.isInHeader();
+				boolean isOutHeader = p.isOutHeader();
+				pw.println("        oper.addParameter(" + paramNameText
+						   + ", " + paramTypeText + ", "
+						   + javaType + modeStrings[p.getMode()]
+						   + ", " + isInHeader + ", " + isOutHeader + ");");
+			}
+			// set output type
+			if (parameters.returnParam != null) {
+
+				// Get the QName for the return Type
+				QName returnType = Utils.getXSIType(parameters.returnParam);
+
+				// Get the javaType
+				String javaType = null;
+				if (parameters.returnParam.getMIMEInfo() != null) {
+					MimeInfo mimeInfo = parameters.returnParam.getMIMEInfo();
+					javaType = JavaUtils.mimeToJava(mimeInfo.getType()) + mimeInfo.getDimensions();
+				}
+				else {
+					javaType = parameters.returnParam.getType().getName();
+				}
+				if (javaType == null) {
+					javaType = "";
+				}
+				else {
+					javaType = javaType + ".class";
+				}
+				pw.println("        oper.setReturnType(" +
+
+						  Utils.getNewQName(returnType) + ");");
+				pw.println("        oper.setReturnClass("
+						   + javaType + ");");
+				QName returnQName = parameters.returnParam.getQName();
+				if (returnQName != null) {
+					pw.println("        oper.setReturnQName(" +
+							   Utils.getNewQName(returnQName) + ");");
+				}
+				if (parameters.returnParam.isOutHeader()) {
+					pw.println("        oper.setReturnHeader(true);");
+				}
+			}
+			else {
+				pw.println("        oper.setReturnType(org.apache.axis.encoding.XMLType.AXIS_VOID);");
+			}
+
+			boolean hasMIME = Utils.hasMIME(bEntry, operation);
+			Style style = Style.getStyle(opStyle, bEntry.getBindingStyle());
+			Use use = bEntry.getInputBodyType(operation.getOperation());
+			if (style == Style.DOCUMENT && symbolTable.isWrapped()) {
+				style = Style.WRAPPED;
+			}
+
+			if (!hasMIME) {
+				pw.println("        oper.setStyle(" + styles.get(style) + ");");
+				pw.println("        oper.setUse(" + uses.get(use) + ");");
+			}
+
+			// Register fault/exception information for this operation
+			writeFaultInfo(pw, operation);
+
+			pw.println(indent + "_operations[" + i + "] = oper;");
+			pw.println("");
+		}
+		pw.println("    }");
+	}
 
     /**
      * This method returns a set of all the TypeEntry in a given PortType.
@@ -639,7 +552,7 @@ public class JavaStubWriter extends JavaClassWriter {
      * @return 
      * @throws SAXException 
      */
-    private HashSet getTypesInPortType(PortType portType) throws SAXException {
+    private HashSet getTypesInPortType(PortType portType) {
 
         HashSet types = new HashSet();
         HashSet firstPassTypes = new HashSet();
@@ -837,197 +750,167 @@ public class JavaStubWriter extends JavaClassWriter {
         }
     }    // writeSerializationDecls
 
-    /**
-     * Method writeSerializationInit
-     * 
-     * @param pw   
-     * @param type 
-     */
-    private void writeSerializationInit(PrintWriter pw, TypeEntry type) {
+	private void writeSerializationInit(PrintWriter pw, TypeEntry type) {
 
-        QName qname = type.getQName();
+		QName qname = type.getQName();
 
-        pw.println("            qName = new javax.xml.namespace.QName(\""
-                + qname.getNamespaceURI() + "\", \"" + qname.getLocalPart()
-                + "\");");
-        pw.println("            cachedSerQNames.add(qName);");
-        pw.println("            cls = " + type.getName() + ".class;");
-        pw.println("            cachedSerClasses.add(cls);");
+		pw.println("            qName = new javax.xml.namespace.QName(\""
+				   + qname.getNamespaceURI() + "\", \"" + qname.getLocalPart()
+				   + "\");");
+		pw.println("            cachedSerQNames.add(qName);");
+		pw.println("            cls = " + type.getName() + ".class;");
+		pw.println("            cachedSerClasses.add(cls);");
+		if (type.getName().endsWith("[]")) {
+			pw.println("            cachedSerFactories.add(arraysf);");
+			pw.println("            cachedDeserFactories.add(arraydf);");
+///JAXME_REFACTOR//////////////////////////////////////////////////////////////////////            
+//		  } else if (type.getNode() != null &&
+//					 Utils.getEnumerationBaseAndValues(
+//					   type.getNode(), symbolTable) != null) {
+//TODO NEWCODE/////////////////////////////////////////////////////////////////////////////
+		 }else if(org.apache.axis.wsdl.symbolTable.Utils.isEnumeration(
+			 symbolTable.getSchemaType(type.getQName()))){
+//////////////////////////////////////////////////////////////////////////////                     	
+			pw.println("            cachedSerFactories.add(enumsf);");
+			pw.println("            cachedDeserFactories.add(enumdf);");
+		} else if (type.isSimpleType()) {
+			pw.println("            cachedSerFactories.add(simplesf);");
+			pw.println("            cachedDeserFactories.add(simpledf);");
+		} else if (type.getBaseType() != null) {
+			// serializers are not required for types derived from base types
+			// java type to qname mapping is anyway established by default
+			// note that we have to add null to the serfactories vector to
+			// keep the order of other entries, this is not going to screw
+			// up because if type mapping returns null for a serialization
+			// factory, it is assumed to be not-defined and the delegate
+			// will be checked, the end delegate is DefaultTypeMappingImpl
+			// that'll get it right with the base type name
+			pw.println("            cachedSerFactories.add(null);");
+			pw.println("            cachedDeserFactories.add(simpledf);");
+		} else {
+			pw.println("            cachedSerFactories.add(beansf);");
+			pw.println("            cachedDeserFactories.add(beandf);");
+		}
+		pw.println();
+	} // writeSerializationInit
 
-        if (type.getName().endsWith("[]")) {
-            pw.println("            cachedSerFactories.add(arraysf);");
-            pw.println("            cachedDeserFactories.add(arraydf);");
-        } else if ((type.getNode() != null) && (Utils.getEnumerationBaseAndValues(
-                type.getNode(), symbolTable) != null)) {
-            pw.println("            cachedSerFactories.add(enumsf);");
-            pw.println("            cachedDeserFactories.add(enumdf);");
-        } else if (type.isSimpleType()) {
-            pw.println("            cachedSerFactories.add(simplesf);");
-            pw.println("            cachedDeserFactories.add(simpledf);");
-        } else if (type.getBaseType() != null) {
+	/**
+	 * Write the stub code for the given operation.
+	 */
+	private void writeOperation(
+			PrintWriter pw,
+			BindingOperation operation,
+			Parameters parms,
+			String soapAction,
+			String opStyle,
+			boolean oneway,
+			int opIndex) {
 
-            // serializers are not required for types derived from base types
-            // java type to qname mapping is anyway established by default
-            // note that we have to add null to the serfactories vector to
-            // keep the order of other entries, this is not going to screw
-            // up because if type mapping returns null for a serialization
-            // factory, it is assumed to be not-defined and the delegate
-            // will be checked, the end delegate is DefaultTypeMappingImpl
-            // that'll get it right with the base type name
-            pw.println("            cachedSerFactories.add(null);");
-            pw.println("            cachedDeserFactories.add(simpledf);");
-        } else {
-            pw.println("            cachedSerFactories.add(beansf);");
-            pw.println("            cachedDeserFactories.add(beandf);");
-        }
+		writeComment(pw, operation.getDocumentationElement());
 
-        pw.println();
-    }    // writeSerializationInit
+		pw.println(parms.signature + " {");
+		pw.println("        if (super.cachedEndpoint == null) {");
+		pw.println("            throw new org.apache.axis.NoEndPointException();");
+		pw.println("        }");
+		pw.println("        org.apache.axis.client.Call _call = createCall();");
 
-    /**
-     * Write the stub code for the given operation.
-     * 
-     * @param pw         
-     * @param operation  
-     * @param parms      
-     * @param soapAction 
-     * @param opStyle    
-     * @param oneway     
-     * @param opIndex    
-     */
-    private void writeOperation(PrintWriter pw, BindingOperation operation,
-                                Parameters parms, String soapAction,
-                                String opStyle, boolean oneway, int opIndex) {
+		pw.println("        _call.setOperation(_operations[" + opIndex + "]);");
 
-        writeComment(pw, operation.getDocumentationElement());
-        pw.println(parms.signature + " {");
-        pw.println("        if (super.cachedEndpoint == null) {");
-        pw.println(
-                "            throw new org.apache.axis.NoEndPointException();");
-        pw.println("        }");
-        pw.println("        org.apache.axis.client.Call _call = createCall();");
-        pw.println("        _call.setOperation(_operations[" + opIndex + "]);");
+		// SoapAction
+		if (soapAction != null) {
+			pw.println("        _call.setUseSOAPAction(true);");
+			pw.println("        _call.setSOAPActionURI(\"" + soapAction + "\");");
+		}
 
-        // SoapAction
-        if (soapAction != null) {
-            pw.println("        _call.setUseSOAPAction(true);");
-            pw.println("        _call.setSOAPActionURI(\"" + soapAction
-                    + "\");");
-        }
+		boolean hasMIME = Utils.hasMIME(bEntry, operation);
 
-        boolean hasMIME = Utils.hasMIME(bEntry, operation);
+		// Encoding: literal or encoded use.
+		Use use = bEntry.getInputBodyType(operation.getOperation());
+		if (use == Use.LITERAL) {
+			// Turn off encoding
+			pw.println("        _call.setEncodingStyle(null);");
+			// turn off XSI types
+			pw.println("        _call.setProperty(org.apache.axis.client.Call.SEND_TYPE_ATTR, Boolean.FALSE);");
+		}
+		if (hasMIME || use == Use.LITERAL) {
+			// If it is literal, turn off multirefs.
+			//
+			// If there are any MIME types, turn off multirefs.
+			// I don't know enough about the guts to know why
+			// attachments don't work with multirefs, but they don't.
+			pw.println("        _call.setProperty(org.apache.axis.AxisEngine.PROP_DOMULTIREFS, Boolean.FALSE);");
+		}
 
-        // Encoding: literal or encoded use.
-        Use use = bEntry.getInputBodyType(operation.getOperation());
+		Style style = Style.getStyle(opStyle, bEntry.getBindingStyle());
+		if (style == Style.DOCUMENT && symbolTable.isWrapped()) {
+			style = Style.WRAPPED;
+		}
 
-        if (use == Use.LITERAL) {
+        
+		Iterator iterator = bEntry.getBinding().getExtensibilityElements().iterator();
+		while (iterator.hasNext()) {
+			Object obj = iterator.next();
+			if (obj instanceof SOAPBinding) {
+				pw.println("        _call.setSOAPVersion(org.apache.axis.soap.SOAPConstants.SOAP11_CONSTANTS);");
+			} else if (obj instanceof UnknownExtensibilityElement) {
+				//TODO: After WSDL4J supports soap12, change this code
+				UnknownExtensibilityElement unkElement = (UnknownExtensibilityElement) obj;
+				QName name = unkElement.getElementType();
+				if(name.getNamespaceURI().equals(Constants.URI_WSDL12_SOAP) && 
+				   name.getLocalPart().equals("binding")){
+					pw.println("        _call.setSOAPVersion(org.apache.axis.soap.SOAPConstants.SOAP12_CONSTANTS);");
+				}
+			}
+		}
+        
+		// Operation name
+		if (style == Style.WRAPPED) {
+			// We need to make sure the operation name, which is what we
+			// wrap the elements in, matches the Qname of the parameter
+			// element.
+			Map partsMap = operation.getOperation().getInput().getMessage().getParts();
+			Part p = (Part)partsMap.values().iterator().next();
+			QName q = p.getElementName();
+			pw.println("        _call.setOperationName(" + Utils.getNewQName(q) + ");" );
+		} else {
+			QName elementQName =
+				Utils.getOperationQName(operation, bEntry, symbolTable);
+			if (elementQName != null) {
+				pw.println("        _call.setOperationName(" +
+						Utils.getNewQName(elementQName) + ");" );
+			}
+		}
+		pw.println();
 
-            // Turn off encoding
-            pw.println("        _call.setEncodingStyle(null);");
+		// Set the headers
+		pw.println("        setRequestHeaders(_call);");
+        
+		// Set the attachments
+		pw.println("        setAttachments(_call);");
+        
+		// Set DIME flag if needed 
+		if(bEntry.isOperationDIME(operation.getOperation().getName())) {
+			pw.println("        _call.setProperty(_call.ATTACHMENT_ENCAPSULATION_FORMAT, _call.ATTACHMENT_ENCAPSULATION_FORMAT_DIME);");
+		}
 
-            // turn off XSI types
-            pw.println(
-                    "        _call.setProperty(org.apache.axis.client.Call.SEND_TYPE_ATTR, Boolean.FALSE);");
-        }
+		// Invoke the operation
+		if (oneway) {
+			pw.print("        _call.invokeOneWay(");
+		}
+		else {
+			pw.print("        java.lang.Object _resp = _call.invoke(");
+		}
+		pw.print("new java.lang.Object[] {");
+		writeParameters(pw, parms);
+		pw.println("});");
+		pw.println();
 
-        if (hasMIME || (use == Use.LITERAL)) {
-
-            // If it is literal, turn off multirefs.
-            // 
-            // If there are any MIME types, turn off multirefs.
-            // I don't know enough about the guts to know why
-            // attachments don't work with multirefs, but they don't.
-            pw.println(
-                    "        _call.setProperty(org.apache.axis.AxisEngine.PROP_DOMULTIREFS, Boolean.FALSE);");
-        }
-
-        Style style = Style.getStyle(opStyle, bEntry.getBindingStyle());
-
-        if ((style == Style.DOCUMENT) && symbolTable.isWrapped()) {
-            style = Style.WRAPPED;
-        }
-
-        Iterator iterator =
-                bEntry.getBinding().getExtensibilityElements().iterator();
-
-        while (iterator.hasNext()) {
-            Object obj = iterator.next();
-
-            if (obj instanceof SOAPBinding) {
-                pw.println(
-                        "        _call.setSOAPVersion(org.apache.axis.soap.SOAPConstants.SOAP11_CONSTANTS);");
-            } else if (obj instanceof UnknownExtensibilityElement) {
-
-                // TODO: After WSDL4J supports soap12, change this code
-                UnknownExtensibilityElement unkElement =
-                        (UnknownExtensibilityElement) obj;
-                QName name =
-                        unkElement.getElementType();
-
-                if (name.getNamespaceURI().equals(Constants.URI_WSDL12_SOAP)
-                        && name.getLocalPart().equals("binding")) {
-                    pw.println(
-                            "        _call.setSOAPVersion(org.apache.axis.soap.SOAPConstants.SOAP12_CONSTANTS);");
-                }
-            }
-        }
-
-        // Operation name
-        if (style == Style.WRAPPED) {
-
-            // We need to make sure the operation name, which is what we
-            // wrap the elements in, matches the Qname of the parameter
-            // element.
-            Map partsMap =
-                    operation.getOperation().getInput().getMessage().getParts();
-            Part p = (Part) partsMap.values().iterator().next();
-            QName q = p.getElementName();
-
-            pw.println("        _call.setOperationName(" + Utils.getNewQName(q)
-                    + ");");
-        } else {
-            QName elementQName = Utils.getOperationQName(operation, bEntry,
-                    symbolTable);
-
-            if (elementQName != null) {
-                pw.println("        _call.setOperationName("
-                        + Utils.getNewQName(elementQName) + ");");
-            }
-        }
-
-        pw.println();
-
-        // Set the headers
-        pw.println("        setRequestHeaders(_call);");
-
-        // Set the attachments
-        pw.println("        setAttachments(_call);");
-
-        // Set DIME flag if needed
-        if (bEntry.isOperationDIME(operation.getOperation().getName())) {
-            pw.println(
-                    "        _call.setProperty(_call.ATTACHMENT_ENCAPSULATION_FORMAT, _call.ATTACHMENT_ENCAPSULATION_FORMAT_DIME);");
-        }
-
-        // Invoke the operation
-        if (oneway) {
-            pw.print("        _call.invokeOneWay(");
-        } else {
-            pw.print("        java.lang.Object _resp = _call.invoke(");
-        }
-
-        pw.print("new java.lang.Object[] {");
-        writeParameters(pw, parms);
-        pw.println("});");
-        pw.println();
-
-        if (!oneway) {
-            writeResponseHandling(pw, parms);
-        }
-
-        pw.println("    }");
-        pw.println();
-    }    // writeOperation
+		if (!oneway) {
+			writeResponseHandling(pw, parms);
+		}
+		pw.println("    }");
+		pw.println();
+	} // writeOperation
 
     /**
      * Method writeParameters
@@ -1140,38 +1023,33 @@ public class JavaStubWriter extends JavaClassWriter {
         }
     }    // writeResponseHandling
 
-    /**
-     * writeOutputAssign
-     * 
-     * @param pw       
-     * @param target   (either "return" or "something ="
-     * @param type     (source TypeEntry)
-     * @param mimeInfo 
-     * @param source   (source String)
-     */
-    private void writeOutputAssign(PrintWriter pw, String target,
-                                   TypeEntry type, MimeInfo mimeInfo,
-                                   String source) {
+	/**
+	 * writeOutputAssign
+	 * @param target (either "return" or "something ="
+	 * @param type (source TypeEntry)
+	 * @param source (source String)
+	 *
+	 */
+	private void writeOutputAssign(PrintWriter pw, String target,
+								   TypeEntry type, MimeInfo mimeInfo,
+								   String source) {
+		if (type != null && type.getName() != null) {
+			// Try casting the output to the expected output.
+			// If that fails, use JavaUtils.convert()
+			pw.println("            try {");
 
-        if ((type != null) && (type.getName() != null)) {
+			pw.println("                " + target +
+					Utils.getResponseString(type, mimeInfo, source));
 
-            // Try casting the output to the expected output.
-            // If that fails, use JavaUtils.convert()
-            pw.println("            try {");
-            pw.println("                " + target
-                    + Utils.getResponseString(type, mimeInfo, source));
-            pw.println(
-                    "            } catch (java.lang.Exception _exception) {");
-            pw.println(
-                    "                " + target
-                    + Utils.getResponseString(
-                            type, mimeInfo,
-                            "org.apache.axis.utils.JavaUtils.convert(" + source + ", "
-                    + type.getName() + ".class)"));
-            pw.println("            }");
-        } else {
-            pw.println("              " + target
-                    + Utils.getResponseString(type, mimeInfo, source));
-        }
-    }
+			pw.println("            } catch (java.lang.Exception _exception) {");
+			pw.println("                " + target +
+					Utils.getResponseString(type, mimeInfo,
+					"org.apache.axis.utils.JavaUtils.convert(" +
+					source + ", " + type.getName() + ".class)"));
+			pw.println("            }");
+		} else {
+			pw.println("              " + target +
+					   Utils.getResponseString(type, mimeInfo, source));
+		}
+	}
 }    // class JavaStubWriter

@@ -242,19 +242,16 @@ public abstract class JavaClassWriter extends JavaWriter {
         pw.println();
     }    // writeHeaderComments
 
-    /**
-     * Write the package declaration statement.
-     * 
-     * @param pw 
-     * @throws IOException 
-     */
-    protected void writePackage(PrintWriter pw) throws IOException {
+	/**
+	 * Write the package declaration statement.
+	 */
+	protected void writePackage(PrintWriter pw) throws IOException {
+		if (getPackage() != null && getPackage().length()>0) {
+			pw.println("package " + getPackage() + ";");
+			pw.println();
+		}
 
-        if (getPackage() != null) {
-            pw.println("package " + getPackage() + ";");
-            pw.println();
-        }
-    }    // writePackage
+	} // writePackage
 
     /**
      * Return "public ".  If more modifiers are needed, this method must be

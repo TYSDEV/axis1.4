@@ -54,22 +54,16 @@
  */
 package org.apache.axis.wsdl.toJava;
 
-import org.apache.axis.Constants;
-import org.apache.axis.deployment.wsdd.WSDDConstants;
-import org.apache.axis.enum.Scope;
-import org.apache.axis.enum.Style;
-import org.apache.axis.enum.Use;
-import org.apache.axis.utils.JavaUtils;
-import org.apache.axis.utils.Messages;
-import org.apache.axis.wsdl.symbolTable.BindingEntry;
-import org.apache.axis.wsdl.symbolTable.CollectionTE;
-import org.apache.axis.wsdl.symbolTable.Element;
-import org.apache.axis.wsdl.symbolTable.FaultInfo;
-import org.apache.axis.wsdl.symbolTable.Parameter;
-import org.apache.axis.wsdl.symbolTable.Parameters;
-import org.apache.axis.wsdl.symbolTable.SymbolTable;
-import org.apache.axis.wsdl.symbolTable.TypeEntry;
-import org.xml.sax.SAXException;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Vector;
 
 import javax.wsdl.Binding;
 import javax.wsdl.BindingOperation;
@@ -81,16 +75,22 @@ import javax.wsdl.Service;
 import javax.wsdl.extensions.UnknownExtensibilityElement;
 import javax.wsdl.extensions.soap.SOAPBinding;
 import javax.xml.namespace.QName;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Vector;
+
+import org.apache.axis.Constants;
+import org.apache.axis.deployment.wsdd.WSDDConstants;
+import org.apache.axis.enum.Scope;
+import org.apache.axis.enum.Style;
+import org.apache.axis.enum.Use;
+import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
+import org.apache.axis.wsdl.symbolTable.BindingEntry;
+import org.apache.axis.wsdl.symbolTable.FaultInfo;
+import org.apache.axis.wsdl.symbolTable.Parameter;
+import org.apache.axis.wsdl.symbolTable.Parameters;
+import org.apache.axis.wsdl.symbolTable.SchemaElement;
+import org.apache.axis.wsdl.symbolTable.SchemaType;
+import org.apache.axis.wsdl.symbolTable.SymbolTable;
+import org.apache.axis.wsdl.symbolTable.TypeEntry;
 
 /**
  * This is Wsdl2java's deploy Writer.  It writes the deploy.wsdd file.
@@ -119,19 +119,15 @@ public class JavaDeployWriter extends JavaWriter {
         this.symbolTable = symbolTable;
     }    // ctor
 
-    /**
-     * Generate deploy.wsdd.  Only generate it if the emitter
-     * is generating server-side mappings.
-     * 
-     * @throws IOException  
-     * @throws SAXException 
-     */
-    public void generate() throws IOException, SAXException {
-
-        if (emitter.isServerSide()) {
-            super.generate();
-        }
-    }    // generate
+	/**
+	 * Generate deploy.wsdd.  Only generate it if the emitter
+	 * is generating server-side mappings.
+	 */
+	public void generate() throws IOException {
+		if (emitter.isServerSide()) {
+			super.generate();
+		}
+	} // generate
 
     /**
      * Return the fully-qualified name of the deploy.wsdd file
@@ -218,101 +214,100 @@ public class JavaDeployWriter extends JavaWriter {
         }
     }    // writeDeployServices
 
-    /**
-     * Write out bean mappings for each type
-     * 
-     * @param pw         
-     * @param binding    
-     * @param hasLiteral 
-     * @param hasMIME    
-     * @param use        
-     * @throws IOException 
-     */
-    protected void writeDeployTypes(
-            PrintWriter pw, Binding binding, boolean hasLiteral, boolean hasMIME, Use use)
-            throws IOException {
+	/**
+	 * Write out bean mappings for each type
+	 */
+	protected void writeDeployTypes(PrintWriter pw, 
+									Binding binding,
+									boolean hasLiteral, 
+									boolean hasMIME,
+									Use use) throws IOException {                                    	
+		Vector types = new Vector(symbolTable.getTypes());
 
-        Vector types = symbolTable.getTypes();
+		pw.println();
 
-        pw.println();
+		if (hasMIME) {
+			QName bQName = binding.getQName();
+			writeTypeMapping(pw, bQName.getNamespaceURI(), "DataHandler",
+					"javax.activation.DataHandler",
+					"org.apache.axis.encoding.ser.JAFDataHandlerSerializerFactory",
+					"org.apache.axis.encoding.ser.JAFDataHandlerDeserializerFactory",
+					use.getEncoding());
+		}
 
-        if (hasMIME) {
-            QName bQName = binding.getQName();
+		for (int i = 0; i < types.size(); ++i) {
+			TypeEntry type = (TypeEntry) types.elementAt(i);
 
-            writeTypeMapping(
-                    pw, bQName.getNamespaceURI(), "DataHandler",
-                    "javax.activation.DataHandler",
-                    "org.apache.axis.encoding.ser.JAFDataHandlerSerializerFactory",
-                    "org.apache.axis.encoding.ser.JAFDataHandlerDeserializerFactory",
-                    use.getEncoding());
-        }
+			// Note this same check is repeated in JavaStubWriter.
+			boolean process = true;
 
-        for (int i = 0; i < types.size(); ++i) {
-            TypeEntry type = (TypeEntry) types.elementAt(i);
+			// 1) Don't register types that are base (primitive) types.
+			//    If the baseType != null && getRefType() != null this
+			//    is a simpleType that must be registered.
+			// 2) Don't register the special types for collections
+			//    (indexed properties) or element types
+			// 3) Don't register types that are not referenced
+			//    or only referenced in a literal context.
+//			  if ((type.getBaseType() != null && type.getRefType() == null) ||
+//				  type instanceof CollectionTE ||
+//				  type instanceof Element ||
+//				  !type.isReferenced() ||
+//				  type.isOnlyLiteralReferenced()) {
+//				  process = false;
+//			  }
 
-            // Note this same check is repeated in JavaStubWriter.
-            boolean process = true;
+			SchemaType stype = null;
+			if(type instanceof SchemaElement){
+				stype = ((SchemaElement)type).getType();
+			}else{
+				stype = ((SchemaType)type);
+			}
+			if(SymbolTable.isInbuildType(stype.getQName()) || stype.isArray() ||
+				!type.isReferenced() || type.isOnlyLiteralReferenced()) {
+				continue;	
+			}	
 
-            // 1) Don't register types that are base (primitive) types.
-            // If the baseType != null && getRefType() != null this
-            // is a simpleType that must be registered.
-            // 2) Don't register the special types for collections
-            // (indexed properties) or element types
-            // 3) Don't register types that are not referenced
-            // or only referenced in a literal context.
-            if (((type.getBaseType() != null) && (type.getRefType() == null))
-                    || (type instanceof CollectionTE)
-                    || (type instanceof Element) || !type.isReferenced()
-                    || type.isOnlyLiteralReferenced()) {
-                process = false;
-            }
 
-            if (process) {
-                String namespaceURI = type.getQName().getNamespaceURI();
-                String localPart = type.getQName().getLocalPart();
-                String javaType = type.getName();
-                String serializerFactory;
-                String deserializerFactory;
-                String encodingStyle = "";
+			if (process) {
+				String namespaceURI = type.getQName().getNamespaceURI();
+				String localPart = type.getQName().getLocalPart();
+				String javaType = type.getName();
+				String serializerFactory;
+				String deserializerFactory;
+				String encodingStyle = "";
+				if (!hasLiteral) {
+					encodingStyle = use.getEncoding();
+				}
 
-                if (!hasLiteral) {
-                    encodingStyle = use.getEncoding();
-                }
-
-                if (javaType.endsWith("[]")) {
-                    serializerFactory =
-                            "org.apache.axis.encoding.ser.ArraySerializerFactory";
-                    deserializerFactory =
-                            "org.apache.axis.encoding.ser.ArrayDeserializerFactory";
-                } else if ((type.getNode() != null) && (Utils.getEnumerationBaseAndValues(
-                        type.getNode(), symbolTable) != null)) {
-                    serializerFactory =
-                            "org.apache.axis.encoding.ser.EnumSerializerFactory";
-                    deserializerFactory =
-                            "org.apache.axis.encoding.ser.EnumDeserializerFactory";
-                } else if (type.isSimpleType()) {
-                    serializerFactory =
-                            "org.apache.axis.encoding.ser.SimpleSerializerFactory";
-                    deserializerFactory =
-                            "org.apache.axis.encoding.ser.SimpleDeserializerFactory";
-                } else if (type.getBaseType() != null) {
-                    serializerFactory =
-                            "org.apache.axis.encoding.ser.SimpleSerializerFactory";
-                    deserializerFactory =
-                            "org.apache.axis.encoding.ser.SimpleDeserializerFactory";
-                } else {
-                    serializerFactory =
-                            "org.apache.axis.encoding.ser.BeanSerializerFactory";
-                    deserializerFactory =
-                            "org.apache.axis.encoding.ser.BeanDeserializerFactory";
-                }
-
-                writeTypeMapping(pw, namespaceURI, localPart, javaType,
-                        serializerFactory, deserializerFactory,
-                        encodingStyle);
-            }
-        }
-    }    // writeDeployTypes
+				if (javaType.endsWith("[]")) {
+					serializerFactory = "org.apache.axis.encoding.ser.ArraySerializerFactory";
+					deserializerFactory = "org.apache.axis.encoding.ser.ArrayDeserializerFactory";
+///JAXME_REFACTOR//////////////////////////////////////////////////////////////////////
+//				  } else if (type.getNode() != null &&
+//					 Utils.getEnumerationBaseAndValues(
+//					   type.getNode(), symbolTable) != null) {
+//TODO NEWCODE////////////////////////////////////////////////////////////////////////
+//find a test case for the enumeration types
+				}else if(org.apache.axis.wsdl.symbolTable.Utils.isEnumeration(
+					symbolTable.getSchemaType(type.getQName()))){
+/////////////////////////////////////////////////////////////////////////////////                    
+					serializerFactory = "org.apache.axis.encoding.ser.EnumSerializerFactory";
+					deserializerFactory = "org.apache.axis.encoding.ser.EnumDeserializerFactory";
+				} else if (type.isSimpleType()) {
+					serializerFactory = "org.apache.axis.encoding.ser.SimpleSerializerFactory";
+					deserializerFactory = "org.apache.axis.encoding.ser.SimpleDeserializerFactory";
+				} else if (type.getBaseType() != null) {
+					serializerFactory = "org.apache.axis.encoding.ser.SimpleSerializerFactory";
+					deserializerFactory = "org.apache.axis.encoding.ser.SimpleDeserializerFactory";
+				} else {
+					serializerFactory = "org.apache.axis.encoding.ser.BeanSerializerFactory";
+					deserializerFactory = "org.apache.axis.encoding.ser.BeanDeserializerFactory";
+				}
+				writeTypeMapping(pw, namespaceURI, localPart, javaType, serializerFactory,
+								 deserializerFactory, encodingStyle);
+				}
+		}
+	} //writeDeployTypes
 
     /**
      * Raw routine that writes out the typeMapping.
@@ -415,118 +410,97 @@ public class JavaDeployWriter extends JavaWriter {
         pw.println("  </service>");
     }    // writeDeployPort
 
-    /**
-     * Write out deployment instructions for given WSDL binding
-     * 
-     * @param pw     
-     * @param bEntry 
-     * @throws IOException 
-     */
-    protected void writeDeployBinding(PrintWriter pw, BindingEntry bEntry)
-            throws IOException {
+	/**
+	 * Write out deployment instructions for given WSDL binding
+	 */
+	protected void writeDeployBinding(PrintWriter pw, 
+									  BindingEntry bEntry) throws IOException {
+		Binding binding = bEntry.getBinding();
+		String className = bEntry.getName();
+		if (emitter.isSkeletonWanted())
+			className += "Skeleton";
+		else
+			className += "Impl";
 
-        Binding binding = bEntry.getBinding();
-        String className = bEntry.getName();
+		pw.println("      <parameter name=\"className\" value=\""
+						 + className + "\"/>");
 
-        if (emitter.isSkeletonWanted()) {
-            className += "Skeleton";
-        } else {
-            className += "Impl";
-        }
+		pw.println("      <parameter name=\"wsdlPortType\" value=\""
+						 + binding.getPortType().getQName().getLocalPart() + "\"/>");
 
-        pw.println("      <parameter name=\"className\" value=\"" + className
-                + "\"/>");
-        pw.println("      <parameter name=\"wsdlPortType\" value=\""
-                + binding.getPortType().getQName().getLocalPart() + "\"/>");
 
-        HashSet allowedMethods = new HashSet();
+		HashSet allowedMethods = new HashSet();
+		if (!emitter.isSkeletonWanted()) {
+			Iterator operationsIterator = binding.getBindingOperations().iterator();
+			for (; operationsIterator.hasNext();) {
+				BindingOperation bindingOper = (BindingOperation) operationsIterator.next();
+				Operation operation = bindingOper.getOperation();
+				OperationType type = operation.getStyle();
+				String javaOperName = JavaUtils.xmlNameToJava(operation.getName());
 
-        if (!emitter.isSkeletonWanted()) {
-            Iterator operationsIterator =
-                    binding.getBindingOperations().iterator();
+				// These operation types are not supported.  The signature
+				// will be a string stating that fact.
+				if (type == OperationType.NOTIFICATION
+						|| type == OperationType.SOLICIT_RESPONSE) {
+					continue;
+				}
 
-            for (; operationsIterator.hasNext();) {
-                BindingOperation bindingOper =
-                        (BindingOperation) operationsIterator.next();
-                Operation operation = bindingOper.getOperation();
-                OperationType type = operation.getStyle();
-                String javaOperName =
-                        JavaUtils.xmlNameToJava(operation.getName());
+				allowedMethods.add(javaOperName);
 
-                // These operation types are not supported.  The signature
-                // will be a string stating that fact.
-                if ((type == OperationType.NOTIFICATION)
-                        || (type == OperationType.SOLICIT_RESPONSE)) {
-                    continue;
-                }
+				// We pass "" as the namespace argument because we're just
+				// interested in the return type for now.
+				Parameters params =
+						symbolTable.getOperationParameters(operation, "", bEntry);
+				if (params != null) {
+                    
+					// Get the operation QName
+					QName elementQName = 
+						Utils.getOperationQName(bindingOper, bEntry, symbolTable);
 
-                allowedMethods.add(javaOperName);
+					// Get the operation's return QName and type
+					QName returnQName = null;
+					QName returnType = null;
+					if (params.returnParam != null) {
+						returnQName = params.returnParam.getQName();
+						returnType = Utils.getXSIType(params.returnParam);
+					}
 
-                // We pass "" as the namespace argument because we're just
-                // interested in the return type for now.
-                Parameters params =
-                        symbolTable.getOperationParameters(operation, "", bEntry);
+					// Get the operations faults
+					Map faultMap = bEntry.getFaults();
+					ArrayList faults = null; 
+					if (faultMap != null) {
+						faults = (ArrayList) faultMap.get(bindingOper);
+					}
+					// Write the operation metadata
+					writeOperation(pw, javaOperName, elementQName, 
+								   returnQName, returnType,
+								   params, binding.getQName(), faults);
+				}
+			}
+		}
 
-                if (params != null) {
+		pw.print("      <parameter name=\"allowedMethods\" value=\"");
+		if (allowedMethods.isEmpty()) {
+			pw.println("*\"/>");
+		}
+		else {
+			boolean first = true;
+			for (Iterator i = allowedMethods.iterator(); i.hasNext();) {
+				String method = (String) i.next();
+				if (first) {
+					pw.print(method);
+					first = false;
+				} else {
+					pw.print(" " + method);
+				}
+			}
+			pw.println("\"/>");
+		}
 
-                    // Get the operation QName
-                    QName elementQName = Utils.getOperationQName(bindingOper,
-                            bEntry, symbolTable);
-
-                    // Get the operation's return QName and type
-                    QName returnQName = null;
-                    QName returnType = null;
-
-                    if (params.returnParam != null) {
-                        returnQName = params.returnParam.getQName();
-                        returnType = Utils.getXSIType(params.returnParam);
-                    }
-
-                    // Get the operations faults
-                    Map faultMap = bEntry.getFaults();
-                    ArrayList faults = null;
-
-                    if (faultMap != null) {
-                        faults = (ArrayList) faultMap.get(bindingOper);
-                    }
-
-                    // Write the operation metadata
-                    writeOperation(pw, javaOperName, elementQName, returnQName,
-                            returnType, params, binding.getQName(),
-                            faults);
-                }
-            }
-        }
-
-        pw.print("      <parameter name=\"allowedMethods\" value=\"");
-
-        if (allowedMethods.isEmpty()) {
-            pw.println("*\"/>");
-        } else {
-            boolean first = true;
-
-            for (Iterator i = allowedMethods.iterator(); i.hasNext();) {
-                String method = (String) i.next();
-
-                if (first) {
-                    pw.print(method);
-
-                    first = false;
-                } else {
-                    pw.print(" " + method);
-                }
-            }
-
-            pw.println("\"/>");
-        }
-
-        Scope scope = emitter.getScope();
-
-        if (scope != null) {
-            pw.println("      <parameter name=\"scope\" value=\""
-                    + scope.getName() + "\"/>");
-        }
-    }    // writeDeployBinding
+		Scope scope = emitter.getScope();
+		if (scope != null)
+			pw.println("      <parameter name=\"scope\" value=\"" + scope.getName() + "\"/>");
+	} //writeDeployBinding
 
     /**
      * Raw routine that writes out the operation and parameters.

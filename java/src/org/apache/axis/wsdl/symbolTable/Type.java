@@ -74,18 +74,7 @@ public abstract class Type extends TypeEntry {
         super(pqName);
     }
 
-    /**
-     * Create a TypeEntry object for an xml construct that references a type that has
-     * not been defined yet.  Defer processing until refType is known.
-     * 
-     * @param pqName  
-     * @param refType 
-     * @param pNode   
-     * @param dims    
-     */
-    protected Type(QName pqName, TypeEntry refType, Node pNode, String dims) {
-        super(pqName, refType, pNode, dims);
-    }
+
 
     /**
      * Create a Type object for an xml construct that is not a base type
