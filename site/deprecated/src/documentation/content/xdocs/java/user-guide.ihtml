@@ -790,7 +790,7 @@ You typed : test me!
  &lt;/sequence&gt;
   &lt;/complexType&gt;
   &lt;element name="PurchaseOrder" type="POType"/&gt;
-&lt;/deployment&gt;
+&lt;/schema&gt;
 </PRE>
 
   <P>For a <B>document</B> style service, this would map to a
