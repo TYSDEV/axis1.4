@@ -96,7 +96,7 @@ public class SOAPFaultBuilder extends SOAPHandler implements Callback
     protected Object faultData = null;
 
     static {
-        fields.put(Constants.ELEM_FAULT_CODE, Constants.XSD_STRING);
+        fields.put(Constants.ELEM_FAULT_CODE, Constants.XSD_QNAME);
         fields.put(Constants.ELEM_FAULT_STRING, Constants.XSD_STRING);
         fields.put(Constants.ELEM_FAULT_ACTOR, Constants.XSD_STRING);
         fields.put(Constants.ELEM_FAULT_DETAIL, null);
@@ -252,14 +252,7 @@ public class SOAPFaultBuilder extends SOAPHandler implements Callback
     {
         String name = (String)hint;
         if (name.equals(Constants.ELEM_FAULT_CODE)) {
-            QName qname = context.getQNameFromString((String)value);
-            if (qname != null) {
-                //??when would QName make sense, this would be app specific
-                faultCode = qname;
-            } else {
-                //?? Where would namespace come from
-                faultCode = new QName("",(String) value);
-            }
+            faultCode = (QName)value;
         } else if (name.equals(Constants.ELEM_FAULT_STRING)) {
             faultString = (String) value;
         } else if (name.equals(Constants.ELEM_FAULT_ACTOR)) {

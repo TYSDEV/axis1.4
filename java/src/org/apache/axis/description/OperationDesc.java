@@ -379,10 +379,12 @@ public class OperationDesc {
      * Returns null if not found.
      */ 
     public FaultDesc getFaultByQName(QName qname) {
-        for (Iterator iterator = faults.iterator(); iterator.hasNext();) {
-            FaultDesc desc = (FaultDesc) iterator.next();
-            if (qname.equals(desc.getQName())) {
-                return desc;
+        if (faults != null) {
+            for (Iterator iterator = faults.iterator(); iterator.hasNext();) {
+                FaultDesc desc = (FaultDesc) iterator.next();
+                if (qname.equals(desc.getQName())) {
+                    return desc;
+                }
             }
         }
         return null;

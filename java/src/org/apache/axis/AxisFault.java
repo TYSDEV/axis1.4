@@ -146,7 +146,7 @@ public class AxisFault extends java.rmi.RemoteException {
     protected AxisFault(Exception target) {
         super ("", target);
 
-        setFaultCode( Constants.FAULT_SERVER_USER );
+        setFaultCodeAsString( Constants.FAULT_SERVER_USER );
         
         initFromException(target);
     }
@@ -154,7 +154,7 @@ public class AxisFault extends java.rmi.RemoteException {
     public AxisFault(String message)
     {
         super (message);
-        setFaultCode(Constants.FAULT_SERVER_GENERAL);
+        setFaultCodeAsString(Constants.FAULT_SERVER_GENERAL);
         setFaultString(message);
         initFromException(this);
     }
@@ -165,14 +165,14 @@ public class AxisFault extends java.rmi.RemoteException {
     public AxisFault()
     {
         super();
-        setFaultCode(Constants.FAULT_SERVER_GENERAL);     
+        setFaultCodeAsString(Constants.FAULT_SERVER_GENERAL);     
         initFromException(this);
     }
 
     public AxisFault (String message, Throwable t)
     {
         super (message, t);
-        setFaultCode(Constants.FAULT_SERVER_GENERAL);
+        setFaultCodeAsString(Constants.FAULT_SERVER_GENERAL);
         setFaultString(message);
     }
 
@@ -245,7 +245,7 @@ public class AxisFault extends java.rmi.RemoteException {
         faultCode = code ;
     }
 
-    public void setFaultCode(String code) {
+    public void setFaultCodeAsString(String code) {
         faultCode = new QName(Constants.NS_URI_AXIS, code);
     }
 
