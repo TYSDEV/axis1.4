@@ -62,7 +62,7 @@ import java.util.Iterator;
 import javax.xml.namespace.QName;
 
 import org.apache.axis.utils.Messages;
-import org.apache.axis.wsdl.symbolTable.ElementInfo;
+import org.apache.axis.wsdl.symbolTable.SchemaElement;
 import org.apache.axis.wsdl.symbolTable.SchemaType;
 import org.apache.axis.wsdl.symbolTable.SymbolTable;
 import org.apache.axis.wsdl.symbolTable.TypeEntry;
@@ -426,8 +426,8 @@ public class JavaBeanHelperWriter extends JavaClassWriter {
 						&& inheritedElements.containsKey(elementName))
 						continue;
 						
-					ElementInfo elementinfo = (ElementInfo)elements.get(elementName);
-					if ("any".equals(elementinfo.getName().getLocalPart())) 
+					SchemaElement elementinfo = (SchemaElement)elements.get(elementName);
+					if ("any".equals(elementinfo.getQName().getLocalPart())) 
 						continue;
 
 					String elemLocalName = elementName.getLocalPart();

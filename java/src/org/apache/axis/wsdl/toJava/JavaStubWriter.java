@@ -229,16 +229,23 @@ public class JavaStubWriter extends JavaClassWriter {
 //					  type.isOnlyLiteralReferenced()) {
 //					  continue;
 //				  }
-				SchemaType stype = null;
-				if(type instanceof SchemaElement){
-					stype = ((SchemaElement)type).getType();
-				}else{
-					stype = ((SchemaType)type);
-				}
-				if(SymbolTable.isInbuildType(stype.getQName()) || stype.isArray() ||
-					!type.isReferenced() || type.isOnlyLiteralReferenced()) {
-					continue;	
-				}	
+//////////////////////////////////////////////
+//				SchemaType stype = null;
+//				if(type instanceof SchemaElement){
+//					continue;
+//				}else{
+//					stype = ((SchemaType)type);
+//				}
+//				if(SymbolTable.isInbuildType(stype.getQName()) || stype.isArray() ||
+//					!type.isReferenced() || type.isOnlyLiteralReferenced()) {
+//					continue;	
+//				}	
+////////////////////////////////////////////////////////////////////////
+ 			 	if(SymbolTable.isInbuildType(type.getQName()) || 
+		 		 	!type.isReferenced() || type.isOnlyLiteralReferenced()) {
+		  			continue;	
+	  			}
+/////////////////////////////////////////////////////////////////////////
 
 				// Write out serializer declarations
 				if (typeMappingCount == 0) {
@@ -463,7 +470,7 @@ public class JavaStubWriter extends JavaClassWriter {
 					javaType = JavaUtils.mimeToJava(mimeInfo.getType()) + mimeInfo.getDimensions() + ".class, ";
 				}
 				else {
-					javaType = p.getType().getName();
+					javaType = p.getJavaName();
 					if (javaType != null) {
 						javaType += ".class, ";
 					} else {
@@ -497,7 +504,7 @@ public class JavaStubWriter extends JavaClassWriter {
 					javaType = JavaUtils.mimeToJava(mimeInfo.getType()) + mimeInfo.getDimensions();
 				}
 				else {
-					javaType = parameters.returnParam.getType().getName();
+					javaType = parameters.returnParam.getJavaName();
 				}
 				if (javaType == null) {
 					javaType = "";
@@ -940,7 +947,7 @@ public class JavaStubWriter extends JavaClassWriter {
                 }
 
                 if (p.getMIMEInfo() == null) {
-                    javifiedName = Utils.wrapPrimitiveType(p.getType(),
+                    javifiedName = Utils.wrapPrimitiveType(p.getTypeEntry(),
                             javifiedName);
                 }
 
@@ -970,7 +977,7 @@ public class JavaStubWriter extends JavaClassWriter {
             if (allOuts == 1) {
                 if (parms.returnParam != null) {
                     writeOutputAssign(pw, "return ",
-                            parms.returnParam.getType(),
+                            parms.returnParam.getTypeEntry(),
                             parms.returnParam.getMIMEInfo(), "_resp");
                 } else {
 
@@ -989,7 +996,7 @@ public class JavaStubWriter extends JavaClassWriter {
                     pw.println(
                             "            _output = _call.getOutputParams();");
                     writeOutputAssign(pw, javifiedName + ".value = ",
-                            p.getType(), p.getMIMEInfo(),
+                            p.getTypeEntry(), p.getMIMEInfo(),
                             "_output.get(" + qnameName + ")");
                 }
             } else {
@@ -1005,14 +1012,14 @@ public class JavaStubWriter extends JavaClassWriter {
 
                     if (p.getMode() != Parameter.IN) {
                         writeOutputAssign(pw, javifiedName + ".value = ",
-                                p.getType(), p.getMIMEInfo(),
+                                p.getTypeEntry(), p.getMIMEInfo(),
                                 "_output.get(" + qnameName + ")");
                     }
                 }
 
                 if (parms.returnParam != null) {
                     writeOutputAssign(pw, "return ",
-                            parms.returnParam.getType(),
+                            parms.returnParam.getTypeEntry(),
                             parms.returnParam.getMIMEInfo(), "_resp");
                 }
             }

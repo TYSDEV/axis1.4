@@ -406,10 +406,10 @@ public class Utils {
 			return;
 		}
 
-		// If all types are in the set, return
-		if (types.size() == symbolTable.getTypeEntryCount()) {
-			return;
-		}
+//		// If all types are in the set, return
+//		if (types.size() == symbolTable.getTypeEntryCount()) {
+//			return;
+//		}
         
 		// Process types derived from this type
 		if (derivedFlag) {
@@ -524,7 +524,6 @@ public class Utils {
 		stype = (SchemaType)type;
    else
 		stype = symbolTable.getSchemaType(type.getQName());
-   System.out.println(type.getQName());
    if(stype == null && type.getQName().getLocalPart().indexOf((int)'[')>0){
 		//TODO FIXTHIS this is becouse x[number] types (arrays)
 		//still the array handling have problems and it compansate by the 

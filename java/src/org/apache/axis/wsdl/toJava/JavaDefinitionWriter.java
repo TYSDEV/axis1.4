@@ -148,7 +148,6 @@ public class JavaDefinitionWriter implements Generator {
 				}
 			}
 			if (emitSimpleFault) {
-				System.out.println("fault = "+faultInfo.getQName());
 				try {
 					JavaFaultWriter writer = 
 							new JavaFaultWriter(emitter, 

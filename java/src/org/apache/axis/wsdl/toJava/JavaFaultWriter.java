@@ -129,7 +129,7 @@ public class JavaFaultWriter extends JavaClassWriter {
         // Write data members of the exception and getter methods for them
         for (int i = 0; i < params.size(); i++) {
             Parameter param = (Parameter) params.get(i);
-            String type = param.getType().getName();
+            String type = param.getJavaName();
             String variable = Utils.xmlNameToJava(param.getName());
 
             pw.println("    public " + type + " " + variable + ";");
@@ -155,7 +155,7 @@ public class JavaFaultWriter extends JavaClassWriter {
                 }
 
                 Parameter param = (Parameter) params.get(i);
-                String type = param.getType().getName();
+                String type = param.getJavaName();
                 String variable = Utils.xmlNameToJava(param.getName());
 
                 pw.print(type + " " + variable);
@@ -189,7 +189,7 @@ public class JavaFaultWriter extends JavaClassWriter {
             String variable = Utils.xmlNameToJava(param.getName());
 
             pw.println("        context.serialize(qname, null, "
-                    + Utils.wrapPrimitiveType(param.getType(), variable)
+                    + Utils.wrapPrimitiveType(param.getTypeEntry(), variable)
                     + ");");
         }
 

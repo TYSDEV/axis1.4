@@ -74,6 +74,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Vector;
 
 /**
  * This is Wsdl2java's TestCase writer.  It writes the <serviceName>TestCase.java file.
@@ -224,7 +225,7 @@ public class JavaTestCaseWriter extends JavaClassWriter {
             }
 
             if (params.returnParam != null) {
-                TypeEntry returnType = params.returnParam.getType();
+                TypeEntry returnType = params.returnParam.getTypeEntry();
 
                 pw.print("        " + indent);
                 pw.print(Utils.getParameterTypeName(params.returnParam));
@@ -252,17 +253,17 @@ public class JavaTestCaseWriter extends JavaClassWriter {
             pw.print(Utils.xmlNameToJava(op.getName()));
             pw.print("(");
 
-            Iterator iparam = params.list.iterator();
+            Vector iparam = params.list;
             boolean isFirst = true;
 
-            while (iparam.hasNext()) {
+            for (int i = iparam.size()-1;i>= 0 ;i--) {
                 if (isFirst) {
                     isFirst = false;
                 } else {
                     pw.print(", ");
                 }
 
-                Parameter param = (Parameter) iparam.next();
+                Parameter param = (Parameter) iparam.get(i);
                 String suffix = "";
 
                 // if we have an out or in/out, we are passing in a holder
@@ -270,7 +271,7 @@ public class JavaTestCaseWriter extends JavaClassWriter {
                     pw.print(
                             "new "
                             + Utils.holder(
-                                    param.getMIMEInfo(), param.getType(), emitter) + "(");
+                                    param.getMIMEInfo(), param.getTypeEntry(), emitter) + "(");
 
                     suffix = ")";
                 }

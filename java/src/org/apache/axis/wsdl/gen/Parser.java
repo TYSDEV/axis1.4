@@ -67,6 +67,7 @@ import org.apache.axis.utils.Messages;
 import org.apache.axis.wsdl.symbolTable.BindingEntry;
 import org.apache.axis.wsdl.symbolTable.MessageEntry;
 import org.apache.axis.wsdl.symbolTable.PortTypeEntry;
+import org.apache.axis.wsdl.symbolTable.SchemaElement;
 import org.apache.axis.wsdl.symbolTable.SchemaType;
 import org.apache.axis.wsdl.symbolTable.ServiceEntry;
 import org.apache.axis.wsdl.symbolTable.SymTabEntry;
@@ -444,7 +445,6 @@ public class Parser {
 
         // Generate bindings for types
         generateTypes(symbolTable);
-        System.out.println("types are sucessfully created ");
 
         Iterator it = symbolTable.getHashMap().values().iterator();
 
@@ -507,7 +507,29 @@ public class Parser {
 	 * start from here. 
 	 */
 	private void generateTypes(SymbolTable symbolTable)
+	
 		throws IOException,SAXException{
+			if(verbose){
+				//TODO JAXME_REFACTOR///////////////////
+				System.out.println(
+					"--------------------DUMPING JAXME----------------");
+				Iterator it = symbolTable.getAllSchemaTypes();
+				while (it.hasNext()) {
+				  SchemaType type = (SchemaType)it.next();
+				  if (!symbolTable.isInbuildType(type.getQName()))
+					  System.out.println(type);
+				}
+				System.out.println("------ ELEMENTS ------");
+				it = symbolTable.getElements();
+				while (it.hasNext()) {
+					SchemaElement type = (SchemaElement)it.next();
+					  System.out.println(type.getQName());
+				}
+				
+				System.out.println(
+					"--------------------DUMPING JAXME----------------");
+			}		
+
 		Vector types = new Vector(symbolTable.getTypes());
 		for (int i = 0; i < types.size(); ++i) {
 			TypeEntry type = (TypeEntry) types.elementAt(i);
@@ -527,8 +549,7 @@ public class Parser {
 			if(type.isReferenced()
 				&& isType
 				&& type.getBaseType() == null
-				&& !SymbolTable.isInbuildType(type.getQName())) {	
-				System.out.println("#################"+type.getQName());	
+				&& !SymbolTable.isInbuildType(type.getQName())) {		
 				Generator gen = genFactory.getGenerator(type, symbolTable);
 				gen.generate();
 			}

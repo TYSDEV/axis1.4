@@ -61,6 +61,7 @@ import java.util.Vector;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.wsdl.jaxme.JAXMEInternalException;
+import org.apache.axis.wsdl.symbolTable.SchemaType;
 import org.apache.axis.wsdl.symbolTable.SymbolTable;
 import org.apache.axis.wsdl.symbolTable.Type;
 import org.apache.axis.wsdl.symbolTable.TypeEntry;
@@ -330,7 +331,7 @@ public class JavaEnumTypeWriter extends JavaClassWriter {
 			 // Get the java name of the type
 			 String javaName = getClassName();
 	
-			 Type baseEType = symbolTable.getType(typeEnum.getQName());
+			 Type baseEType = symbolTable.getType(((SchemaType)typeEnum).getRestrictionBase());
 			
 			 // TODO :: Check for whether type is simple is unneccesary
 			
@@ -357,7 +358,7 @@ public class JavaEnumTypeWriter extends JavaClassWriter {
 			
 			 // Create a list of the literal values.
 			 Vector values = new Vector();
-			 for (int i=1; i < xsEnum.length; i++) {
+			 for (int i=0; i < xsEnum.length; i++) {
 				 String value = (String) xsEnum[i].getValue();
 	            
 				 if (baseClass.equals("java.lang.String")) {
@@ -485,6 +486,42 @@ public class JavaEnumTypeWriter extends JavaClassWriter {
 			 }
 	        
 			pw.println("    public java.lang.Object readResolve() throws java.io.ObjectStreamException { return fromValue(_value_);}");
+
+////////////////////////////////////////////////////////////////////			
+			pw.println("    public static org.apache.axis.encoding.Serializer getSerializer(");
+			pw.println("           java.lang.String mechType, ");
+			pw.println("           java.lang.Class _javaType,  ");
+			pw.println("           javax.xml.namespace.QName _xmlType) {");
+			pw.println("        return ");
+			pw.println("          new org.apache.axis.encoding.ser.EnumSerializer(");
+			pw.println("            _javaType, _xmlType);");
+			pw.println("    }");
+			pw.println("    public static org.apache.axis.encoding.Deserializer getDeserializer(");
+			pw.println("           java.lang.String mechType, ");
+			pw.println("           java.lang.Class _javaType,  ");
+			pw.println("           javax.xml.namespace.QName _xmlType) {");
+			pw.println("        return ");
+			pw.println("          new org.apache.axis.encoding.ser.EnumDeserializer(");
+			pw.println("            _javaType, _xmlType);");
+			pw.println("    }");
+
+			 pw.println("    // " + Messages.getMessage("typeMeta"));
+			 pw.println("    private static org.apache.axis.description.TypeDesc typeDesc =");
+			 pw.println("        new org.apache.axis.description.TypeDesc(" +
+						Utils.getJavaLocalName(typeEnum.getName()) + ".class);");
+			 pw.println();
+
+			 pw.println("    static {");
+			 pw.println("        typeDesc.setXmlType(" + Utils.getNewQName(typeEnum.getQName()) + ");");
+			 pw.println("    }");
+			 pw.println("    /**");
+			 pw.println("     * " + Messages.getMessage("returnTypeMeta"));
+			 pw.println("     */");
+			 pw.println("    public static org.apache.axis.description.TypeDesc getTypeDesc() {");
+			 pw.println("        return typeDesc;");
+			 pw.println("    }");
+			 pw.println();
+///////////////////////////////////////////////////////////
 		 }catch(SAXException e){
 			 throw new JAXMEInternalException(e);
 		 }	

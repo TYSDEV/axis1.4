@@ -186,7 +186,7 @@ public class JavaImplWriter extends JavaClassWriter {
 
         // Print the return statement
         if (parms.returnParam != null) {
-            TypeEntry returnType = parms.returnParam.getType();
+            TypeEntry returnType = parms.returnParam.getTypeEntry();
 
             pw.print("        return ");
 
