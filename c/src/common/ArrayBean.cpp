@@ -87,7 +87,10 @@ ArrayBean::~ArrayBean()
 			int blocksize = GetArrayBlockSize(it);
 			if (m_value.cta->pObject)
 			{
-				m_value.cta->pDelFunct(m_value.cta->pObject, true, blocksize);
+				if (AxisEngine::m_bServer)
+				{
+					m_value.cta->pDelFunct(m_value.cta->pObject, true, blocksize);
+				}
 				/* make sure that the ComplexObjectHandler's destructor does not try to delete the objects again */
 				m_value.cta->pObject = NULL;
 			}

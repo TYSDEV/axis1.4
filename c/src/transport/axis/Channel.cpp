@@ -68,6 +68,7 @@
 #include <axis/client/transport/axis/Transport.hpp>
 
 using namespace std;
+char Channel::m_buf[AXIS_TRANSPORT_BUF_SIZE];
 /**
  * Create a Channel & initialize
  * 
@@ -243,13 +244,11 @@ const Channel& Channel::operator >> (std::string& msg)
 
 	int nToRead;
 	int nByteRecv = 0;
-	const int BUF_SIZE = 64;
-	char buf[BUF_SIZE];
 	
 	// read socket until we reach to the body
 	do	// Manage multiple chuncks of the message
 	{
-		if ((nByteRecv = recv(m_Sock, (char *) &buf, BUF_SIZE - 1, 0)) == SOCKET_ERROR)
+		if ((nByteRecv = recv(m_Sock, (char *) &m_buf, AXIS_TRANSPORT_BUF_SIZE - 1, 0)) == SOCKET_ERROR)
 		{
 			Error("Channel error while getting data.");
 			CloseChannel();
@@ -258,8 +257,8 @@ const Channel& Channel::operator >> (std::string& msg)
 		
 		if(nByteRecv)
 		{
-			buf[nByteRecv] = '\0';	// got a part of the message, so add it to form 
-			msg += buf;					// the whole message
+			m_buf[nByteRecv] = '\0';	// got a part of the message, so add it to form 
+			msg += m_buf;					// the whole message
 
 		}
 		else
@@ -277,7 +276,7 @@ const Channel& Channel::operator >> (std::string& msg)
 
 	do	// Manage multiple chuncks of the message
 	{
-		if ((nByteRecv = recv(m_Sock, (char *) &buf, BUF_SIZE - 1, 0)) == SOCKET_ERROR)
+		if ((nByteRecv = recv(m_Sock, (char *) &m_buf, AXIS_TRANSPORT_BUF_SIZE - 1, 0)) == SOCKET_ERROR)
 		{
 			Error("Channel error while getting data.");
 			CloseChannel();
@@ -287,8 +286,8 @@ const Channel& Channel::operator >> (std::string& msg)
 		if(nByteRecv)
 		{
 			nToRead -= nByteRecv;
-			buf[nByteRecv] = '\0';	// got a part of the message, so add it to form 
-			m_pTransportHandler->m_PayLoad += buf;					// the whole message
+			m_buf[nByteRecv] = '\0';	// got a part of the message, so add it to form 
+			m_pTransportHandler->m_PayLoad += m_buf;					// the whole message
 
 		}
 		else
