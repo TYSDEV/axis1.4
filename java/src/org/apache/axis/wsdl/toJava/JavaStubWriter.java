@@ -83,6 +83,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
+import java.util.ArrayList;
 
 /**
 * This is Wsdl2java's stub writer.  It writes the <BindingName>Stub.java
@@ -196,9 +197,6 @@ public class JavaStubWriter extends JavaClassWriter {
             typeMappingCount++;
         }
         
-        // Register fault/exception information
-        writeFaultInfo(pw, portType);
-
         pw.println("    }");
         pw.println();
         pw.println("    private org.apache.axis.client.Call createCall() throws java.rmi.RemoteException {");
@@ -403,76 +401,40 @@ public class JavaStubWriter extends JavaClassWriter {
     /**
      * This function writes the regsiterFaultInfo API calls
      */
-    private void writeFaultInfo(PrintWriter pw, PortType portType) throws IOException {
-        // Where we remember which QName we have already written out
-        Vector emitted = new Vector();
-        // Get all the faults from all the operations
-        List operations = portType.getOperations();
-        for (int i = 0; i < operations.size(); ++i) {
-            Operation operation = (Operation) operations.get(i);
-            Map faults = operation.getFaults();
-            BindingOperation bindOp = 
-                    binding.getBindingOperation(operation.getName(), null, null);
+    private void writeFaultInfo(PrintWriter pw, BindingOperation bindOp) throws IOException {
+        Map faultMap = bEntry.getFaults();
+        // Get the list of faults for this operation
+        ArrayList faults = (ArrayList) faultMap.get(bindOp);
+        
+        // check for no faults
+        if (faults == null) {
+            return;
+        }
+        // For each fault, register its information
+        for (Iterator faultIt = faults.iterator(); faultIt.hasNext();) {
+            JavaDefinitionWriter.FaultInfo info = (JavaDefinitionWriter.FaultInfo) faultIt.next();
             
-            if (faults != null) {
-                Iterator it = faults.values().iterator();
-                while (it.hasNext()) {
-                    Fault fault = (Fault) it.next();
-
-                    // get the name of the part - there can be only one!
-                    Message message = fault.getMessage();
-                    Map parts = message.getParts();
-                    // If no parts, skip it
-                    if (parts.size() == 0) {
-                        continue;
-                    }
-                    String partName = (String) parts.keySet().iterator().next();
-
-                    // Use the namespace in the binding for this fault
-                    // NOTE: we do the same thing when writing the fault in JavaFaultWriter
-                    BindingFault bindFault = bindOp.getBindingFault(fault.getName());
-                    if (bindFault == null) {
-                        throw new IOException(
-                                Messages.getMessage("noBindingFault", 
-                                  new String[] {fault.getName(), 
-                                                bindOp.getName(), 
-                                                binding.getQName().toString()}));
-                    }
-                    List extList = bindFault.getExtensibilityElements();
-                    String namespace = "";
-                    for (Iterator iterator = extList.iterator(); iterator.hasNext();) {
-                        Object o = (Object) iterator.next();
-                        if (o instanceof SOAPFault) {
-                            SOAPFault sf = (SOAPFault) o;
-                            namespace = sf.getNamespaceURI();
-                        }
-                    }
-
-                    // Now make a QName
-                    QName qname = new QName(namespace, partName);
-                    
-                    if (emitted.contains(qname)) {
-                        continue;
-                    }
-                    
-                    // Remember that we have already registered this name
-                    emitted.add(qname);
-                    
-                    // Get the Exception class name
-                    String className = Utils.getFullExceptionName(fault, symbolTable);
-                    
-                    // Get the xmlType of the exception data
-                    QName xmlType = Utils.getFaultDataType(fault, symbolTable);
-
-                    // output the registration API call
-                    pw.print("      ((org.apache.axis.client.Service)service).registerFaultInfo(");
-                     pw.print( Utils.getNewQName(qname) + ", ");
-                     pw.print( className + ".class, ");
-                     pw.print( Utils.getNewQName(xmlType) + ", ");
-                     pw.print( Utils.isFaultComplex(fault, symbolTable));
-                    pw.println(");");
-                }
+            Fault fault = info.fault;
+            QName qname = Utils.getFaultQName(fault, info.soapFault);
+            
+            // if no parts in fault, skip it!
+            if (qname == null) {
+                continue;
             }
+            
+            // Get the Exception class name
+            String className = Utils.getFullExceptionName(fault, symbolTable);
+            
+            // Get the xmlType of the exception data
+            QName xmlType = Utils.getFaultDataType(fault, symbolTable);
+            
+            // output the registration API call
+            pw.print("        _call.addFault(");
+            pw.print( Utils.getNewQName(qname) + ", ");
+            pw.print( className + ".class, ");
+            pw.print( Utils.getNewQName(xmlType) + ", ");
+            pw.print( Utils.isFaultComplex(fault, symbolTable));
+            pw.println(");");
         }
     }
     
@@ -640,6 +602,10 @@ public class JavaStubWriter extends JavaClassWriter {
         else {
             pw.println("        _call.setReturnType(org.apache.axis.encoding.XMLType.AXIS_VOID);");
         }
+
+        // Register fault/exception information for this operation
+        writeFaultInfo(pw, operation);
+
 
         // SoapAction
         if (soapAction != null) {

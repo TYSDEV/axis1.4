@@ -130,11 +130,6 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
      */
     private Hashtable transportImpls = new Hashtable();
 
-    /**
-     * A HashMap mapping faultDetails elements (QNames) to exceptions (Class)
-     */
-    private HashMap faultInfoMap = new HashMap();
-    
     
     Definition getWSDLDefinition() {
         return( wsdlDefinition );
@@ -775,43 +770,4 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
         return (Transport)transportImpls.get(url);
     }
 
-    /**
-     * Class that describes a fault, including:
-     * <ul>
-     * <li>QName of the fault</li>
-     * <li>java class of the fault</li>
-     * <li>Qname of the XML type</li>
-     * <li>flag indicating is this is a complex type fault</li>
-     * </ul> 
-     */ 
-    public class FaultInfo {
-        public QName qname;
-        public Class cls;
-        public QName xmlType;
-        public boolean isComplex;
-
-        public FaultInfo(QName qname, Class cls, QName xmlType, boolean isComplex) {
-            this.qname = qname;
-            this.cls = cls;
-            this.xmlType = xmlType;
-            this.isComplex = isComplex;
-        }
-    }
-    /**
-     * Look up QName of a faultDetail element 
-     * and return any registered Exception class
-     */ 
-    public FaultInfo getFaultInfoForQName(QName qname) {
-        FaultInfo fi = (FaultInfo)faultInfoMap.get(qname);
-        return fi;
-    }
-
-    /**
-     * register a QName of a faultDetail element 
-     * the Exception class it coresponds to and if it is a complex type
-     */ 
-    public void registerFaultInfo(QName qname, Class cls, QName xmlType, boolean isComplex) {
-        FaultInfo fi = new FaultInfo(qname, cls, xmlType, isComplex);
-        this.faultInfoMap.put(qname, fi);
-    }
 }

@@ -32,7 +32,7 @@ Copyright:
 </description>
 ==================================================================== -->
 
-<project name="Round4" default="main">
+<project name="Round4" default="compile">
 <property name="axis.home" location="../../../../.." />
 <property name="componentName" value="test/wsdl/interop4/groupH/simpleRPCenc" />
         &properties;
@@ -41,8 +41,13 @@ Copyright:
         &taskdefs_post_compile;
         &targets;
   <property name="root.dir" value="../../../../.."/>
+<target name="clean">
+    <echo message="Removing ${build.dir}/classes/${componentName} and ${build.dir}/work/${componentName}" />
+    <delete dir="${build.dir}/classes/${componentName}"/>
+    <delete dir="${build.dir}/work/${componentName}"/>
+</target>
 
-  <target name="main">
+  <target name="compile">
     <property name="testname" value="simpleRPCenc"/>
 
     <!-- generate skeletons -->
@@ -64,8 +69,11 @@ Copyright:
     <javac srcdir="${build.dir}/work"
       destdir="${build.dest}" debug="on">
       <classpath refid="classpath" />
-      <include name="test/wsdl/interop4/groupH/simpleRPCenc/groupH/*.java" />
+      <include name="test/wsdl/interop4/groupH/simpleRPCenc/*.java" />
     </javac>
   </target>
+<target name="run" >
+  <antcall target="execute-Component" />
+</target>
 
 </project>

@@ -62,6 +62,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
+import java.util.ArrayList;
 
 import javax.wsdl.Definition;
 import javax.wsdl.Fault;
@@ -71,11 +72,13 @@ import javax.wsdl.PortType;
 import javax.wsdl.BindingFault;
 import javax.wsdl.Binding;
 import javax.wsdl.BindingOperation;
+import javax.wsdl.extensions.soap.SOAPFault;
 
 import org.apache.axis.wsdl.gen.Generator;
 
 import org.apache.axis.wsdl.symbolTable.SymbolTable;
 import org.apache.axis.wsdl.symbolTable.MessageEntry;
+import org.apache.axis.wsdl.symbolTable.BindingEntry;
 import org.apache.axis.utils.Messages;
 
 /**
@@ -111,15 +114,22 @@ public class JavaDefinitionWriter implements Generator {
      * The fault name is derived from the fault message name per JAX-RPC
      */
     private void writeFaults() throws IOException {
-        HashMap faults = new HashMap();
+        ArrayList faults = new ArrayList();
         collectFaults(definition, faults);
+        
+        // Fault classes we're actually writing (for dup checking)
+        HashSet generatedFaults = new HashSet();
 
         // iterate over fault list, emitting code.
-        Iterator fi = faults.entrySet().iterator();
+        Iterator fi = faults.iterator();
         while (fi.hasNext()) {
-            Map.Entry entry = (Map.Entry) fi.next();
-            FaultInfo faultInfo = (FaultInfo) entry.getValue();
+            FaultInfo faultInfo = (FaultInfo) fi.next();
             Fault fault = faultInfo.fault;
+            String name = Utils.getFullExceptionName(fault, symbolTable);
+            if (generatedFaults.contains(name)) {
+                continue;
+            }
+            generatedFaults.add(name);
 
             // Generate the 'Simple' Faults.
             // The complexType Faults are automatically handled
@@ -129,8 +139,7 @@ public class JavaDefinitionWriter implements Generator {
             boolean emitSimpleFault = true;
             if (me != null) {
                 Boolean complexTypeFault = (Boolean)
-                    me.getDynamicVar(
-                        JavaGeneratorFactory.COMPLEX_TYPE_FAULT);
+                    me.getDynamicVar(JavaGeneratorFactory.COMPLEX_TYPE_FAULT);
                 if (complexTypeFault != null &&
                     complexTypeFault.booleanValue()) {
                     emitSimpleFault = false;
@@ -142,7 +151,7 @@ public class JavaDefinitionWriter implements Generator {
                             new JavaFaultWriter(emitter, 
                                                 symbolTable, 
                                                 faultInfo.fault, 
-                                                faultInfo.bindingFault); 
+                                                faultInfo.soapFault); 
                     // Go write the file
                     writer.generate();
                 } catch (DuplicateFileException dfe) {
@@ -156,16 +165,21 @@ public class JavaDefinitionWriter implements Generator {
     /**
      * Holder structure for fault information
      */ 
-    public class FaultInfo {
+    public static class FaultInfo {
+        public FaultInfo(Fault fault, SOAPFault soapFault) {
+            this.fault = fault;
+            this.soapFault = soapFault;
+        }
+
         public Fault fault;
-        public BindingFault bindingFault;
+        public SOAPFault soapFault;
     }
+
     /**
      * Collect all of the faults used in this definition.
      */
     private HashSet importedFiles = new HashSet();
-    private void collectFaults(Definition def, Map faults) throws IOException {
-        Vector faultList = new Vector();
+    private void collectFaults(Definition def, ArrayList faults) throws IOException {
         Map imports = def.getImports();
         Object[] importValues = imports.values().toArray();
         for (int i = 0; i < importValues.length; ++i) {
@@ -181,68 +195,25 @@ public class JavaDefinitionWriter implements Generator {
                 }
             }
         }
-        Map portTypes = def.getPortTypes();
-        Iterator pti = portTypes.values().iterator();
-        // collect referenced faults in a list
-        while (pti.hasNext()) {
-            PortType portType = (PortType) pti.next();
-            
-            // Don't emit faults that are not referenced.
-            if (symbolTable.getPortTypeEntry(portType.getQName()).
-                    isReferenced()) {
-                List operations = portType.getOperations();
-                for (int i = 0; i < operations.size(); ++i) {
-                    Operation operation = (Operation) operations.get(i);
-                    Map opFaults = operation.getFaults();
-                    Iterator fi = opFaults.values().iterator();
-                    while (fi.hasNext()) {
-                        Fault f = (Fault) fi.next();
-                        String name = Utils.getFullExceptionName(
-                                f,
-                                symbolTable);
-                        // prevent duplicates
-                        if (! faultList.contains(name) ) {
-                            faultList.add(name);
-                            FaultInfo faultInfo = new FaultInfo();
-                            faultInfo.fault = f;
-                            faults.put(f.getName(), faultInfo);
-                        }
-                    }
-                }
-            }
-        }
-        
-        // We now have a map of FullExceptionName -> FaultInfo
-        // Now we traverse the bindings to fill in more info
+
+        // Traverse the bindings to find faults
         Map bindings = def.getBindings();
         Iterator bindi = bindings.values().iterator();
         while (bindi.hasNext()) {
             Binding binding = (Binding) bindi.next();
-            
-            if (symbolTable.getBindingEntry(binding.getQName()).isReferenced()) {
-                List operations = binding.getBindingOperations();
-                for (int i = 0; i < operations.size(); ++i) {
-                    BindingOperation operation = (BindingOperation) operations.get(i);
-                    Map bindFaults = operation.getBindingFaults();
-                    Iterator fi = bindFaults.values().iterator();
-                    while (fi.hasNext()) {
-                        BindingFault bFault = (BindingFault) fi.next();
-                        FaultInfo faultInfo = (FaultInfo) faults.get(bFault.getName());
-                        if (faultInfo == null) {
-                            // This should NOT happen!
-                            throw new IOException(
-                                    Messages.getMessage("noBindingFault",
-                                      new String[] {bFault.getName(), 
-                                              operation.getName(), 
-                                              binding.getQName().toString()}));
-                        }
-                        faultInfo.bindingFault = bFault;
-                        // put the updated entry back in the map
-                        faults.put(bFault.getName(), faultInfo);
-                    } // while
-                } // for
-            } // if binding referenced
-        } // iterate bindings
+            BindingEntry entry = symbolTable.getBindingEntry(binding.getQName());
+            if (entry.isReferenced()) {
+                // use the map of bindingOperation -> fault info
+                // created in SymbolTable
+                Map faultMap = entry.getFaults();
+                Iterator it = faultMap.values().iterator();
+                while (it.hasNext()) {
+                    ArrayList list = (ArrayList) it.next();
+                    // Accumulate total list of faults
+                    faults.addAll(list);
+                }
+            }
+        }
     } // collectFaults
     
 } // class JavaDefinitionWriter

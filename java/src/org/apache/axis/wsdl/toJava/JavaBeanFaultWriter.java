@@ -55,8 +55,13 @@
 package org.apache.axis.wsdl.toJava;
 
 import java.util.Vector;
+import java.io.PrintWriter;
+import java.io.IOException;
 
 import org.apache.axis.wsdl.symbolTable.TypeEntry;
+import org.apache.axis.wsdl.symbolTable.Parameter;
+
+import javax.xml.namespace.QName;
 
 /**
  * This is Wsdl2java's Complex Faylt Writer.
@@ -111,4 +116,31 @@ public class JavaBeanFaultWriter extends JavaBeanWriter {
         return extendsText;
     }
 
+    /**
+     * Write the Exception serialization code
+     * 
+     * NOTE: This function is written in JavaFaultWriter.java also. 
+     */ 
+    protected void writeFileFooter(PrintWriter pw) throws IOException {
+        // PROBLEM: we need to have the Exception class serialize itself
+        // with the correct namespace, which can change depending on which
+        // operation the exception is thrown from.  This event seems unlikely
+        // so for the time being we will use the namespace from the first
+        // binding operation we find, which is passed in as construction time
+        // Note that bindingFault can be null if this fault is never referenced
+        // in a binding (WSDL2Java --all switch).
+
+        // method that serializes this exception (writeDetail)
+        pw.println();
+        pw.println("    /**");
+        pw.println("     * Writes the exception data to the faultDetails");
+        pw.println("     */");
+        pw.println("    public void writeDetails(javax.xml.namespace.QName qname, org.apache.axis.encoding.SerializationContext context) throws java.io.IOException {");
+/*        pw.println("        javax.xml.namespace.QName qname = new QName();");
+        pw.println("        context.serialize(qname, null, this);");
+*/
+        pw.println("    }");
+        
+        super.writeFileFooter(pw);
+    } // writeFileFooter
 } // class JavaBeanFaultWriter

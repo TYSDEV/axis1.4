@@ -1154,6 +1154,7 @@ public class ServiceDesc {
                 FaultDesc fault = new FaultDesc();
                 fault.setName(pkgAndClsName);
                 fault.setParameters(exceptionParams);
+                fault.setClassName(pkgAndClsName);
                 operation.addFault(fault);
             }
         }
