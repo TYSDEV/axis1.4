@@ -79,24 +79,26 @@ public class NoopFactory implements GeneratorFactory {
     public Generator getGenerator(Message message, SymbolTable symbolTable) {
         return new NoopGenerator();
     } // getGenerator
-    
+
     public Generator getGenerator(PortType portType, SymbolTable symbolTable) {
         return new NoopGenerator();
     } // getGenerator
-    
+
     public Generator getGenerator(Binding binding, SymbolTable symbolTable) {
         return new NoopGenerator();
     } // getGenerator
-    
+
     public Generator getGenerator(Service service, SymbolTable symbolTable) {
         return new NoopGenerator();
     } // getGenerator
-    
+
     public Generator getGenerator(TypeEntry type, SymbolTable symbolTable) {
         return new NoopGenerator();
     } // getGenerator
 
-    public Generator getGenerator(Definition definition, SymbolTable symbolTable) {
+    public Generator getGenerator(
+        Definition definition,
+        SymbolTable symbolTable) {
         return new NoopGenerator();
     } // getGenerator
 
@@ -109,21 +111,21 @@ public class NoopFactory implements GeneratorFactory {
     public BaseTypeMapping getBaseTypeMapping() {
         if (btm == null) {
             btm = new BaseTypeMapping() {
-                    TypeMapping defaultTM = DefaultSOAPEncodingTypeMappingImpl.create();
-                    public String getBaseName(QName qNameIn) {
-                        javax.xml.namespace.QName qName = 
-                            new javax.xml.namespace.QName(
-                              qNameIn.getNamespaceURI(),
-                              qNameIn.getLocalPart());
-                        Class cls = defaultTM.getClassForQName(qName);
-                        if (cls == null) {
-                            return null;
-                        }
-                        else {
-                            // RJB NOTE:  Javaism - bad bad bad
-                            return JavaUtils.getTextClassName(cls.getName());
-                        }
+                TypeMapping defaultTM =
+                    DefaultSOAPEncodingTypeMappingImpl.create();
+                public String getBaseName(QName qNameIn) {
+                    javax.xml.namespace.QName qName =
+                        new javax.xml.namespace.QName(
+                            qNameIn.getNamespaceURI(),
+                            qNameIn.getLocalPart());
+                    Class cls = defaultTM.getClassForQName(qName);
+                    if (cls == null) {
+                        return null;
+                    } else {
+                        // RJB NOTE:  Javaism - bad bad bad
+                        return JavaUtils.getTextClassName(cls.getName());
                     }
+                }
             };
         }
         return btm;

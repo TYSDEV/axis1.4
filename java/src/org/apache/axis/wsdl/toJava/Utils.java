@@ -57,10 +57,8 @@ package org.apache.axis.wsdl.toJava;
 import org.apache.axis.Constants;
 import org.apache.axis.enum.Style;
 import org.apache.axis.utils.JavaUtils;
-import org.apache.axis.wsdl.symbolTable.BaseType;
 import org.apache.axis.wsdl.symbolTable.BindingEntry;
 import org.apache.axis.wsdl.symbolTable.CollectionTE;
-import org.apache.axis.wsdl.symbolTable.CollectionType;
 import org.apache.axis.wsdl.symbolTable.Element;
 import org.apache.axis.wsdl.symbolTable.MessageEntry;
 import org.apache.axis.wsdl.symbolTable.MimeInfo;
@@ -136,24 +134,11 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
         // Anything else with [] gets its holder from the qname
         else if (typeValue.endsWith("[]")) {
             String name = emitter.getJavaName(type.getQName());
-            String packagePrefix = "";
-            // Make sure that holders for arrays of either primitive Java types
-            // or their wrappers are generated at a predictable location.
-            if (type instanceof CollectionType
-                    && type.getRefType() instanceof BaseType) {
-                String uri = type.getRefType().getQName().getNamespaceURI();
-                packagePrefix = emitter.getNamespaces().getCreate(uri, false);
-                if (packagePrefix == null) {
-                    packagePrefix = "";
-                } else {
-                    packagePrefix += '.';
-                }
-            }
             // This could be a special QName for a indexed property.
             // If so, change the [] to Array.
             name = JavaUtils.replace(name, "[]", "Array");
             name = addPackageName(name, "holders");
-            return packagePrefix + name + "Holder";
+            return name + "Holder";
         }
         // String also has a reserved holder
         else if (typeValue.equals("String")) {

@@ -58,6 +58,7 @@ import org.apache.axis.utils.Messages;
 import org.apache.axis.wsdl.gen.Generator;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.xml.sax.SAXException;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -131,7 +132,7 @@ public abstract class JavaWriter implements Generator {
     /**
      * Generate a file.
      */
-    public void generate() throws IOException {
+    public void generate() throws IOException,SAXException {
         String file = getFileName();
         if (isFileGenerated(file)) {
             throw new DuplicateFileException(Messages.getMessage("duplicateFile00", file), file);
@@ -206,7 +207,7 @@ public abstract class JavaWriter implements Generator {
      * This method must be implemented by a subclass.  This
      * is where the body of a file is generated.
      */
-    protected abstract void writeFileBody(PrintWriter pw) throws IOException;
+    protected abstract void writeFileBody(PrintWriter pw) throws IOException,SAXException;
 
     /**
      * You may want to override this method.  This default

@@ -323,7 +323,8 @@ public abstract class TypeEntry extends SymTabEntry implements Serializable {
         String refString = indent + "RefType:       null \n";
         if (refType != null)
             refString = indent + "RefType:\n" + refType.toString(indent + "  ") + "\n";
-        return super.toString(indent) + 
+		String val ;
+        val = super.toString(indent) + 
             indent + "Class:         " + this.getClass().getName() + "\n" + 
             indent + "Base?:         " + isBaseType + "\n" + 
             indent + "Undefined?:    " + undefined + "\n" + 
@@ -331,5 +332,27 @@ public abstract class TypeEntry extends SymTabEntry implements Serializable {
             indent + "Node:          " + getNode() + "\n" +
             indent + "Dims:          " + dims + "\n" +
             refString;
-    }
+
+    
+//		Iterator it1 = this.getAttributeNames();
+//		Iterator it2 = this.getElementNames();
+//		val = val
+//		+"isArray = " +this.isArray +"\n"
+//		+"name = " +this.name +"\n"
+//		+"jaxmetype = " +this.jaxmetype +"\n"
+//		+"attributes = " +"{";
+//			while(it1.hasNext()){
+//				QName qn = (QName)it1.next();
+//				val = val+ "(" + qn +"="+this.getAttributeTypeByName(qn)+")\n";
+//			}
+//		val = val+"}\n";
+//		val = val +"elements = " +"{\n";
+//			while(it2.hasNext()){
+//				QName qn = (QName)it2.next();
+//				val = val+ "(" + qn +"="+this.getElementTypeByName(qn)+")\n";
+//			}
+//		val = val +"}\n";	
+		return val;	
+	}	 
 };
+

@@ -61,9 +61,9 @@ import org.apache.axis.enum.Use;
 import javax.wsdl.Binding;
 import javax.wsdl.Operation;
 import javax.wsdl.extensions.soap.SOAPFault;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.ArrayList;
 import java.util.Set;
 
 /**
@@ -84,36 +84,41 @@ public class BindingEntry extends SymTabEntry {
     public static final int USE_LITERAL = 1;
 
     private Binding binding;
-    private int     bindingType;
-    private Style   bindingStyle;
+    private int bindingType;
+    private Style bindingStyle;
     private boolean hasLiteral;
     private HashMap attributes;
     // operation to parameter info (Parameter)
     private HashMap parameters = new HashMap();
-    
+
     // BindingOperation to faults (ArrayList of FaultBodyType)
     private HashMap faults = new HashMap();
 
     // This is a map of a map.  It's a map keyed on operation name whose values
     // are maps keyed on parameter name.  The ultimate values are simple Strings.
-    private Map     mimeTypes; 
+    private Map mimeTypes;
 
     // This is a map of a map.  It's a map keyed on operation name whose values
     // are maps keyed on part name.  The ultimate values are simple
     // Booleans.
-    private Map     headerParts;
+    private Map headerParts;
 
     // List of operations at need to use DIME
     private ArrayList dimeOps = new ArrayList();
-    
+
     /**
      * Construct a BindingEntry from a WSDL4J Binding object and the additional binding info:
      * binding type, binding style, whether there is any literal binding, and the attributes which
      * contain the input/output/fault body type information.
      */
-    public BindingEntry(Binding binding, int bindingType, Style bindingStyle,
-            boolean hasLiteral, HashMap attributes, Map mimeTypes,
-            Map headerParts) {
+    public BindingEntry(
+        Binding binding,
+        int bindingType,
+        Style bindingStyle,
+        boolean hasLiteral,
+        HashMap attributes,
+        Map mimeTypes,
+        Map headerParts) {
         super(binding.getQName());
         this.binding = binding;
         this.bindingType = bindingType;
@@ -121,20 +126,17 @@ public class BindingEntry extends SymTabEntry {
         this.hasLiteral = hasLiteral;
         if (attributes == null) {
             this.attributes = new HashMap();
-        }
-        else {
+        } else {
             this.attributes = attributes;
         }
         if (mimeTypes == null) {
             this.mimeTypes = new HashMap();
-        }
-        else {
+        } else {
             this.mimeTypes = mimeTypes;
         }
         if (headerParts == null) {
             this.headerParts = new HashMap();
-        }
-        else {
+        } else {
             this.headerParts = headerParts;
         }
     } // ctor
@@ -150,20 +152,20 @@ public class BindingEntry extends SymTabEntry {
      * operation outputBodyTypes = USE_ENCODED
      * operation faultBodyTypes = USE_ENCODED
      * mimeTypes = null
-
-The caller of this constructor should
+    
+    The caller of this constructor should
      * also call the various setter methods to fully fill out this object:
      * setBindingType, setBindingStyle, setHasLiteral, setAttribute,
      * setMIMEType.  
      */
     public BindingEntry(Binding binding) {
         super(binding.getQName());
-        this.binding          = binding;
-        this.bindingType      = TYPE_UNKNOWN;
-        this.bindingStyle     = Style.DOCUMENT;
-        this.hasLiteral       = false;
-        this.attributes       = new HashMap();
-        this.mimeTypes        = new HashMap();
+        this.binding = binding;
+        this.bindingType = TYPE_UNKNOWN;
+        this.bindingStyle = Style.DOCUMENT;
+        this.hasLiteral = false;
+        this.attributes = new HashMap();
+        this.mimeTypes = new HashMap();
         this.headerParts = new HashMap();
     } // ctor
 
@@ -183,7 +185,7 @@ The caller of this constructor should
 
     /**
      * Set the parameters for all operations
-     */ 
+     */
     public void setParameters(HashMap parameters) {
         this.parameters = parameters;
     }
@@ -196,8 +198,7 @@ The caller of this constructor should
         Map opMap = (Map) mimeTypes.get(operationName);
         if (opMap == null) {
             return null;
-        }
-        else {
+        } else {
             return (MimeInfo) opMap.get(parameterName);
         }
     } // getMIMEType
@@ -212,55 +213,57 @@ The caller of this constructor should
     /**
      * Set the mime mapping for the given parameter name.
      */
-    public void setMIMEInfo(String operationName, String parameterName, String type, String dims) {
+    public void setMIMEInfo(
+        String operationName,
+        String parameterName,
+        String type,
+        String dims) {
         Map opMap = (Map) mimeTypes.get(operationName);
         if (opMap == null) {
             opMap = new HashMap();
             mimeTypes.put(operationName, opMap);
         }
-        opMap.put(parameterName, new MimeInfo(type,dims));
+        opMap.put(parameterName, new MimeInfo(type, dims));
     } // setMIMEType
 
     /**
      * Mark the operation as a DIME operation
      * @param operationName
-     */ 
+     */
     public void setOperationDIME(String operationName) {
-        if(dimeOps.indexOf(operationName)==-1){
+        if (dimeOps.indexOf(operationName) == -1) {
             dimeOps.add(operationName);
         }
     }
-    
+
     /**
      * Check if this operation should use DIME
      * @param operationName
      * @return
-     */ 
-    public boolean isOperationDIME(String operationName){
-        return (dimeOps.indexOf(operationName)>=0);    
+     */
+    public boolean isOperationDIME(String operationName) {
+        return (dimeOps.indexOf(operationName) >= 0);
     }
-    
+
     /**
      * Is this part an input header part?.
      */
-    public boolean isInHeaderPart(String operationName,
-            String partName) {
+    public boolean isInHeaderPart(String operationName, String partName) {
         return (headerPart(operationName, partName) & IN_HEADER) > 0;
     } // isInHeaderPart
 
     /**
      * Is this part an output header part?.
      */
-    public boolean isOutHeaderPart(String operationName,
-            String partName) {
+    public boolean isOutHeaderPart(String operationName, String partName) {
         return (headerPart(operationName, partName) & OUT_HEADER) > 0;
     } // isInHeaderPart
 
     /**
      * Get the flag indicating what sort of header this part is.
      */
-    public static final int NO_HEADER  = 0;
-    public static final int IN_HEADER  = 1;
+    public static final int NO_HEADER = 0;
+    public static final int IN_HEADER = 1;
     public static final int OUT_HEADER = 2;
     /**
      * Get the mime mapping for the given part name.
@@ -269,13 +272,11 @@ The caller of this constructor should
      * @param partName
      * @return flag indicating kind of header
      */
-    private int headerPart(String operationName,
-            String partName) {
+    private int headerPart(String operationName, String partName) {
         Map opMap = (Map) headerParts.get(operationName);
         if (opMap == null) {
             return NO_HEADER;
-        }
-        else {
+        } else {
             Integer I = (Integer) opMap.get(partName);
             return I == null ? NO_HEADER : I.intValue();
         }
@@ -291,7 +292,10 @@ The caller of this constructor should
     /**
      * Set the header part mapping for the given part name.
      */
-    public void setHeaderPart(String operationName, String partName, int headerFlags) {
+    public void setHeaderPart(
+        String operationName,
+        String partName,
+        int headerFlags) {
         Map opMap = (Map) headerParts.get(operationName);
         if (opMap == null) {
             opMap = new HashMap();
@@ -361,8 +365,7 @@ The caller of this constructor should
         OperationAttr attr = (OperationAttr) attributes.get(operation);
         if (attr == null) {
             return Use.ENCODED; // should really create an exception for this.
-        }
-        else {
+        } else {
             return attr.getInputBodyType();
         }
     } // getInputBodyType
@@ -370,17 +373,17 @@ The caller of this constructor should
     /**
      * Set the input body type for the given operation.
      */
-     protected void setInputBodyType(Operation operation, Use inputBodyType) {
-         OperationAttr attr = (OperationAttr) attributes.get(operation);
-         if (attr == null) {
-             attr = new OperationAttr();
-             attributes.put(operation, attr);
-         }
-         attr.setInputBodyType(inputBodyType);
-         if (inputBodyType == Use.LITERAL) {
-             setHasLiteral(true);
-         }
-     } // setInputBodyType
+    protected void setInputBodyType(Operation operation, Use inputBodyType) {
+        OperationAttr attr = (OperationAttr) attributes.get(operation);
+        if (attr == null) {
+            attr = new OperationAttr();
+            attributes.put(operation, attr);
+        }
+        attr.setInputBodyType(inputBodyType);
+        if (inputBodyType == Use.LITERAL) {
+            setHasLiteral(true);
+        }
+    } // setInputBodyType
 
     /**
      * Get the output body type for the given operation.
@@ -389,8 +392,7 @@ The caller of this constructor should
         OperationAttr attr = (OperationAttr) attributes.get(operation);
         if (attr == null) {
             return Use.ENCODED; // should really create an exception for this.
-        }
-        else {
+        } else {
             return attr.getOutputBodyType();
         }
     } // getOutputBodyType
@@ -398,31 +400,33 @@ The caller of this constructor should
     /**
      * Set the output body type for the given operation.
      */
-     protected void setOutputBodyType(Operation operation, Use outputBodyType) {
-         OperationAttr attr = (OperationAttr) attributes.get(operation);
-         if (attr == null) {
-             attr = new OperationAttr();
-             attributes.put(operation, attr);
-         }
-         attr.setOutputBodyType(outputBodyType);
-         if (outputBodyType == Use.LITERAL) {
-             setHasLiteral(true);
-         }
-     } // setOutputBodyType
+    protected void setOutputBodyType(Operation operation, Use outputBodyType) {
+        OperationAttr attr = (OperationAttr) attributes.get(operation);
+        if (attr == null) {
+            attr = new OperationAttr();
+            attributes.put(operation, attr);
+        }
+        attr.setOutputBodyType(outputBodyType);
+        if (outputBodyType == Use.LITERAL) {
+            setHasLiteral(true);
+        }
+    } // setOutputBodyType
 
-     /**
-      * Set the body type for the given operation.  If input is true,
-      * then this is the inputBodyType, otherwise it's the outputBodyType.
-      * (NOTE:  this method exists to enable reusing some SymbolTable code.
-      */
-     protected void setBodyType(Operation operation, Use bodyType, boolean input) {
-         if (input) {
-             setInputBodyType(operation, bodyType);
-         }
-         else {
-             setOutputBodyType(operation, bodyType);
-         }
-     } // setBodyType
+    /**
+     * Set the body type for the given operation.  If input is true,
+     * then this is the inputBodyType, otherwise it's the outputBodyType.
+     * (NOTE:  this method exists to enable reusing some SymbolTable code.
+     */
+    protected void setBodyType(
+        Operation operation,
+        Use bodyType,
+        boolean input) {
+        if (input) {
+            setInputBodyType(operation, bodyType);
+        } else {
+            setOutputBodyType(operation, bodyType);
+        }
+    } // setBodyType
 
     /**
      * Get the fault body type for the given fault of the given operation. 
@@ -432,8 +436,7 @@ The caller of this constructor should
         OperationAttr attr = (OperationAttr) attributes.get(operation);
         if (attr == null) {
             return Use.ENCODED; // should really create an exception for this.
-        }
-        else {
+        } else {
             HashMap m = attr.getFaultBodyTypeMap();
             SOAPFault soapFault = (SOAPFault) m.get(faultName);
 
@@ -445,7 +448,7 @@ The caller of this constructor should
             if ("literal".equals(use)) {
                 return Use.LITERAL;
             }
-            
+
             return Use.ENCODED;
         }
     }
@@ -463,21 +466,23 @@ The caller of this constructor should
     /**
      * Get a {@link Set} of comprised {@link Operation} objects.
      */
-     public Set getOperations() {
-         return attributes.keySet();
-     }
+    public Set getOperations() {
+        return attributes.keySet();
+    }
 
     /**
      * Set the fault body type map for the given operation.
      */
-     protected void setFaultBodyTypeMap(Operation operation, HashMap faultBodyTypeMap) {
-         OperationAttr attr = (OperationAttr) attributes.get(operation);
-         if (attr == null) {
-             attr = new OperationAttr();
-             attributes.put(operation, attr);
-         }
-         attr.setFaultBodyTypeMap(faultBodyTypeMap);
-     } // setInputBodyTypeMap
+    protected void setFaultBodyTypeMap(
+        Operation operation,
+        HashMap faultBodyTypeMap) {
+        OperationAttr attr = (OperationAttr) attributes.get(operation);
+        if (attr == null) {
+            attr = new OperationAttr();
+            attributes.put(operation, attr);
+        }
+        attr.setFaultBodyTypeMap(faultBodyTypeMap);
+    } // setInputBodyTypeMap
 
     /**
      * Contains attributes for Operations
@@ -488,7 +493,10 @@ The caller of this constructor should
         private Use outputBodyType;
         private HashMap faultBodyTypeMap;
 
-        public OperationAttr(Use inputBodyType, Use outputBodyType, HashMap faultBodyTypeMap) {
+        public OperationAttr(
+            Use inputBodyType,
+            Use outputBodyType,
+            HashMap faultBodyTypeMap) {
             this.inputBodyType = inputBodyType;
             this.outputBodyType = outputBodyType;
             this.faultBodyTypeMap = faultBodyTypeMap;

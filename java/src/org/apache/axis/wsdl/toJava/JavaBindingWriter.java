@@ -59,6 +59,7 @@ import org.apache.axis.wsdl.gen.Generator;
 import org.apache.axis.wsdl.symbolTable.BindingEntry;
 import org.apache.axis.wsdl.symbolTable.PortTypeEntry;
 import org.apache.axis.wsdl.symbolTable.SymbolTable;
+import org.xml.sax.SAXException;
 
 import javax.wsdl.Binding;
 import java.io.IOException;
@@ -132,7 +133,7 @@ public class JavaBindingWriter implements Generator {
     /**
      * Write all the binding bindings:  stub, skeleton, and impl.
      */
-    public void generate() throws IOException {
+    public void generate() throws IOException,SAXException {
         setGenerators();
         if (interfaceWriter != null) {
             interfaceWriter.generate();

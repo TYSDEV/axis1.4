@@ -69,6 +69,7 @@ import org.apache.axis.wsdl.symbolTable.Parameter;
 import org.apache.axis.wsdl.symbolTable.Parameters;
 import org.apache.axis.wsdl.symbolTable.SymbolTable;
 import org.apache.axis.wsdl.symbolTable.TypeEntry;
+import org.xml.sax.SAXException;
 
 import javax.wsdl.Binding;
 import javax.wsdl.BindingOperation;
@@ -77,19 +78,19 @@ import javax.wsdl.Operation;
 import javax.wsdl.OperationType;
 import javax.wsdl.Port;
 import javax.wsdl.Service;
-import javax.wsdl.extensions.soap.SOAPBinding;
 import javax.wsdl.extensions.UnknownExtensibilityElement;
+import javax.wsdl.extensions.soap.SOAPBinding;
 import javax.xml.namespace.QName;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.OutputStreamWriter;
-import java.io.FileOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Vector;
-import java.util.HashSet;
 
 /**
 * This is Wsdl2java's deploy Writer.  It writes the deploy.wsdd file.
@@ -113,7 +114,7 @@ public class JavaDeployWriter extends JavaWriter {
      * Generate deploy.wsdd.  Only generate it if the emitter
      * is generating server-side mappings.
      */
-    public void generate() throws IOException {
+    public void generate() throws IOException,SAXException {
         if (emitter.isServerSide()) {
             super.generate();
         }

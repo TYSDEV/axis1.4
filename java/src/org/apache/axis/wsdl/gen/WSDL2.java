@@ -75,32 +75,38 @@ public class WSDL2 {
     protected static final int VERBOSE_OPT = 'v';
     protected static final int NOWRAP_OPT = 'W';
 
-    protected CLOptionDescriptor[] options = new CLOptionDescriptor[]{
-        new CLOptionDescriptor("help",
+    protected CLOptionDescriptor[] options =
+        new CLOptionDescriptor[] {
+            new CLOptionDescriptor(
+                "help",
                 CLOptionDescriptor.ARGUMENT_DISALLOWED,
                 HELP_OPT,
                 Messages.getMessage("optionHelp00")),
-        new CLOptionDescriptor("verbose",
+            new CLOptionDescriptor(
+                "verbose",
                 CLOptionDescriptor.ARGUMENT_DISALLOWED,
                 VERBOSE_OPT,
                 Messages.getMessage("optionVerbose00")),
-        new CLOptionDescriptor("noImports",
+            new CLOptionDescriptor(
+                "noImports",
                 CLOptionDescriptor.ARGUMENT_DISALLOWED,
                 NOIMPORTS_OPT,
                 Messages.getMessage("optionImport00")),
-        new CLOptionDescriptor("timeout",
+            new CLOptionDescriptor(
+                "timeout",
                 CLOptionDescriptor.ARGUMENT_REQUIRED,
                 NETWORK_TIMEOUT_OPT,
                 Messages.getMessage("optionTimeout00")),
-        new CLOptionDescriptor("Debug",
+            new CLOptionDescriptor(
+                "Debug",
                 CLOptionDescriptor.ARGUMENT_DISALLOWED,
                 DEBUG_OPT,
                 Messages.getMessage("optionDebug00")),
-        new CLOptionDescriptor("noWrapped",
-                 CLOptionDescriptor.ARGUMENT_DISALLOWED,
-                 NOWRAP_OPT,
-                 Messages.getMessage("optionNoWrap00"))
-    };
+            new CLOptionDescriptor(
+                "noWrapped",
+                CLOptionDescriptor.ARGUMENT_DISALLOWED,
+                NOWRAP_OPT,
+                Messages.getMessage("optionNoWrap00"))};
 
     protected String wsdlURI = null;
     protected Parser parser;
@@ -109,7 +115,7 @@ public class WSDL2 {
      * Constructor
      * Used by extended classes to construct an instance of WSDL2
      */
-    protected WSDL2 () {
+    protected WSDL2() {
         parser = createParser();
     } // ctor
 
@@ -136,10 +142,15 @@ public class WSDL2 {
      */
     protected void addOptions(CLOptionDescriptor[] newOptions) {
         if (newOptions != null && newOptions.length > 0) {
-            CLOptionDescriptor[] allOptions = new CLOptionDescriptor[
-                   options.length + newOptions.length];
+            CLOptionDescriptor[] allOptions =
+                new CLOptionDescriptor[options.length + newOptions.length];
             System.arraycopy(options, 0, allOptions, 0, options.length);
-            System.arraycopy(newOptions, 0, allOptions, options.length, newOptions.length);
+            System.arraycopy(
+                newOptions,
+                0,
+                allOptions,
+                options.length,
+                newOptions.length);
             options = allOptions;
         }
     } // addOptions
@@ -178,42 +189,44 @@ public class WSDL2 {
      */
     protected void parseOption(CLOption option) {
         switch (option.getId()) {
-            case CLOption.TEXT_ARGUMENT:
+            case CLOption.TEXT_ARGUMENT :
                 if (wsdlURI != null) {
-                    System.out.println(Messages.getMessage("w2jDuplicateWSDLURI00", 
-                                                            wsdlURI, 
-                                                            option.getArgument()));
+                    System.out.println(
+                        Messages.getMessage(
+                            "w2jDuplicateWSDLURI00",
+                            wsdlURI,
+                            option.getArgument()));
                     printUsage();
                 }
                 wsdlURI = option.getArgument();
                 break;
 
-            case HELP_OPT:
+            case HELP_OPT :
                 printUsage();
                 break;
 
-            case NOIMPORTS_OPT:
+            case NOIMPORTS_OPT :
                 parser.setImports(false);
                 break;
 
-            case NETWORK_TIMEOUT_OPT:
+            case NETWORK_TIMEOUT_OPT :
                 String timeoutValue = option.getArgument();
                 long timeout = Long.parseLong(timeoutValue);
-                        // Convert seconds to milliseconds.
-                if(timeout > 0)
+                // Convert seconds to milliseconds.
+                if (timeout > 0)
                     timeout = timeout * 1000;
                 parser.setTimeout(timeout);
                 break;
 
-            case VERBOSE_OPT:
+            case VERBOSE_OPT :
                 parser.setVerbose(true);
                 break;
 
-            case DEBUG_OPT:
+            case DEBUG_OPT :
                 parser.setDebug(true);
                 break;
 
-            case NOWRAP_OPT:
+            case NOWRAP_OPT :
                 parser.setNowrap(true);
                 break;
         }
@@ -232,10 +245,11 @@ public class WSDL2 {
 
         // Set username and password if provided in URL
         checkForAuthInfo(wsdlURI);
-        Authenticator.setDefault(new DefaultAuthenticator(
-                parser.getUsername(), parser.getPassword()));
+        Authenticator.setDefault(
+            new DefaultAuthenticator(
+                parser.getUsername(),
+                parser.getPassword()));
     } // validateOptions
-
 
     /**
      * checkForAuthInfo
@@ -253,8 +267,8 @@ public class WSDL2 {
         if (userInfo != null) {
             int i = userInfo.indexOf(':');
             if (i >= 0) {
-                parser.setUsername(userInfo.substring(0,i));
-                parser.setPassword(userInfo.substring(i+1));
+                parser.setUsername(userInfo.substring(0, i));
+                parser.setPassword(userInfo.substring(i + 1));
             } else {
                 parser.setUsername(userInfo);
             }
@@ -268,10 +282,12 @@ public class WSDL2 {
     protected void printUsage() {
         String lSep = System.getProperty("line.separator");
         StringBuffer msg = new StringBuffer();
-        msg.append(
-                Messages.getMessage("usage00",
-                "java " + getClass().getName() + " [options] WSDL-URI"))
-                .append(lSep);
+        msg
+            .append(
+                Messages.getMessage(
+                    "usage00",
+                    "java " + getClass().getName() + " [options] WSDL-URI"))
+            .append(lSep);
         msg.append(Messages.getMessage("options00")).append(lSep);
         msg.append(CLUtil.describeOptions(options).toString());
         System.out.println(msg.toString());
@@ -290,7 +306,7 @@ public class WSDL2 {
         // Print parser errors, if any
         if (null != argsParser.getErrorString()) {
             System.err.println(
-                    Messages.getMessage("error01", argsParser.getErrorString()));
+                Messages.getMessage("error01", argsParser.getErrorString()));
             printUsage();
         }
 
@@ -301,7 +317,7 @@ public class WSDL2 {
         try {
             // Parse the options and configure the emitter as appropriate.
             for (int i = 0; i < size; i++) {
-                parseOption((CLOption)clOptions.get(i));
+                parseOption((CLOption) clOptions.get(i));
             }
 
             // validate argument combinations
@@ -312,8 +328,7 @@ public class WSDL2 {
 
             // everything is good
             System.exit(0);
-        }
-        catch (Throwable t) {
+        } catch (Throwable t) {
             t.printStackTrace();
             System.exit(1);
         }

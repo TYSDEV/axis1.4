@@ -69,12 +69,14 @@ import org.apache.axis.wsdl.symbolTable.MessageEntry;
 import org.apache.axis.wsdl.symbolTable.Parameter;
 import org.apache.axis.wsdl.symbolTable.Parameters;
 import org.apache.axis.wsdl.symbolTable.PortTypeEntry;
+import org.apache.axis.wsdl.symbolTable.SchemaType;
 import org.apache.axis.wsdl.symbolTable.SchemaUtils;
 import org.apache.axis.wsdl.symbolTable.ServiceEntry;
 import org.apache.axis.wsdl.symbolTable.SymTabEntry;
 import org.apache.axis.wsdl.symbolTable.SymbolTable;
 import org.apache.axis.wsdl.symbolTable.Type;
 import org.apache.axis.wsdl.symbolTable.TypeEntry;
+import org.xml.sax.SAXException;
 
 import javax.wsdl.Binding;
 import javax.wsdl.Definition;
@@ -170,7 +172,7 @@ public class JavaGeneratorFactory implements GeneratorFactory {
      * - resolve name clashes
      * - construct signatures
      */
-    public void generatorPass(Definition def, SymbolTable symbolTable) {
+    public void generatorPass(Definition def, SymbolTable symbolTable)throws SAXException {
         this.symbolTable = symbolTable;
         javifyNames(symbolTable);
         setFaultContext(symbolTable);
@@ -237,7 +239,7 @@ public class JavaGeneratorFactory implements GeneratorFactory {
      */
     private Writers typeWriters = new Writers();
 
-    public Generator getGenerator(TypeEntry type, SymbolTable symbolTable) {
+    public Generator getGenerator(TypeEntry type, SymbolTable symbolTable)throws SAXException {
         Generator writer = new JavaTypeWriter(emitter, type, symbolTable);
         typeWriters.addStuff(writer, type, symbolTable);
         return typeWriters;
@@ -279,7 +281,7 @@ public class JavaGeneratorFactory implements GeneratorFactory {
             this.symbolTable = symbolTable;
         } // addStuff
 
-        public void generate() throws IOException {
+        public void generate() throws IOException,SAXException {
             if (baseWriter != null) {
                 baseWriter.generate();
             }
@@ -450,7 +452,7 @@ public class JavaGeneratorFactory implements GeneratorFactory {
      * class name.
      * @param symbolTable SymbolTable
      */
-    private void setFaultContext(SymbolTable symbolTable) {
+    private void setFaultContext(SymbolTable symbolTable)throws SAXException {
         Iterator it = symbolTable.getHashMap().values().iterator();
         while (it.hasNext()) {
             Vector v = (Vector) it.next();
@@ -483,7 +485,7 @@ public class JavaGeneratorFactory implements GeneratorFactory {
      * @param symbolTable SymbolTable
      */
     private void setFaultContext(FaultInfo fault,
-                                 SymbolTable symbolTable) {
+                                 SymbolTable symbolTable)throws SAXException {
         QName faultXmlType = null;
         
         Vector parts = new Vector();
@@ -551,18 +553,45 @@ public class JavaGeneratorFactory implements GeneratorFactory {
                             JavaGeneratorFactory.COMPLEX_TYPE_FAULT, 
                             Boolean.TRUE);
                     }
-                    // Mark all base types as Complex Faults
-                    TypeEntry base = SchemaUtils.getComplexElementExtensionBase(
-                        te.getNode(),
-                        symbolTable);
-                    while (base != null) {
-                        base.setDynamicVar(
-                            JavaGeneratorFactory.COMPLEX_TYPE_FAULT, 
-                            Boolean.TRUE);
-                        base = SchemaUtils.getComplexElementExtensionBase(
-                            base.getNode(),
-                            symbolTable);
-                    }
+//////JAXME_REFACTOR/////////////////////////////////////////////////////////////////                    
+//                    // Mark all base types as Complex Faults
+//                    TypeEntry base = SchemaUtils.getComplexElementExtensionBase(
+//                        te.getNode(),
+//                        symbolTable);
+//                    while (base != null) {
+//                        base.setDynamicVar(
+//                            JavaGeneratorFactory.COMPLEX_TYPE_FAULT, 
+//                            Boolean.TRUE);
+//                        base = SchemaUtils.getComplexElementExtensionBase(
+//                            base.getNode(),
+//                            symbolTable);
+//                    }
+//NEW CODE///////////////////////////////////////////////////////////////////////////////
+// you can replace this 
+//1) if you do not need to support for the complex content
+//2) if jaxme do not suppot
+  // Mark all base types as Complex Faults
+  					  QName baseName = null;
+  					  SchemaType stype = symbolTable.getSchemaType(te.getQName());
+  					  if(stype != null){
+						baseName = stype.getExtentionBase();
+  					  }
+
+					  TypeEntry base = null;
+
+					  while (baseName != null) {
+						  base = symbolTable.getType(baseName);	
+						  if(base!= null){	
+						  	base.setDynamicVar(
+							  	JavaGeneratorFactory.COMPLEX_TYPE_FAULT, 
+							  	Boolean.TRUE);
+						  }	
+						stype = symbolTable.getSchemaType(te.getQName());
+						if(stype != null){
+							baseName = stype.getExtentionBase();
+						}
+					  }
+///////////////////////////////////////////////////////////////////////////////////////                    
                 }
                 // The exception class name is the name of the type
                 exceptionClassName = te.getName();
@@ -987,11 +1016,17 @@ public class JavaGeneratorFactory implements GeneratorFactory {
                                         JavaTypeWriter.HOLDER_IS_NEEDED,
                                         Boolean.TRUE);
                                 }
-
+//TODOJAXME_REFACTOR///////////////////////////////////////////////////////////////////////////////////
                                 // If the type is a DefinedElement, need to 
                                 // set HOLDER_IS_NEEDED on the anonymous type.
                                 QName anonQName = SchemaUtils.
                                     getElementAnonQName(p.getType().getNode());
+///NEWCODE//////////////////////////////////////////////////////////////////////////////////                                    
+//by the time above code calles the schema havenot parsed,There was a null pointer exception
+//occured CHECK ???
+//  								QName anonQName =   symbolTable.
+//								  getTypeQNameAssociatedWithElement(p.getType().getQName());
+/////////////////////////////////////////////////////////////////////////////////////////								  
                                 if (anonQName != null) {
                                     TypeEntry anonType = 
                                         symbolTable.getType(anonQName);

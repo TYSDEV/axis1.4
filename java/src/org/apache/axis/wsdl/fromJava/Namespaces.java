@@ -70,7 +70,7 @@ public class Namespaces extends HashMap {
 
     public Namespaces() {
         super();
-        namespacePrefixMap  = new HashMap();
+        namespacePrefixMap = new HashMap();
     }
 
     /**
@@ -117,7 +117,7 @@ public class Namespaces extends HashMap {
         if (prefix != null)
             namespacePrefixMap.put(value, prefix);
         else
-            getCreatePrefix((String)value);
+            getCreatePrefix((String) value);
         return super.put(key, value);
     }
 
@@ -144,7 +144,7 @@ public class Namespaces extends HashMap {
         if (namespacePrefixMap.get(namespace) == null) {
             namespacePrefixMap.put(namespace, "tns" + prefixCount++);
         }
-        return (String)namespacePrefixMap.get(namespace);
+        return (String) namespacePrefixMap.get(namespace);
     }
 
     /**
@@ -177,7 +177,7 @@ public class Namespaces extends HashMap {
      * @param clsName fully qualified class name
      * @return namespace namespace String
      */
-    public static String makeNamespace (String clsName) {
+    public static String makeNamespace(String clsName) {
         return makeNamespace(clsName, "http");
     }
 
@@ -189,45 +189,46 @@ public class Namespaces extends HashMap {
      * @param protocol protocol String
      * @return namespace namespace String
      */
-    public static String makeNamespace (String clsName, String protocol) {
-        if ( clsName.startsWith("[L") )
-            clsName = clsName.substring( 2, clsName.length() - 1 );
-            
+    public static String makeNamespace(String clsName, String protocol) {
+        if (clsName.startsWith("[L"))
+            clsName = clsName.substring(2, clsName.length() - 1);
+
         if (clsName.lastIndexOf('.') == -1)
             return protocol + "://" + "DefaultNamespace";
         String packageName = clsName.substring(0, clsName.lastIndexOf('.'));
-        return makeNamespaceFromPackageName(packageName, protocol);       
+        return makeNamespaceFromPackageName(packageName, protocol);
     }
 
     private static String makeNamespaceFromPackageName(String packageName) {
-      return makeNamespaceFromPackageName(packageName, "http");       
+        return makeNamespaceFromPackageName(packageName, "http");
     }
-    
-    
-    private static String makeNamespaceFromPackageName(String packageName, String protocol) {
+
+    private static String makeNamespaceFromPackageName(
+        String packageName,
+        String protocol) {
         if (packageName == null || packageName.equals(""))
             return protocol + "://" + "DefaultNamespace";
-        StringTokenizer st = new StringTokenizer( packageName, "." );
-        String[] words = new String[ st.countTokens() ];
-        for(int i = 0; i < words.length; ++i)
+        StringTokenizer st = new StringTokenizer(packageName, ".");
+        String[] words = new String[st.countTokens()];
+        for (int i = 0; i < words.length; ++i)
             words[i] = st.nextToken();
 
         StringBuffer sb = new StringBuffer(80);
-        for(int i = words.length-1; i >= 0; --i) {
+        for (int i = words.length - 1; i >= 0; --i) {
             String word = words[i];
             // seperate with dot
-            if( i != words.length-1 )
+            if (i != words.length - 1)
                 sb.append('.');
-            sb.append( word );
+            sb.append(word);
         }
         return protocol + "://" + sb.toString();
     }
-    
+
     /**
      * Get the list of namespaces currently registered
      * @return iterator
-     */ 
+     */
     public Iterator getNamespaces() {
-        return namespacePrefixMap.keySet().iterator();            
+        return namespacePrefixMap.keySet().iterator();
     }
 }
