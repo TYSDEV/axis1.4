@@ -64,7 +64,7 @@ import java.util.Iterator;
 /**
  * ,p>This class represent a Schema Type.</p>
  */
-public interface SchemaType extends Type {
+public interface SchemaType {
     public static final QName ARRAY_TYPE = new QName("arrayType");
     public static final QName SIMPLE_CONTENT = new QName("simpleContent");
 
@@ -102,5 +102,5 @@ public interface SchemaType extends Type {
 
     public boolean isSimpleTypeOrSimpleContent();
 
-    public SimpleTypeContext getSimpleTypeContext();
+
 }
