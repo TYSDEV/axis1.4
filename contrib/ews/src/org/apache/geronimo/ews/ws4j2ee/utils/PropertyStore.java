@@ -64,11 +64,12 @@ public class PropertyStore {
 
 	private File file;
 
-	public PropertyStore(){
+	public PropertyStore() throws Exception {
 
 		File baseDir = new File(".");
 
-		String path = baseDir.getAbsolutePath();
+		String path = baseDir.getCanonicalPath();
+        System.out.println(path);
 
 		if(path.endsWith("geronimo")
 
