@@ -1,6 +1,6 @@
 package org.apache.axis.client;
 
-import org.apache.axis.ConfigurationProvider;
+import org.apache.axis.EngineConfiguration;
 import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
 import org.apache.axis.configuration.FileProvider;
@@ -19,7 +19,7 @@ import java.util.Map;
  */ 
 
 public class ServiceFactory {
-    private static FileProvider defaultConfigProvider =
+    private static FileProvider defaultEngineConfig =
                            new FileProvider(Constants.CLIENT_CONFIG_FILE);
 
     /**
@@ -29,9 +29,9 @@ public class ServiceFactory {
      * name so we find it next time.
      *
      * @param name the JNDI name we're interested in
-     * @param configProvider a ConfigurationProvider which should be used
-     *                       to configure any engine we end up creating, or
-     *                       null to use the default configuration pattern.
+     * @param engineConfig a EngineConfiguration which should be used
+     *                     to configure any engine we end up creating, or
+     *                     null to use the default configuration pattern.
      */
     static public Service getService(Map environment)
         throws JAXRPCException
@@ -39,10 +39,10 @@ public class ServiceFactory {
         Service service = null;
         InitialContext context = null;
 
-        ConfigurationProvider configProvider =
-                (ConfigurationProvider)environment.get("configProvider");
+        EngineConfiguration configProvider =
+                (EngineConfiguration)environment.get("engineConfig");
         if (configProvider == null)
-            configProvider = defaultConfigProvider;
+            configProvider = defaultEngineConfig;
 
         // First check to see if JNDI works
         // !!! Might we need to set up context parameters here?

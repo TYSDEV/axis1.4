@@ -60,7 +60,7 @@ import org.apache.axis.AxisFault;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
 import org.apache.axis.SimpleTargetedChain;
-import org.apache.axis.deployment.DeploymentException;
+import org.apache.axis.ConfigurationException;
 import org.apache.axis.server.AxisServer;
 import org.apache.axis.utils.Options;
 import org.apache.log4j.Category;
@@ -159,7 +159,7 @@ public class TCPListener implements Runnable {
 
                 try {
                     engine.deployTransport(transportName, c);
-                } catch (DeploymentException e) {
+                } catch (ConfigurationException e) {
                     // !!! We're toast.  What to do about it?
                     System.exit(-1);
                 }

@@ -172,7 +172,7 @@ public class Admin {
      * Process a given XML document - needs cleanup.
      */
     public Element[] AdminService(MessageContext msgContext, Vector xml)
-        throws AxisFault
+        throws Exception
     {
         category.debug(JavaUtils.getMessage("enter00", "Admin:AdminService") );
         Document doc = process( msgContext, (Element) xml.get(0) );
@@ -301,7 +301,7 @@ public class Admin {
     }
     
     protected static Document processWSDD(AxisEngine engine, Element root)
-        throws AxisFault
+        throws Exception
     {
         Document doc = null ;
 
@@ -327,7 +327,7 @@ public class Admin {
      * @return an XML Document indicating the results.
      */
     public Document process(MessageContext msgContext, Element root)
-        throws AxisFault
+        throws Exception
     {
         // Check security FIRST.
         
@@ -536,7 +536,7 @@ public class Admin {
      * @param engine the AxisEngine in which to deploy
      */
     public static void registerChain(Element elem, AxisEngine engine)
-        throws AxisFault
+        throws Exception
     {
         Handler tmpH = null;
         String hName;
@@ -587,7 +587,7 @@ public class Admin {
      * @param engine the AxisEngine in which to deploy
      */
     public static void registerService(Element elem, AxisEngine engine)
-        throws AxisFault
+        throws Exception
     {
         String   name    = elem.getAttribute( "name" );
         String   request   = elem.getAttribute( "request" );
@@ -675,7 +675,7 @@ public class Admin {
      * @param engine the AxisEngine in which to deploy
      */
     public static void registerHandler(Element elem, AxisEngine engine)
-        throws AxisFault
+        throws Exception
     {
         try {
             AxisClassLoader   cl     = AxisClassLoader.getClassLoader();
@@ -708,7 +708,7 @@ public class Admin {
      * @param engine the AxisEngine in which to deploy
      */
     public static void registerTransport(Element elem, AxisEngine engine)
-        throws AxisFault
+        throws Exception
     {
         String   name    = elem.getAttribute( "name" );
         String   request   = elem.getAttribute( "request" );

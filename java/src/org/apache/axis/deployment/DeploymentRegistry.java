@@ -424,13 +424,13 @@ public abstract class DeploymentRegistry
      * Returns a global request handler.
      */
     public abstract Handler getGlobalRequest()
-        throws Exception;
+        throws DeploymentException;
 
     /**
      * Returns a global response handler.
      */
     public abstract Handler getGlobalResponse()
-        throws Exception;
+        throws DeploymentException;
 
     /**
      * Returns the global configuration options.
