@@ -111,7 +111,7 @@ int SoapDeSerializer::SetInputStream(const Ax_soapstream* pInputStream)
 	MemBufInputSource Input((const unsigned char*)m_hugebuffer, nChars , "bufferid");
 	//Input.setEncoding("UTF-16");
 	m_pParser->parse(Input);
-	return AXIS_SUCCESS;
+	return m_pHandler->Success();
 }
 
 SoapEnvelope* SoapDeSerializer::GetEnvelope()
