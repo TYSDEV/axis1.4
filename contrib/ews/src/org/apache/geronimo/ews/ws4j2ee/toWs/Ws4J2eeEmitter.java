@@ -102,7 +102,7 @@ public class Ws4J2eeEmitter {
 	public void executeAnt()throws GenerationFault{
         if(wscontext.getMiscInfo().isCompile()){
             org.apache.geronimo.ews.ws4j2ee.utils.AntExecuter executer 
-                = new org.apache.geronimo.ews.ws4j2ee.utils.AntExecuter();
+                = new org.apache.geronimo.ews.ws4j2ee.utils.AntExecuter(wscontext);
             executer.execute(wscontext.getMiscInfo().getOutPutPath() + "/build.xml");
         }
 	}

@@ -133,6 +133,10 @@ public class BuildFileGenerator implements Generator {
 				}
 				if(location != null){
 					out.write("	<property name=\"maven.repo.local\" location=\"" +location +"\"/>\n");
+                    if(!(new File(location)).exists()){
+                        j2eewscontext.getMiscInfo().setCompile(false);
+                    }
+                    
 				}else{
 					prpertyIn = null;
 				}
