@@ -132,10 +132,10 @@ public class BuildFileGenerator implements Generator {
                 out.write("         <include name=\"openejb/**/*.jar\"/>\n");
                 out.write("		</fileset>\n");
             }
-            StringTokenizer tok = getClasspathComponets();
-            while (tok.hasMoreTokens()) {
-                out.write("		<pathelement location=\"" + tok.nextToken() + "\"/>\n");
-            }
+//            StringTokenizer tok = getClasspathComponets();
+//            while (tok.hasMoreTokens()) {
+//                out.write("		<pathelement location=\"" + tok.nextToken() + "\"/>\n");
+//            }
             out.write("	</path>\n");
             out.write("	<target name=\"compile\">\n");
             out.write("	   <mkdir dir=\"${build.classes}\"/>\n");

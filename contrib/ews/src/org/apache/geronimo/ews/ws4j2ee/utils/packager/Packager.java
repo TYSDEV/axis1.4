@@ -50,10 +50,12 @@ public class Packager {
                         for (int j = 0; j < list.size(); j++) {
                             File temp = new File((String) list.get(j));
                             String filename = temp.getAbsolutePath();
-                            int index = filename.indexOf("classes/");
+                            String checkedfor = "classes";
+                            int index = filename.indexOf(checkedfor);
                             if (index > 0) {
-                                filename = filename.substring(index + "classes/".length());
+                                filename = filename.substring(index + checkedfor.length()+1);
                             }
+                            filename = filename.replace('\\','/');
                             JARFileEntry newEntry =
                                     new JARFileEntry(filename,
                                             new FileInputStream(temp));
