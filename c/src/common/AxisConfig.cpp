@@ -87,9 +87,9 @@ AxisConfig::AxisConfig()
 
 AxisConfig::~AxisConfig()
 {
-    delete m_sWsddFilePath;
-    delete m_sAxisLogPath;
-    delete m_sValue;
+    if(m_sWsddFilePath) delete m_sWsddFilePath;
+    if(m_sAxisLogPath) delete m_sAxisLogPath;
+    if(m_sValue) delete m_sValue;
     
 }
 
@@ -102,8 +102,8 @@ int AxisConfig::ReadConfFile()
     FILE* fileConfig = NULL;
     char* sConfPath = NULL;
     char sNewConfPath[CONFBUFFSIZE] = {0};
-    //char m_sLine[CONFBUFFSIZE] = {0};
     char key[CONFBUFFSIZE] = {0};
+    //char m_sLine[CONFBUFFSIZE] = {0};
 	//char value[CONFBUFFSIZE] = {0};
              
 	sConfPath = getenv("AXIS_HOME");
@@ -154,9 +154,7 @@ int AxisConfig::ReadConfFile()
         if(strcmp(key, "AXISLOGPATH") == 0)
             strncpy(m_sAxisLogPath, m_sValue + 1, linesize  - strlen(key) - 2);    
     
-        //m_sValue = NULL;
-        
-        
+        //m_sValue = NULL;     
     }
     
     return AXIS_SUCCESS;
