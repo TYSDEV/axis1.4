@@ -554,7 +554,7 @@ public class Round4XSDTestTestCase extends junit.framework.TestCase {
             input.set_any(_any);
             test.wsdl.interop4.groupi._return value = null;
             value = binding.retAny(input);
-            assertEquals(value.get_any(), _any);
+            assertEquals(value.get_any()[0].toString(), _any[0].toString());
         }
         catch (java.rmi.RemoteException re) {
             throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re);
