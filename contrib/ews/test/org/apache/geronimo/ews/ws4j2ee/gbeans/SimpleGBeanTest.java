@@ -24,8 +24,6 @@ import java.net.URLClassLoader;
 import javax.enterprise.deploy.model.DDBean;
 import javax.enterprise.deploy.model.DDBeanRoot;
 import javax.enterprise.deploy.model.exceptions.DDBeanCreateException;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 
 import junit.framework.Assert;
 import junit.framework.Test;
@@ -34,6 +32,7 @@ import junit.framework.TestSuite;
 import org.apache.geronimo.deployment.tools.loader.WebDeployable;
 import org.apache.geronimo.ews.AbstractTestCase;
 import org.apache.geronimo.ews.ws4j2ee.parsers.gbeans.JARDeployable;
+import org.apache.geronimo.ews.ws4j2ee.utils.EWSUtils;
 import org.w3c.dom.Document;
 
 /**
@@ -101,10 +100,8 @@ public class SimpleGBeanTest extends AbstractTestCase{
 		ClassLoader rootCL = new URLClassLoader(new URL[] {url}, Thread.currentThread().getContextClassLoader());
 		URL descriptor = rootCL.getResource("META-INF/ejb-jar.xml");
 		System.out.println(descriptor);
-		DocumentBuilder parser = null;
-		parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 		InputStream is = null;
 		is = descriptor.openStream();
-		Document doc = parser.parse(is);
+		Document doc = EWSUtils.createDocument(is);
 	}
 }

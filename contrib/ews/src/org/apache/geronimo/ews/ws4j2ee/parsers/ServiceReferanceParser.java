@@ -18,11 +18,10 @@
 
 import java.io.InputStream;
 
-import javax.xml.parsers.DocumentBuilderFactory;
-
 import org.apache.geronimo.ews.ws4j2ee.context.webservices.client.ServiceReferanceImpl;
 import org.apache.geronimo.ews.ws4j2ee.context.webservices.client.interfaces.ServiceReferanceContext;
 import org.apache.geronimo.ews.ws4j2ee.toWs.GenerationFault;
+import org.apache.geronimo.ews.ws4j2ee.utils.EWSUtils;
 import org.apache.geronimo.ews.ws4j2ee.utils.Utils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -52,9 +51,7 @@ public class ServiceReferanceParser {
 	
 	public ServiceReferanceParser(InputStream inputStream) throws GenerationFault{
 		try {
-            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-            dbf.setNamespaceAware(true);
-            Document doc = dbf.newDocumentBuilder().parse(inputStream);
+            Document doc = EWSUtils.createDocument(inputStream);
             Element root =  doc.getDocumentElement();
 			Element serviceref = findServiceReferance(root);
 			if(serviceref != null)

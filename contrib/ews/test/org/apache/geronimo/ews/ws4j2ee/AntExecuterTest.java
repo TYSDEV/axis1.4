@@ -19,11 +19,8 @@ import java.io.File;
 
 import org.apache.geronimo.ews.AbstractTestCase;
 import org.apache.geronimo.ews.ws4j2ee.utils.AntExecuter;
-import org.apache.geronimo.ews.ws4j2ee.utils.packager.ModulePackager;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Ant;
-import org.apache.tools.ant.taskdefs.Javac;
-import org.apache.tools.ant.types.Path;
 
 /**
  * @author hemapani

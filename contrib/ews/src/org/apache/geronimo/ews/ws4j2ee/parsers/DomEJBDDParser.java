@@ -18,12 +18,11 @@ package org.apache.geronimo.ews.ws4j2ee.parsers;
 
 import java.io.InputStream;
 
-import javax.xml.parsers.DocumentBuilderFactory;
-
 import org.apache.geronimo.ews.ws4j2ee.context.J2EEWebServiceContext;
 import org.apache.geronimo.ews.ws4j2ee.context.impl.EJBDDContextImpl;
 import org.apache.geronimo.ews.ws4j2ee.context.j2eeDD.EJBContext;
 import org.apache.geronimo.ews.ws4j2ee.toWs.GenerationFault;
+import org.apache.geronimo.ews.ws4j2ee.utils.EWSUtils;
 import org.apache.geronimo.ews.ws4j2ee.utils.Utils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -44,9 +43,7 @@ public class DomEJBDDParser {
 
 	public void parse(InputStream inputStream) throws GenerationFault {
 			try {
-				DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-				dbf.setNamespaceAware(true);
-				Document doc = dbf.newDocumentBuilder().parse(inputStream);
+				Document doc = EWSUtils.createDocument(inputStream);
 				Element root =  doc.getDocumentElement();
 				NodeList beaneles = root.getElementsByTagName("enterprise-beans");
 				if(beaneles.getLength()>0){
