@@ -27,6 +27,7 @@ import org.apache.geronimo.ews.ws4j2ee.context.j2eeDD.WebContext;
 import org.apache.geronimo.ews.ws4j2ee.context.webservices.client.interfaces.ServiceReferanceContext;
 import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.interfaces.WSCFContext;
 import org.apache.geronimo.ews.ws4j2ee.context.wsdl.WSDLContext;
+import org.apache.geronimo.ews.ws4j2ee.parsers.DomEJBDDParser;
 import org.apache.geronimo.ews.ws4j2ee.parsers.EJBDDParser;
 import org.apache.geronimo.ews.ws4j2ee.toWs.Ws4J2eeFactory;
 
@@ -34,6 +35,41 @@ import org.apache.geronimo.ews.ws4j2ee.toWs.Ws4J2eeFactory;
  * @author hemapani
  */
 public class EJBDDTest extends AbstractTestCase{
+    private J2EEWebServiceContext con = new J2EEWebServiceContext() {
+        public WSDLContext getWSDLContext() {return null;}
+        public void setWSDLContext(WSDLContext wsdlcontext) {}
+        public WSCFContext getWSCFContext() {return null;}
+        public void setWSCFContext(WSCFContext wscfcontext) {}
+        public JaxRpcMapperContext getJAXRPCMappingContext() {return null;}
+        public void setJAXRPCMappingContext(JaxRpcMapperContext context) {}
+        public MiscInfo getMiscInfo() {return new MiscInfoImpl();}
+        public void setMiscInfo(MiscInfo info) {}
+        public void validate() {
+        }
+        public void setFactory(Ws4J2eeFactory factory){}
+        public Ws4J2eeFactory getFactory(){
+            return null;
+        }
+
+        public EJBContext getEJBDDContext(){
+            return null;
+        }
+        public void setEJBDDContext(EJBContext context){}
+
+        public WebContext getWebDDContext(){
+            return null;
+        }
+        public void setWebDDContext(WebContext context){}
+
+        public ServiceReferanceContext getServiceReferanceContext(int index){
+            return null;
+        }
+        public void addServiceReferanceContext(ServiceReferanceContext context){}
+        public int getServiceReferanceContextCount(){
+            return 0;
+        }
+    };
+
     /**
      * @param testName
      */
@@ -41,42 +77,8 @@ public class EJBDDTest extends AbstractTestCase{
         super(testName);
     }
 
-	public void testGoogleSample() throws Exception{
+	public void testMathSample() throws Exception{
 		try{
-			J2EEWebServiceContext con = new J2EEWebServiceContext() {
-				public WSDLContext getWSDLContext() {return null;}
-				public void setWSDLContext(WSDLContext wsdlcontext) {}
-				public WSCFContext getWSCFContext() {return null;}
-				public void setWSCFContext(WSCFContext wscfcontext) {}
-				public JaxRpcMapperContext getJAXRPCMappingContext() {return null;}
-				public void setJAXRPCMappingContext(JaxRpcMapperContext context) {}
-				public MiscInfo getMiscInfo() {return new MiscInfoImpl();}
-				public void setMiscInfo(MiscInfo info) {}
-				public void validate() {
-				}
-				public void setFactory(Ws4J2eeFactory factory){}
-				public Ws4J2eeFactory getFactory(){
-					return null;
-				}
-
-				public EJBContext getEJBDDContext(){
-					return null;
-				}
-				public void setEJBDDContext(EJBContext context){}
-
-				public WebContext getWebDDContext(){
-					return null;
-				}
-				public void setWebDDContext(WebContext context){}
-
-				public ServiceReferanceContext getServiceReferanceContext(int index){
-					return null;
-				}
-				public void addServiceReferanceContext(ServiceReferanceContext context){}
-				public int getServiceReferanceContextCount(){
-					return 0;
-				}
-			};
 		   EJBDDParser pars = new EJBDDParser(con);
 		   pars.parse(new FileInputStream(
 		   	getTestFile(testDir+"testData/math/ejb-jar.xml")));
@@ -86,4 +88,27 @@ public class EJBDDTest extends AbstractTestCase{
 			throw e;
 		}
 	}
+    public void testMathSampleWithDOM() throws Exception{
+        try{
+            DomEJBDDParser pars = new DomEJBDDParser(con);
+           pars.parse(new FileInputStream(
+            getTestFile(testDir+"testData/math/ejb-jar.xml")));
+           //Assert.assertEquals(con.getMiscInfo().getEjbName(),"MathFace"); 
+        }catch(Exception e){
+            e.printStackTrace();
+            throw e;
+        }
+    }
+    public void testMathSampleWithDOMWithDOCTYPE() throws Exception{
+        try{
+            DomEJBDDParser pars = new DomEJBDDParser(con);
+           pars.parse(new FileInputStream(
+            getTestFile(testDir+"testData/math/ejb-jar1.xml")));
+           //Assert.assertEquals(con.getMiscInfo().getEjbName(),"MathFace"); 
+        }catch(Exception e){
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
 }
