@@ -200,8 +200,8 @@ public class WSDDChain
         context.endElement();
     }
 
-    public void deployToRegistry(DeploymentRegistry registry)
-            throws DeploymentException {
+    public void deployToRegistry(WSDDDeployment registry)
+            throws WSDDException {
         if (getQName() != null)
             registry.deployHandler(this);
         

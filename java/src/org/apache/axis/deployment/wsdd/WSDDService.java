@@ -344,8 +344,8 @@ public class WSDDService
         cachedService = service;
     }
 
-    public void deployToRegistry(DeploymentRegistry registry)
-            throws DeploymentException {
+    public void deployToRegistry(WSDDDeployment registry)
+            throws WSDDException {
         registry.deployService(this);
         
         super.deployToRegistry(registry);

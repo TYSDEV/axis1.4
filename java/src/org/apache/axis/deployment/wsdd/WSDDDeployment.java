@@ -183,19 +183,19 @@ public class WSDDDeployment
         elements = getChildElements(e, "chain");
         for (i = 0; i < elements.length; i++) {
             WSDDChain chain = new WSDDChain(elements[i]);
-            deployHandler(chain);
+            chain.deployToRegistry(this);
         }
 
         elements = getChildElements(e, "transport");
         for (i = 0; i < elements.length; i++) {
             WSDDTransport transport = new WSDDTransport(elements[i]);
-            deployTransport(transport);
+            transport.deployToRegistry(this);
         }
 
         elements = getChildElements(e, "service");
         for (i = 0; i < elements.length; i++) {
             WSDDService service = new WSDDService(elements[i]);
-            deployService(service);
+            service.deployToRegistry(this);
         }
 
         elements = getChildElements(e, "typeMapping");
