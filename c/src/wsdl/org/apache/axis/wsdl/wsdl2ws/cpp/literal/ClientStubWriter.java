@@ -80,15 +80,12 @@ public class ClientStubWriter extends CPPClassWriter{
 	 */
 	protected void writeConstructors() throws WrapperFault {
 		try{
-			writer.write(classname+"::"+classname+"(const char* pcEndpointUri):Stub(pcEndpointUri)\n{\n");
-		//writer.write(classname+"::"+classname+"()\n{\n");
-		/*		
-		writer.write("\tm_pCall = new Call();\n");
-		//TODO get TransportURI from WrapInfo and check what the transport is and do the following line accordingly
-		writer.write("\tm_pCall->setProtocol(APTHTTP);\n");
-		writer.write("\tm_pCall->setEndpointURI(\""+wscontext.getWrapInfo().getTargetEndpointURI()+"\");\n");
-		*/
-		writer.write("}\n\n");
+			writer.write(classname+"::"+classname+"(const char* pcEndpointUri, AXIS_PROTOCOL_TYPE eProtocol):Stub(pcEndpointUri, eProtocol)\n{\n");
+			writer.write("}\n\n");
+			writer.write(classname+"::"+classname+"()\n:Stub(\" \", APTHTTP)\n{\n");
+			//TODO get TransportURI from WrapInfo and check what the transport is and do the following line accordingly
+			writer.write("\tm_pCall->setEndpointURI(\""+wscontext.getWrapInfo().getTargetEndpointURI()+"\");\n");
+			writer.write("}\n\n");
 		}catch(IOException e){
 			throw new WrapperFault(e);
 		}
@@ -460,6 +457,10 @@ public class ClientStubWriter extends CPPClassWriter{
 			String faultType =null;	 
 			String langName =null;
 			String paramName =null;
+		    if (!paramsFault.hasNext()){
+					writer.write("\t\t\t\t  cFaultdetail = m_pCall->getElementAsString(\"faultdetail\", 0);\n");//damitha
+					writer.write("\t\t\t\t  throw AxisException(cFaultdetail);\n");//damitha		
+				}
 			while (paramsFault.hasNext()){
 				FaultInfo info = (FaultInfo)paramsFault.next();
 				faultInfoName =info.getFaultInfo();	     
@@ -471,11 +472,12 @@ public class ClientStubWriter extends CPPClassWriter{
 					faultType = WrapperUtils.getClassNameFromParamInfoConsideringArrays(par,wscontext);
 					writeExceptions(faultType,faultInfoName,paramName,langName);
 					}
+				writer.write("\t\t\telse{ \n");
+				writer.write("\t\t\t\t  cFaultdetail = m_pCall->getElementAsString(\"faultdetail\", 0);\n");//damitha
+				writer.write("\t\t\t\t  throw AxisException(cFaultdetail);\n");//damitha
+				writer.write("\t\t\t}\n");
 				}
-			writer.write("\t\t\telse{ \n");
-			writer.write("\t\t\t\t  cFaultdetail = m_pCall->getElementAsString(\"faultdetail\", 0);\n");//damitha
-			writer.write("\t\t\t\t  throw AxisException(cFaultdetail);\n");//damitha
-			writer.write("\t\t\t}\n");
+			
 			writer.write("\t\t}\n");//damitha
 			writer.write("\t\telse throw;\n");//damitha
 			writer.write("\t}\n");//damitha
