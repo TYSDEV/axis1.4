@@ -995,21 +995,21 @@ to register the Axis
 provided serializer  <a href="apiDocs/org/apache/axis/encoding/JAFDataHandlerSerializer.html">org.apache.axis.encoding.JAFDataHandlerSerializer</a>.  Similarly, to receive an attachment
 the <a href="apiDocs/org/apache/axis/encoding/JAFDataHandlerDeserializer.Factory.html">org.apache.axis.encoding.JAFDataHandlerDeserializer.Factory</a> needs to be registered. 
 </p>
-<P>An example of using attachments is provided for in the <A href="../samples/attachments">samples/attachments</a>
-directory.  The sample allows you to specify a file to send as an attachment or a directory which will send all the files in
-that directory as a single message.
+<P>An example of using attachments is provided in the <A href="../samples/attachments">samples/attachments</a>
+directory.  The sample allows you to specify a single file to send as an attachment or a directory which will send all the files in
+that directory as attachments in a single message. In both cases the attachments are sent to the service, returned, and compared to 
+the source to make sure their content is the same.
+</P>
+<P>
 </P>
 <P>The support for attachments is still preliminary with the following know limitations:
 <ul>
- <li>Transfer-Encoding Types base64, and quoted printable are not accepted.
- <li>Send Data
+ <li>Transfer-Encoding Types base64, and quoted printable are not supported.
+ <li>Better control over managing attachment resources.
+ <li>Code referencing attachments by Content-Location has not been tested or debugged. 
+ <li>Serialization and DeSerialization types as referenced by JAX-RPC.
 </ul>
 </P>
-
-
-to send the contents
-</P>
-<p><i><font color="#ff0000">Work in progress--- a lot more work to be done.. </font></i></p>
 <!--                             -->
 <!--                             -->
 <a name="tcpmon"></a><h2>Using the Axis TCP Monitor (tcpmon) </h2>
