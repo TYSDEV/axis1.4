@@ -430,7 +430,7 @@
 </p>
 <p>Copy apache include files</p>
 <p>
-<strong>$ cp -f &lt;apacheinstdirectory&gt;/include/* $AXISCPP_HOME/include/apache1_3/</strong>
+<strong>$ cp -f &lt;apacheinstdirectory&gt;/include/* $AXISCPP_HOME/include/apache1_3/ (if apache2.0 do accordingly)</strong>
 </p>
 <p>
 <strong>$ cd $AXISCPP_HOME</strong>
@@ -450,14 +450,51 @@
 <strong>$ make install</strong>
 
 </p>
-<p>Now libaxiscpp_mod.so should have been created in $AXISCPP_HOME/bin directory. Note:- you can give the install path inside the runconfigure script.There will be link errors if you don't use correct version of xerces-c.</p>
+<p>
+<p>
+-----------------------------------------------------------------------
+</p>
+<strong>NOTE: </strong>If you use apache2.0 following two small changes has to be done in $AXISCPP_HOME/configure.ac and $AXISCPP_HOME/src/server/Makefile.am)
+</p>
+<p>
+in $AXISCPP_HOME/configure.ac
+</p>
+<p>
+comment 
+</p>
+<p>
+<strong>
+AC_OUTPUT(Makefile src/Makefile src/common/Makefile src/engine/Makefile src/soap/Makefile src/wsdd/Makefile src/xml/Makefile src/server/Makefile src/server/apache/Makefile)
+</strong>
+</p>
+<p>
+and uncomment
+</p>
+<p>
+<strong>
+#AC_OUTPUT(Makefile src/Makefile src/common/Makefile src/engine/Makefile src/soap/Makefile src/wsdd/Makefile src/xml/Makefile src/server/Makefile src/server/apache2/Makefile)
+</strong>
+</p>
+<p>
+in $AXISCPP_HOME/src/server/Makefile.am
+</p>
+<p>
+change
+SUBDIRS = apache
+to 
+SUBDIRS = apache2
+</p>
+<p>
+-----------------------------------------------------------------
+</p>
+<p>Now libaxiscpp_mod.so (in apache2 this is libaxiscpp_mod2.so) should have been created in $AXISCPP_HOME/bin directory. Note:- you can give the install path inside the runconfigure script.There will be link errors if you don't use correct version of xerces-c.</p>
 <p>Now you need to edit /usr/local/apache/conf/httpd.conf</p>
 <p>
 <strong>$ vi /usr/local/apache/conf/httpd.conf</strong>
 </p>
 <p>At the bottom of the file you have to include following lines and save it.</p>
 <p>
-<strong>LoadModule axis_module libexec/libaxiscpp_mod.so (in apache2 replace libexec with modules)</strong>
+<strong>LoadModule axis_module libexec/libaxiscpp_mod.so (in apache2 replace libexec with modules and libaxiscpp_mod.so with libaxiscpp_mod2.so)</strong>
 </p>
 <p>
 <strong>&lt;Location /axis&gt;</strong>
@@ -469,9 +506,9 @@
 <p>
 <strong>&lt;/Location&gt;</strong>
 </p>
-<p>Copy /home/axisuser/projects/axis_c/bin/libaxiscpp_mod.so into /usr/local/Apache/libexec/ (in apache2 replace libexec with modules)</p>
+<p>Copy /home/axisuser/projects/axis_c/bin/libaxiscpp_mod.so into /usr/local/Apache/libexec/ (in apache2 replace libexec with modules and libaxiscpp_mod.so with libaxiscpp_mod2.so)</p>
 <p>
-<strong>$cp -f /home/axisuser/projects/axis_c/bin/libaxiscpp_mod.so /usr/local/apache/libexec (in apache2 replace libexec with modules)</strong>
+<strong>$cp -f /home/axisuser/projects/axis_c/bin/libaxiscpp_mod.so /usr/local/apache/libexec (in apache2 replace libexec with modules and libaxiscpp_mod.so with libaxiscpp_mod2.so)</strong>
 </p>
 <p>Restart apache</p>
 
