@@ -59,6 +59,8 @@ import org.apache.axis.wsdl.toJava.JavaWriter;
 import org.apache.axis.wsdl.toJava.Utils;
 import org.apache.geronimo.ews.jaxrpcmapping.J2eeEmitter;
 import org.apache.geronimo.ews.ws4j2ee.context.J2EEWebServiceContext;
+import org.apache.geronimo.ews.ws4j2ee.context.j2eeDD.EJBContext;
+import org.apache.geronimo.ews.ws4j2ee.context.j2eeDD.WebContext;
 import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.interfaces.WSCFHandler;
 import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.interfaces.WSCFInitParam;
 import org.apache.geronimo.ews.ws4j2ee.toWs.GenerationConstants;
@@ -67,7 +69,7 @@ import org.apache.geronimo.ews.ws4j2ee.toWs.GenerationConstants;
  * This is Wsdl2java's deploy Writer.  It writes the deploy.wsdd file.
  */
 public class J2eeDeployWriter  extends JavaWriter{
-	
+	protected boolean useProvider = false;
 	/** Field definition */
 	protected Definition definition;
 
@@ -86,7 +88,7 @@ public class J2eeDeployWriter  extends JavaWriter{
 							SymbolTable symbolTable) {
 
 		super(emitter, "deploy");
-		this.definition = definition;
+        this.definition = definition;
 		this.symbolTable = symbolTable;
 		wscontext =((J2eeEmitter)emitter).getWscontext();
 		if(wscontext == null){
@@ -391,9 +393,46 @@ public class J2eeDeployWriter  extends JavaWriter{
 //			pw.println("  <service name=\"" + serviceName + "\" provider=\""
 //					+ prefix + ":RPC" + "\"" + styleStr + useStr + ">");
 //		}
-		pw.println("  <service name=\"" + serviceName + "\" provider=\"java:j2ee\"" 
-			+ styleStr + useStr + ">");
-
+        if(useProvider){
+            String continer = wscontext.getMiscInfo().getTargetJ2EEContainer();
+            if(GenerationConstants.GERONIMO_CONTAINER.equals(continer)){
+                pw.println("  <service name=\"" + serviceName + "\" provider=\"java:geronimo\"" 
+                    + styleStr + useStr + ">");
+            }else{
+                pw.println("  <service name=\"" + serviceName + "\" provider=\"java:ews\"" 
+                    + styleStr + useStr + ">");
+            }
+        }else{
+            pw.println("  <service name=\"" + serviceName + "\" provider=\"java:j2ee\"" 
+                + styleStr + useStr + ">");
+        }
+        EJBContext ejbcontext = wscontext.getEJBDDContext();
+        if(ejbcontext != null){
+            if(ejbcontext.getEjbhomeInterface()!= null){
+                pw.println("      <parameter name=\"homeInterfaceName\" value=\""
+                    + ejbcontext.getEjbhomeInterface() + "\"/>");
+            }
+            if(ejbcontext.getEjbRemoteInterface()!= null){
+                pw.println("      <parameter name=\"remoteInterfaceName\" value=\""
+                    + ejbcontext.getEjbRemoteInterface() + "\"/>");
+            }
+            if(ejbcontext.getEjbLocalHomeInterfce()!= null){
+                pw.println("      <parameter name=\"localHomeInterfaceName\" value=\""
+                    + ejbcontext.getEjbLocalHomeInterfce() + "\"/>");
+            }
+            if(ejbcontext.getEjbLocalInterface()!= null){
+                pw.println("      <parameter name=\"localInterfaceName\" value=\""
+                    + ejbcontext.getEjbLocalInterface() + "\"/>");
+            }
+            if(ejbcontext.getEjbRemoteInterface()!= null){
+                pw.println("      <parameter name=\"beanJndiName\" value=\""
+                    + "ejb/"+ejbcontext.getEjbName() + "\"/>");
+            }
+            if(ejbcontext.getEjbRemoteInterface()!= null){
+                pw.println("      <parameter name=\"beanName\" value=\""
+                    + ejbcontext.getEjbName() + "\"/>");
+            }
+        }
 		pw.println("      <parameter name=\"wsdlTargetNamespace\" value=\""
 				+ service.getQName().getNamespaceURI() + "\"/>");
 		pw.println("      <parameter name=\"wsdlServiceElement\" value=\""
@@ -438,8 +477,18 @@ public class J2eeDeployWriter  extends JavaWriter{
 			className += "Impl";
 		}
 
-		pw.println("      <parameter name=\"className\" value=\"" + className
-				+ "\"/>");
+        
+        if(useProvider){
+            WebContext webContext = wscontext.getWebDDContext();
+            if(webContext != null){
+                pw.println("      <parameter name=\"className\" value=\"" + webContext.getServletClass()
+                        + "\"/>");
+            }
+        }else{
+            pw.println("      <parameter name=\"className\" value=\"" + className
+                    + "\"/>");
+        }
+                
 		pw.println("      <parameter name=\"wsdlPortType\" value=\""
 				+ binding.getPortType().getQName().getLocalPart() + "\"/>");
 

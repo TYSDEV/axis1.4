@@ -29,17 +29,13 @@ import org.apache.axis.utils.ClassUtils;
  * @author Srinath Perera(hemapani@opensource.lk)
  */
 public class EWSProvider extends RPCProvider{
-    public static final String OPTION_BEANNAME = "beanJndiName";
-    public static final String OPTION_HOMEINTERFACENAME = "homeInterfaceName";
-    public static final String OPTION_REMOTEINTERFACENAME = "remoteInterfaceName";
-    public static final String OPTION_LOCALHOMEINTERFACENAME = "localHomeInterfaceName";
-    public static final String OPTION_LOCALINTERFACENAME = "localInterfaceName";
+    public static final String OPTION_EJB_NAME = "beanName";
+    public static final String OPTION_JNDI_LOOKUP_NAME = "beanJndiName";
+    public static final String OPTION_HOMEINTERFACE_NAME = "homeInterfaceName";
+    public static final String OPTION_REMOTEINTERFACE_NAME = "remoteInterfaceName";
+    public static final String OPTION_LOCALHOMEINTERFACE_NAME = "localHomeInterfaceName";
+    public static final String OPTION_LOCALINTERFACE_NAME = "localInterfaceName";
     
-    public static final String OPTION_INITIAL_FACOTORY = "jndiContextClass";
-    public static final String OPTION_JNDI_FACTORY = "jndiContextClass";
-    public static final String OPTION_JNDI_URL = "jndiURL";
-    public static final String OPTION_JNDI_USERNAME = "jndiUser";
-    public static final String OPTION_JNDI_PASSWORD = "jndiPassword";
 
     private String ejblookupName;
     private String localhome;
@@ -47,10 +43,6 @@ public class EWSProvider extends RPCProvider{
     private String remote;
     private String local;
     
-    private String jndiUrl;
-    private String jndiFactory;
-    private String jndiUser;
-    private String jndiPassword; 
     private boolean ejbbased = true;
 
 
@@ -60,15 +52,21 @@ public class EWSProvider extends RPCProvider{
         throws Exception {
             if(ejbbased){
                 java.util.Properties env = new java.util.Properties();
-                InputStream jndiIn = getClass().getClassLoader().getResourceAsStream("jndi.properties");
+                InputStream jndiIn = ClassUtils.getResourceAsStream(getClass(),"jndi.properties");
+
                 if(jndiIn != null){
                     env.load(jndiIn);
                 }else{
-                    env.setProperty("java.naming.factory.initial",(String)getOption(OPTION_INITIAL_FACOTORY));
-                    env.setProperty("java.naming.factory.url.pkgs",(String)getOption(OPTION_JNDI_FACTORY));
-                    env.setProperty("java.naming.provider.url",(String)getOption(OPTION_JNDI_URL));
+                    throw new AxisFault("Do not find the JNDI properties file in the class path");
                 }
                 javax.naming.Context initial = new javax.naming.InitialContext(env);
+                
+                ejblookupName = (String)getOption(OPTION_JNDI_LOOKUP_NAME);
+                remote = (String)getOption(OPTION_REMOTEINTERFACE_NAME);
+                home = (String)getOption(OPTION_HOMEINTERFACE_NAME);
+                local = (String)getOption(OPTION_LOCALINTERFACE_NAME);
+                localhome = (String)getOption(OPTION_LOCALHOMEINTERFACE_NAME);                
+
                 if(remote != null && home != null && ejblookupName != null){
                     Object objref = initial.lookup(ejblookupName);
                     Class homeClass = ClassUtils.forName(home);
@@ -81,6 +79,7 @@ public class EWSProvider extends RPCProvider{
                     Method method = homeClass.getMethod("create",new Class[]{}); 
                     return method.invoke(homeObj,new Object[]{});
                 }
+                
                 throw new AxisFault("Wrong configuration");
             }else{
                 return makeNewServiceObject(msgContext, clsName);
@@ -101,5 +100,4 @@ public class EWSProvider extends RPCProvider{
             Method ejbMethod = obj.getClass().getMethod(method.getName(),method.getParameterTypes());
             return ejbMethod.invoke(obj,argValues);
     }
-
 }
