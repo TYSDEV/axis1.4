@@ -71,7 +71,7 @@ import java.net.Socket;
 import java.util.Hashtable;
 
 /**
- * This is a single threaded implementation of an HTTP server for processing
+ * This is a simple implementation of an HTTP server for processing
  * SOAP requests via Apache's xml-axis.  This is not intended for production
  * use.  Its intended uses are for demos, debugging, and performance
  * profiling.
@@ -95,7 +95,7 @@ public class SimpleAxisServer implements Runnable {
     private Hashtable sessions = new Hashtable();
 
     // Are we doing threads?
-    private static boolean doThreads = false;
+    private static boolean doThreads = true;
 
     // Are we doing sessions?
     // Set this to false if you don't want any session overhead.
@@ -103,6 +103,14 @@ public class SimpleAxisServer implements Runnable {
 
     protected boolean isSessionUsed() {
         return doSessions;
+    }
+
+    public void setDoThreads(boolean value) {
+        doThreads = value ;
+    }
+
+    public boolean getDoThreads() {
+        return doThreads ;
     }
 
     protected Session createSession(String cooky) {
