@@ -190,8 +190,11 @@ public abstract class BaseSerializerFactory
      */
     protected Serializer getSpecialized(String mechanismType) {
         if (javaType != null && xmlType != null) {
-            if (getSerializer == null) {
-                getSerializer = getSerializerMethod(javaType);
+            // Ensure that getSerializerMethod is called only once.
+            synchronized (this) {
+                if (getSerializer == null) {
+                    getSerializer = getSerializerMethod(javaType);
+                }
             }
             if (getSerializer != null) {
                 try {
@@ -250,7 +253,23 @@ public abstract class BaseSerializerFactory
         }
         return mechanisms.iterator();
     }
+
+    /**
+     * get xmlType
+     * @return xmlType QName for this factory
+     */
+    public QName getXMLType() {
+        return xmlType;
+    }
     
+    /**
+     * get javaType
+     * @return javaType Class for this factory
+     */
+    public Class getJavaType() {
+        return javaType;
+    }
+
     /**
      * Utility method that intospects on a factory class to decide how to 
      * create the factory.  Tries in the following order:
