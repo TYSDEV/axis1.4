@@ -83,52 +83,39 @@ AxisTrace::~AxisTrace()
     fclose(fileTrace);
 }
 
-/**
-    open log file for writing at server side.
-*/
 int AxisTrace::openFile()
 {
     char* sFileName =  g_pConfig->GetAxisLogPath();
-    if((fileTrace = fopen(sFileName, "w")) == NULL)
+    if((fileTrace = fopen(sFileName, "a")) == NULL)
         return AXIS_FAIL;
     fclose(fileTrace);
     int length = strlen(sFileName) + 12;
     char* setPerm = (char*) malloc(length);
     if(setPerm)
     {
-        strcpy(setPerm, "chmod 777 ");
+        strcpy(setPerm, "chmod 766 ");
         strcat(setPerm, sFileName);
     }
 
 #ifdef __GNUC__
     system(setPerm);
 #endif
-    if((fileTrace = fopen(sFileName, "ab")) == NULL)
+    if((fileTrace = fopen(sFileName, "a")) == NULL)
         return AXIS_FAIL;
                 
     return AXIS_SUCCESS;
 }
 
-/**
-    open log file for writing at client side.
-*/
 int AxisTrace::openFileByClient()
 {
     char* sFileName =  "./ClientAxisLog";
     
-    if((fileTrace = fopen(sFileName, "ab")) == NULL)
+    if((fileTrace = fopen(sFileName, "a")) == NULL)
         return AXIS_FAIL;
 
     return AXIS_SUCCESS;
 }
 
-/** 
-*   Logs messages according to their severity level.
-*   @param sLog log message
-*   @param level severity level of the message
-*   @param arg2 file name
-*   @param arg3 line number
-*/
 int AxisTrace::logaxis(const char* sLog, int level, char* arg2, int arg3)
 {
     time_t ltime;
@@ -167,14 +154,6 @@ int AxisTrace::logaxis(const char* sLog, int level, char* arg2, int arg3)
    
 }
 
-/**
-*   Logs messages according to their severity level.
-*   @param sLog1 log message1
-*   @param sLog2 log message2
-*   @param level severity level of the message
-*   @param arg2 file name
-*   @param arg3 line number
-*/
 int AxisTrace::logaxis(const char* sLog1, const char* sLog2, int level, char* arg3, int arg4)
 {
     time_t ltime;

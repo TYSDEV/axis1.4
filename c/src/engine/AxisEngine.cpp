@@ -67,10 +67,12 @@
 #include <axis/engine/HandlerPool.h>
 #include <axis/engine/DeserializerPool.h>
 #include <axis/engine/SerializerPool.h>
+#include <axis/common/AxisTrace.h>
 
 extern DeserializerPool* g_pDeserializerPool;
 extern SerializerPool* g_pSerializerPool;
 extern HandlerPool* g_pHandlerPool;
+extern AxisTrace* g_pAT;
 //extern WSDDDeployment* g_pWSDDDeployment;
 
 AxisEngine::AxisEngine()
@@ -98,7 +100,11 @@ int AxisEngine::Initialize()
 {
 	int Status;
 	m_pMsgData = new MessageData();
-	if (!m_pMsgData) return AXIS_FAIL;
+	if (!m_pMsgData)
+    {
+        AXISTRACE1("MessageData object could not be initialized", CRITICAL);
+        return AXIS_FAIL;
+    }
 	//Create and initialize Serializer and Deserializer objects
 	if (AXIS_SUCCESS != (Status = g_pSerializerPool->GetInstance(&m_pSZ))) return Status;
 	if (AXIS_SUCCESS != (Status = g_pDeserializerPool->GetInstance(&m_pDZ))) return Status;

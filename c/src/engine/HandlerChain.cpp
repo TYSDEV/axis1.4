@@ -95,7 +95,7 @@ int HandlerChain::Invoke(IMessageData* pMsg)
 		}
 		else
 		{
-            AXISTRACE1("handler invoke not successful", WARN);
+            AXISTRACE1("Handler invoke not successful", WARN);
 			OnFault(pMsg);
 			return AXIS_FAIL;
 		}

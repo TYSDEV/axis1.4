@@ -77,8 +77,25 @@ class AxisConfig
     public:
         AxisConfig();
         ~AxisConfig();
+        /**
+	     * This is called to get the server.wsdd file path.
+         * 
+	     * @return the server.wsdd file path 
+	     */
         char* GetWsddFilePath();
+        /**
+	     * This is called to get the AxisLog file path.
+         *
+	     * @return the AxisLog file path.
+	     */
         char* GetAxisLogPath();
+
+        /**
+	     * This method will read from the configuration file called axiscpp.conf
+         * which is located in a place defined by AXIS_HOME environment variable. 
+	 
+	     * @return The status which indicates whether the operation is success (AXIS_SUCCESS) or not (AXIS_FAIL).
+	     */
         int ReadConfFile();
         
     private:		 

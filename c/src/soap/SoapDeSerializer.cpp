@@ -119,8 +119,7 @@ int SoapDeSerializer::SetInputStream(const Ax_soapstream* pInputStream)
     
 	if (NULL != m_pInputStream->transport.pGetFunct)
         m_hugebuffer = (char*) malloc(intBuffLen + 10);
-		m_pInputStream->transport.pGetFunct(m_hugebuffer, intBuffLen, &nChars, m_pInputStream->str.ip_stream);
-    AXISTRACE2("buffer length is: ",strBuffLen, 4);        
+		m_pInputStream->transport.pGetFunct(m_hugebuffer, intBuffLen, &nChars, m_pInputStream->str.ip_stream);    
 	//if no soap then quit
 	if (nChars <= 0) return AXIS_FAIL;
 	MemBufInputSource Input((const unsigned char*)m_hugebuffer, nChars , "bufferid");

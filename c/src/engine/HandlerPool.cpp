@@ -271,7 +271,7 @@ int HandlerPool::GetHandlerChain(string& sSessionId, HandlerChain** ppChain, con
 	}
 	if (Status != AXIS_SUCCESS) //some failure so undo whatever done here
 	{
-        AXISTRACE1("handler failure", WARN);
+        AXISTRACE1("Handler failure", WARN);
 		string nosession = SESSIONLESSHANDLERS;
 		for (pChain->m_itCurrHandler = pChain->m_HandlerList.begin(); pChain->m_itCurrHandler != pChain->m_HandlerList.end(); pChain->m_itCurrHandler++)
 		{

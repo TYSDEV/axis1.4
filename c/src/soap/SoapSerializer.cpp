@@ -398,11 +398,9 @@ IWrapperSoapSerializer& SoapSerializer::operator<<(const AxisChar* cSerialized)
 */
 int SoapSerializer::flushSerializedBuffer()
 {
-	//sendSoapResponse(m_cSerializedBuffer);
-    AXISTRACE1("flushSerializedBuffer1", 4);
+	//sendSoapResponse(m_cSerializedBuffer);    
 	if (NULL != m_pOutputStream->transport.pSendFunct)
-    {
-        AXISTRACE1("flushSerializedBuffer2", 4);    
+    {        
 		m_pOutputStream->transport.pSendFunct(m_cSerializedBuffer, m_pOutputStream->str.op_stream);
     }
     

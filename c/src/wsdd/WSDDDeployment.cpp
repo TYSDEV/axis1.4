@@ -149,8 +149,10 @@ int WSDDDeployment::LoadWSDD(const AxisChar* sWSDD)
 	WSDDDocument doc;
 	if (AXIS_SUCCESS != doc.GetDeployment(sWSDD, this))
 	{
+        printf("server.wsdd loading failed\n");
 		return AXIS_FAIL;
 	}
+    printf("server.wsdd loading successful\n");
 	return AXIS_SUCCESS;
 }
 
@@ -267,7 +269,7 @@ int WSDDDeployment::RemoveHandler(bool bGlobal, bool bRequestFlow, WSDDHandler* 
  */
 int WSDDDeployment::unDeploy(string sServiceName)
 {
-	AXISTRACE3("entered to WSDDDeployment::unDeploy");
+ AXISTRACE3("entered to WSDDDeployment::unDeploy");
 
 	int iStatus = AXIS_FAIL;
 
@@ -289,9 +291,9 @@ int WSDDDeployment::unDeploy(string sServiceName)
 		do {
 			file = fopen(m_sWSDDPath.c_str(), "w");
 			if(file) {
-				AXISTRACE3("WSDDDeployment::unDeploy, opened the file successfully");
+    AXISTRACE3("WSDDDeployment::unDeploy, opened the file successfully");
 			} else {
-				AXISTRACE3("FAILED: WSDDDeployment::unDeploy, couldn't open the file successfully");
+    AXISTRACE3("FAILED: WSDDDeployment::unDeploy, couldn't open the file successfully");
 				iWriteStatus = AXIS_FAIL;
 				break;
 			}
@@ -300,20 +302,20 @@ int WSDDDeployment::unDeploy(string sServiceName)
 			
 			iWriteResult = fputs("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n", file);
 			if (iWriteResult<0) {
-				AXISTRACE3("WSDDDeployment::unDeploy, writing to the file is UNSUCCESSFULL");
+    AXISTRACE3("WSDDDeployment::unDeploy, writing to the file is UNSUCCESSFULL");
 				iWriteStatus = AXIS_FAIL;
 				break;
 			} else {
-				AXISTRACE3("WSDDDeployment::unDeploy, writing to the file is SUCCESSFULL");
+    AXISTRACE3("WSDDDeployment::unDeploy, writing to the file is SUCCESSFULL");
 			}
 
 			iWriteResult = fputs("<deployment xmlns=\"http://xml.apache.org/axis/wsdd/\" xmlns:java=\"http://xml.apache.org/axis/wsdd/providers/java\">\n", file);
 			if (iWriteResult<0) {
-				AXISTRACE3("WSDDDeployment::unDeploy, writing to the file is UNSUCCESSFULL");
+    AXISTRACE3("WSDDDeployment::unDeploy, writing to the file is UNSUCCESSFULL");
 				iWriteStatus = AXIS_FAIL;
 				break;
 			} else {
-				AXISTRACE3("WSDDDeployment::unDeploy, writing to the file is SUCCESSFULL");
+    AXISTRACE3("WSDDDeployment::unDeploy, writing to the file is SUCCESSFULL");
 			}
 
 			if(m_DeployedServices)

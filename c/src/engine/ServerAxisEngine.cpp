@@ -41,7 +41,10 @@ int ServerAxisEngine::Process(Ax_soapstream* soap)
 
 		if (!(soap->transport.pSendFunct && soap->transport.pGetFunct &&
 			soap->transport.pSendTrtFunct && soap->transport.pGetTrtFunct))
-			return AXIS_FAIL;
+            {
+                AXISTRACE1("transport is not set properly", CRITICAL);
+                return AXIS_FAIL;
+            }
 
 		do {
 			//populate MessageData with transport information
@@ -170,9 +173,8 @@ int ServerAxisEngine::Process(Ax_soapstream* soap)
             intContentLength = m_pSZ->GetContentLength();
             
             sprintf(strContentLength,"%d", intContentLength);
-            AXISTRACE2("content length:", strContentLength, 4);
-            set_header(soap, "Content-Length", strContentLength);
-            AXISTRACE2("content length:", strContentLength, 4);
+            AXISTRACE2("content length:", strContentLength, INFO);
+            set_header(soap, "Content-Length", strContentLength);            
             //send any transoport information like http headers first
             soap->transport.pSendTrtFunct(soap);
             m_pSZ->flushSerializedBuffer();

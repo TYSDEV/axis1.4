@@ -35,14 +35,21 @@ int ClientAxisEngine::Process(Ax_soapstream* pSoap)
 	int Status;
 	//const WSDDService* pService = NULL;
 
-	if (!pSoap) return AXIS_FAIL;
+	if (!pSoap)
+    {
+        AXISTRACE1("Ax_soapstream is null", CRITICAL);
+        return AXIS_FAIL;
+    }
 	m_pSoap = pSoap;
 
 	string sSessionId = m_pSoap->sessionid;
 
 	if (!(m_pSoap->transport.pSendFunct && m_pSoap->transport.pGetFunct &&
 		m_pSoap->transport.pSendTrtFunct && m_pSoap->transport.pGetTrtFunct))
-		return AXIS_FAIL;
+        {
+            AXISTRACE1("transport is not set properly", CRITICAL);
+            return AXIS_FAIL;
+        }
 
 	do {
 		//const char* cService = get_header(soap, SOAPACTIONHEADER);
@@ -98,7 +105,7 @@ int ClientAxisEngine::Invoke(MessageData* pMsg)
 				break; //do .. while (0)
 			}
 		}
-//		AXISTRACE1("AFTER invoke service specific request handlers");
+
 		level++; //AE_SERH		//invoke transport request handlers
 		//invoke global request handlers
 		if (m_pGReqFChain)
@@ -109,7 +116,6 @@ int ClientAxisEngine::Invoke(MessageData* pMsg)
 				break; //do .. while (0)
 			}		
 		}
-//        AXISTRACE1("AFTER invoke global request handlers");
 		level++; //AE_GLH	
 		if (m_pTReqFChain) {
 			if(AXIS_SUCCESS != (Status = m_pTReqFChain->Invoke(pMsg)))
@@ -118,7 +124,6 @@ int ClientAxisEngine::Invoke(MessageData* pMsg)
 				break; //do .. while (0)
 			}
 		}
-//		AXISTRACE1("AFTER invoke transport request handlers");
 		level++; // AE_TRH
 
 
@@ -129,8 +134,7 @@ int ClientAxisEngine::Invoke(MessageData* pMsg)
 	do 
 	{
         if((Status = m_pSZ->SetOutputStream(m_pSoap)) == AXIS_SUCCESS)
-        {
-            AXISTRACE1("clientinvoke", 4);
+        {            
             if (AXIS_SUCCESS != (Status = m_pSoap->transport.pSendTrtFunct(m_pSoap))) break;
             m_pSZ->flushSerializedBuffer();
         }
@@ -178,7 +182,6 @@ int ClientAxisEngine::Invoke(MessageData* pMsg)
 	case AE_START:;//transport handlers have failed
 	};
 	*/
-//	AXISTRACE1("end axisengine process()");
 	return Status;
 }
 

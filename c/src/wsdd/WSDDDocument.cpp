@@ -65,7 +65,6 @@
 #include <axis/wsdd/WSDDDocument.h>
 #include <axis/wsdd/WSDDKeywords.h>
 #include <string>
-#include <axis/common/AxisTrace.h>
 
 
 WSDDDocument::WSDDDocument()
@@ -106,8 +105,10 @@ int WSDDDocument::ParseDocument(const AxisChar* sWSDD)
 	}
 	catch (...)
 	{
+        printf("Document parsing failed\n");
 		return AXIS_FAIL;
 	}
+    printf("Document parsing successful\n");
 	return AXIS_SUCCESS;
 }
 

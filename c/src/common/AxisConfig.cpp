@@ -93,16 +93,13 @@ AxisConfig::~AxisConfig()
     
 }
 
-/**
-    This method will read from the configuration file called axiscpp.conf
-* which is located in a place defined by AXIS_HOME environment variable.
-*/
 int AxisConfig::ReadConfFile()
 {
     FILE* fileConfig = NULL;
     char* sConfPath = NULL;
     char sNewConfPath[CONFBUFFSIZE] = {0};
-    char key[CONFBUFFSIZE] = {0};
+    //char key[CONFBUFFSIZE] = {0};
+    char* key;
     //char m_sLine[CONFBUFFSIZE] = {0};
 	//char value[CONFBUFFSIZE] = {0};
              
@@ -111,7 +108,7 @@ int AxisConfig::ReadConfFile()
         return AXIS_FAIL;
 	strcpy(sNewConfPath, sConfPath);
     strcat(sNewConfPath, "/axiscpp.conf");
-    if ((fileConfig = fopen(sNewConfPath, "rt")) == NULL)
+    if ((fileConfig = fopen(sNewConfPath, "r")) == NULL)
 		return AXIS_FAIL;
 
     /*while(fgets(m_sLine, CONFBUFFSIZE, fileConfig) != NULL)
@@ -146,15 +143,15 @@ int AxisConfig::ReadConfFile()
         int linesize = strlen(m_sLine);
         m_sValue = strpbrk(m_sLine, ":");
         if(!m_sValue) break;
+        key = (char*) malloc(strlen(m_sValue));
         m_sValue[0] = '\0';
         sscanf(m_sLine,"%s", key);
         
         if(strcmp(key, "WSDDFILEPATH") == 0)
             strncpy(m_sWsddFilePath, m_sValue + 1, linesize  - strlen(key) - 2);
         if(strcmp(key, "AXISLOGPATH") == 0)
-            strncpy(m_sAxisLogPath, m_sValue + 1, linesize  - strlen(key) - 2);    
-    
-        //m_sValue = NULL;     
+            strncpy(m_sAxisLogPath, m_sValue + 1, linesize  - strlen(key) - 2);
+         
     }
     
     return AXIS_SUCCESS;
@@ -175,6 +172,7 @@ char* AxisConfig::GetAxisLogPath()
     AxisConfig* objConfig = new AxisConfig();
     objConfig->ReadConfFile();
     char* pWsddPath = objConfig->GetWsddFilePath();
+    printf("pWsddPath:%s\n", pWsddPath);
     char* LogPath = objConfig->GetAxisLogPath();
     
 }
