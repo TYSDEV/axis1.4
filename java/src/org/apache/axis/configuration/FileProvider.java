@@ -58,6 +58,8 @@
 import org.apache.axis.AxisEngine;
 import org.apache.axis.ConfigurationProvider;
 import org.apache.axis.deployment.wsdd.WSDDDocument;
+import org.apache.axis.deployment.wsdd.SimpleWsddDeploymentManager;
+import org.apache.axis.deployment.DeploymentRegistry;
 import org.apache.axis.utils.Admin;
 import org.apache.axis.utils.XMLUtils;
 import org.w3c.dom.Document;
@@ -127,6 +129,11 @@ public class FileProvider implements ConfigurationProvider
         this.searchClasspath = searchClasspath;
     }
 
+    public DeploymentRegistry getDeploymentRegistry()
+    {
+        return new SimpleWsddDeploymentManager();
+    }
+
     public void configureEngine(AxisEngine engine) throws Exception
     {
         if (myInputStream == null) {
@@ -145,7 +152,8 @@ public class FileProvider implements ConfigurationProvider
         }
 
         WSDDDocument doc = new WSDDDocument(XMLUtils.newDocument(myInputStream));
-        engine.deployWSDD(doc);
+        engine.getDeploymentRegistry().deploy(doc);
+        engine.refreshGlobalOptions();
         
         myInputStream = null;
     }

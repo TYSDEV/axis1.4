@@ -57,6 +57,9 @@ package org.apache.axis.deployment;
 import org.apache.axis.Constants;
 import org.apache.axis.Handler;
 import org.apache.axis.InternalException;
+import org.apache.axis.handlers.soap.SOAPService;
+import org.apache.axis.providers.java.RPCProvider;
+import org.apache.axis.providers.java.MsgProvider;
 import org.apache.axis.deployment.wsdd.WSDDGlobalConfiguration;
 import org.apache.axis.deployment.wsdd.WSDDDocument;
 import org.apache.axis.deployment.wsdd.WSDDHandler;
@@ -64,9 +67,13 @@ import org.apache.axis.deployment.wsdd.WSDDConstants;
 import org.apache.axis.deployment.wsdd.WSDDService;
 import org.apache.axis.deployment.wsdd.WSDDTransport;
 import org.apache.axis.deployment.wsdd.WSDDTypeMapping;
+import org.apache.axis.deployment.wsdd.WSDDRequestFlow;
+import org.apache.axis.deployment.wsdd.WSDDResponseFlow;
 import org.apache.axis.encoding.SOAPTypeMappingRegistry;
 import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.encoding.SerializationContext;
+import org.apache.axis.utils.JavaUtils;
+import org.apache.log4j.Category;
 import org.w3c.dom.Document;
 
 import javax.xml.rpc.namespace.QName;
@@ -85,6 +92,9 @@ import java.io.IOException;
 public class SimpleDeploymentManager
     extends DeploymentRegistry
 {
+    static Category category =
+            Category.getInstance(SimpleDeploymentManager.class.getName());
+
     /** Our global configuration */
     WSDDGlobalConfiguration globalConfig;
 
@@ -135,18 +145,6 @@ public class SimpleDeploymentManager
     public DeploymentDocument getConfigDocument()
             throws DeploymentException {
         return doc;
-    }
-
-    /**
-     * Return the global configuration
-     * 
-     * @return our global configuration
-     * @throws DeploymentException XXX
-     */
-    public WSDDGlobalConfiguration getGlobalConfiguration()
-        throws DeploymentException
-    {
-        return globalConfig;
     }
 
     /**
@@ -453,4 +451,109 @@ public class SimpleDeploymentManager
         return transports == null ? null : transports.keys();
     }
 
+   /**
+     * Deploy a Handler into the registry.
+     */
+    public void deployHandler(String key, Handler handler)
+        throws DeploymentException
+    {
+        handler.setName(key);
+        WSDDDocument doc = (WSDDDocument)getConfigDocument();
+        WSDDHandler newHandler = new WSDDHandler();
+        newHandler.setName(key);
+        newHandler.setType(new QName(WSDDConstants.WSDD_JAVA,
+                                     handler.getClass().getName()));
+        newHandler.setOptionsHashtable(handler.getOptions());
+        deployHandler(newHandler);
+    }
+
+    /**
+     * Undeploy (remove) a Handler from the registry.
+     */
+    public void undeployHandler(String key)
+        throws DeploymentException
+    {
+        removeDeployedItem(new QName("", key));
+    }
+
+    /**
+     * Deploy a Service into the registry.
+     */
+     public void deployService(String key, SOAPService service)
+        throws DeploymentException
+    {
+        category.info(JavaUtils.getMessage("deployService00", key, this.toString()));
+        service.setName(key);
+        
+        WSDDService newService = new WSDDService();
+        newService.setName(key);
+        newService.setOptionsHashtable(service.getOptions());
+        newService.setCachedService(service);
+        
+        Handler pivot = service.getPivotHandler();
+        if (pivot == null) {
+            throw new DeploymentException(JavaUtils.getMessage("noPivot01"));
+        }
+        
+        if (pivot instanceof RPCProvider) {
+            newService.setProviderQName(WSDDConstants.JAVARPC_PROVIDER);
+        } else if (pivot instanceof MsgProvider) {
+            newService.setProviderQName(WSDDConstants.JAVAMSG_PROVIDER);
+        } else {
+            newService.setProviderQName(WSDDConstants.HANDLER_PROVIDER);
+            newService.setParameter("handlerClass", pivot.getClass().getName());
+        }
+        deployService(newService);
+    }
+
+    /**
+     * Undeploy (remove) a Service from the registry.
+     */
+    public void undeployService(String key)
+        throws DeploymentException
+    {
+        undeployService(new QName("", key));
+    }
+
+    /**
+     * Returns a global request handler.
+     */
+    public Handler getGlobalRequest()
+        throws Exception
+    {
+        Handler h = null;
+        if (globalConfig != null) {
+            WSDDRequestFlow reqFlow = globalConfig.getRequestFlow();
+            if (reqFlow != null)
+                h = reqFlow.getInstance(this);
+        }
+        return h;
+    }
+
+   /**
+     * Returns a global response handler.
+     */
+    public Handler getGlobalResponse()
+        throws Exception
+    {
+        Handler h = null;
+        if (globalConfig != null) {
+            WSDDResponseFlow respFlow = globalConfig.getResponseFlow();
+            if (respFlow != null)
+                h = respFlow.getInstance(this);
+        }
+        return h;
+    }
+
+    /**
+     * Returns the global configuration options.
+     */
+    public Hashtable getGlobalOptions()
+    {
+        Hashtable go = null;
+        if (globalConfig != null) {
+            go = globalConfig.getParametersTable();
+        }
+        return go;
+    }
 }
