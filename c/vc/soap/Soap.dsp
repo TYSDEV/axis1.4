@@ -151,71 +151,71 @@ SOURCE=..\..\src\soap\XMLStreamHandler.cpp
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
 # Begin Source File
 
-SOURCE=..\..\include\axis\soap\Attribute.h
+SOURCE=..\..\src\soap\Attribute.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\include\axis\soap\BasicNode.h
+SOURCE=..\..\src\soap\BasicNode.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\include\axis\soap\CharacterElement.h
+SOURCE=..\..\src\soap\CharacterElement.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\include\axis\soap\ComplexElement.h
+SOURCE=..\..\src\soap\ComplexElement.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\include\axis\soap\HeaderBlock.h
+SOURCE=..\..\src\soap\HeaderBlock.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\include\axis\soap\SoapBody.h
+SOURCE=..\..\src\soap\SoapBody.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\include\axis\soap\SoapDeSerializer.h
+SOURCE=..\..\src\soap\SoapDeSerializer.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\include\axis\soap\SoapEnvelope.h
+SOURCE=..\..\src\soap\SoapEnvelope.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\include\axis\soap\SoapEnvVersions.h
+SOURCE=..\..\src\soap\SoapEnvVersions.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\include\axis\soap\SoapFault.h
+SOURCE=..\..\src\soap\SoapFault.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\include\axis\soap\SoapFaults.h
+SOURCE=..\..\src\soap\SoapFaults.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\include\axis\soap\SoapHeader.h
+SOURCE=..\..\src\soap\SoapHeader.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\include\axis\soap\SoapKeywordMapping.h
+SOURCE=..\..\src\soap\SoapKeywordMapping.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\include\axis\soap\SoapMethod.h
+SOURCE=..\..\src\soap\SoapMethod.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\include\axis\soap\SoapSerializer.h
+SOURCE=..\..\src\soap\SoapSerializer.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\include\axis\soap\URIMapping.h
+SOURCE=..\..\src\soap\URIMapping.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\include\axis\soap\XMLStreamHandler.h
+SOURCE=..\..\src\soap\XMLStreamHandler.h
 # End Source File
 # End Group
 # End Target
