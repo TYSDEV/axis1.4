@@ -281,8 +281,9 @@ public class JavaBeanWriter extends JavaClassWriter {
      */
     protected void writeMemberFields() {
         // Define the member element of the bean
-	if (simpleValueTypes.size() > 1) {
+	if (isUnion()) {
             pw.println("    private java.lang.String value;");
+            return;
 	}
         for (int i = 0; i < names.size(); i += 2) {
             String typeName = (String) names.get(i);
@@ -420,7 +421,7 @@ public class JavaBeanWriter extends JavaClassWriter {
 	    return;
 	}
         pw.println("    // " + Messages.getMessage("needStringCtor"));
-        if (simpleValueTypes.size() > 1 || simpleValueTypes.get(0).equals("java.lang.String")) {
+        if (isUnion() || simpleValueTypes.get(0).equals("java.lang.String")) {
             pw.println("    public " + className + "(java.lang.String value) {");
             pw.println("        this.value = value;");
 	    pw.println("    }");
@@ -447,11 +448,6 @@ public class JavaBeanWriter extends JavaClassWriter {
     }
     protected void writeSimpleTypeGetter(String simpleValueType, String name, String returnString) {
             // Make sure we wrap base types with its Object type
-            if (name != null) {
-                pw.println("        if (this." + name + " != null) {");
-                pw.println("            " + returnString + " this." + name + ";");
-                pw.println("        }");
-            }
             String wrapper = JavaUtils.getWrapper(simpleValueType);
 
             if (wrapper != null) {
@@ -490,6 +486,9 @@ public class JavaBeanWriter extends JavaClassWriter {
             }
     }
 
+    private boolean isUnion() {
+        return this.simpleValueTypes.size() > 1;
+    }
     /**
      * Writes the toString method
      * Currently the toString method is only written for
@@ -502,7 +501,7 @@ public class JavaBeanWriter extends JavaClassWriter {
 	}
         pw.println("    // " + Messages.getMessage("needToString"));
         pw.println("    public java.lang.String toString() {");
-        if (simpleValueTypes.size() > 1 || simpleValueTypes.get(0).equals("java.lang.String")) {
+        if (isUnion() || simpleValueTypes.get(0).equals("java.lang.String")) {
             pw.println("        return value;");
 	} else {
             String wrapper = JavaUtils.getWrapper((String)simpleValueTypes.get(0));
@@ -553,7 +552,7 @@ public class JavaBeanWriter extends JavaClassWriter {
             if (enableGetters) {
                 pw.println("    public " + typeName + " " +
                            get + capName + "() {");
-                if (simpleValueTypes.size() > 1) {
+                if (isUnion()) {
 			writeSimpleTypeGetter(typeName, name, "return");
 		} else {
 		    pw.println("        return " + name + ";");
@@ -562,11 +561,10 @@ public class JavaBeanWriter extends JavaClassWriter {
                 pw.println();
             }
             if (enableSetters) {
-                if (simpleValueTypes.size() > 1) {
+                if (isUnion()) {
                     pw.println("    public void setValue(" +
                            typeName + " value) {");
 		    writeSimpleTypeSetter(typeName);
-                    pw.println("        this." + name + " = value;");
 		} else {
                     pw.println("    public void set" + capName + "(" +
                            typeName + " " + name + ") {");
@@ -658,6 +656,9 @@ public class JavaBeanWriter extends JavaClassWriter {
         pw.println("        boolean _equals;");
         if (names.size() == 0) {
             pw.println("        _equals = " + truth + ";");
+        } else if (isUnion()) {
+            pw.println("        _equals = " + truth + " && " + 
+                       " this.toString().equals(obj.toString());");
         } else {
             pw.println("        _equals = " + truth + " && ");
             for (int i = 0; i < names.size(); i += 2) {
@@ -727,7 +728,12 @@ public class JavaBeanWriter extends JavaClassWriter {
             start = "super.hashCode()";
         }
         pw.println("        int _hashCode = " + start + ";");
-        for (int i = 0; i < names.size(); i += 2) {
+        if (isUnion()) {
+            pw.println("        if (this.value != null) {");
+            pw.println("            _hashCode += this.value.hashCode();");
+            pw.println("        }");
+        }
+        for (int i = 0; !isUnion() && (i < names.size()); i += 2) {
             String variableType = (String) names.get(i);
             String variable = (String) names.get(i + 1);
             String get = "get";

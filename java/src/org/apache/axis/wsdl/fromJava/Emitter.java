@@ -1123,13 +1123,26 @@ public class Emitter {
     }
     
     private QName getRequestQName(OperationDesc oper) {
+        qualifyOperation(oper);
         QName qname = oper.getElementQName();
         if (qname == null) {
             qname = new QName(oper.getName());
         }
         return qname;
     }
+    private void qualifyOperation(OperationDesc oper) {
+        if (style == Style.WRAPPED && use == Use.LITERAL) {
+            QName qname = oper.getElementQName();
+            if (qname != null) {
+                qname = new QName(intfNS, oper.getName()); 
+            } else if (qname.getNamespaceURI().equals("")) {
+                qname = new QName(intfNS,qname.getLocalPart());
+            }
+            oper.setElementQName(qname);
+        }
+    }
     private QName getResponseQName(OperationDesc oper) {
+        qualifyOperation(oper);
         QName qname = oper.getElementQName();
         if (qname == null) {
             return new QName(oper.getName() + "Response");
@@ -1345,6 +1358,9 @@ public class Emitter {
             // declaration whose name and type may be found in the
             // ParameterDesc.
             QName qname = param.getQName();
+            if (param.getTypeQName().getNamespaceURI().equals("")) {
+                param.setTypeQName(new QName(intfNS,param.getTypeQName().getLocalPart()));
+            }
             Element el = types.createElementDecl(qname.getLocalPart(),
                                                  param.getJavaType(),
                                                  param.getTypeQName(),
