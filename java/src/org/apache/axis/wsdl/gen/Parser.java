@@ -77,59 +77,117 @@ import java.util.Vector;
 
 /**
  * This is a class with no documentation.
- *
  */
 public class Parser {
 
+    /** Field debug */
     protected boolean debug = false;
+
+    /** Field imports */
     protected boolean imports = true;
+
+    /** Field verbose */
     protected boolean verbose = false;
+
+    /** Field nowrap */
     protected boolean nowrap = false;
 
     // Username and password for Authentication
+
+    /** Field username */
     protected String username = null;
+
+    /** Field password */
     protected String password = null;
 
     // Timeout, in milliseconds, to let the Emitter do its work
-    //TODO private long timeoutms = 45000; // 45 sec default
-    private long timeoutms = 999999999; // 45 sec default
+    // TODO private long timeoutms = 45000; // 45 sec default
+
+    /** Field timeoutms */
+    private long timeoutms = 999999999;    // 45 sec default
+
+    /** Field genFactory */
     private GeneratorFactory genFactory = null;
+
+    /** Field symbolTable */
     private SymbolTable symbolTable = null;
 
+    /**
+     * Method isDebug
+     * 
+     * @return 
+     */
     public boolean isDebug() {
         return debug;
-    } // isDebug
+    }    // isDebug
 
+    /**
+     * Method setDebug
+     * 
+     * @param debug 
+     */
     public void setDebug(boolean debug) {
         this.debug = debug;
-    } // setDebug
+    }    // setDebug
 
+    /**
+     * Method isImports
+     * 
+     * @return 
+     */
     public boolean isImports() {
         return imports;
-    } // isImports
+    }    // isImports
 
+    /**
+     * Method setImports
+     * 
+     * @param imports 
+     */
     public void setImports(boolean imports) {
         this.imports = imports;
-    } // setImports
+    }    // setImports
 
+    /**
+     * Method isVerbose
+     * 
+     * @return 
+     */
     public boolean isVerbose() {
         return verbose;
-    } // isVerbose
+    }    // isVerbose
 
+    /**
+     * Method setVerbose
+     * 
+     * @param verbose 
+     */
     public void setVerbose(boolean verbose) {
         this.verbose = verbose;
-    } // setVerbose
+    }    // setVerbose
 
+    /**
+     * Method isNowrap
+     * 
+     * @return 
+     */
     public boolean isNowrap() {
         return nowrap;
     }
 
+    /**
+     * Method setNowrap
+     * 
+     * @param nowrap 
+     */
     public void setNowrap(boolean nowrap) {
         this.nowrap = nowrap;
     }
 
     /**
      * Return the current timeout setting
+     * 
+     * @return 
      */
     public long getTimeout() {
         return timeoutms;
@@ -137,157 +195,249 @@ public class Parser {
 
     /**
      * Set the timeout, in milliseconds
+     * 
+     * @param timeout 
      */
     public void setTimeout(long timeout) {
         this.timeoutms = timeout;
         this.timeoutms = 999999999;
     }
 
+    /**
+     * Method getUsername
+     * 
+     * @return 
+     */
     public String getUsername() {
         return username;
-    } // getUsername
+    }    // getUsername
 
+    /**
+     * Method setUsername
+     * 
+     * @param username 
+     */
     public void setUsername(String username) {
         this.username = username;
-    } // setUsername
+    }    // setUsername
 
+    /**
+     * Method getPassword
+     * 
+     * @return 
+     */
     public String getPassword() {
         return password;
-    } // getPassword
+    }    // getPassword
 
+    /**
+     * Method setPassword
+     * 
+     * @param password 
+     */
     public void setPassword(String password) {
         this.password = password;
-    } // setPassword
+    }    // setPassword
 
+    /**
+     * Method getFactory
+     * 
+     * @return 
+     */
     public GeneratorFactory getFactory() {
         return genFactory;
-    } // getFactory
+    }    // getFactory
 
+    /**
+     * Method setFactory
+     * 
+     * @param factory 
+     */
     public void setFactory(GeneratorFactory factory) {
         this.genFactory = factory;
-    } // setFactory
+    }    // setFactory
 
     /**
      * Get the symbol table.  The symbol table is null until
      * run is called.
+     * 
+     * @return 
      */
     public SymbolTable getSymbolTable() {
         return symbolTable;
-    } // getSymbolTable
+    }    // getSymbolTable
 
     /**
      * Return the current definition.  The current definition is
      * null until run is called.
+     * 
+     * @return 
      */
     public Definition getCurrentDefinition() {
-        return symbolTable == null ? null : symbolTable.getDefinition();
-    } // getCurrentDefinition
+
+        return (symbolTable == null)
+                ? null
+                : symbolTable.getDefinition();
+    }    // getCurrentDefinition
 
     /**
      * Get the current WSDL URI.  The WSDL URI is null until
      * run is called.
+     * 
+     * @return 
      */
     public String getWSDLURI() {
-        return symbolTable == null ? null : symbolTable.getWSDLURI();
-    } // getWSDLURI
+
+        return (symbolTable == null)
+                ? null
+                : symbolTable.getWSDLURI();
+    }    // getWSDLURI
 
     /**
      * Parse a WSDL at a given URL.
-     *
+     * <p/>
      * This method will time out after the number of milliseconds specified
      * by our timeoutms member.
-     *
+     * 
+     * @param wsdlURI 
+     * @throws Exception 
      */
     public void run(String wsdlURI) throws Exception {
+
         if (getFactory() == null) {
             setFactory(new NoopFactory());
         }
-        symbolTable =
-            new SymbolTable(
-                genFactory.getBaseTypeMapping(),
-                imports,
-                verbose,
-                nowrap);
+
+        symbolTable = new SymbolTable(genFactory.getBaseTypeMapping(), imports,
+                verbose, nowrap);
 
         // We run the actual Emitter in a thread that we can kill
         WSDLRunnable runnable = new WSDLRunnable(symbolTable, wsdlURI);
         Thread wsdlThread = new Thread(runnable);
+
         wsdlThread.start();
 
         try {
-            if (timeoutms > 0)
+            if (timeoutms > 0) {
                 wsdlThread.join(timeoutms);
-            else
+            } else {
                 wsdlThread.join();
+            }
         } catch (InterruptedException e) {
         }
 
         if (wsdlThread.isAlive()) {
             wsdlThread.interrupt();
+
             throw new IOException(Messages.getMessage("timedOut"));
         }
 
         if (runnable.getFailure() != null) {
             throw runnable.getFailure();
         }
-    } // run
+    }    // run
 
+    /**
+     * Class WSDLRunnable
+     * 
+     * @version %I%, %G%
+     */
     private class WSDLRunnable implements Runnable {
+
+        /** Field symbolTable */
         private SymbolTable symbolTable;
+
+        /** Field wsdlURI */
         private String wsdlURI;
+
+        /** Field failure */
         private Exception failure = null;
 
+        /**
+         * Constructor WSDLRunnable
+         * 
+         * @param symbolTable 
+         * @param wsdlURI     
+         */
         public WSDLRunnable(SymbolTable symbolTable, String wsdlURI) {
             this.symbolTable = symbolTable;
             this.wsdlURI = wsdlURI;
-        } // ctor
+        }    // ctor
 
+        /**
+         * Method run
+         */
         public void run() {
+
             try {
                 symbolTable.populate(wsdlURI, username, password);
                 generate(symbolTable);
             } catch (Exception e) {
                 failure = e;
             }
-        } // run
+        }    // run
 
+        /**
+         * Method getFailure
+         * 
+         * @return 
+         */
         public Exception getFailure() {
             return failure;
-        } // getFailure
-    } // WSDLRunnable
+        }    // getFailure
+    }    // WSDLRunnable
 
     /**
      * Call this method if your WSDL document has already been parsed as an XML DOM document.
+     * 
      * @param context context This is directory context for the Document.  If the Document were from file "/x/y/z.wsdl" then the context could be "/x/y" (even "/x/y/z.wsdl" would work).  If context is null, then the context becomes the current directory.
-     * @param doc doc This is the XML Document containing the WSDL.
+     * @param doc     doc This is the XML Document containing the WSDL.
+     * @throws IOException                  
+     * @throws SAXException                 
+     * @throws WSDLException                
+     * @throws ParserConfigurationException 
      */
     public void run(String context, Document doc)
-        throws
-            IOException,
-            SAXException,
-            WSDLException,
+            throws IOException, SAXException, WSDLException,
             ParserConfigurationException {
+
         if (getFactory() == null) {
             setFactory(new NoopFactory());
         }
-        symbolTable =
-            new SymbolTable(
-                genFactory.getBaseTypeMapping(),
-                imports,
-                verbose,
-                nowrap);
+
+        symbolTable = new SymbolTable(genFactory.getBaseTypeMapping(), imports,
+                verbose, nowrap);
+
         symbolTable.populate(context, doc);
         generate(symbolTable);
-    } // run
+    }    // run
 
+    /**
+     * Method sanityCheck
+     * 
+     * @param symbolTable 
+     */
     protected void sanityCheck(SymbolTable symbolTable) {
+
         // do nothing.
     }
+
+    /**
+     * Method generate
+     * 
+     * @param symbolTable 
+     * @throws IOException  
+     * @throws SAXException 
+     */
     private void generate(SymbolTable symbolTable)
-        throws IOException, SAXException {
+            throws IOException, SAXException {
+
         sanityCheck(symbolTable);
+
         Definition def = symbolTable.getDefinition();
+
         genFactory.generatorPass(def, symbolTable);
+
         if (isDebug()) {
             symbolTable.dump(System.out);
         }
@@ -295,28 +445,30 @@ public class Parser {
         // Generate bindings for types
         generateTypes(symbolTable);
         System.out.println("types are sucessfully created ");
+
         Iterator it = symbolTable.getHashMap().values().iterator();
+
         while (it.hasNext()) {
             Vector v = (Vector) it.next();
+
             for (int i = 0; i < v.size(); ++i) {
                 SymTabEntry entry = (SymTabEntry) v.elementAt(i);
                 Generator gen = null;
+
                 if (entry instanceof MessageEntry) {
-                    gen =
-                        genFactory.getGenerator(
-                            ((MessageEntry) entry).getMessage(),
-                            symbolTable);
+                    gen = genFactory.getGenerator(
+                            ((MessageEntry) entry).getMessage(), symbolTable);
                 } else if (entry instanceof PortTypeEntry) {
                     PortTypeEntry pEntry = (PortTypeEntry) entry;
+
                     // If the portType is undefined, then we're parsing a Definition
                     // that didn't contain a portType, merely a binding that referred
                     // to a non-existent port type.  Don't bother writing it.
                     if (pEntry.getPortType().isUndefined()) {
                         continue;
                     }
-                    gen =
-                        genFactory.getGenerator(
-                            pEntry.getPortType(),
+
+                    gen = genFactory.getGenerator(pEntry.getPortType(),
                             symbolTable);
                 } else if (entry instanceof BindingEntry) {
                     BindingEntry bEntry = (BindingEntry) entry;
@@ -328,58 +480,64 @@ public class Parser {
                     if (binding.isUndefined() || !bEntry.isReferenced()) {
                         continue;
                     }
+
                     gen = genFactory.getGenerator(binding, symbolTable);
                 } else if (entry instanceof ServiceEntry) {
-                    gen =
-                        genFactory.getGenerator(
-                            ((ServiceEntry) entry).getService(),
-                            symbolTable);
+                    gen = genFactory.getGenerator(
+                            ((ServiceEntry) entry).getService(), symbolTable);
                 }
+
                 if (gen != null) {
                     gen.generate();
                 }
             }
         }
 
-        // Output extra stuff (deployment files and faults) 
+        // Output extra stuff (deployment files and faults)
         // outside of the recursive emit method.
         Generator gen = genFactory.getGenerator(def, symbolTable);
+
         gen.generate();
-    } // generate
+    }    // generate
 
     /**
      * Generate bindings (classes and class holders) for the complex types.
      * If generating serverside (skeleton) spit out beanmappings.
      * TODO This is the place to start writng types. the JAXME refactoring should
-     * start from here. 
+     * start from here.
+     * 
+     * @param symbolTable 
+     * @throws IOException  
+     * @throws SAXException 
      */
     private void generateTypes(SymbolTable symbolTable)
-        throws IOException, SAXException {
+            throws IOException, SAXException {
+
         Vector types = symbolTable.getTypes();
+
         for (int i = 0; i < types.size(); ++i) {
             TypeEntry type = (TypeEntry) types.elementAt(i);
 
             // Write out the type if and only if:
-            //  - we found its definition (getNode())
-            //  - it is referenced 
-            //  - it is not a base type
-            //  - it is a Type (not an Element) or a CollectionElement
+            // - we found its definition (getNode())
+            // - it is referenced
+            // - it is not a base type
+            // - it is a Type (not an Element) or a CollectionElement
             // (Note that types that are arrays are passed to getGenerator
-            //  because they may require a Holder)
-
+            // because they may require a Holder)
             // A CollectionElement is an array that might need a holder
-            boolean isType =
-                (type instanceof Type || type instanceof CollectionElement);
+            boolean isType = ((type instanceof Type)
+                    || (type instanceof CollectionElement));
+
             System.out.println(type);
-            if (type.getNode() != null
-                && type.isReferenced()
-                && isType
-                && type.getBaseType() == null) {
+
+            if ((type.getNode() != null) && type.isReferenced() && isType
+                    && (type.getBaseType() == null)) {
                 Generator gen = genFactory.getGenerator(type, symbolTable);
+
                 gen.generate();
                 System.out.println("type genarated");
             }
         }
-    } // generateTypes
-
-} // class Parser
+    }    // generateTypes
+}    // class Parser
