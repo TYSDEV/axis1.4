@@ -12,6 +12,8 @@
 </div>
 <dl>
 <dt>
+
+<br>
 <a href="#Introducti">Introduction&nbsp;</a>
 </dt>
 <dt>
@@ -49,6 +51,9 @@
 </dd>
 <dd>
 <a href="#ssl">SSL Client</a>
+</dd>
+<dd>
+<a href="#session">Session Headers</a>
 <br>
 </dd>
 <dd>
@@ -536,6 +541,8 @@ To run the samples
 </p>
 <br>
 
+<br>
+
 <p><a name="ssl"></a> </p>
 <h3>SSL Client </h3>
 <p>To build the ssl channel library configure with <br>
@@ -549,6 +556,73 @@ request through ssh tunnelling. <br> <br>
 Currently I use openssl libraries for ssh tunnelling. <br> <br>
 The API to write a new ssl channel library(using a library other than openssl) is in <b>src/transport/SSLChannel.hpp </b> <br> <br>
 All openssl ssl related implementations are  in <b>src/transport/axis2/ssl folder</b> 
+
+<br> <br>
+
+<p><a name="session"></a> </p>
+<h3>Session Headers</h3>
+<p>The following text explains how to deploy and run the SOAP Header based sample client with Axis Java web service <br> <br>
+<b>Deploying the Web Service</b> <br> <br> </p>
+<p>c\samples\server\session\headers folder contains the sources (inside the counters folder, which is the package of these classes)  needed to build the Axis java service needed to run the soap header based session client
+(These server side skeletons were generated from the Counter.wsdl) <br> <br>
+
+
+Compile these java source files and deploy them in Axis java (visit http://ws.apache.org/axis/java/index.html on how to 
+achieve this) <br> <br>
+
+
+Put the following element in the <globalConfiguration> section in the server-config.wsdd to enable SOAP header based 
+session handling for Axis Java <br> <br>
+<b>&lt;handler name="session" type="java:org.apache.axis.handlers.SimpleSessionHandler"/&gt; </b> <br> <br>
+
+The following should be put in the server-config.wsdd of Axis java for this service to behave as having session scope <br> <br>
+
+&lt;service name="CounterService" provider="java:RPC"&gt; <br>
+&lt;parameter name="scope" value="session"/&gt;<br>
+&lt;requestFlow&gt; <br>
+&lt;handler type="session"/&gt;<br> 
+&lt;/requestFlow&gt; <br>
+&lt;responseFlow&gt; <br>
+&lt;handler type="session"/&gt; <br> 
+&lt;/responseFlow&gt; <br>
+  &lt;parameter name="allowedMethods" value="*"/&gt; <br>
+  &lt;parameter name="className" value="counters.CounterSoapBindingImpl"/&gt; <br>
+  &lt;namespace&gt;http://xml.apache.org/axis/wsdd/&lt;/namespace&gt; <br>
+&lt;/service&gt; <br> <br> </p>
+
+<p>
+Since Axis c++ doesn't support multiref yet, Axis java multiref should be disabled by putting the element <br> <br>
+&lt;parameter name="sendMultiRefs" value="false"/&gt; <br> 
+under &lt;globalConfiguration&gt; <br> <br>
+
+Start Axis java (visit http://ws.apache.org/axis/java/index.html on how to achieve this)<br> <br>
+
+Generating the client stubs and building the client and running the client. <br> <br> </p>
+
+<p>Compile the sessionhandler using the sources in c\samples\client\session\headers\sessionhandler <br> <br>
+Run the command java org.apache.axis.wsdl.wsdl2ws.WSDL2Ws ../Counter.wsdl -o./gen_src -lc++ -sclient 
+from within c\samples\client\session\headers\sessionclient to generate the client stubs <br> <br>
+
+Compile the client application using  the following command from within c\samples\client\session\headers\sessionclient <br> <br>
+
+g++ CounterClient.cpp gen_src/*.cpp -Igen_src <br>
+I$AXISCPP_HOME/include -L$AXISCPP_DEPLOY/lib -ldl <br>
+laxiscpp_client -oclient <br> <br>
+
+Host the service in Axis java (Check c/samples/server/session/headers/readme.txt on how to do this). <br> <br>
+
+Configure the client to use the provided client.wsdd from axiscpp.conf (make appropriate changes if necessary 
+in the client.wsdd to the absolute path of the handler )<br> <br>
+
+Run the tcpMonitor and configure it to check the conversation between the client and server <br> <br>
+
+Run the client in the following fashion <br> <br>
+sessionClient count 1 http://localhost:8080/axis/services/CounterService <br> <br>
+
+
+Inspect the SOAP messages in tcpMonitor to see the values returned by the server incremented by 1 each 
+time (as done throught the client). Counting starts at the value 97, which is set at the server side web service. <br>
+</p>
 
 <br>
 <div id="pdf" align="right">
