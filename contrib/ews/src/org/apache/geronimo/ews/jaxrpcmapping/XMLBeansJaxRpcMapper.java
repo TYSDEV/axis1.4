@@ -55,8 +55,10 @@ public class XMLBeansJaxRpcMapper implements JaxRpcMapper {
             JavaWsdlMappingDocument mappingdoc = JavaWsdlMappingDocument.Factory.parse(is);
             mapping = mappingdoc.getJavaWsdlMapping();
         } catch (XmlException e) {
+            e.printStackTrace();
             throw GenerationFault.createGenerationFault(e);
         } catch (IOException e) {
+            e.printStackTrace();
             throw GenerationFault.createGenerationFault(e);
         }
     }
@@ -67,10 +69,13 @@ public class XMLBeansJaxRpcMapper implements JaxRpcMapper {
             JavaWsdlMappingDocument mappingdoc = JavaWsdlMappingDocument.Factory.parse(fis);
             mapping = mappingdoc.getJavaWsdlMapping();
         } catch (FileNotFoundException e2) {
+            e2.printStackTrace();
             throw GenerationFault.createGenerationFault(e2);
         } catch (IOException e) {
+            e.printStackTrace();
             throw GenerationFault.createGenerationFault(e);
         } catch (XmlException e2) {
+            e2.printStackTrace();
             throw GenerationFault.createGenerationFault(e2);
         }
     }

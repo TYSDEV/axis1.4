@@ -66,6 +66,7 @@ public class DomEJBDDParser {
                 throw new GenerationFault("enterprise-beans tag not found");
             }
         } catch (Exception e) {
+            e.printStackTrace();
             throw GenerationFault.createGenerationFault(e);
         }
     }

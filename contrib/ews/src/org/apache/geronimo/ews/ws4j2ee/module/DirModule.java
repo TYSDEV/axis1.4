@@ -60,6 +60,7 @@ public class DirModule implements Module {
             }
             findDDs();
         } catch (FileNotFoundException e) {
+            e.printStackTrace();
             throw GenerationFault.createGenerationFault(e);
         }
     }
@@ -84,6 +85,7 @@ public class DirModule implements Module {
             }
             findDDs();
         } catch (FileNotFoundException e) {
+            e.printStackTrace();
             throw GenerationFault.createGenerationFault(e);
         }
     }
@@ -111,6 +113,7 @@ public class DirModule implements Module {
             if (wscfFile == null)
                 throw new GenerationFault("wscf file must not be null");
         } catch (FileNotFoundException e) {
+            e.printStackTrace();
             throw GenerationFault.createGenerationFault(e);
         }
     }
@@ -120,6 +123,7 @@ public class DirModule implements Module {
             File file = new File(location);
             return new URLClassLoader(new URL[]{file.toURL()}, parentCL);
         } catch (MalformedURLException e) {
+            e.printStackTrace();
             throw GenerationFault.createGenerationFault(e);
         }
     }
@@ -164,6 +168,7 @@ public class DirModule implements Module {
                 new FileInputStream(file);
             return null;
         } catch (FileNotFoundException e) {
+            e.printStackTrace();
             throw GenerationFault.createGenerationFault(e);
         }
     }

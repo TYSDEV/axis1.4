@@ -16,6 +16,8 @@
 package org.apache.geronimo.ews.ws4j2ee.utils;
 
 import org.apache.geronimo.ews.ws4j2ee.toWs.GenerationFault;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -32,6 +34,8 @@ import java.util.zip.ZipFile;
  * @author Srinath Perera (hemapani@opensource.lk)
  */
 public class FileUtils {
+    protected static Log log =
+            LogFactory.getLog(FileUtils.class.getName());
     public static void copyFile(InputStream in, OutputStream out) throws GenerationFault {
         try {
             byte[] buf = new byte[1024];
@@ -43,6 +47,7 @@ public class FileUtils {
             out.close();
             in.close();
         } catch (Exception e) {
+            log.error(e);
             throw GenerationFault.createGenerationFault(e);
         }
     }

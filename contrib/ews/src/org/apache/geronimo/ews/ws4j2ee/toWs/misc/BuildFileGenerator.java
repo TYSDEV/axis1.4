@@ -248,6 +248,7 @@ public class BuildFileGenerator implements Generator {
             out.write("</project>\n");
             out.close();
         } catch (IOException e) {
+            log.error(e);
             throw GenerationFault.createGenerationFault(e);
         }
     }

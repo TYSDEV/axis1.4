@@ -87,6 +87,7 @@ public class WSDLGenerator extends Java2WSDL implements Generator {
             //validate the j2ee context
             validator.validateWithOutWSDL(emitter);
         } catch (Exception e) {
+            log.error(e);
             throw GenerationFault.createGenerationFault(e);
         }
     }
