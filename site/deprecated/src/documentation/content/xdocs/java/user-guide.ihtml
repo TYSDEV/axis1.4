@@ -22,7 +22,7 @@
   <I>Feedback: <A href=
   "mailto:axis-dev@ws.apache.org">axis-dev@ws.apache.org</A></I></P>
 
-  <H3>Table of Contents</H3>
+  <H2>Table of Contents</H2>
 
   <UL>
  <LI><A href="#Introduction">Introduction</A></LI>
@@ -42,22 +42,15 @@
 
  <LI style="list-style: none">
    <UL>
-  <LI><A href=
-  "#WSDL:%20Obtaining%20WSDL%20for%20deployed%20services">?WSDL:
-  Obtaining WSDL for deployed services</A></LI>
+  <LI><A href="#WSDLObtaining">?WSDL: Obtaining WSDL for deployed services</A></LI>
 
-  <LI><A href=
-  "#WSDL2Java:%20Building%20stubs,%20skeletons,%20and%20data">
-  WSDL2Java: Building stubs, skeletons, and data</A></LI>
+  <LI><A href="#WSDL2Java">WSDL2Java: Building stubs, skeletons, and data</A></LI>
 
-  <LI><A href=
-  "#Java2WSDL:%20Building%20WSDL%20from%20Java">Java2WSDL:
-  Building WSDL from Java</A></LI>
+  <LI><A href="#Java2WSDL">Java2WSDL: Building WSDL from Java</A></LI>
    </UL>
  </LI>
 
- <LI><A href="#published%20interfaces">Published
- Interfaces</A></LI>
+ <LI><A href="#publishedinterfaces">Published Interfaces</A></LI>
 
  <LI><A href="#newbie">Newbie Tips: Finding Your Way
  Around</A></LI>
@@ -69,7 +62,8 @@
  <LI><A href="#Glossary">Glossary</A></LI>
   </UL>
 
-  <H2><A name="Introduction"></A>Introduction</H2>
+  <P><A name="Introduction"></A></P>
+  <H2>Introduction</H2>
 
   <P>Welcome to Axis, the third generation of Apache SOAP!</P>
 
@@ -134,27 +128,27 @@
   <UL>
  <LI><B>Speed.</B> Axis uses SAX (event-based) parsing to
  acheive significantly greater speed than earlier versions of
- Apache SOAP.</LI>
+ Apache SOAP.</LI><P>
 
  <LI><B>Flexibility.</B> The Axis architecture gives the
  developer complete freedom to insert extensions into the engine
  for custom header processing, system management, or anything
  else you can imagine.</LI>
 
- <LI><B>Stability.</B> Axis defines a set of <A href=
- "#published%20interfaces">published interfaces</A> which change
- relatively slowly compared to the rest of Axis.</LI>
+ <P><A name="publishedinterfaces"></A></P>
+ <LI><B>Stability.</B> Axis defines a set of <B>published interfaces</B> which change
+ relatively slowly compared to the rest of Axis.</LI><P>
 
  <LI><B>Component-oriented deployment.</B> You can easily define
  reusable networks of Handlers to implement common patterns of
  processing for your applications, or to distribute to
- partners.</LI>
+ partners.</LI><P>
 
  <LI><B>Transport framework.</B> We have a clean and simple
  abstraction for designing transports (i.e., senders and
  listeners for SOAP over various protocols such as SMTP, FTP,
  message-oriented middleware, etc), and the core of the engine
- is completely transport-independent.</LI>
+ is completely transport-independent.</LI><P>
 
  <LI><B>WSDL support.</B> Axis supports the <A href=
  "http://www.w3.org/TR/wsdl">Web Service Description
@@ -239,7 +233,8 @@
   needs doing</A> - and please consider helping out if you're
   interested & able!</P>
 
-  <H2><A name="Installation"></A>Installing Axis and Using this
+  <P><A name="Installation"></A></P>
+  <H2>Installing Axis and Using this
   Guide</H2>
 
   <P>See the <A href="install.html">Axis Installation Guide</A> for
@@ -271,8 +266,8 @@
  Crimson</LI>
   </UL>
 
-  <H2><A name="ConsumingServices"></A>Consuming Web Services with
-  Axis</H2>
+  <P><A name="ConsumingServices"></A></P>
+  <H2>Consuming Web Services with Axis</H2>
 
   <H3>Basics - Getting Started</H3>
 
@@ -467,8 +462,8 @@ call.setReturnClass(String.class);
   <P>OK - so now you know the basics of accessing SOAP services as
   a client. But how do you publish your own services?</P>
 
-  <H2><A name="PublishingServices"></A>Publishing Web Services with
-  Axis</H2>
+  <P><A name="PublishingServices"></A></P>
+  <H2>Publishing Web Services with Axis</H2>
 
   <P>Let's say we have a simple class like the following:</P>
   <PRE class="example">
@@ -546,7 +541,8 @@ Got result : 1
   ways to be able to embed this sort of metadata into your source
   files if desired - stay tuned!)</I></P>
 
-  <H4><A name="descriptors"></A>Deploying via descriptors</H4>
+  <P><A name="descriptors"></A></P>
+  <H4>Deploying via descriptors</H4>
 
   <P>To really use the flexibility available to you in Axis, you
   should get familiar with the Axis <B>Web Service Deployment
@@ -899,7 +895,8 @@ public Element[] echoElements(Element [] elems)
   samples.message.TestMsg (look at the source to see what the test
   driver does).</P>
 
-  <H2><A name="DataMapping"></A>XML &lt;-&gt; Java Data Mapping in
+  <P><A name="DataMapping"></A></P>
+  <H2>XML &lt;-&gt; Java Data Mapping in
   Axis</H2>
 
   <H3>How your Java types map to SOAP/XML types</H3>
@@ -1220,7 +1217,8 @@ you about now.
   <TT>encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"</TT>,
   but clearly it can save a lot of typing!)</P>
 
-  <H2><A name="WSDL"></A>Using WSDL with Axis</H2>
+  <P><A name="WSDL"></A></P>
+  <H2>Using WSDL with Axis</H2>
 
   <P>The <A href="http://www.w3.org/TR/wsdl">Web Service
   Description Language</A> is a specification authored by IBM and
@@ -1247,9 +1245,8 @@ you about now.
  Java classes.</LI>
   </OL>
 
-  <H3><A name=
-  "WSDL: Obtaining WSDL for deployed services"></A>?WSDL: Obtaining
-  WSDL for deployed services</H3>
+  <P><A name="WSDLObtaining"></A></P>
+  <H3>?WSDL: Obtaining WSDL for deployed services</H3>
 
   <P>When you make a service available using Axis, there is
   typically a unique URL associated with that service. For JWS
@@ -1270,14 +1267,11 @@ you about now.
   WSDL.</P>
 
   <P>You can also generate WSDL files from existing Java classes
-  (see <A href=
-  "#Java2WSDL:%20Building%20WSDL%20from%20Java">Java2WSDL: Building
-  WSDL from Java</A> ).<BR>
+  (see <A href="#Java2WSDL">Java2WSDL: Building WSDL from Java</A> ).<BR>
    </P>
 
-  <H3><A name=
-  "WSDL2Java: Building stubs, skeletons, and data"></A>WSDL2Java:
-  Building stubs, skeletons, and data types from WSDL</H3>
+  <P><A name="WSDL2Java"></A></P>
+  <H3>WSDL2Java: Building stubs, skeletons, and data types from WSDL</H3>
 
   <H4>Client-side bindings</H4>
 
@@ -1770,8 +1764,8 @@ public class AddressBookSOAPBindingImpl implements AddressBook {
   in the methods of the Implementation class, compiled the code,
   and made the classes available to your Axis engine.</P>
 
-  <H3><A name="Java2WSDL: Building WSDL from Java"></A>Java2WSDL:
-  Building WSDL from Java</H3>
+  <P><A name="Java2WSDL"></A></P>
+  <H3>Java2WSDL: Building WSDL from Java</H3>
 
   <P>The Java2WSDL and WSDL2Java emitters make it easy to develop a
   new web service. The following sections describe the steps in
@@ -1853,7 +1847,7 @@ public interface WidgetPrice {
 
   <P>Use the generated WSDL file to build the appropriate
   client/server bindings for the web service (see <A href=
-  "#WSDL2Java:%20Building%20stubs,%20skeletons,%20and%20data">WSDL2Java</A>):</P>
+  "#WSDL2Java:Buildingstubs,skeletons,anddata">WSDL2Java</A>):</P>
   <PRE class="example">
 % java org.apache.axis.wsdl.WSDL2Java -o . -d Session -s -S true
   -Nurn:Example6 samples.userguide.example6 wp.wsdl
@@ -1901,8 +1895,8 @@ public interface WidgetPrice {
   <P>Now you have all of the necessary files to build your
   client/server side code and deploy the web service!</P>
 
-  <H2><A name="published interfaces"></A>Published Axis
-  Interfaces</H2>
+  <P><A name="published interfaces"></A></P>
+  <H2>Published Axis Interfaces</H2>
 
   <P>Although you may use any of the interfaces and classes present
   in Axis, you need to be aware that some are more stable than
@@ -2126,8 +2120,8 @@ public interface WidgetPrice {
  </LI>
   </UL>
 
-  <H2><A name="newbie"></A>Newbie Tips: Finding Your Way
-  Around</H2>
+  <P><A name="newbie"></A></P>
+  <H2>Newbie Tips: Finding Your Way Around</H2>
 
   <P>So you've skimmed the User's Guide and written your first .jws
   service, and everything went perfectly! Now it's time to get to
@@ -2250,8 +2244,8 @@ public interface WidgetPrice {
   the SOAP Body. See the Javadocs for a full list of the properties
   available.</P>
 
-  <H2><A name="tcpmon"></A>Appendix : Using the Axis TCP Monitor
-  (tcpmon)</H2>
+  <P><A name="tcpmon"></A></P>
+  <H2>Appendix : Using the Axis TCP Monitor (tcpmon)</H2>
 
   <P>The included "tcpmon" utility can be found in the
   org.apache.axis.utils package. To run it from the command
@@ -2295,7 +2289,8 @@ public interface WidgetPrice {
   the content-length HTTP header value before resending an edited
   request.</P>
 
-  <H2><A name="soapmon"></A>Appendix: Using the SOAP Monitor</H2>
+  <P><A name="soapmon"></A></P>
+  <H2>Appendix: Using the SOAP Monitor</H2>
 
   <P>Web service developers often have the need to see the SOAP
   messages being used to invoke web services along with the results
@@ -2327,7 +2322,8 @@ public interface WidgetPrice {
   application to change the port to be used. <B>Note: The SOAP
   Monitor is NOT enabled by default for security reasons.</B></P>
 
-  <H2><A name="Glossary">Glossary</A></H2>
+  <P><A name="Glossary"></A></P>
+  <H2>Glossary</H2>
 
   <DL>
  <DT><I>Handler</I></DT>
