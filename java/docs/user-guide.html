@@ -969,7 +969,7 @@ Instead of inventing
 a new standard, an existing standard:
 <a href="http://www.ietf.org/rfc/rfc2387.txt">MIME Multipart/Related Content-type</a>  was incorporated
 into the SOAP standard as <a href="http://www.w3.org/TR/SOAP-attachments">SOAP Messages with Attachments</a> 
-In short, this allows SOAP message to be embedded as a part in a multi-part message where each part may
+In short, this allows a SOAP message to be embedded as a part in a multi-part message where each part may
 specify the type of content it contains.  This can make the transferring of many types of data more
 efficient than if the data had to be contained in SOAP message it self.  Also specified is how elements
 within the SOAP part may reference data contained in other parts of the message. 
@@ -987,7 +987,7 @@ in its entirety to be sent or when its received.
 <P>Axis's implementation of attachments uses
 <a href="http://java.sun.com/products/javabeans/glasgow/jaf.html">JavaBeans Activation Framework (JAF)</a>
 as recommended by <a href="http://java.sun.com/xml/jaxrpc/">Java API for XML-Based RPC (JAX-RPC)</a>
-specification.  Essentially, an attachment may be create as JAF 
+specification.  Essentially, an attachment may be created as a JAF 
 <a href="http://java.sun.com/products/javabeans/glasgow/javadocs/javax/activation/DataHandler.html">DataHandler</a>
 object.  The DataHandler object may then be treated as any other complex type object being sent.  In order for
 the content that the DataHandler references to be sent as an attachment the only thing that needs to be done is
@@ -1002,7 +1002,7 @@ the source to make sure their content is the same.
 </P>
 <P>
 </P>
-<P>The support for attachments is still preliminary with the following know limitations:
+<P>The support for attachments is still preliminary with the following known limitations:
 <ul>
  <li>Transfer-Encoding Types base64, and quoted printable are not supported.
  <li>Better control over managing attachment resources.
