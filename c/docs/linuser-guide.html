@@ -198,8 +198,9 @@
 <p> There are two options to create the wsdl2ws.jar tool<br> <br>
 <b> 1st Option is using ANT (This is more reliable) </b> <br> <br>
 In your PATH environment variable add path to &lt;antinstall dir&gt/bin. <br> 
-<strong>$ cd $AXISCPP_HOME/src/wsdl/</strong> 
-$ ant 
+<strong>$ cd $AXISCPP_HOME/src/wsdl/</strong>
+<br>
+<strong>$ ant </strong>
 </p>
 <p> <b>2nd Option (Some users have experienced difficulties in using this option)</b> </p>
 <p><strong>$ cd $AXISCPP_HOME/src/wsdl/</strong>
@@ -332,22 +333,15 @@ $ ant
 <strong>&nbsp;}</strong>
 </p>
 <p>Then build by<br> 
-<strong>cd $AXISCPP_HOME/samples/client</strong>
+<strong>cd $AXISCPP_HOME/samples/client/simple</strong>
 <br>
 </p>
 <p>
-<strong>sh build.sh</strong>
+<strong>g++ *.cpp -I$AXISCPP_HOME/include -L$AXISCPP_DEPLOY/lib -ldl -laxiscpp_client -ocalculator</strong>
 <br>Then to run the calculator sample</p>
+
 <p>
-<strong>$ cd AXISCPP_HOME/samples/simple</strong>
-</p>
-<p>
-<strong>./calculator &lt;server&gt; &lt;port&gt; &nbsp;&lt;command&gt; &nbsp;&lt;param1&gt; &nbsp;&lt;param2&gt;</strong>
-<br>
-<br> Example:<br>
-</p>
-<p>
-<strong>./calculator locathost 80 add 10 20</strong>
+<strong>./calculator add 10 5 http://locathost/axis/Calculator</strong>
 </p>
 <p>
 <br>
@@ -362,7 +356,7 @@ $ ant
 <p>Basically this will include all the Interoptest Samples and calculator sample.</p>
 <br>
 <p>
-<strong>cd $AXISCPP_HOME/samples/server</strong>
+<strong>cd $AXISCPP_HOME/samples</strong>
 </p>
 <p>
 <strong>$ sh autogen.sh</strong>
@@ -377,15 +371,7 @@ $ ant
 <strong>$ make install<br>
 </strong>
 </p>
-<p>
-<strong>OR<br>
-</strong>
-</p>
-<p>
-<strong>$ sh build.sh&nbsp;<br>
-</strong>
-</p>
-<p>Once you type the above command all the samples will be deployed in $AXIS_HOME/webservices folder.<br>you also have sample $AXIS_HOME/conf/server.wsdd_linux file which you should rename to server.wsdd,<br>which contain all the neccessary entries for these sevices.<br>
+<p>Once you type the above command all the server samples will be deployed in $AXISCPP_DEPLOY/lib folder.<br>you also have sample $AXISCPP_DEPLOY/conf/server.wsdd_linux file which you should rename to server.wsdd,<br>which contain all the neccessary entries for these sevices. Sample clients will be installed in $AXISCPP_DEPLOY/bin<br>
 <br>
 </p>
 <strong>Restart Apache</strong>
@@ -394,42 +380,21 @@ $ ant
 <a name="scls"></a>
 </p>
 <br>
-<div class="h3">
-<h3>Building Client Side of the provided samples</h3>
-</div>
+To run the samples
+<br><br>
+<strong>$ cd $AXISCPP_DEPLOY/bin </strong>
 <p>
-<strong>cd $AXISCPP_HOME/samples/client</strong>
-</p>
-<p>
-<strong>$ sh autogen.sh</strong>
-</p>
-<p>
-<strong>$ sh runconfig</strong>
-</p>
-<p>
-<strong>$ make</strong>
-</p>
-<p>
-<strong>$ make install<br>
-</strong>
-</p>
-<p>
-<strong>OR<br>
-</strong>
-</p>
-<strong>$ sh build.sh</strong>
-<br>
-<br>
-<p>sample executables will be created in your current folder.<br>to run samples one by one</p>
-<p>
-<strong><strong>$ ./base localhost 80 &nbsp;</strong></strong>
+<strong><strong>$ ./base http://localhost/axis/base &nbsp;</strong></strong>
 </p>
 <p>
 <strong><strong>
 <br>
 </strong></strong>
 </p>
-<p>to run all the samples at once<br>sh run_interoptests.sh (Note: local host and port 80 is assumed)</p>
+<p>to run all the samples at once<br>sh run_interoptests.sh Note: local host and port 80 is assumed.
+   If you have different use.</p>
+<br>
+<strong>$ sh run_interoptests.sh -u http://yourserver:yourport/axis </strong>
 <p>
 <strong></strong>
 </p>
