@@ -163,6 +163,7 @@ public class Round4XSDTestTestCase extends junit.framework.TestCase {
             test.wsdl.interop4.groupi.xsd.SOAPComplexType input = new test.wsdl.interop4.groupi.xsd.SOAPComplexType();
             input.setVarFloat(1024);
             input.setVarInt(2048);
+            input.setVarString("Hello World");
             test.wsdl.interop4.groupi.xsd.SOAPComplexType value = binding.echoComplexType(input);
             assertTrue(input.equals(value));
         }
@@ -273,6 +274,7 @@ public class Round4XSDTestTestCase extends junit.framework.TestCase {
             test.wsdl.interop4.groupi.xsd.SOAPComplexType input2 = new test.wsdl.interop4.groupi.xsd.SOAPComplexType();
             input2.setVarFloat(1024);
             input2.setVarInt(2048);
+            input2.setVarString("Hello World");
             input.setSOAPComplexType(0,input2);
             test.wsdl.interop4.groupi.xsd.SOAPComplexType[] value = null;
             value = binding.echoComplexTypeMultiOccurs(input);
