@@ -69,18 +69,6 @@ public class XMLBeansJaxRpcMapper implements JaxRpcMapper {
     }
 
     public void loadMappingFromDir(String path) throws GenerationFault {
-        JAXBContext jc = null;
-        try {
-            jc = JAXBContext.newInstance("org.apache.geronimo.ews.jaxrpcmapping.descriptor");
-        } catch (JAXBException e1) {
-            e1.printStackTrace();
-        }
-        Unmarshaller u = null;
-        try {
-            u = jc.createUnmarshaller();
-        } catch (JAXBException e) {
-            e.printStackTrace();
-        }
         try {
             java.io.InputStream fis = new FileInputStream(path);
             JavaWsdlMappingDocument mappingdoc = JavaWsdlMappingDocument.Factory.parse(fis);
