@@ -2,29 +2,25 @@
 <!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.2//EN" "./dtd/document-v12.dtd">
 <document>
   <header>
-    <title>WebServices - Axis</title>
+    <title>Axis C++ 1.5 Alphaが利用可能です！</title>
   </header>
   <body>
 
-<a name="AxisC++1.4Final"/>
+<a name="AxisC++1.5Alpha"/>
 <section>
-<title>Axis C++ 1.4 最終版</title>
+<title>Axis C++ 1.5 Alpha</title>
 <p><a href="download.html">Axis C++ のダウンロード</a></p>
 
 </section>
 
-<a name="KeyFeaturesOfAxisC++1.4Final"/>
+<a name="KeyFeaturesOfAxisC++1.5Alpha"/>
 <section>
-<title>Axis C++ 1.4 最終版の主要機能</title>
+<title>Axis C++ 1.5 Alphaの主要機能</title>
 
-<p><b>SSL 実装</b></p>
-<p>Axis C++ SSL セキュアクライアントは、セキュアなWebサービスにホストされたWebサービスにアクセスすることができます。Axis C++ のクライアントの SSL 実装はオープンソースライブラリである openssl を利用しています。</p>
+<p><b>クライアント側の新しいトランスポートの追加</b></p>
 
-<p><b>クライアント側の、Cookieに基づくセッションのサポート</b></p>
-<p>クライアントは、サービスのレスポンスと共に送られてくる'Set-Cookie' HTTP ヘッダ を探知し、送出するリクエストの中に状況に応じて'Cookie' HTTP ヘッダを設定することができます。</p>
-
-<p><b>クライアント側の、SOAP ヘッダに基づくセッションのサポート</b></p>
-<p>これにより Axis C++ クライアントは、セッションスコープ内の Axis Java Webサービスとセッション通信ができるようになります。</p>
+<p>これは、Axis3トランスポートと名付けられました。Axis2トランスポートと比較して、
+より洗練されており、拡張性があるのが特徴です。</p>
 
 </section>
 
@@ -32,53 +28,73 @@
 <section>
   <title>改善点</title>
 
-<p><b>Axis エンジンは純粋な C++</b></p>
-<ul>
-  <li>mallocs/frees/strdups を news/deletes に変更しました。</li>
-  <li>.h ヘッダファイルは .hpp に変更しました。</li>
-  <li>structs は classes に変更しました。</li>
+<p><b>以下のバグFIXを実施しました。</b></p>
+<ul> 
+  <li><a href="http://issues.apache.org/jira/browse/AXISCPP-323">AXISCPP-323</a> [英語]</li>
+  <li><a href="http://issues.apache.org/jira/browse/AXISCPP-373">AXISCPP-373</a> [英語]</li>
+  <li><a href="http://issues.apache.org/jira/browse/AXISCPP-367">AXISCPP-367</a> [英語]</li>
+  <li><a href="http://issues.apache.org/jira/browse/AXISCPP-338">AXISCPP-338</a> [英語]</li>
+  <li><a href="http://issues.apache.org/jira/browse/AXISCPP-313">AXISCPP-313</a> [英語]</li>
+  <li><a href="http://issues.apache.org/jira/browse/AXISCPP-277">AXISCPP-277</a> [英語]</li>
+  <li><a href="http://issues.apache.org/jira/browse/AXISCPP-265">AXISCPP-265</a> [英語]</li>
+  <li><a href="http://issues.apache.org/jira/browse/AXISCPP-264">AXISCPP-264</a> [英語]</li>
+  <li><a href="http://issues.apache.org/jira/browse/AXISCPP-261">AXISCPP-261</a> [英語]</li>
+  <li><a href="http://issues.apache.org/jira/browse/AXISCPP-236">AXISCPP-236</a> [英語]</li>
+  <li><a href="http://issues.apache.org/jira/browse/AXISCPP-129">AXISCPP-129</a> [英語]</li>
+  <li><a href="http://issues.apache.org/jira/browse/AXISCPP-43">AXISCPP-43</a> [英語]</li>
+  <li><a href="http://issues.apache.org/jira/browse/AXISCPP-41">AXISCPP-41</a> [英語]</li>
+  <li><a href="http://issues.apache.org/jira/browse/AXISCPP-267">AXISCPP-267</a> [英語]</li>
+  <li><a href="http://issues.apache.org/jira/browse/AXISCPP-163">AXISCPP-163</a> [英語]</li>
+  <li><a href="http://issues.apache.org/jira/browse/AXISCPP-162">AXISCPP-162</a> [英語]</li>
+  <li><a href="http://issues.apache.org/jira/browse/AXISCPP-361">AXISCPP-361</a> [英語]</li>
+  <li><a href="http://issues.apache.org/jira/browse/AXISCPP-187">AXISCPP-187</a> [英語]</li>
+  <li><a href="http://issues.apache.org/jira/browse/AXISCPP-221">AXISCPP-221</a> [英語]</li>
+  <li><a href="http://issues.apache.org/jira/browse/AXISCPP-199">AXISCPP-199</a> [英語]</li>
+  <li><a href="http://issues.apache.org/jira/browse/AXISCPP-195">AXISCPP-195</a> [英語]</li>
+  <li><a href="http://issues.apache.org/jira/browse/AXISCPP-78">AXISCPP-78</a> [英語]</li>
+  <li><a href="http://issues.apache.org/jira/browse/AXISCPP-97">AXISCPP-97</a> [英語]</li>
+  <li><a href="http://issues.apache.org/jira/browse/AXISCPP-184">AXISCPP-184</a> [英語]</li>
+  <li><a href="http://issues.apache.org/jira/browse/AXISCPP-379">AXISCPP-379</a> [英語]</li>
+  <li><a href="http://issues.apache.org/jira/browse/AXISCPP-384">AXISCPP-384</a> [英語]</li>
+  <li><a href="http://issues.apache.org/jira/browse/AXISCPP-320">AXISCPP-320</a> [英語]</li>
+  <li><a href="http://issues.apache.org/jira/browse/AXISCPP-382">AXISCPP-382</a> [英語]</li>
+  <li><a href="http://issues.apache.org/jira/browse/AXISCPP-381">AXISCPP-381</a> [英語]</li>
+  <li><a href="http://issues.apache.org/jira/browse/AXISCPP-370">AXISCPP-370</a> [英語]</li>
+  <li><a href="http://issues.apache.org/jira/browse/AXISCPP-372">AXISCPP-372</a> [英語]</li>
+  <li><a href="http://issues.apache.org/jira/browse/AXISCPP-332">AXISCPP-332</a> [英語]</li>
+  <li><a href="http://issues.apache.org/jira/browse/AXISCPP-262">AXISCPP-262</a> [英語]</li>
+  <li><a href="http://issues.apache.org/jira/browse/AXISCPP-366">AXISCPP-366</a> [英語]</li>
+  <li><a href="http://issues.apache.org/jira/browse/AXISCPP-337">AXISCPP-337</a> [英語]</li>
+  <li><a href="http://issues.apache.org/jira/browse/AXISCPP-369">AXISCPP-369</a> [英語]</li>
+  <li><a href="http://issues.apache.org/jira/browse/AXISCPP-327">AXISCPP-327</a> [英語]</li>
+  <li><a href="http://issues.apache.org/jira/browse/AXISCPP-356">AXISCPP-356</a> [英語]</li>
+  <li><a href="http://issues.apache.org/jira/browse/AXISCPP-325">AXISCPP-325</a> [英語]</li>
+  <li><a href="http://issues.apache.org/jira/browse/AXISCPP-350">AXISCPP-350</a> [英語]</li>
+  <li><a href="http://issues.apache.org/jira/browse/AXISCPP-354">AXISCPP-354</a> [英語]</li>
+  <li><a href="http://issues.apache.org/jira/browse/AXISCPP-352">AXISCPP-352</a> [英語]</li>
+  <li><a href="http://issues.apache.org/jira/browse/AXISCPP-311">AXISCPP-311</a> [英語]</li>
+  <li><a href="http://issues.apache.org/jira/browse/AXISCPP-260">AXISCPP-260</a> [英語]</li>
+  <li><a href="http://issues.apache.org/jira/browse/AXISCPP-315">AXISCPP-315</a> [英語]</li>
+  <li><a href="http://issues.apache.org/jira/browse/AXISCPP-222">AXISCPP-222</a> [英語]</li>
+  <li><a href="http://issues.apache.org/jira/browse/AXISCPP-178">AXISCPP-178</a> [英語]</li>
+  <li><a href="http://issues.apache.org/jira/browse/AXISCPP-316">AXISCPP-316</a> [英語]</li>
+  <li><a href="http://issues.apache.org/jira/browse/AXISCPP-274">AXISCPP-274</a> [英語]</li>
+  <li><a href="http://issues.apache.org/jira/browse/AXISCPP-403">AXISCPP-403</a> [英語]</li>
+  <li><a href="http://issues.apache.org/jira/browse/AXISCPP-394">AXISCPP-394</a> [英語]</li>
 </ul>
 
-<p><b>WSDL2WS をリファクタリング</b></p>
+</section>
+
+<a name="KnownIssues"/>
+<section>
+  <title>既知の問題</title>
+
 <ul>
-  <li>クラスパス順序に関する問題を修正しました。順序はもはや重要ではありません。</li>
-  <li>使われていないクラスを特定し、削除しました。</li>
-  <li>全ての重複したクラスを特定し、削除しました。</li>
-  <li>クラス継承を再設計し、全ての重複したメソッドを削除しました。</li>
-  <li>いくつかの大きなメソッドを、小さくてより扱いやすいメソッドに分解しました。</li>
-  <li>全てのコンパイル警告を取り除きました。</li>
-  <li>コードの可読性を向上させました。</li>
-  <li>クラス名やメソッドのスペルミスを訂正しました。</li>
+  <li>一時的にCのサポートを停止しました。(C言語のサンプルとテストは動作しません)</li>
+  <li>XMLパーサXercesのみのサポート。</li>
+  <li>SimpleAxisServerに問題が残存している。</li>
+  <li>サーバ側でのDocumentスタイル利用での問題が残存している。</li>
 </ul>
-
-<p><b>クライアントとサーバの共通インクルードを分割</b></p>
-<p>共通のヘッダファイルは include/axis に移行されました。</p>
-
-<p><b>Axis CPP Conf ライブラリ名から事前に定義されたパスを削除</b></p>
-<p>完全修飾パスは削除され、ライブラリ名のみが残りました。</p>
-
-<p><b>警告を除去</b></p>
-
-<p><b>ハンドラチュートリアル</b></p>
-<p>ハンドラは Axis C++ のプラグ可能なコンポーネントです。このガイドは自分用のハンドラを作成する方法の詳細について扱っています。</p>
-
-<p><b>SOAP メッセージの本体へのアクセスを提供</b></p>
-<p>ハンドラを書く人は SOAP Body にアクセスすることができます。</p>
-
-<p><b>Basic Node オブジェクトに対する const/non-const メソッド呼び出し内の衝突を解決</b></p>
-
-<p><b>Complex Object プロパティを保持するサポートを追加</b></p>
-<p>MessageData 内の複雑なオブジェクトを保持するサポートを追加しました。</p>
-
-<p><b>ハンドラから DeSerializer に新しい SOAP 本体を設定する機構を追加</b></p>
-<p>一度ハンドラが SOAP 本体にアクセスすれば、SoapDeSerializer の"setNewSoapBody"メソッドを通じて新しい SOAP 本体をリセットするのはそのハンドラの義務となります。</p>
-
-<p><b>IPV6 をサポートするトランスポートを追加</b></p>
-<p>これは IPV6 プロトコルをサポートします。IPV6 の標準 API が IPV6 トランスポート実装で使われています。このトランスポートは IPV6 と IPV4 の両方に対して機能することができます。</p> 
-
-<p><b>トランスポートに対する Keep Alive のサポート</b></p>
-
-<br/>
 
 <p>私たちは Axis C++ を楽しみながら利用してくれることを望んでいます。</p>
 <p>Axis C++ 全体を改善するために多大な努力が現在注がれています。Axis C++ の 1.5 計画については <a href="http://wiki.apache.org/ws/FrontPage/AxisC_2b_2b">TODO ページ</a> [英語] をご覧下さい。</p>
