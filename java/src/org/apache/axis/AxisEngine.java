@@ -59,9 +59,10 @@ import org.apache.axis.deployment.DeploymentRegistry;
 import org.apache.axis.deployment.DeploymentException;
 import org.apache.axis.deployment.wsdd.*;
 import org.apache.axis.encoding.DeserializerFactory;
-import org.apache.axis.encoding.SOAPTypeMappingRegistry;
+import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.encoding.Serializer;
 import org.apache.axis.encoding.TypeMappingRegistry;
+import org.apache.axis.encoding.TypeMappingRegistryImpl;
 import org.apache.axis.handlers.BasicHandler;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.InternalException;
@@ -119,10 +120,10 @@ public abstract class AxisEngine extends BasicHandler
      * scope", have it store things in this Session.
      */
     private Session session = new SimpleSession();
-    
+
     /**
      * What actor URIs hold for the entire engine?
-     */ 
+     */
     private ArrayList actorURIs = new ArrayList();
 
     /**
@@ -132,7 +133,7 @@ public abstract class AxisEngine extends BasicHandler
     private static ThreadLocal currentMessageContext = new ThreadLocal();
 
     /**
-     * Set the active message context. 
+     * Set the active message context.
      *
      * @param mc - the new active message context.
      */
@@ -141,7 +142,7 @@ public abstract class AxisEngine extends BasicHandler
     }
 
     /**
-     * Get the active message context. 
+     * Get the active message context.
      *
      * @return the current active message context
      */
@@ -174,14 +175,15 @@ public abstract class AxisEngine extends BasicHandler
             category.debug(JavaUtils.getMessage("enter00", "AxisEngine::init"));
         }
 
-        getTypeMappingRegistry().setParent(SOAPTypeMappingRegistry.getSingleton());
+        // The SOAP/XSD stuff is in the default TypeMapping of the TypeMappingRegistry.
+        //getTypeMappingRegistry().setParent(SOAPTypeMappingRegistry.getSingleton());
 
         try {
             config.configureEngine(this);
         } catch (Exception e) {
             throw new InternalException(e);
         }
-        
+
         if (category.isDebugEnabled()) {
             category.debug(JavaUtils.getMessage("exit00", "AxisEngine::init"));
         }
@@ -202,6 +204,10 @@ public abstract class AxisEngine extends BasicHandler
         }
     }
 
+    public EngineConfiguration getConfig() {
+        return config;
+    }
+
     public boolean hasSafePassword()
     {
         return _hasSafePassword;
@@ -218,7 +224,7 @@ public abstract class AxisEngine extends BasicHandler
     {
         this.shouldSaveConfig = shouldSaveConfig;
     }
-    
+
     public Handler getHandler(String name) throws AxisFault
     {
         try {
@@ -227,7 +233,7 @@ public abstract class AxisEngine extends BasicHandler
             throw new AxisFault(e);
         }
     }
-    
+
     public Handler getService(String name) throws AxisFault
     {
         try {
@@ -236,7 +242,7 @@ public abstract class AxisEngine extends BasicHandler
             throw new AxisFault(e);
         }
     }
-    
+
     public Handler getTransport(String name) throws AxisFault
     {
         try {
@@ -246,49 +252,40 @@ public abstract class AxisEngine extends BasicHandler
         }
     }
 
-    public DeploymentRegistry getDeploymentRegistry()
-    {
-        return config.getDeploymentRegistry();
-    }
-
     public TypeMappingRegistry getTypeMappingRegistry()
     {
         TypeMappingRegistry tmr = null;
         try {
-            tmr = config.getTypeMappingRegistry("");
-            if (tmr == null) {
-                tmr = new TypeMappingRegistry();
-                config.getDeploymentRegistry().addTypeMappingRegistry("", tmr);
-            }
+            tmr = config.getTypeMappingRegistry();
         } catch (ConfigurationException e) {
             category.error(e);
         }
-        
+
         return tmr;
     }
-    
+
     public Handler getGlobalRequest()
         throws ConfigurationException
     {
         return config.getGlobalRequest();
     }
-    
+
     public Handler getGlobalResponse()
         throws ConfigurationException
     {
         return config.getGlobalResponse();
     }
-    
+
     public ArrayList getActorURIs()
     {
         return actorURIs;
     }
-    
+
     public void addActorURI(String uri)
     {
         actorURIs.add(uri);
     }
-    
+
     public void removeActorURI(String uri)
     {
         actorURIs.remove(uri);
@@ -300,7 +297,7 @@ public abstract class AxisEngine extends BasicHandler
      * An AxisEngine may define another specific AxisEngine to be used
      * by newly created Clients.  For instance, a server may
      * create an AxisClient and allow deployment to it.  Then
-     * the server's services may access the AxisClient's deployed 
+     * the server's services may access the AxisClient's deployed
      * handlers and transports.
      *********************************************************************
      */
@@ -317,38 +314,10 @@ public abstract class AxisEngine extends BasicHandler
     */
 
     /**
-     * Register a new global type mapping
-     */
-    public void registerTypeMapping(QName qName,
-                                    Class cls,
-                                    DeserializerFactory deserFactory,
-                                    Serializer serializer)
-        throws IntrospectionException
-    {
-        category.info(JavaUtils.getMessage("registerTypeMap00",
-                qName.toString(), cls.getName()));
-        if (deserFactory != null)
-            getTypeMappingRegistry().addDeserializerFactory(qName,
-                                                        cls,
-                                                        deserFactory);
-        if (serializer != null)
-            getTypeMappingRegistry().addSerializer(cls, qName, serializer);
-    }
-
-    /**
-     * Unregister a global type mapping
-     */
-    public void unregisterTypeMapping(QName qName, Class cls)
-    {
-        getTypeMappingRegistry().removeDeserializer(qName);
-        getTypeMappingRegistry().removeSerializer(cls);
-    }
-
-    /**
      * List of options which should be converted from Strings to Booleans
      * automatically. Note that these options are common to all XML
      * web services.
-     */ 
+     */
     private static final String [] BOOLEAN_OPTIONS = new String [] {
         PROP_DOMULTIREFS, PROP_SEND_XSI, PROP_XML_DECL
     };
@@ -363,7 +332,7 @@ public abstract class AxisEngine extends BasicHandler
     private void normaliseOptions() {
         // Convert boolean options to Booleans so we don't need to use
         // string comparisons.  Default is "true".
-        
+
         for (int i = 0; i < BOOLEAN_OPTIONS.length; i++) {
             Object val = getOption(BOOLEAN_OPTIONS[i]);
             if (val != null) {
@@ -378,7 +347,7 @@ public abstract class AxisEngine extends BasicHandler
             // If it was null or not "false"...
             setOption(BOOLEAN_OPTIONS[i], Boolean.TRUE);
         }
-        
+
         // Deal with admin password's default value.
         if (getOption(PROP_PASSWORD) == null) {
             setOption(PROP_PASSWORD, DEFAULT_ADMIN_PASSWORD);
@@ -404,53 +373,7 @@ public abstract class AxisEngine extends BasicHandler
     public void deployHandler(String key, Handler handler)
         throws ConfigurationException
     {
-        config.getDeploymentRegistry().deployHandler(key, handler);
-    }
-
-    /**
-     * Undeploy (remove) a Handler from our handler registry.
-     */
-    public void undeployHandler(String key)
-        throws ConfigurationException
-    {
-        config.getDeploymentRegistry().undeployHandler(key);
-    }
-
-    /**
-     * Deploy a Service into our service registry
-     */
-    public void deployService(String key, SOAPService service)
-        throws ConfigurationException
-    {
-        service.setEngine(this);
-        config.getDeploymentRegistry().deployService(key, service);
-    }
-
-    /**
-     * Undeploy (remove) a Service from the handler registry
-     */
-    public void undeployService(String key)
-        throws ConfigurationException
-    {
-        config.getDeploymentRegistry().undeployService(key);
-    }
-
-    /**
-     * Deploy a Transport
-     */
-    public void deployTransport(String key, SimpleTargetedChain transport)
-        throws ConfigurationException
-    {
-        config.getDeploymentRegistry().deployTransport(key, transport);
-    }
-
-    /**
-     * Undeploy (remove) a client Transport
-     */
-    public void undeployTransport(String key)
-        throws ConfigurationException
-    {
-        config.getDeploymentRegistry().undeployTransport(key);
+//        config.getDeploymentRegistry().deployHandler(key, handler);
     }
 
     /**
@@ -461,5 +384,4 @@ public abstract class AxisEngine extends BasicHandler
     public Session getApplicationSession () {
         return session;
     }
-
 };

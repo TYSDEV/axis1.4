@@ -56,7 +56,6 @@
  package org.apache.axis.configuration;
 
 import org.apache.axis.AxisEngine;
-import org.apache.axis.deployment.BasicEngineConfiguration;
 import org.apache.axis.ConfigurationException;
 import org.apache.axis.deployment.DeploymentRegistry;
 import org.apache.axis.utils.Admin;
@@ -65,6 +64,7 @@ import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 
 import java.io.StringReader;
+import java.io.ByteArrayInputStream;
 
 /**
  * A simple ConfigurationProvider that uses the Admin class to
@@ -74,7 +74,7 @@ import java.io.StringReader;
  *
  * @author Glen Daniels (gdaniels@macromedia.com)
  */
-public class XMLStringProvider extends BasicEngineConfiguration
+public class XMLStringProvider extends FileProvider
 {
     String xmlConfiguration;
 
@@ -86,24 +86,17 @@ public class XMLStringProvider extends BasicEngineConfiguration
      */
     public XMLStringProvider(String xmlConfiguration)
     {
+        super(new ByteArrayInputStream(xmlConfiguration.getBytes()));
         this.xmlConfiguration = xmlConfiguration;
     }
 
-    public void configureEngine(AxisEngine engine) throws ConfigurationException
-    {
-        try {
-            InputSource is = new InputSource(new StringReader(xmlConfiguration));
-            
-            Document doc = XMLUtils.newDocument(is);
-            
-            Admin.processEngineConfig(doc, engine);
-        } catch (Exception e) {
-            throw new ConfigurationException(e);
-        }
+    public void writeEngineConfig(AxisEngine engine)
+            throws ConfigurationException {
+        // NOOP
     }
 
-    public void writeEngineConfig(AxisEngine engine) throws ConfigurationException
-    {
-        // NOOP
+    public void configureEngine(AxisEngine engine) throws ConfigurationException {
+        myInputStream = new ByteArrayInputStream(xmlConfiguration.getBytes());
+        super.configureEngine(engine);
     }
 }

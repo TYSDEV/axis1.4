@@ -57,6 +57,8 @@ package org.apache.axis;
 
 import javax.xml.rpc.namespace.QName;
 import org.apache.axis.encoding.TypeMappingRegistry;
+import org.apache.axis.encoding.TypeMapping;
+
 import java.util.Hashtable;
 
 // temporary...
@@ -77,13 +79,6 @@ import org.apache.axis.deployment.DeploymentRegistry;
  * @author Glen Daniels (gdaniels@macromedia.com)
  */
 public interface EngineConfiguration {
-
-    /*
-     * @deprecated This is a temporary method for use only during the WSDD refactoring
-     * Remember to delete the DeploymentRegistry import when removing this method.
-     */
-    public DeploymentRegistry getDeploymentRegistry();
-
      /**
      * Configure this AxisEngine using whatever data source we have.
      *
@@ -125,12 +120,9 @@ public interface EngineConfiguration {
     public Handler getTransport(QName qname) throws ConfigurationException;
 
     /**
-     * retrieve an instance of the named mapping registry
-     * @param encodingStyle XXX
-     * @return XXX
-     * @throws ConfigurationException XXX
+     * Retrieve the TypeMappingRegistry for this engine
      */
-    public TypeMappingRegistry getTypeMappingRegistry(String encodingStyle)
+    public TypeMappingRegistry getTypeMappingRegistry()
         throws ConfigurationException;
 
     /**

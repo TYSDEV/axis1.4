@@ -72,7 +72,10 @@ public class TestUndeployment extends TestCase
 
         InputStream is = new StringBufferInputStream(undeployDoc);
         WSDDDocument doc = new WSDDDocument(XMLUtils.newDocument(is));
-        server.getDeploymentRegistry().deploy(doc);
+
+        WSDDDeployment dep = provider.getDeployment();
+        doc.deploy(dep);
+
         server.refreshGlobalOptions();
         
         handler = server.getHandler("other");

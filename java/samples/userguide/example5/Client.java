@@ -83,9 +83,9 @@ public class Client
         Call     call    = (Call) service.createCall();
         QName    qn      = new QName( "urn:BeanService", "Order" );
 
-        call.addSerializer(Order.class, qn,
-                    new org.apache.axis.encoding.BeanSerializer(Order.class));
-        
+        call.registerTypeMapping(Order.class, qn,
+                      new org.apache.axis.encoding.ser.BeanSerializerFactory(Order.class, qn),        
+                      new org.apache.axis.encoding.ser.BeanDeserializerFactory(Order.class, qn));        
         String result;
         try {
             call.setTargetEndpointAddress( new java.net.URL(options.getURL()) );

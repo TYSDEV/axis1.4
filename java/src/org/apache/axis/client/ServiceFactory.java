@@ -21,6 +21,12 @@ import java.util.Map;
 public class ServiceFactory {
     private static FileProvider defaultEngineConfig =
                            new FileProvider(Constants.CLIENT_CONFIG_FILE);
+    private static ThreadLocal threadDefaultConfig = new ThreadLocal();
+
+    public static void setThreadDefaultConfig(EngineConfiguration config)
+    {
+        threadDefaultConfig.set(config);
+    }
 
     /**
      * Obtain an AxisClient reference, using JNDI if possible, otherwise
@@ -41,6 +47,9 @@ public class ServiceFactory {
 
         EngineConfiguration configProvider =
                 (EngineConfiguration)environment.get("engineConfig");
+        if (configProvider == null)
+            configProvider = (EngineConfiguration)threadDefaultConfig.get();
+
         if (configProvider == null)
             configProvider = defaultEngineConfig;
 
