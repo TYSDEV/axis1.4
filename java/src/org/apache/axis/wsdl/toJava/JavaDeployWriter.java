@@ -425,6 +425,9 @@ public class JavaDeployWriter extends JavaWriter {
                      Utils.genQNameAttributeString(returnType, "rtns") +
                      "\"");
         }
+        if (params.returnParam != null && params.returnParam.isOutHeader()) {
+            pw.print(" returnHeader=\"true\"");
+        }
         pw.println(" >");
 
         Vector paramList = params.list;

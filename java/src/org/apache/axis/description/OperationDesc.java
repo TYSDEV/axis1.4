@@ -306,10 +306,16 @@ public class OperationDesc {
         this.method = method;
     }
 
+    /**
+     * Is the return value in the header of the response message?
+     */
     public boolean isReturnHeader() {
         return returnDesc.isOutHeader();
     }
 
+    /**
+     * Set whether the return value is in the response message.
+     */
     public void setReturnHeader(boolean value) {
         returnDesc.setOutHeader(value);
     }

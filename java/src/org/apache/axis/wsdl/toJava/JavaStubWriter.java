@@ -520,10 +520,19 @@ public class JavaStubWriter extends JavaClassWriter {
 
             // Generate the addParameter call with the
             // name qname, typeQName, optional javaType, and mode
-            if (p.getMode() != Parameter.OUT && p.isInHeader()) {
-                pw.println("        _call.addParameterAsHeader(" + paramNameText + ", "
+            boolean isInHeader = p.isInHeader();
+            boolean isOutHeader = p.isOutHeader();
+            if (isInHeader || isOutHeader) {
+                String headerMode = isInHeader ?
+                        (isOutHeader ? "javax.xml.rpc.ParameterMode.INOUT" :
+                        "javax.xml.rpc.ParameterMode.IN") :
+                        "javax.xml.rpc.ParameterMode.OUT";
+                pw.println("        _call.addParameterAsHeader("
+                           + paramNameText + ", "
                            + paramTypeText + ", " 
-                           + javaType + "javax.xml.rpc.ParameterMode.IN);");
+                           + javaType
+                           + "javax.xml.rpc.ParameterMode.IN, "
+                           + headerMode + ");");
             }
             else if (p.getMode() == Parameter.IN) {
                 pw.println("        _call.addParameter(" + paramNameText + ", "
@@ -546,7 +555,7 @@ public class JavaStubWriter extends JavaClassWriter {
 
             // Get the QName for the return Type
             QName returnType = Utils.getXSIType(parms.returnParam);
-            
+
             // Get the javaType
             String javaType = null;
             if (parms.returnParam.getMIMEType() != null) {
@@ -556,12 +565,21 @@ public class JavaStubWriter extends JavaClassWriter {
                 javaType = parms.returnParam.getType().getName();
             }
             if (javaType == null) {
-                pw.println("        _call.setReturnType(" + 
-                           Utils.getNewQName(returnType) + ");");
-            } else {
-                pw.println("        _call.setReturnType(" + 
-                           Utils.getNewQName(returnType) + 
-                           ", " + javaType + ".class);");
+                javaType = "";
+            }
+            else {
+                javaType = ", " + javaType + ".class";
+            }
+            String method = "setReturnType";
+            if (parms.returnParam.isOutHeader()) {
+                method = "setReturnTypeAsHeader";
+            }
+            pw.println("        _call." + method + "("
+                    + Utils.getNewQName(returnType)
+                    + javaType + ");");
+            QName returnQName = parms.returnParam.getQName();
+            if (returnQName != null) {
+                pw.println("        _call.setReturnQName(" + Utils.getNewQName(returnQName) + ");");
             }
         }
         else {
@@ -612,15 +630,6 @@ public class JavaStubWriter extends JavaClassWriter {
             Part p = (Part)partsMap.values().iterator().next();
             QName q = p.getElementName();
             pw.println("        _call.setOperationName(" + Utils.getNewQName(q) + ");" );
-            
-            // Special return info for wrapped - the QName of the element
-            // which is the return type
-            if (parms.returnParam != null) {
-                QName returnQName = parms.returnParam.getQName();
-                if (returnQName != null) {
-                    pw.println("        _call.setReturnQName(" + Utils.getNewQName(returnQName) + ");" );
-                }
-            }
         } else {
             QName elementQName = 
                 Utils.getOperationQName(operation, bEntry, symbolTable);

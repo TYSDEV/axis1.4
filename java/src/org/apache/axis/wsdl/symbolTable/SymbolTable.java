@@ -996,7 +996,7 @@ public class SymbolTable {
                 }
             }
         }
-    } // populate Parameters
+    } // populateParameters
 
     /**
      * For the given operation, this method returns the parameter info conveniently collated.
@@ -1112,6 +1112,7 @@ public class SymbolTable {
         // out parameters.
         if (outputs.size() == 1) {
             parameters.returnParam = (Parameter)outputs.get(0);
+            parameters.returnParam.setMode(Parameter.OUT);
             if (parameters.returnParam.getType() instanceof DefinedElement) {
                 parameters.returnParam.setQName(
                         ((DefinedElement)parameters.returnParam.getType())

@@ -216,6 +216,7 @@ public class RPCHandler extends SOAPHandler
             } else {
                 paramDesc = operation.getInputParamByQName(qname);
             }
+
             
             // If that didn't work, try position
             // FIXME : Do we need to be in EITHER named OR positional
@@ -230,7 +231,6 @@ public class RPCHandler extends SOAPHandler
                     paramDesc = operation.getParameter(params.size() - 1);
                 }
             }
-            
             
             if (paramDesc == null) {
                 throw new SAXException(Messages.getMessage("noParmDesc"));
