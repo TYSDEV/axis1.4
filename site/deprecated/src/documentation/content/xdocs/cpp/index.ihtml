@@ -1,61 +1,92 @@
 <html>
 <head>
   <meta http-equiv="Content-Type" content="text/html">
-  <title>Axis C++ 1.4 Final is Available!</title>
+  <title>Axis C++ 1.5 Alpha is Available!</title>
 </head>
 
 <body>
-<h1>Axis C++ 1.4 Final </h1>
+<h1>Axis C++ 1.5 Alpha </h1>
 
 <p><a href="download.html">Download Axis C++</a></p>
 <br>
 
 <p>
-<h1>Key features of Axis C++ 1.4 Final </h1> </p>
-<p><b>SSL Implementation</b> <br> <br>
-An Axis C++ SSL secure client can access web services hosted on a secure web service.<br>
-The SSL implementation for the client in Axis C++ uses the openssl opensource library. </p> <br> <br> 
-<p><b>Cookie based session support for the client side.</b> <br> <br>
-Client is capable of tracking 'Set-Cookie' HTTP header sent with the service response and set the 'Cookie' HTTP header in the outgoing requests accordingly. </p> <br> <br>
-<p><b>SOAP header based session support for the client side.</b> <br> <br>
-This enables an Axis c++ client to have a session conversation with a session scoped Axis java Web Service. 
-</p> <br> 
-<h1>The Improvements</h1>
-<p> <b>Axis Engine is pure C++</b> <br> 
-<li>Changed mallocs/frees/strdups to news/deletes </li><br>
-<li>.h header files were changed to .hpp</li> <br>
-<li>structs were changed to classes</li> <br> <br> </p>
-<p><b>Refactor WSDL2WS </b> <br>
-<li>Corrected the issue with classpath ordering - order is no longer important</li> <br>
-<li>Identified and removed unused classes </li> <br>
-<li> identified and removed all duplicate classes. </li> <br>
-<li>Re-organized class inheritance and removed all duplicated methods. </li> <br>
-<li>Decomposed some of the larger methods into smaller, more manageable methods. </li> <br>
-<li>Removed all compilation warnings </li> <br>
-<li>Improved readability of code </li> <br>
-<li>Corrected spelling mistakes in class names and methods</li> <br> <br> </p>
-<p><b>Split client, server common includes </b> <br> <br>
-The common header files have now been moved to include/axis <br> <br> </p>
-<p><b>Pre-defined paths were removed from Axis CPP Conf library names</b> <br> <br>
-Fully-qualified paths were  removed, leaving only the library name. <br> <br> </p>
-<p><b>Eliminated warnings </b> <br> <br> </p>
-<p><b>Handler Tutorial </b> <br> <br>
-Handlers are plugable components of Axis C++. This guide gives you details of creating your own handlers.  <br> <br> </p>
-<p><b>Provided access to the body of the SOAP message </b><br> <br>
-Handler writers can get access to the SOAP Body.
-<br> <br></p>
-<p><b>Resolved the conflict in const/non-const method calls for Basic Node objects</b> <br> <br>
- <br> <br> </p>
-<p><b>Added support to store Complex Object properties</b> <br> <br>
-Added support to store complex objects in MessageData.
-<br> <br> </p>
-<p><b>Added the facility to set a new SOAP body to the DeSerializer from a Handler</b> <br><br>
-Once a Handler gets access to the SOAP body it is the duty of the Handler to reset the new SOAP body through the SoapDeSerializer's "setNewSoapBody" method. <br> <br> </p>
-<p><b>Added a transport that supports IPV6.</b> <br> <br> 
-This supports IPV6 protocol.The standard API for IPV6 is used in the IPV6 transport implementation. This transport is capable of working with both IPV6 and IPV4.
-</p> 
+<h1>Key features of Axis C++ 1.5 Alpha </h1> </p>
 
-<p><b>Keep Alive support for transport </b> <br> <br> </p>
+
+<p><b>Added a  new client side transport</b> <br> <br>
+This is called Axis3 transport.This is a cleaner and extensible Transport compared to  Axis2Transport.
+ <br> <br> 
+
+</p>
+
+<h1>The Bug Fixes </h1>
+<p>
+
+AXISCPP-323 <br>
+AXISCPP-373<br>
+AXISCPP-367<br>
+AXISCPP-338<br>
+AXISCPP-313<br>
+AXISCPP-277 <br>
+AXISCPP-265<br>
+AXISCPP-264<br>
+AXISCPP-261<br>
+AXISCPP-236 <br>
+AXISCPP-129 <br>
+AXISCPP-43 <br>
+AXISCPP-41 <br>
+AXISCPP-267<br>
+AXISCPP-163<br>
+AXISCPP-162 <br>
+AXISCPP-361<br>
+AXISCPP-187 <br>
+AXISCPP-221<br>
+AXISCPP-199<br>
+AXISCPP-195<br>
+AXISCPP-78 <br>
+AXISCPP-97<br>
+AXISCPP-184<br>
+AXISCPP-379 <br>
+AXISCPP-384 <br>
+AXISCPP-320<br>
+AXISCPP-382<br>
+AXISCPP-381 <br>
+AXISCPP-370<br>
+AXISCPP-372 <br>
+AXISCPP-332<br>
+AXISCPP-262<br>
+AXISCPP-366 <br>
+AXISCPP-337 <br>
+AXISCPP-369 <br>
+AXISCPP-327<br>
+AXISCPP-356 <br>
+AXISCPP-325<br>
+AXISCPP-350<br>
+AXISCPP-354<br>
+AXISCPP-352<br>
+AXISCPP-311<br>
+AXISCPP-260 <br>
+AXISCPP-315<br>
+AXISCPP-222<br>
+AXISCPP-178 <br>
+AXISCPP-316<br>
+AXISCPP-274 <br>
+AXISCPP-403 <br>
+AXISCPP-394<br>
+<br> <br> 
+</p>
+
+<h1>Known Issues</h1>
+<p>Temporarily removed C support(C samples and tests do not work) <br> <br>
+Out of the two parsers Expat and Xerces, only Xerces is supported. <br> <br>
+ There is a problem with the SimpleAxisServer. <br> <br>
+ There could be problems with document style services on the serverside
+</p>
+
+
+
+
 <br>
  <p>We hope you will enjoy using Axis C++. <br> <br>
  Numerous efforts are currently underway to improve Axis C++ as a whole. Please have a look at the <a href="http://wiki.apache.org/ws/FrontPage/AxisC_2b_2b">TODO page </a> to learn about 1.5 plans for Axis C++. <br> <br>
