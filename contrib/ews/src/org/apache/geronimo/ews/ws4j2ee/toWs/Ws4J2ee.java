@@ -17,6 +17,7 @@
 package org.apache.geronimo.ews.ws4j2ee.toWs;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,9 +33,10 @@ import org.apache.geronimo.ews.ws4j2ee.context.j2eeDD.WebContext;
 import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.interfaces.WSCFContext;
 import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.interfaces.WSCFPortComponent;
 import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.interfaces.WSCFWebserviceDescription;
+import org.apache.geronimo.ews.ws4j2ee.module.Module;
 import org.apache.geronimo.ews.ws4j2ee.toWs.impl.Ws4J2eeFactoryImpl;
+import org.apache.geronimo.ews.ws4j2ee.utils.FileUtils;
 import org.apache.geronimo.ews.ws4j2ee.utils.MiscFactory;
-import org.apache.geronimo.ews.ws4j2ee.utils.packager.load.PackageModule;
 
 /**
  * <p>this class genarate the code when the WSDL does not presents.</p>
@@ -48,7 +50,7 @@ public class Ws4J2ee implements Generator {
     private WSCFPortComponent port;
     private ClassLoader classloader;
    
-    private PackageModule module;
+    private Module module;
     private String wsdlImplFilename;
 
     private InputStream wscffile;
@@ -131,7 +133,7 @@ public class Ws4J2ee implements Generator {
 		if (wscfwsdiss == null || wscfwsdiss.length == 0)
 			throw new UnrecoverableGenerationFault(
 				"no webservice discription "
-					+ "found in the webservice.xml file");
+					+ "found in the webservices.xml file");
 		wscontext.getWSCFContext().setWscfdWsDescription(wscfwsdiss[0]);			
 		return wscfwsdiss[0];
 	
@@ -213,7 +215,7 @@ public class Ws4J2ee implements Generator {
 				if (ports == null || ports.length == 0)
 					throw new UnrecoverableGenerationFault(
 						"no port discription"
-							+ " found in the webservice.xml file");
+							+ " found in the webservices.xml file");
 				this.port = ports[0];
 				wscontext.getWSCFContext().setWscfport(port);
 				this.ejbLink = port.getServiceImplBean().getEjblink();
@@ -237,32 +239,40 @@ public class Ws4J2ee implements Generator {
 	
 	private void checkAndGenerateWsdlAndMapping(WSCFWebserviceDescription wscfwsdis)
 		throws GenerationFault{
-		String wsdlFilename = wscfwsdis.getWsdlFile();
-		String jaxrpcMappingFileName = wscfwsdis.getJaxrpcMappingFile();
-		this.wsdlFile = module.findFileInModule(wsdlFilename);
-		if(this.wsdlFile == null){
-			String wsdlabsoluteFile = wscontext.getMiscInfo().getOutPutPath()+"/"+wsdlFilename;
-			wscontext.getMiscInfo().setWsdlFile(MiscFactory.getInputFile(wsdlabsoluteFile));
-			File jaxrpcfile = new File(wscontext.getMiscInfo().getOutPutPath()+"/"+jaxrpcMappingFileName);
-			wscontext.getMiscInfo().setJaxrpcfile(MiscFactory.getInputFile(jaxrpcfile.getAbsolutePath()));
-			generateTheWSDLfile();
-			generateTheJaxrpcmappingFile();
-			wscontext.getMiscInfo().setSEIExists(true);
-		}else{
-			String file = wscontext.getMiscInfo().getOutPutPath()+"/"+wsdlFilename;
-			copyTheWSDLFile(file);
-			wscontext.getMiscInfo().setWsdlFile(MiscFactory.getInputFile(file));
-			jaxrpcmappingFile = module.findFileInModule(jaxrpcMappingFileName);
-			if(jaxrpcmappingFile == null){
-				throw new GenerationFault("if the wsdlfile avalible the jaxrpcmapping file must be avalible");
-			}else{
-				wscontext.getMiscInfo().setJaxrpcfile(MiscFactory.getInputFile(jaxrpcmappingFile));			
-			}
-			wscontext.getMiscInfo().setSEIExists(false);
-		}
-	
-	}
-
+		try {
+            String wsdlFilename = wscfwsdis.getWsdlFile();
+            String jaxrpcMappingFileName = wscfwsdis.getJaxrpcMappingFile();
+            this.wsdlFile = module.findFileInModule(wsdlFilename);
+            if(this.wsdlFile == null){
+            	String wsdlabsoluteFile = wscontext.getMiscInfo().getOutPutPath()+"/"+wsdlFilename;
+            	wscontext.getMiscInfo().setWsdlFile(MiscFactory.getInputFile(wsdlabsoluteFile));
+            	File jaxrpcfile = new File(wscontext.getMiscInfo().getOutPutPath()+"/"+jaxrpcMappingFileName);
+            	wscontext.getMiscInfo().setJaxrpcfile(MiscFactory.getInputFile(jaxrpcfile.getAbsolutePath()));
+            	generateTheWSDLfile();
+            	generateTheJaxrpcmappingFile();
+            	wscontext.getMiscInfo().setSEIExists(true);
+            }else{
+            	File file = new File(wscontext.getMiscInfo().getOutPutPath()+"/"+wsdlFilename);
+                file.getParentFile().mkdirs();
+            	FileUtils.copyFile(wsdlFile,new FileOutputStream(file));
+            	wscontext.getMiscInfo().setWsdlFile(MiscFactory.getInputFile(file.getAbsolutePath()));
+                
+            	jaxrpcmappingFile = module.findFileInModule(jaxrpcMappingFileName);
+                file = new File(wscontext.getMiscInfo().getOutPutPath()+"/"+jaxrpcMappingFileName);
+                file.getParentFile().mkdirs();
+                FileUtils.copyFile(jaxrpcmappingFile,new FileOutputStream(file));
+                
+            	if(jaxrpcmappingFile == null){
+            		throw new GenerationFault("if the wsdlfile avalible the jaxrpcmapping file must be avalible");
+            	}else{
+            		wscontext.getMiscInfo().setJaxrpcfile(MiscFactory.getInputFile(file.getAbsolutePath()));			
+            	}
+            	wscontext.getMiscInfo().setSEIExists(false);
+            }
+        } catch (FileNotFoundException e) {
+            throw GenerationFault.createGenerationFault(e);
+        }
+    }
 
 	public void cleanup()throws GenerationFault{
 		try{
@@ -283,30 +293,15 @@ public class Ws4J2ee implements Generator {
 			throw GenerationFault.createGenerationFault(e);
 		}
 	}
-	public void copyTheWSDLFile(String filein) throws GenerationFault{
-		try{
-			File file = new File(filein);
-			OutputStream out = new FileOutputStream(file);
-			byte[] buf = new byte[1024];
-			int val = this.wsdlFile.read(buf);
-			while(val > 0){
-				out.write(buf,0,val);
-				val = this.wsdlFile.read(buf);
-			}
-			out.close();
-			this.wsdlFile.close();
-		}catch(Exception e){
-				throw GenerationFault.createGenerationFault(e);
-		}
-	}
+
 
     /**
      * args is String array s.t.
-     * 1)first argument is webservice.xml file 
+     * 1)first argument is webservices.xml file 
      * 2)Other arguments are any option that can given to Java2WSDL
      * 3)the SEI and the service Implementation bean should be avalible on the class path
      * 4)the ws4j2ee will search for the web.xml or ejb-jar.xml 
-     * 		a)same directory as the webservice.xml file 
+     * 		a)same directory as the webservices.xml file 
      * 		b)file should be in the class path s.t META-INF/web.xml or META-INF/ejb-jar.xml
      * 5)if no file found at the #4 the ws4j2ee continue assuming the Impl bean and the 
      * DD is not avalible. This is additional to spec.

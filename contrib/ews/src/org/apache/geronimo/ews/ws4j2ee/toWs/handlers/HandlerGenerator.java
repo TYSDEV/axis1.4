@@ -25,7 +25,7 @@ import org.apache.geronimo.ews.ws4j2ee.toWs.Generator;
 import org.apache.geronimo.ews.ws4j2ee.toWs.Writer;
 
 /**
- * <p>Genarate the signature of the handlers as given by the webservice.xml file.</p>
+ * <p>Genarate the signature of the handlers as given by the webservices.xml file.</p>
  * 
  * @author Srinath Perera(hemapani@opensource.lk)
  */

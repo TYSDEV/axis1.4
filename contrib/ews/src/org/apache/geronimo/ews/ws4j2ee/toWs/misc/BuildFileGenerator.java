@@ -22,6 +22,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Properties;
 import java.util.StringTokenizer;
 import java.util.Vector;
@@ -121,7 +122,7 @@ public class BuildFileGenerator implements Generator {
 			tempfile = new File("target/test-classes");
 			out.write("		<pathelement location=\"/"+tempfile.getAbsolutePath()+"\"/>");
 			
-			Vector classpathelements = j2eewscontext.getMiscInfo().getClasspathElements();
+			ArrayList classpathelements = j2eewscontext.getMiscInfo().getClasspathElements();
 			if(classpathelements != null){
 				for(int i = 0;i<classpathelements.size();i++){
 					out.write("		<pathelement location=\"" 

@@ -730,7 +730,6 @@ public class J2eeDeployWriter  extends JavaWriter{
 	}
 	
 	private void writeHandler(PrintWriter pw,WSCFHandler handler){
-		System.out.println("handler written");
 		pw.println("      <handler name=\""+handler.getHandlerName()+"\"type=\""+handler.getHandlerClass()+"\">");
 		WSCFInitParam[] param = handler.getInitParam();
 		for(int i = 0;i<param.length;i++){

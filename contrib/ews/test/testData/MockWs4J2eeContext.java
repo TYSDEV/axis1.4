@@ -31,13 +31,14 @@ import org.apache.geronimo.ews.ws4j2ee.toWs.Ws4J2eeFactory;
  * @author hemapani@opensource.lk
  */
 public class MockWs4J2eeContext implements J2EEWebServiceContext{
+    private MiscInfo miscinfo = new MiscInfoImpl();
 	public WSDLContext getWSDLContext() {return null;}
 	public void setWSDLContext(WSDLContext wsdlcontext) {}
 	public WSCFContext getWSCFContext() {return null;}
 	public void setWSCFContext(WSCFContext wscfcontext) {}
 	public JaxRpcMapperContext getJAXRPCMappingContext() {return null;}
 	public void setJAXRPCMappingContext(JaxRpcMapperContext context) {}
-	public MiscInfo getMiscInfo() {return new MiscInfoImpl();}
+	public MiscInfo getMiscInfo() {return miscinfo;}
 	public void setMiscInfo(MiscInfo info) {}
 	public void validate() {
 	}

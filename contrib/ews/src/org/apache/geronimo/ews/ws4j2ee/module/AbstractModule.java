@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.geronimo.ews.ws4j2ee.utils.packager.load;
+package org.apache.geronimo.ews.ws4j2ee.module;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,7 +28,7 @@ import org.apache.geronimo.ews.ws4j2ee.toWs.GenerationFault;
 /**
  * @author Srinath Perera(hemapani@opensource.lk)
  */
-public abstract class AbstractPackageModule implements PackageModule {
+public abstract class AbstractModule implements Module {
     protected InputStream wscfFile;
     protected InputStream webddfile;
     protected InputStream ejbJarfile;
@@ -37,7 +37,7 @@ public abstract class AbstractPackageModule implements PackageModule {
     protected ZipFile zip;
     protected ClassLoader parentCL;
 
-    public AbstractPackageModule(String jarFile,ClassLoader parentCL) throws GenerationFault {
+    public AbstractModule(String jarFile,ClassLoader parentCL) throws GenerationFault {
         try {
 			this.parentCL = parentCL;
             zip = new JarFile(jarFile);

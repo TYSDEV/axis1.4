@@ -14,41 +14,39 @@
  * limitations under the License.
  */
 
-package org.apache.geronimo.ews.ws4j2ee.utils.packager.load;
+package org.apache.geronimo.ews.ws4j2ee.module;
 
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.Vector;
+import java.util.ArrayList;
 
 import org.apache.geronimo.ews.ws4j2ee.toWs.GenerationFault;
-import org.apache.geronimo.ews.ws4j2ee.toWs.UnrecoverableGenerationFault;
 
 /**
  * @author Srinath Perera(hemapani@opensource.lk)
  */
-public class JarPackageModule extends AbstractPackageModule {
+public class JarModule extends AbstractModule {
     private ClassLoader cl;
-    private Vector list = new Vector(1);
+    private ArrayList list = new ArrayList(1);
     /**
      * @param jarFile
      * @throws GenerationFault
      */
-    public JarPackageModule(String jarFile, ClassLoader parentCL,boolean firstmodule)
+    public JarModule(String jarFile, ClassLoader parentCL)
         throws GenerationFault {
         super(jarFile,parentCL);
         try {
             this.parentCL = parentCL;
             list.add(new File(jarFile));
-            if (firstmodule){
-                if(parentCL == null){
-                    throw new UnrecoverableGenerationFault("parent class loader must not be null");
-                }
-                cl = new URLClassLoader(new URL[]{(new File(jarFile)).toURL()},parentCL);
+            cl = new URLClassLoader(new URL[]{(new File(jarFile)).toURL()},parentCL);
+
+            wscfFile = getInputStreamForJarEntry(jarFile, "META-INF/webservices.xml");
+            if (wscfFile == null) {
+                wscfFile =
+                    getInputStreamForJarEntry(jarFile, "META-INF/webservice.xml");
             }
-            wscfFile =
-                getInputStreamForJarEntry(jarFile, "META-INF/webservice.xml");
             if (wscfFile == null) {
                 wscfFile = getInputStreamForJarEntry(jarFile, "webservice.xml");
             }
@@ -57,7 +55,7 @@ public class JarPackageModule extends AbstractPackageModule {
                 webddfile = getInputStreamForJarEntry(jarFile, "web.xml");
             }
             ejbJarfile = getInputStreamForJarEntry(jarFile, "META-INF/ejb-jar.xml");
-            if (wscfFile == null && firstmodule)
+            if (wscfFile == null) 
                 throw new GenerationFault("wscf file must not be null");
         } catch (MalformedURLException e) {
             throw GenerationFault.createGenerationFault(e);
@@ -70,7 +68,7 @@ public class JarPackageModule extends AbstractPackageModule {
     public ClassLoader getClassLoaderWithPackageLoaded() {
         return cl;
     }
-	public Vector getClassPathElements() {
+	public ArrayList getClassPathElements() {
 		return list;
 	}
 }

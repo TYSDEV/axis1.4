@@ -18,7 +18,7 @@ package org.apache.geronimo.ews.ws4j2ee.context.webservices.server.interfaces;
 import org.apache.geronimo.ews.ws4j2ee.toWs.GenerationFault;
 
 /**
- * This will inteface the wholw webservice.xml file and will give sufficient access to
+ * This will inteface the wholw webservices.xml file and will give sufficient access to
  * all the elements and attrebutes either directly or through other interfaces.
  *
  */

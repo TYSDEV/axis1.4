@@ -113,7 +113,7 @@ public class ContextValidator {
         WSCFPortComponent[] ports = wscfwsdis.getPortComponent();
         if (ports == null || ports.length == 0)
             throw new UnrecoverableGenerationFault("no port discription found in the" +
-                    "webservice.xml file");
+                    "webservices.xml file");
         WSCFPortComponent port = ports[0];
         context.getWSCFContext().setWscfport(port);
 		String ejbLink = port.getServiceImplBean().getEjblink();
@@ -150,7 +150,7 @@ public class ContextValidator {
 
 		if (wsdlport == null)
 			throw new UnrecoverableGenerationFault("wsdl port can not be null, you may have the " +
-				"wsdlport define wrongly on the webservice.xml");
+				"wsdlport define wrongly on the webservices.xml");
         Iterator services = context.getWSDLContext().getServices().iterator();
         while (services.hasNext()) {
             ServiceEntry service = (ServiceEntry) services.next();

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.apache.geronimo.ews.ws4j2ee.utils.packager.load;
+package org.apache.geronimo.ews.ws4j2ee.module;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -23,14 +23,14 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.Vector;
+import java.util.ArrayList;
 
 import org.apache.geronimo.ews.ws4j2ee.toWs.GenerationFault;
 
 /**
  * @author Srinath Perera(hemapani@opensource.lk)
  */
-public class DirPackageModule implements PackageModule{
+public class DirModule implements Module{
 	protected InputStream wscfFile;
 	protected InputStream webddfile;
 	protected InputStream ejbJarfile;
@@ -41,21 +41,21 @@ public class DirPackageModule implements PackageModule{
      * @param jarFile
      * @throws GenerationFault
      */
-    public DirPackageModule(String location,ClassLoader parentCL)
+    public DirModule(String location,ClassLoader parentCL)
         throws GenerationFault {
         File file = null;
         this.parentCL = parentCL;
         this.location = location; 
         try {
-            file = new File(location+ "/WEB-INF/webservice.xml");
+            file = new File(location+ "/WEB-INF/webservices.xml");
             if(file.exists()){
             	wscfFile = new FileInputStream(file);
             }else{
-            	file = new File(location+ "/META-INF/webservice.xml");
+            	file = new File(location+ "/META-INF/webservices.xml");
             	if(file.exists()){
             		wscfFile = new FileInputStream(file);        	
             	}else{
-            		wscfFile = new FileInputStream(new File(location+ "/webservice.xml"));			
+            		wscfFile = new FileInputStream(new File(location+ "/webservices.xml"));			
             	}
             }
 			findDDs();
@@ -68,7 +68,7 @@ public class DirPackageModule implements PackageModule{
 	 * @param jarFile
 	 * @throws GenerationFault
 	 */
-	public DirPackageModule(File wscfDDFile)
+	public DirModule(File wscfDDFile)
 		throws GenerationFault {
 		try{
 			wscfFile = new FileInputStream(wscfDDFile);
@@ -124,8 +124,8 @@ public class DirPackageModule implements PackageModule{
 			throw GenerationFault.createGenerationFault(e);
         }
     }
-    public Vector getClassPathElements() throws GenerationFault {
-    	Vector elements = new Vector();
+    public ArrayList getClassPathElements() throws GenerationFault {
+        ArrayList elements = new ArrayList();
 		elements.add(new File(location));
 		return elements;
     }

@@ -125,7 +125,7 @@ public interface MiscInfo {
 	public void setImplAvalible(boolean b);
 
 	/**
-	 * The webservice.xml specifies a location of the WSDL description of
+	 * The webservices.xml specifies a location of the WSDL description of
 	 * a set of Web services. The location is relative to the root of the module
 	 * and must be specified by the developer.
 	 */
@@ -143,8 +143,8 @@ public interface MiscInfo {
      * the class path elemnts added via jar,war,ear files this is a Vector of
      * java.io.File
      */
-    public Vector getClasspathElements();
-    public void setClassPathElements(Vector classpathelements);
+    public ArrayList getClasspathElements();
+    public void setClassPathElements(ArrayList classpathelements);
     
 	public ClassLoader getClassloader();
 	public void setClassloader(ClassLoader loader);

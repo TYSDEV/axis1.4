@@ -39,6 +39,7 @@ public class WebDDTest extends AbstractTestCase{
 
 	public void testWebDD() throws Exception{
 	   J2EEWebServiceContext con = new MockWs4J2eeContext();
+       con.getMiscInfo().setJ2eeComponetLink("AxisServlet");
 	   WebDDParser pars = new WebDDParser(con);
 	   pars.parse(new FileInputStream(getTestFile(sampleDir + "servlet/math/web.xml")));
 	   Assert.assertEquals("org.apache.axis.transport.http.AxisServlet",pars.getServletClass()); 
