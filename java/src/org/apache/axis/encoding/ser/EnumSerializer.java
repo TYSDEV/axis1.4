@@ -106,11 +106,11 @@ public class EnumSerializer extends SimpleSerializer
         throws IOException
     {
         context.startElement(name, attributes);
-        context.writeString(getValueAsString(value));
+        context.writeString(getValueAsString(value, context));
         context.endElement();
     }
 
-    public String getValueAsString(Object value) {
+    public String getValueAsString(Object value, SerializationContext context) {
         // Invoke the toString method on the enumeration class and
         // write out the result as a string.
         try {

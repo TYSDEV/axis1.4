@@ -100,11 +100,11 @@ public class Base64Serializer implements SimpleValueSerializer {
         throws IOException
     {
         context.startElement(name, attributes);
-        context.writeString(getValueAsString(value));
+        context.writeString(getValueAsString(value, context));
         context.endElement();
     }
 
-    public String getValueAsString(Object value) {
+    public String getValueAsString(Object value, SerializationContext context) {
         byte[] data = null;
         if (javaType == byte[].class) {
             data = (byte[]) value;

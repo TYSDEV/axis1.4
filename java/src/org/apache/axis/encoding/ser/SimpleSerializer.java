@@ -151,12 +151,12 @@ public class SimpleSerializer implements SimpleValueSerializer {
 
         context.startElement(name, attributes);
         if (value != null) {
-            context.writeString(getValueAsString(value));
+            context.writeString(getValueAsString(value, context));
         }
         context.endElement();
     }
 
-    public String getValueAsString(Object value) {
+    public String getValueAsString(Object value, SerializationContext context) {
         // We could have separate serializers/deserializers to take
         // care of Float/Double cases, but it makes more sence to
         // put them here with the rest of the java lang primitives.
@@ -221,7 +221,7 @@ public class SimpleSerializer implements SimpleValueSerializer {
                     // the attribute may be more sophisticated.  For example, don't
                     // serialize if the attribute matches the default value.
                     if (propValue != null) {
-                        String propString = getValueAsString(propValue);
+                        String propString = getValueAsString(propValue, context);
 
                         String namespace = qname.getNamespaceURI();
                         String localName = qname.getLocalPart();

@@ -95,11 +95,11 @@ public class DateSerializer implements SimpleValueSerializer {
         throws IOException
     {
         context.startElement(name, attributes);
-        context.writeString(getValueAsString(value));
+        context.writeString(getValueAsString(value, context));
         context.endElement();
     }
 
-    public String getValueAsString(Object value) {
+    public String getValueAsString(Object value, SerializationContext context) {
         StringBuffer buf = new StringBuffer();
         synchronized (calendar) {
             calendar.setTime((Date)value);
