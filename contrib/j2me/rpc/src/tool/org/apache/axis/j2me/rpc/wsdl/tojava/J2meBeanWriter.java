@@ -57,6 +57,7 @@ package org.apache.axis.j2me.rpc.wsdl.tojava;
 import org.apache.axis.Constants;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
+import org.apache.axis.wsdl.symbolTable.ContainedAttribute;
 import org.apache.axis.wsdl.symbolTable.ElementDecl;
 import org.apache.axis.wsdl.symbolTable.SchemaUtils;
 import org.apache.axis.wsdl.symbolTable.TypeEntry;
@@ -256,8 +257,7 @@ public class J2meBeanWriter extends JavaClassWriter {
                     variableName = Constants.ANYCONTENT;
                     isAny = true;
                 } else {
-                    String elemName = Utils.getLastLocalPart(elem.getName().getLocalPart());
-                    variableName = Utils.xmlNameToJava(elemName);
+                    variableName = elem.getName();
                 }
 
                 names.add(typeName);
@@ -281,13 +281,10 @@ public class J2meBeanWriter extends JavaClassWriter {
 
         // Add attribute names
         if (attributes != null) {
-            for (int i = 0; i < attributes.size(); i += 2) {
-                TypeEntry attr = (TypeEntry) attributes.get(i);
-                String typeName = attr.getName();
-                QName xmlName = (QName) attributes.get(i + 1);
-                String attrName = Utils.getLastLocalPart(xmlName.getLocalPart());
-                String variableName =
-                        Utils.xmlNameToJava(attrName);
+            for (int i = 0; i < attributes.size(); i++) {
+                ContainedAttribute attr = (ContainedAttribute) attributes.get(i);
+                String typeName = attr.getType().getName(); 
+                String variableName = attr.getName();
 
                 names.add(typeName);
                 names.add(variableName);
@@ -301,7 +298,7 @@ public class J2meBeanWriter extends JavaClassWriter {
                 // bug 19069: need to generate code that access member variables that
                 // are enum types through the class interface, not the constructor
                 // this util method returns non-null if the type at node is an enum
-                if (null != Utils.getEnumerationBaseAndValues(attr.getNode(),
+                if (null != Utils.getEnumerationBaseAndValues(attr.getType().getNode(),
                         emitter.getSymbolTable())) {
                     enumerationTypes.add(typeName);
                 }
@@ -479,11 +476,8 @@ public class J2meBeanWriter extends JavaClassWriter {
             if (elements != null) {
                 for (int j = 0; j < elements.size(); j++) {
                     ElementDecl elem = (ElementDecl) elements.get(j);
-                    String name = Utils.getLastLocalPart(elem.getName().getLocalPart());
                     paramTypes.add(elem.getType().getName());
-                    paramNames.add(
-                            mangle
-                            + Utils.xmlNameToJava(name));
+                    paramNames.add(elem.getName());
                 }
             }
         }
