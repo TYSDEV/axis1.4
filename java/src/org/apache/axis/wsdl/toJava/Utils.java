@@ -57,6 +57,7 @@ package org.apache.axis.wsdl.toJava;
 import org.apache.axis.Constants;
 
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 import org.apache.axis.wsdl.symbolTable.BindingEntry;
 import org.apache.axis.wsdl.symbolTable.CollectionTE;
@@ -78,8 +79,10 @@ import javax.wsdl.Input;
 import javax.wsdl.Message;
 import javax.wsdl.Operation;
 import javax.wsdl.Part;
+import javax.wsdl.BindingFault;
 import javax.wsdl.extensions.ExtensibilityElement;
 import javax.wsdl.extensions.soap.SOAPBody;
+import javax.wsdl.extensions.soap.SOAPFault;
 
 import javax.xml.namespace.QName;
 import javax.xml.rpc.holders.BooleanHolder;
@@ -269,6 +272,37 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
         }
     } // isFaultComplex
 
+    /**
+     * Return the QName of a fault
+     * 
+     * Can return null if no parts in fault
+     */ 
+    public static QName getFaultQName(Fault fault, SOAPFault soapFault) {
+        // get the name of the part - there can be only one!
+        Message message = fault.getMessage();
+        Map parts = message.getParts();
+        // If no parts, skip it
+        if (parts.size() == 0) {
+            return null;
+        }
+                
+        // We have 2 cases
+        // - part is an element, use element name and namespace
+        // - part is a type, use part name and binding namespace 
+        Part part = (Part) parts.values().iterator().next();
+                
+        // Someone should have already made sure that
+        // if use=literal, no use of namespace on the soap:fault
+        // if use=encoded, no use of element on the part
+        if (part.getTypeName() != null) {
+            String namespace = soapFault.getNamespaceURI();
+            // Now make a QName
+            return new QName(namespace, part.getName());
+        } else {
+            // Use the element's QName for the fault
+            return part.getElementName();
+        }
+    }
     /**
      * If the specified node represents a supported JAX-RPC enumeration,
      * a Vector is returned which contains the base type and the enumeration values.

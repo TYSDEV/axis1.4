@@ -359,7 +359,7 @@ public class AxisFault extends java.rmi.RemoteException {
     /**
      *  Writes any exception data to the faultDetails
      */
-    public void writeDetails(org.apache.axis.encoding.SerializationContext context) throws java.io.IOException {
+    public void writeDetails(QName qname, SerializationContext context) throws java.io.IOException {
         // no data in default Axis fault
     }
 

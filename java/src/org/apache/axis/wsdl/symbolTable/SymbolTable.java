@@ -68,6 +68,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
+import java.util.ArrayList;
 
 import javax.wsdl.Binding;
 import javax.wsdl.BindingFault;
@@ -100,11 +101,13 @@ import javax.wsdl.xml.WSDLReader;
 import javax.wsdl.extensions.http.HTTPBinding;
 import javax.wsdl.extensions.soap.SOAPBinding;
 import javax.wsdl.extensions.soap.SOAPBody;
+import javax.wsdl.extensions.soap.SOAPFault;
 
 import javax.xml.rpc.holders.BooleanHolder;
 import javax.xml.rpc.holders.IntHolder;
 
 import org.apache.axis.Constants;
+import org.apache.axis.wsdl.toJava.JavaDefinitionWriter;
 
 import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.XMLUtils;
@@ -1569,34 +1572,65 @@ public class SymbolTable {
                 }
 
                 // faults
-                HashMap faultMap = new HashMap();
+                HashMap faultMap = new HashMap(); // name to SOAPFault from WSDL4J
+                ArrayList faults = new ArrayList();
                 Iterator faultMapIter = bindOp.getBindingFaults().values().iterator();
                 for (; faultMapIter.hasNext(); ) {
                     BindingFault bFault = (BindingFault)faultMapIter.next();
 
                     // Set default entry for this fault
                     String faultName = bFault.getName();
-                    int faultBodyType = BindingEntry.USE_ENCODED;
 
+                    // Check to make sure this fault is named
+                    if (faultName == null || faultName.length() == 0) {
+                        throw new IOException(
+                                Messages.getMessage("unNamedFault00", 
+                                                    bindOp.getName(), 
+                                                    binding.getQName().toString()));
+                    }
+                    
+                    SOAPFault soapFault = null;
                     Iterator faultIter =
                             bFault.getExtensibilityElements().iterator();
                     for (; faultIter.hasNext();) {
                         Object obj = faultIter.next();
-                        if (obj instanceof SOAPBody) {
-                            String use = ((SOAPBody) obj).getUse();
-                            if (use == null) {
-                                throw new IOException(Messages.getMessage(
-                                        "noUse", opName));
-                            }
-                            if (use.equalsIgnoreCase("literal")) {
-                                faultBodyType = BindingEntry.USE_LITERAL;
-                            }
+                        if (obj instanceof SOAPFault) {
+                            soapFault = (SOAPFault) obj;
                             break;
                         }
                     }
-                    // Add this fault name and bodyType to the map
-                    faultMap.put(faultName, new Integer(faultBodyType));
+                    
+                    // Check to make sure we have a soap:fault element
+                    if (soapFault == null) {
+                        throw new IOException(
+                                Messages.getMessage("missingSoapFault00",
+                                                    faultName,
+                                                    bindOp.getName(), 
+                                                    binding.getQName().toString()));
+                    }
+                    
+                    // TODO error checking:
+                    // if use=literal, no use of namespace on the soap:fault
+                    // if use=encoded, no use of element on the part
+
+                    // Check this fault to make sure it matches the one
+                    // in the matching portType Operation
+                    Operation operation = bindOp.getOperation();
+                    Fault opFault = operation.getFault(bFault.getName());
+                    if (opFault == null) {
+                        throw new IOException(
+                                Messages.getMessage("noPortTypeFault",
+                                  new String[] {bFault.getName(), 
+                                          bindOp.getName(), 
+                                          binding.getQName().toString()}));
+                    }
+                    // put the updated entry back in the map
+                    faults.add(new JavaDefinitionWriter.FaultInfo(opFault, 
+                                                                  soapFault));
                 }
+                // Add this fault name and info to the map
+                faultMap.put(bindOp, faults);
+
                 // Associate the portType operation that goes with this binding
                 // with the body types.
                 attributes.put(bindOp.getOperation(),

@@ -81,7 +81,7 @@ import org.apache.axis.wsdl.symbolTable.SymbolTable;
 public class JavaFaultWriter extends JavaClassWriter {
     private Fault fault;
     private SymbolTable symbolTable;
-    private BindingFault bindingFault;
+    private SOAPFault soapFault;
 
     /**
      * Constructor.
@@ -89,11 +89,11 @@ public class JavaFaultWriter extends JavaClassWriter {
     protected JavaFaultWriter(Emitter emitter, 
                               SymbolTable symbolTable, 
                               Fault fault, 
-                              BindingFault bindingFault) {
+                              SOAPFault soapFault) {
         super(emitter, Utils.getFullExceptionName(fault, symbolTable), "fault");
         this.fault = fault;
         this.symbolTable = symbolTable;
-        this.bindingFault = bindingFault;
+        this.soapFault = soapFault;
     } // ctor
 
     /**
@@ -109,23 +109,14 @@ public class JavaFaultWriter extends JavaClassWriter {
     protected void writeFileBody(PrintWriter pw) throws IOException {
         Vector params = new Vector();
 
-        String faultNamespace = "";
         boolean literal = false;
-        // Have to get namespace and use information (literal/encoded) 
-        // for fault from Binding.
-        if (bindingFault != null) {
-            List extList = bindingFault.getExtensibilityElements();
-            for (Iterator iterator = extList.iterator(); iterator.hasNext();) {
-                Object o = (Object) iterator.next();
-                if (o instanceof SOAPFault) {
-                    SOAPFault sf = (SOAPFault) o;
-                    faultNamespace = sf.getNamespaceURI();
-                    if ("literal".equalsIgnoreCase(sf.getUse())) {
-                        literal = true;
-                    }
-                }
+        // Have to get use information (literal/encoded) for fault from Binding.
+        if (soapFault != null) {
+            if ("literal".equalsIgnoreCase(soapFault.getUse())) {
+                literal = true;
             }
         }
+
         symbolTable.getParametersFromParts(params, 
                                 fault.getMessage().getOrderedParts(null), 
                                 literal, 
@@ -182,12 +173,10 @@ public class JavaFaultWriter extends JavaClassWriter {
         pw.println("    /**");
         pw.println("     * Writes the exception data to the faultDetails");
         pw.println("     */");
-        pw.println("    public void writeDetails(org.apache.axis.encoding.SerializationContext context) throws java.io.IOException {");
+        pw.println("    public void writeDetails(javax.xml.namespace.QName qname, org.apache.axis.encoding.SerializationContext context) throws java.io.IOException {");
         for (int i = 0; i < params.size(); i++) {
             Parameter param = (Parameter)params.get(i);
             String variable = param.getName();
-            QName qname = new QName(faultNamespace, param.getQName().getLocalPart());
-            pw.println("        javax.xml.namespace.QName qname = " + Utils.getNewQName(qname) + ";");
             pw.println("        context.serialize(qname, null, " + Utils.wrapPrimitiveType(param.getType(), variable) + ");");
         }
         pw.println("    }");

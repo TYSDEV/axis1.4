@@ -56,6 +56,8 @@ package org.apache.axis.message;
 
 import org.apache.axis.Constants;
 import org.apache.axis.MessageContext;
+import org.apache.axis.description.OperationDesc;
+import org.apache.axis.description.FaultDesc;
 import org.apache.axis.client.Service;
 import org.apache.axis.client.Call;
 import org.apache.axis.encoding.DeserializationContext;
@@ -105,15 +107,15 @@ public class SOAPFaultDetailsBuilder extends SOAPHandler implements Callback
         // Look up this element in our faultMap
         // if we find a match, this element is the fault data
         MessageContext msgContext = context.getMessageContext();
-        Service service = (Service) msgContext.getProperty(Call.WSDL_SERVICE);
-        if (service != null) {
-            Service.FaultInfo info = service.getFaultInfoForQName(qn);
-            if (info != null && info.cls != null) {
+        OperationDesc op = msgContext.getOperation();
+        if (op != null) {
+            FaultDesc faultDesc = op.getFaultByQName(qn);
+            if (faultDesc != null) {
                 // Set the class
-                builder.setFaultClass(info.cls);
+                builder.setFaultClass(faultDesc.getClass());
                 builder.setWaiting(true);
                 // register callback for the data, use the xmlType from fault info
-                Deserializer dser = context.getDeserializerForType(info.xmlType);
+                Deserializer dser = context.getDeserializerForType(faultDesc.getXmlType());
                 dser.registerValueTarget(new CallbackTarget(this, "faultData"));
                 return (SOAPHandler)dser;
             }
