@@ -442,6 +442,21 @@ public class JavaDeployWriter extends JavaWriter {
             if (param.getMode() != Parameter.IN) {
                 pw.print(" mode=\"" + getModeString(param.getMode()) + "\"");
             }
+
+            // Is this a header?
+            // NOTE:  the symbol table will have to change eventually to distinguish
+            // between the input and output aspects of INOUT parameters.  One COULD
+            // be in the header while the other could be in the body.  Right now the
+            // symbol table assumes it's all or nothing.
+            if (param.inHeader()) {
+                if (param.getMode() != Parameter.OUT) {
+                    pw.print(" inHeader=\"true\"");
+                }
+                if (param.getMode() != Parameter.IN) {
+                    pw.print(" outHeader=\"true\"");
+                }
+            }
+
             pw.println("/>");
         }
 
