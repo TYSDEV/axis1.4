@@ -95,9 +95,11 @@ int InteropTestPortTypeBWrapper::echoStructAsSimpleTypes(void* pMsg)
 	int out1;
 	float out2;
 	pWs->echoStructAsSimpleTypes(v0,&out0,&out1,&out2);
-	pIWSSZ->addOutputParam("outputFloat", (void*)&out0, XSD_FLOAT);
-	pIWSSZ->addOutputParam("outputInteger", (void*)&out1, XSD_INT);
-	pIWSSZ->addOutputParam("outputString", (void*)&out2, XSD_STRING);
+	pIWSSZ->addOutputParam("outputString", (void*)&out0, XSD_STRING);
+   	pIWSSZ->addOutputParam("outputInteger", (void*)&out1, XSD_INT);
+	pIWSSZ->addOutputParam("outputFloat", (void*)&out2, XSD_FLOAT);
+
+
 	return AXIS_SUCCESS;
 }
 

@@ -74,9 +74,11 @@ SOAPStruct* InteropTestPortTypeB::echoSimpleTypesAsStruct(xsd__string Value0, in
 	m_pCall->setTransportProperty(SOAPACTION_HEADER , "groupB#echoSimpleTypesAsStruct");
 	m_pCall->setSOAPVersion(SOAP_VER_1_1);
 	m_pCall->setOperation("echoSimpleTypesAsStruct", "http://soapinterop.org/");
-	m_pCall->addParameter((void*)&Value0, "inputFloat", XSD_FLOAT);
+	m_pCall->addParameter((void*)&Value0, "inputString", XSD_STRING);
 	m_pCall->addParameter((void*)&Value1, "inputInteger", XSD_INT);
-	m_pCall->addParameter((void*)&Value2, "inputString", XSD_STRING);
+	m_pCall->addParameter((void*)&Value2, "inputFloat", XSD_FLOAT);
+
+
 	if (AXIS_SUCCESS == m_pCall->invoke())
 	{
 		if(AXIS_SUCCESS == m_pCall->checkMessage("echoSimpleTypesAsStructResponse", ""))
