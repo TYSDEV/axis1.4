@@ -26,6 +26,10 @@ import org.apache.geronimo.ews.ws4j2ee.utils.packager.load.PackageModuleFactory;
  * @author hemapani@opensource.lk
  */
 public class AntDeployContext implements Ws4J2eeDeployContext{
+        private String implStyle = GenerationConstants.USE_INTERNALS;
+        
+        private String j2eeContainer =  GenerationConstants.GERONIMO_CONTAINER;
+        
         private boolean compile = false;
 		/**
 		 * Field module
@@ -42,6 +46,25 @@ public class AntDeployContext implements Ws4J2eeDeployContext{
 		 */
 		private String outputLocation;
 
+        /**
+         * Constructor GeronimoWsDeployContext
+         *
+         * @param moduleLocation
+         * @param outputLocation
+         */
+        public AntDeployContext(String moduleLocation,
+                                String outputLocation,
+                                ClassLoader parentCL,
+                                String implStyle,
+                                String j2eeContiner) {
+            module =
+                    PackageModuleFactory.createPackageModule(moduleLocation,parentCL, true);
+            this.moduleLocation = moduleLocation;
+            this.outputLocation = outputLocation;
+            this.implStyle = implStyle;
+            this.j2eeContainer = j2eeContiner;
+        }
+
 		/**
 		 * Constructor GeronimoWsDeployContext
 		 *
@@ -49,7 +72,8 @@ public class AntDeployContext implements Ws4J2eeDeployContext{
 		 * @param outputLocation
 		 */
 		public AntDeployContext(String moduleLocation,
-									   String outputLocation,ClassLoader parentCL) {
+									   String outputLocation,
+                                       ClassLoader parentCL) {
 			module =
 					PackageModuleFactory.createPackageModule(moduleLocation,parentCL, true);
 			this.moduleLocation = moduleLocation;
@@ -98,7 +122,7 @@ public class AntDeployContext implements Ws4J2eeDeployContext{
 		 * @return
 		 */
 		public String getContanier() {
-			return GenerationConstants.GERONIMO_CONTAINER;
+			return j2eeContainer;
 		}
 
 		/**
@@ -107,7 +131,7 @@ public class AntDeployContext implements Ws4J2eeDeployContext{
 		 * @return
 		 */
 		public String getImplStyle() {
-			return GenerationConstants.USE_INTERNALS;
+			return implStyle;
 		}
 
 		/**

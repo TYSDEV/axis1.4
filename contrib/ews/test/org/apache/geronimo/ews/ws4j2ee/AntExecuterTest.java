@@ -58,8 +58,11 @@ import java.io.File;
 
 import org.apache.geronimo.ews.AbstractTestCase;
 import org.apache.geronimo.ews.ws4j2ee.utils.AntExecuter;
+import org.apache.geronimo.ews.ws4j2ee.utils.packager.ModulePackager;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Ant;
+import org.apache.tools.ant.taskdefs.Javac;
+import org.apache.tools.ant.types.Path;
 
 /**
  * @author hemapani
@@ -74,7 +77,7 @@ public class AntExecuterTest extends AbstractTestCase{
 
 	public void testBuildFile() throws Exception{
 		try{
-			AntExecuter exec = new AntExecuter();
+			AntExecuter exec = new AntExecuter(null);
 			exec.execute(getTestFile(testDir + "testData/testBuildfile.xml"));
 		}catch(Exception e){
 			e.printStackTrace();
@@ -100,5 +103,5 @@ public class AntExecuterTest extends AbstractTestCase{
 			throw e;
 		}
 	}
-	
+    
 }
