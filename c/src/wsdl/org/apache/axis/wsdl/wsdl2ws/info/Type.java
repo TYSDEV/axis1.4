@@ -153,6 +153,10 @@ public class Type {
  */
     public void setTypeForAttributeName(String attribName, Type type) {
 		attribName = TypeMap.resoleveWSDL2LanguageNameClashes(attribName,this.language);
+	 if (attribName.lastIndexOf('>') > 1 )
+	 {
+	     attribName=attribName.substring(attribName.lastIndexOf('>')+1,attribName.length());
+	 }	
         if (hasOrder)
             this.attribOrder.add(attribName);
         this.attributes.put(attribName, type);
@@ -177,10 +181,8 @@ public class Type {
 		String attribName = TypeMap.resoleveWSDL2LanguageNameClashes(element.getName().getLocalPart(),this.language);
 		if (attribName.lastIndexOf('>') > 1 )
 		{
-			 attribName=attribName.substring(attribName.lastIndexOf('>')+1,attribName.length());
-		         System.out.println(attribName+"   attribute Name ");
-		}
-		
+		    attribName=attribName.substring(attribName.lastIndexOf('>')+1,attribName.length());
+		}		
 		if (hasOrder)
 			this.attribOrder.add(attribName);
 		this.elements.put(attribName, element);
