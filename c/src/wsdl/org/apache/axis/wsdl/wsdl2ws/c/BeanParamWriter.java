@@ -255,7 +255,7 @@ public class BeanParamWriter extends ParamCPPFileWriter{
 						String containedType = null;
 						if (CPPUtils.isSimpleType(qname)){
 							containedType = CPPUtils.getclass4qname(qname);
-							writer.write("\t\t\tdelete [] (("+containedType+"*)pTemp->"+attribs[i][0]+".m_Array);\n");
+							writer.write("\t\t\tdelete [] ("+containedType+"*)(pTemp->"+attribs[i][0]+".m_Array);\n");
 						}
 						else{
 							containedType = qname.getLocalPart();
