@@ -15,7 +15,7 @@
     </goal>
     
     <goal name="generate:xmlbeans"
-        description="Generates the XML beans using JAXB">
+        description="Generates the XML beans using XMLBeans">
 
         <j:jelly xmlns="jelly:ant">
 
@@ -32,7 +32,7 @@
             <ant:mkdir dir="${dir}/lib"/>
 
 		    <xmlbean schema="${schema.dir}"
-    	        destfile="${maven.repo.local}/ews/jars/ews-xmlbeans-DEV.jar"
+    	        destfile="${dir}/lib/ews-xmlbeans-DEV.jar"
         	    srcgendir="${xmlbeans.dir}"
             	classpathref="maven.dependency.classpath"
 	            debug="on">    
@@ -41,9 +41,12 @@
             </xmlbean>
 
             <ant:path id="ews.xmlbeans.libraries">
-                <ant:pathelement path="${maven.repo.local}/ews/jars/ews-xmlbeans-DEV.jar"/>
+                <ant:pathelement path="${dir}/lib/ews-xmlbeans-DEV.jar"/>
             </ant:path>
             <maven:addPath id="maven.dependency.classpath" refid="ews.xmlbeans.libraries"/>
+
+            <ant:unzip src="${dir}/lib/ews-xmlbeans-DEV.jar" 
+                       dest="${basedir}/target/classes"/>
 
         </j:jelly>
     </goal>
