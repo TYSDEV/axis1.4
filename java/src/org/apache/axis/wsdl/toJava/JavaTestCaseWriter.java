@@ -180,23 +180,15 @@ public class JavaTestCaseWriter extends JavaClassWriter {
 
             String javaOpName = Utils.xmlNameToJavaClass(op.getName());
             String testMethodName = "test" + counter++ + portName + javaOpName;
-            pw.println("    public void " + testMethodName + "() throws Exception {");
+            pw.println("    public void " + testMethodName + "() {");
 
             String bindingType = (String) bEntry.getDynamicVar(JavaBindingWriter.INTERFACE_NAME);
             writeBindingAssignment(pw, bindingType, portName);
 
-            
-            pw.println("        // Test operation");
-            String indent = "";
-            Map faultMap = op.getFaults();
-            if (faultMap != null && faultMap.size() > 0) {
-                // we are going to catch fault Exceptions
-                pw.println("        try {");
-                indent = "    ";
-            }
+            pw.println("        try {");
             if (params.returnParam != null) {
                 TypeEntry returnType = params.returnParam.getType();
-                pw.print("        " + indent);
+                pw.print("            ");
                 pw.print(Utils.getParameterTypeName(params.returnParam));
                 pw.print(" value = ");
 
@@ -212,7 +204,7 @@ public class JavaTestCaseWriter extends JavaClassWriter {
                 }
             }
 
-            pw.print  ("        " + indent);
+            pw.print("            ");
 
             if (params.returnParam != null) {
                 pw.print("value = ");
@@ -254,9 +246,9 @@ public class JavaTestCaseWriter extends JavaClassWriter {
 
             pw.println(");");
 
-            if (faultMap != null && faultMap.size() > 0) {
-                pw.println("        }");
-            }
+            pw.println("        }");
+
+            Map faultMap = op.getFaults();
 
             if (faultMap != null) {
                 Iterator i = faultMap.values().iterator();
@@ -266,17 +258,14 @@ public class JavaTestCaseWriter extends JavaClassWriter {
                     count++;
                     Fault f = (Fault) i.next();
                     pw.print("        catch (");
-                    pw.print(Utils.getFullExceptionName(f, symbolTable));
+                    pw.print(Utils.getFullExceptionName(
+                            f, emitter));
                     pw.println(" e" + count + ") {");
                     pw.print("            ");
                     pw.println("throw new junit.framework.AssertionFailedError(\"" + f.getName() + " Exception caught: \" + e" + count + ");");
                     pw.println("        }");
                 }
             }
-            
-            pw.println("        " + indent + "// TBD - validate results");
-
-            /*
             pw.println("        catch (java.rmi.RemoteException re) {");
             pw.print("            ");
             pw.println("throw new junit.framework.AssertionFailedError(\"Remote Exception caught: \" + re);");
@@ -286,7 +275,6 @@ public class JavaTestCaseWriter extends JavaClassWriter {
                 pw.println("            // Unsigned constructors can throw - ignore");
                 pw.println("        }");
             }
-            */
             pw.println("    }");
             pw.println();
         }

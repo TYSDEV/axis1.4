@@ -55,24 +55,27 @@
 
 package org.apache.axis ;
 
-import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPFault;
 import org.apache.axis.message.SOAPHeaderElement;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.XMLUtils;
+
+import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
 
-import javax.xml.namespace.QName;
 import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Vector;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Vector;
+
+import javax.xml.namespace.QName;
 
 /**
  * An exception which maps cleanly to a SOAP fault.
@@ -146,7 +149,7 @@ public class AxisFault extends java.rmi.RemoteException {
     protected AxisFault(Exception target) {
         super ("", target);
 
-        setFaultCodeAsString( Constants.FAULT_SERVER_USER );
+        setFaultCode( Constants.FAULT_SERVER_USER );
         
         initFromException(target);
     }
@@ -154,7 +157,7 @@ public class AxisFault extends java.rmi.RemoteException {
     public AxisFault(String message)
     {
         super (message);
-        setFaultCodeAsString(Constants.FAULT_SERVER_GENERAL);
+        setFaultCode(Constants.FAULT_SERVER_GENERAL);
         setFaultString(message);
         initFromException(this);
     }
@@ -165,14 +168,14 @@ public class AxisFault extends java.rmi.RemoteException {
     public AxisFault()
     {
         super();
-        setFaultCodeAsString(Constants.FAULT_SERVER_GENERAL);     
+        setFaultCode(Constants.FAULT_SERVER_GENERAL);     
         initFromException(this);
     }
 
     public AxisFault (String message, Throwable t)
     {
         super (message, t);
-        setFaultCodeAsString(Constants.FAULT_SERVER_GENERAL);
+        setFaultCode(Constants.FAULT_SERVER_GENERAL);
         setFaultString(message);
     }
 
@@ -205,7 +208,7 @@ public class AxisFault extends java.rmi.RemoteException {
                                                   "exceptionName", 
                                                   target.getClass().getName());
             
-            faultDetails.add(el);
+            faultDetails.add(el);        
         }
         
         el =  XMLUtils.StringToElement(Constants.NS_URI_AXIS, 
@@ -245,7 +248,7 @@ public class AxisFault extends java.rmi.RemoteException {
         faultCode = code ;
     }
 
-    public void setFaultCodeAsString(String code) {
+    public void setFaultCode(String code) {
         faultCode = new QName(Constants.NS_URI_AXIS, code);
     }
 
@@ -355,12 +358,4 @@ public class AxisFault extends java.rmi.RemoteException {
     public void clearHeaders() {
         faultHeaders = null;
     }
-    
-    /**
-     *  Writes any exception data to the faultDetails
-     */
-    public void writeDetails(QName qname, SerializationContext context) throws java.io.IOException {
-        // no data in default Axis fault
-    }
-
 };

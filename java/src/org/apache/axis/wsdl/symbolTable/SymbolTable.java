@@ -68,7 +68,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
-import java.util.ArrayList;
 
 import javax.wsdl.Binding;
 import javax.wsdl.BindingFault;
@@ -101,14 +100,11 @@ import javax.wsdl.xml.WSDLReader;
 import javax.wsdl.extensions.http.HTTPBinding;
 import javax.wsdl.extensions.soap.SOAPBinding;
 import javax.wsdl.extensions.soap.SOAPBody;
-import javax.wsdl.extensions.soap.SOAPFault;
-import javax.wsdl.extensions.soap.SOAPHeader;
 
 import javax.xml.rpc.holders.BooleanHolder;
 import javax.xml.rpc.holders.IntHolder;
 
 import org.apache.axis.Constants;
-import org.apache.axis.wsdl.toJava.JavaDefinitionWriter;
 
 import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.XMLUtils;
@@ -615,7 +611,7 @@ public class SymbolTable {
                     if (!importedFiles.contains(url)) {
                         importedFiles.add(url);
                         String filename = url.toString();
-                        populate(url, null,
+                        populate(context, null,
                                 XMLUtils.newDocument(filename), filename);
                     }
                 }
@@ -1263,10 +1259,6 @@ public class SymbolTable {
                                        BindingEntry bindingEntry)
             throws IOException {
 
-        // HACK ALERT!  This whole method is waaaay too complex.
-        // It needs rewriting (for instance, we sometimes new up
-        // a Parameter, then ignore it in favor of another we new up.)
-
         // Determine if there's only one element.  For wrapped
         // style, we normally only have 1 part which is an
         // element.  But with MIME we could have any number of
@@ -1334,10 +1326,6 @@ public class SymbolTable {
                 }
                 setMIMEType(param, bindingEntry == null ? null :
                         bindingEntry.getMIMEType(opName, partName));
-                if (bindingEntry != null &&
-                        bindingEntry.isHeaderParameter(opName, partName)) {
-                    param.setInHeader(true);
-                }
 
                 v.add(param);
 
@@ -1418,9 +1406,6 @@ public class SymbolTable {
                     p.setType(elem.getType());
                     setMIMEType(p, bindingEntry == null ? null :
                             bindingEntry.getMIMEType(opName, partName));
-                    if (bindingEntry.isHeaderParameter(opName, partName)) {
-                        p.setInHeader(true);
-                    }
                     v.add(p);
                 }
             } else {
@@ -1436,9 +1421,6 @@ public class SymbolTable {
                 }
                 setMIMEType(param, bindingEntry == null ? null :
                         bindingEntry.getMIMEType(opName, partName));
-                if (bindingEntry.isHeaderParameter(opName, partName)) {
-                    param.setInHeader(true);
-                }
 
                 v.add(param);
             }
@@ -1480,45 +1462,38 @@ public class SymbolTable {
     private void populateBindings(Definition def) throws IOException {
         Iterator i = def.getBindings().values().iterator();
         while (i.hasNext()) {
+            int bindingStyle = BindingEntry.STYLE_DOCUMENT;
+            int bindingType = BindingEntry.TYPE_UNKNOWN;
             Binding binding = (Binding) i.next();
-
-            BindingEntry bEntry = new BindingEntry(binding);
-            symbolTablePut(bEntry);
-
             Iterator extensibilityElementsIterator = binding.getExtensibilityElements().iterator();
             while (extensibilityElementsIterator.hasNext()) {
                 Object obj = extensibilityElementsIterator.next();
                 if (obj instanceof SOAPBinding) {
-                    bEntry.setBindingType(BindingEntry.TYPE_SOAP);
+                    bindingType = BindingEntry.TYPE_SOAP;
                     SOAPBinding sb = (SOAPBinding) obj;
                     String style = sb.getStyle();
                     if ("rpc".equalsIgnoreCase(style)) {
-                        bEntry.setBindingStyle(BindingEntry.STYLE_RPC);
+                        bindingStyle = BindingEntry.STYLE_RPC;
                     }
                 }
                 else if (obj instanceof HTTPBinding) {
                     HTTPBinding hb = (HTTPBinding) obj;
                     if (hb.getVerb().equalsIgnoreCase("post")) {
-                        bEntry.setBindingType(BindingEntry.TYPE_HTTP_POST);
+                        bindingType = BindingEntry.TYPE_HTTP_POST;
                     }
                     else {
-                        bEntry.setBindingType(BindingEntry.TYPE_HTTP_GET);
+                        bindingType = BindingEntry.TYPE_HTTP_GET;
                     }
                 }
             }
 
-            // Step through the binding operations, setting the following as appropriate:
-            // - hasLiteral
-            // - body types
-            // - mimeTypes
-            // - headers
+            // Check the Binding Operations for use="literal"
+            boolean hasLiteral = false;
             HashMap attributes = new HashMap();
             List bindList = binding.getBindingOperations();
-            HashMap faultMap = new HashMap(); // name to SOAPFault from WSDL4J
-            
+            Map mimeTypes = new HashMap();
             for (Iterator opIterator = bindList.iterator(); opIterator.hasNext();) {
                 BindingOperation bindOp = (BindingOperation) opIterator.next();
-                Operation operation = bindOp.getOperation();
                 BindingInput bindingInput = bindOp.getBindingInput();
                 BindingOutput bindingOutput = bindOp.getBindingOutput();
                 String opName = bindOp.getName();
@@ -1534,11 +1509,35 @@ public class SymbolTable {
                             new String[] {opName, inputName, outputName}));
                 }
 
+                int inputBodyType = BindingEntry.USE_ENCODED;
+                int outputBodyType = BindingEntry.USE_ENCODED;
+                Map opMimeTypes = new HashMap();
+                mimeTypes.put(opName, opMimeTypes);
+
                 // input
                 if (bindingInput != null) {
                     if (bindingInput.getExtensibilityElements() != null) {
                         Iterator inIter = bindingInput.getExtensibilityElements().iterator();
-                        fillInBindingInfo(bEntry, operation, inIter, true);
+                        for (; inIter.hasNext();) {
+                            Object obj = inIter.next();
+                            if (obj instanceof SOAPBody) {
+                                String use = ((SOAPBody) obj).getUse();
+                                if (use == null) {
+                                    throw new IOException(Messages.getMessage(
+                                            "noUse", opName));
+                                }
+                                if (use.equalsIgnoreCase("literal")) {
+                                    inputBodyType = BindingEntry.USE_LITERAL;
+                                }
+                                break;
+                            }
+                            else if (obj instanceof MIMEMultipartRelated) {
+                                IntHolder holder = new IntHolder(inputBodyType);
+                                opMimeTypes.putAll(collectMIMETypes(
+                                        (MIMEMultipartRelated) obj, holder, bindOp));
+                                inputBodyType = holder.value;
+                            }
+                        }
                     }
                 }
 
@@ -1546,76 +1545,58 @@ public class SymbolTable {
                 if (bindingOutput != null) {
                     if (bindingOutput.getExtensibilityElements() != null) {
                         Iterator outIter = bindingOutput.getExtensibilityElements().iterator();
-                        fillInBindingInfo(bEntry, operation, outIter, false);
+                        for (; outIter.hasNext();) {
+                            Object obj = outIter.next();
+                            if (obj instanceof SOAPBody) {
+                                String use = ((SOAPBody) obj).getUse();
+                                if (use == null) {
+                                    throw new IOException(Messages.getMessage(
+                                            "noUse", opName));
+                                }
+                                if (use.equalsIgnoreCase("literal")) {
+                                    outputBodyType = BindingEntry.USE_LITERAL;
+                                }
+                                break;
+                            }
+                            else if (obj instanceof MIMEMultipartRelated) {
+                                IntHolder holder = new IntHolder(outputBodyType);
+                                opMimeTypes.putAll(collectMIMETypes(
+                                        (MIMEMultipartRelated) obj, holder, bindOp));
+                                outputBodyType = holder.value;
+                            }
+                        }
                     }
                 }
 
                 // faults
-                ArrayList faults = new ArrayList();
+                HashMap faultMap = new HashMap();
                 Iterator faultMapIter = bindOp.getBindingFaults().values().iterator();
                 for (; faultMapIter.hasNext(); ) {
                     BindingFault bFault = (BindingFault)faultMapIter.next();
 
                     // Set default entry for this fault
                     String faultName = bFault.getName();
+                    int faultBodyType = BindingEntry.USE_ENCODED;
 
-                    // Check to make sure this fault is named
-                    if (faultName == null || faultName.length() == 0) {
-                        throw new IOException(
-                                Messages.getMessage("unNamedFault00", 
-                                                    bindOp.getName(), 
-                                                    binding.getQName().toString()));
-                    }
-                    
-                    SOAPFault soapFault = null;
                     Iterator faultIter =
                             bFault.getExtensibilityElements().iterator();
                     for (; faultIter.hasNext();) {
                         Object obj = faultIter.next();
-                        if (obj instanceof SOAPFault) {
-                            soapFault = (SOAPFault) obj;
+                        if (obj instanceof SOAPBody) {
+                            String use = ((SOAPBody) obj).getUse();
+                            if (use == null) {
+                                throw new IOException(Messages.getMessage(
+                                        "noUse", opName));
+                            }
+                            if (use.equalsIgnoreCase("literal")) {
+                                faultBodyType = BindingEntry.USE_LITERAL;
+                            }
                             break;
                         }
                     }
-                    
-                    // Check to make sure we have a soap:fault element
-                    if (soapFault == null) {
-                        throw new IOException(
-                                Messages.getMessage("missingSoapFault00",
-                                                    faultName,
-                                                    bindOp.getName(), 
-                                                    binding.getQName().toString()));
-                    }
-                    
-                    // TODO error checking:
-                    // if use=literal, no use of namespace on the soap:fault
-                    // if use=encoded, no use of element on the part
-
-                    // Check this fault to make sure it matches the one
-                    // in the matching portType Operation
-                    Fault opFault = operation.getFault(bFault.getName());
-                    if (opFault == null) {
-                        throw new IOException(
-                                Messages.getMessage("noPortTypeFault",
-                                  new String[] {bFault.getName(), 
-                                          bindOp.getName(), 
-                                          binding.getQName().toString()}));
-                    }
-                    
-                    QName xmlType = Utils.getFaultType(opFault, this);
-                    
-                    // put the updated entry back in the map
-                    faults.add(new JavaDefinitionWriter.FaultInfo(opFault, 
-                                                                  soapFault,
-                                                                  xmlType));
+                    // Add this fault name and bodyType to the map
+                    faultMap.put(faultName, new Integer(faultBodyType));
                 }
-
-                // Add this fault name and info to the map
-                faultMap.put(bindOp, faults);
-                
-                int inputBodyType = bEntry.getInputBodyType(operation);
-                int outputBodyType = bEntry.getOutputBodyType(operation);
-
                 // Associate the portType operation that goes with this binding
                 // with the body types.
                 attributes.put(bindOp.getOperation(),
@@ -1625,70 +1606,20 @@ public class SymbolTable {
                 // NOTE:  should I include faultBodyType in this check?
                 if (inputBodyType == BindingEntry.USE_LITERAL ||
                         outputBodyType == BindingEntry.USE_LITERAL) {
-                    bEntry.setHasLiteral(true);
+                    hasLiteral = true;
                 }
-                bEntry.setFaultBodyTypeMap(operation, faultMap);
             } // binding operations
-
-            bEntry.setFaults(faultMap);
+            BindingEntry bEntry = new BindingEntry(binding, bindingType, bindingStyle, hasLiteral, attributes, mimeTypes);
             symbolTablePut(bEntry);
         }
     } // populateBindings
 
     /**
-     * Fill in some binding information:  bodyType, mimeType, header info.
+     * Collect the list of those parts that are really MIME types.
      */
-    private void fillInBindingInfo(BindingEntry bEntry, Operation operation,
-            Iterator it, boolean input) throws IOException {
-        for (; it.hasNext();) {
-            Object obj = it.next();
-            if (obj instanceof SOAPBody) {
-                setBodyType(((SOAPBody) obj).getUse(), bEntry, operation,
-                        input);
-            }
-            else if (obj instanceof SOAPHeader) {
-                SOAPHeader header = (SOAPHeader) obj;
-                setBodyType(header.getUse(), bEntry, operation, input);
-
-                // Note, this only works for explicit headers - those whose
-                // parts come from messages used in the portType's operation
-                // input/output clauses - it does not work for implicit
-                // headers - those whose parts come from messages not used in
-                // the portType-s operation's input/output clauses.
-                bEntry.setHeaderParameter(operation.getName(), header.getPart(),
-                        true);
-            }
-            else if (obj instanceof MIMEMultipartRelated) {
-                bEntry.setBodyType(operation,
-                        addMIMETypes(bEntry, (MIMEMultipartRelated) obj,
-                        operation), input);
-            }
-        }
-    } // fillInBindingInfo
-
-    /**
-     * Set the body type.
-     */
-    private void setBodyType(String use, BindingEntry bEntry,
-            Operation operation, boolean input) throws IOException {
-        if (use == null) {
-            throw new IOException(Messages.getMessage(
-                    "noUse", operation.getName()));
-        }
-        if (use.equalsIgnoreCase("literal")) {
-            bEntry.setBodyType(operation, BindingEntry.USE_LITERAL,
-                    input);
-        }
-    } // setBodyType
-
-    /**
-     * Add the parts that are really MIME types as MIME types.
-     * A side effect is to return the body Type of the given
-     * MIMEMultipartRelated object.
-     */
-    private int addMIMETypes(BindingEntry bEntry, MIMEMultipartRelated mpr,
-            Operation op) throws IOException {
-        int bodyType = BindingEntry.USE_ENCODED;
+    private Map collectMIMETypes(MIMEMultipartRelated mpr, IntHolder bodyType,
+            BindingOperation bindOp) throws IOException {
+        HashMap mimeTypes = new HashMap();
         List parts = mpr.getMIMEParts();
         Iterator i = parts.iterator();
         while (i.hasNext()) {
@@ -1699,22 +1630,22 @@ public class SymbolTable {
                 Object obj = j.next();
                 if (obj instanceof MIMEContent) {
                     MIMEContent content = (MIMEContent) obj;
-                    bEntry.setMIMEType(op.getName(), content.getPart(), content.getType());
+                    mimeTypes.put(content.getPart(), content.getType());
                 }
                 else if (obj instanceof SOAPBody) {
                     String use = ((SOAPBody) obj).getUse();
                     if (use == null) {
                         throw new IOException(Messages.getMessage(
-                                "noUse", op.getName()));
+                                "noUse", bindOp.getName()));
                     }
                     if (use.equalsIgnoreCase("literal")) {
-                        bodyType = BindingEntry.USE_LITERAL;
+                        bodyType.value = BindingEntry.USE_LITERAL;
                     }
                 }
             }
         }
-        return bodyType;
-    } // addMIMETypes
+        return mimeTypes;
+    } // collectMIMETypes
 
     /**
      * Populate the symbol table with all of the ServiceEntry's from the Definition.

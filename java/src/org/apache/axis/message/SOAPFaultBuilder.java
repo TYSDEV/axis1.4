@@ -60,15 +60,17 @@ import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.Deserializer;
 import org.apache.axis.encoding.Callback;
 import org.apache.axis.encoding.CallbackTarget;
+import org.apache.axis.utils.ClassUtils;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.w3c.dom.Element;
+import org.w3c.dom.Text;
 
 import javax.xml.namespace.QName;
 
 import java.util.HashMap;
 import java.util.ArrayList;
-import java.lang.reflect.Constructor;
+import java.util.Iterator;
 
 /** 
  * Build a Fault body element.
@@ -79,24 +81,19 @@ import java.lang.reflect.Constructor;
  */
 public class SOAPFaultBuilder extends SOAPHandler implements Callback
 {
-    boolean waiting = false;
-    boolean passedEnd = false;
-
     protected SOAPFault element;
     protected DeserializationContext context;
     static HashMap fields = new HashMap();
     
     // Fault data
+    protected String faultClassName = null;
     protected QName faultCode = null;
     protected String faultString = null;
     protected String faultActor = null;
     protected Element[] faultDetails;
 
-    protected Class faultClass = null;
-    protected Object faultData = null;
-
     static {
-        fields.put(Constants.ELEM_FAULT_CODE, Constants.XSD_QNAME);
+        fields.put(Constants.ELEM_FAULT_CODE, Constants.XSD_STRING);
         fields.put(Constants.ELEM_FAULT_STRING, Constants.XSD_STRING);
         fields.put(Constants.ELEM_FAULT_ACTOR, Constants.XSD_STRING);
         fields.put(Constants.ELEM_FAULT_DETAIL, null);
@@ -107,20 +104,6 @@ public class SOAPFaultBuilder extends SOAPHandler implements Callback
         this.element = element;
         this.context = context;
     }
-    
-    void setFaultData(Object data) {
-        faultData = data;
-        if (waiting && passedEnd) {
-            // This happened after the end of the <soap:Fault>, so make
-            // sure we set up the fault.
-            createFault();
-        }
-        waiting = false;
-    }
-
-    public void setFaultClass(Class faultClass) {
-        this.faultClass = faultClass;
-    }
 
     /**
      * Final call back where we can populate the exception with data.
@@ -129,48 +112,13 @@ public class SOAPFaultBuilder extends SOAPHandler implements Callback
                            DeserializationContext context)
             throws SAXException {
         super.endElement(namespace, localName, context);
-        if (!waiting) {
-            createFault();
-        } else {
-            passedEnd = true;
-        }
-    }
-
-    void setWaiting(boolean waiting) {
-        this.waiting = waiting;
-    }
-
-    /**
-     * When we're sure we have everything, this gets called.
-     */
-    private void createFault() {
+        
         AxisFault f = null;
-        if (faultClass != null) {
-            // Custom fault handling
+        if (faultClassName != null) {
             try {
-                // If we have an element which is fault data, It can be:
-                // 1. A simple type that needs to be passed in to the constructor
-                // 2. A complex type that is the exception itself
-                if (faultData != null) {
-                    if (faultData instanceof AxisFault) {
-                        // This is our exception class
-                        f = (AxisFault) faultData;
-                    } else {
-                        // We need to create the exception,
-                        // passing the data to the constructor.
-                        Class argClass = ConvertWrapper(faultData.getClass());
-                        Constructor con =
-                                faultClass.getConstructor(
-                                        new Class[] { argClass });
-                        f = (AxisFault) con.newInstance(new Object[] { faultData });
-                    }
-                }
-                // If we have an AxisFault, set the fields
-                if (AxisFault.class.isAssignableFrom(faultClass)) {
-                    if (f == null) {
-                        // this is to support the <exceptionName> detail
-                        f = (AxisFault) faultClass.newInstance();
-                    }
+                Class exClass = ClassUtils.forName(faultClassName);
+                if (AxisFault.class.isAssignableFrom(exClass)) {
+                    f = (AxisFault) exClass.newInstance();
                     f.setFaultCode(faultCode);
                     f.setFaultString(faultString);
                     f.setFaultActor(faultActor);
@@ -184,12 +132,12 @@ public class SOAPFaultBuilder extends SOAPHandler implements Callback
         }
 
         if (f == null) {
-            f  = new AxisFault(faultCode,
-                               faultString,
-                               faultActor,
+            f  = new AxisFault(faultCode, 
+                               faultString, 
+                               faultActor, 
                                faultDetails);
         }
-
+        
         element.setFault(f);
     }
 
@@ -200,24 +148,18 @@ public class SOAPFaultBuilder extends SOAPHandler implements Callback
                                     DeserializationContext context)
         throws SAXException
     {
-        SOAPHandler retHandler = null;
+        Deserializer currentDeser = null;
         
         QName qName = (QName)fields.get(name);
         
-        // If we found the type for this field, get the deserializer
-        // otherwise, if this is the details element, use the special 
-        // SOAPFaultDetailsBuilder handler to take care of custom fault data 
         if (qName != null) {
-            Deserializer currentDeser = context.getDeserializerForType(qName);
+            currentDeser = context.getDeserializerForType(qName);
             if (currentDeser != null) {
                 currentDeser.registerValueTarget(new CallbackTarget(this, name));
             }
-            retHandler = (SOAPHandler) currentDeser;
-        } else if (name.equals(Constants.ELEM_FAULT_DETAIL)) {
-            retHandler = new SOAPFaultDetailsBuilder(this);
         }
         
-        return retHandler;
+        return (SOAPHandler)currentDeser;
     }
 
     public void onEndChild(String namespace, String localName,
@@ -232,7 +174,10 @@ public class SOAPFaultBuilder extends SOAPHandler implements Callback
                     try {
                         elements[i] = ((MessageElement)children.get(i)).
                                                                     getAsDOM();
-                        
+                        if (elements[i].getLocalName().equals("exceptionName")) {
+                            Text text = (Text)elements[i].getFirstChild();
+                            faultClassName = text.getData();
+                        }
                     } catch (Exception e) {
                         throw new SAXException(e);
                     }
@@ -252,37 +197,19 @@ public class SOAPFaultBuilder extends SOAPHandler implements Callback
     {
         String name = (String)hint;
         if (name.equals(Constants.ELEM_FAULT_CODE)) {
-            faultCode = (QName)value;
+            QName qname = context.getQNameFromString((String)value);
+            if (qname != null) {
+                //??when would QName make sense, this would be app specific
+                faultCode = qname;
+            } else {
+                //?? Where would namespace come from
+                faultCode = new QName("",(String) value);
+            }
         } else if (name.equals(Constants.ELEM_FAULT_STRING)) {
             faultString = (String) value;
         } else if (name.equals(Constants.ELEM_FAULT_ACTOR)) {
             faultActor = (String) value;
         }
-    }
-
-    /**
-     * A simple map of holder objects and their primitive types 
-     */
-    private static HashMap TYPES = new HashMap(7);
-
-    static {
-        TYPES.put(java.lang.Integer.class, int.class);
-        TYPES.put(java.lang.Float.class, float.class);
-        TYPES.put(java.lang.Boolean.class, boolean.class);
-        TYPES.put(java.lang.Double.class, double.class);
-        TYPES.put(java.lang.Byte.class, byte.class);
-        TYPES.put(java.lang.Short.class, short.class);
-        TYPES.put(java.lang.Long.class, long.class);
-    }
-    
-    /**
-     * Internal method to convert wrapper classes to their base class
-     */ 
-    private Class ConvertWrapper(Class cls) {
-        Class ret = (Class) TYPES.get(cls);
-        if (ret != null) {
-            return ret;
-        }
-        return cls;
+        
     }
 }

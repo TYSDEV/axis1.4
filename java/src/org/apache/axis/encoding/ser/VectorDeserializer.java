@@ -55,11 +55,13 @@
 
 package org.apache.axis.encoding.ser;
 
+import org.apache.axis.Constants;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.Deserializer;
 import org.apache.axis.encoding.DeserializerImpl;
 import org.apache.axis.encoding.DeserializerTarget;
 import org.apache.axis.message.SOAPHandler;
+import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
 
 import org.apache.axis.components.logger.LogFactory;
@@ -144,7 +146,7 @@ public class VectorDeserializer extends DeserializerImpl
         // If the xsi:nil attribute, set the value to null and return since
         // there is nothing to deserialize.
         if (context.isNil(attributes)) {
-            setChildValue(null, new Integer(curIndex++));
+            setValue(null, new Integer(curIndex++));
             return null;
         }
 
@@ -170,11 +172,6 @@ public class VectorDeserializer extends DeserializerImpl
         if (log.isDebugEnabled()) {
             log.debug("Exit: VectorDeserializer::onStartChild()");
         }
-        
-        // Let the framework know that we aren't complete until this guy
-        // is complete.
-        addChildDeserializer(dSer);
-        
         return (SOAPHandler)dSer;
     }
     
@@ -184,7 +181,7 @@ public class VectorDeserializer extends DeserializerImpl
      * @param value is the value of an element
      * @param hint is an Integer containing the index
      */
-    public void setChildValue(Object value, Object hint) throws SAXException
+    public void setValue(Object value, Object hint) throws SAXException
     {
         if (log.isDebugEnabled()) {
             log.debug(Messages.getMessage("gotValue00", "VectorDeserializer", "" + value));

@@ -66,7 +66,7 @@
     <operation name="myop">
       <input message="serviceNS:myopRequest"/>
       <output message="serviceNS:myopResponse"/>
-      <fault name="opFault" message="serviceNS:opFault"/>
+      <fault message="serviceNS:opFault"/>
     </operation>
   </portType>
 
@@ -75,7 +75,7 @@
     <operation name="otherop">
       <input message="serviceNS:otheropHttpGetIn"/>
       <output message="serviceNS:otheropHttpGetOut"/>
-      <fault name="InvalidTickerFault" message="serviceNS:InvalidTickerFaultMessage"/>
+      <fault message="serviceNS:InvalidTickerFaultMessage"/>
     </operation>
   </portType>
 
@@ -90,7 +90,7 @@
       <output>
         <soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace=""/>
       </output>
-      <fault name="opFault">
+      <fault>
         <soap:fault name="opFault" use="encoded"/>
       </fault>
     </operation>

@@ -133,10 +133,6 @@ public class DeserializationContextImpl extends DefaultHandler implements Lexica
     private MessageElement curElement;
 
     protected int startOfMappingsPos = -1;
-    
-    public void deserializing(boolean isDeserializing) {
-        doneParsing = isDeserializing;
-    }
 
     /**
      * Construct Deserializer using MessageContext and EnvelopeBuilder handler
@@ -732,14 +728,6 @@ public class DeserializationContextImpl extends DefaultHandler implements Lexica
         }
 
         return result;
-    }
-
-    boolean processingRef = false;
-    public void setProcessingRef(boolean ref) {
-        processingRef = ref;
-    }
-    public boolean isProcessingRef() {
-        return processingRef;
     }
 
     /****************************************************************

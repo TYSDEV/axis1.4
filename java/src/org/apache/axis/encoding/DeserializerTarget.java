@@ -75,7 +75,7 @@ public class DeserializerTarget implements Target {
     
     public void set(Object value) throws SAXException {
         if (hint != null) {
-            target.setChildValue(value, hint);
+            target.setValue(value, hint);
         } else {
             target.setValue(value);
         }

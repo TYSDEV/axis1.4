@@ -59,17 +59,12 @@ import javax.xml.namespace.QName;
 import java.util.ArrayList;
 
 /**
- * Holds information about a fault for an operation
- * 
+ *
  * @author Glen Daniels (gdaniels@apache.org)
- * @author Tom Jordahl (tomj@apache.org)
  */
 public class FaultDesc {
     private QName qname;
     private ArrayList parameters;
-    private String className;
-    private QName xmlType;
-    private boolean complex;
 
     public QName getQName() {
         return qname;
@@ -99,29 +94,6 @@ public class FaultDesc {
         this.parameters = parameters;
     }
 
-    public String getClassName() {
-        return className;
-    }
-
-    public void setClassName(String className) {
-        this.className = className;
-    }
-
-    public boolean isComplex() {
-        return complex;
-    }
-
-    public void setComplex(boolean complex) {
-        this.complex = complex;
-    }
-
-    public QName getXmlType() {
-        return xmlType;
-    }
-
-    public void setXmlType(QName xmlType) {
-        this.xmlType = xmlType;
-    }
 
     public String toString() {
         return toString("");
@@ -129,8 +101,7 @@ public class FaultDesc {
     public String toString(String indent) {
         String text ="";
         text+= indent + "qname: " + getQName() + "\n";
-        text+= indent + "Class: " + getClassName() + "\n";
-        for (int i=0; parameters != null && i < parameters.size(); i++) {
+        for (int i=0; i<parameters.size(); i++) {
             text+= indent +" ParameterDesc[" + i + "]:\n";
             text+= indent + ((ParameterDesc)parameters.get(i)).toString("  ") + "\n";
         }

@@ -64,7 +64,9 @@ import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.message.SOAPHandler;
 import org.apache.axis.message.MessageElement;
 import org.apache.axis.utils.BeanPropertyDescriptor;
+import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
+import org.apache.axis.wsdl.symbolTable.SchemaUtils;
 
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
@@ -200,10 +202,6 @@ public class BeanDeserializer extends DeserializerImpl implements Serializable
         }  
         prevQName = elemQName;
 
-        // Fastpath nil checks...
-        if (context.isNil(attributes))
-            return null;
-        
         if (typeDesc != null) {       
             // Lookup the name appropriately (assuming an unqualified
             // name for SOAP encoding, using the namespace otherwise)
@@ -275,10 +273,8 @@ public class BeanDeserializer extends DeserializerImpl implements Serializable
         // It is an error if the dSer is not found, the base
         // deserializer impl is returned so that it can generate the correct message.
         if (dSer == null) {
-            throw new SAXException(Messages.getMessage("noDeser00",
-                                                       childXMLType.toString()));
-//            dSer = new DeserializerImpl();
-//            return (SOAPHandler)dSer;
+            dSer = new DeserializerImpl();
+            return (SOAPHandler)dSer;
         }
 
         // Register value target
@@ -305,14 +301,9 @@ public class BeanDeserializer extends DeserializerImpl implements Serializable
                                                                 propDesc));
             }
         }
-        
-        // Let the framework know that we need this deserializer to complete
-        // for the bean to complete.
-        addChildDeserializer(dSer);
-        
         return (SOAPHandler)dSer;
     }
-    
+
     /**
      * Get a BeanPropertyDescriptor which indicates where we should
      * put extensibility elements (i.e. XML which falls under the
@@ -436,7 +427,7 @@ public class BeanDeserializer extends DeserializerImpl implements Serializable
         
         Deserializer dSer = null;
 
-        if (xmlType != null && href == null) {
+        if (xmlType != null) {
             // Use the xmlType to get the deserializer.
             dSer = context.getDeserializerForType(xmlType);
         } else {
