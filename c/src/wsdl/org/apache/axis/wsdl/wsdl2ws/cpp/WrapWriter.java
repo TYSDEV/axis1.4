@@ -245,7 +245,7 @@ public class WrapWriter extends CPPClassWriter{
 			Type type;
 			if((CPPUtils.isSimpleType(((ParameterInfo)paramsB.get(i)).getLangName()))){
 				//for simple types	
-				writer.write("\t"+paraTypeName+" v"+i+" = pIWSDZ->"+CPPUtils.getParameterGetValueMethodName(paraTypeName)+";\n");
+				writer.write("\t"+paraTypeName+" v"+i+" = pIWSDZ->"+CPPUtils.getParameterGetValueMethodName(paraTypeName)+"();\n");
 			}else if((type = this.wscontext.getTypemap().getType(((ParameterInfo)paramsB.get(i)).getSchemaName())) != null && type.isArray()){
 				QName qname = type.getTypNameForAttribName("item");
 				String containedType = null;
@@ -282,19 +282,19 @@ public class WrapWriter extends CPPClassWriter{
 				String containedType = null;
 				if (CPPUtils.isSimpleType(qname)){ //array of simple types
 					containedType = CPPUtils.getclass4qname(qname);
-					writer.write("\tdelete [] ("+containedType+"*) v"+i+".m_Array;\n"); 
+					writer.write("\t\tdelete [] v"+i+".m_Array;\n"); 
 				}
 				else{
 					containedType = qname.getLocalPart();
-					writer.write("\tdelete [] ("+containedType+"*) v"+i+".m_Array;\n");
+					writer.write("\t\tdelete [] v"+i+".m_Array;\n");
 				}
 			}else{
 				//for complex types 
-				writer.write("\tdelete v"+i+";\n");				
+				writer.write("\t\tdelete v"+i+";\n");				
 			}
 		}
 
-		writer.write("\treturn AXIS_DESERIALIZATION_ERROR;\n\t}\n");
+		writer.write("\t\treturn AXIS_DESERIALIZATION_ERROR;\n\t}\n");
 
 		if(returntype != null){				
 			/* Invoke the service when return type not void */
