@@ -57,6 +57,8 @@ package org.apache.axis.attachments;
 
 import org.apache.axis.Part;
 
+import java.io.Serializable;
+
 /**
  * Access the Attachments of a Message.  This interface essentially
  * firewalls the rest of Axis from any dependencies on javax.activation.
@@ -68,7 +70,7 @@ import org.apache.axis.Part;
  * @author Rick Rineholt
  */
 
-public interface Attachments {
+public interface Attachments extends Serializable {
 
     /**
      * Adds an existing attachment to this list.

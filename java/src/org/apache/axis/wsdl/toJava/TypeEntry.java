@@ -59,6 +59,9 @@ import org.w3c.dom.Node;
 
 import javax.wsdl.QName;
 import java.io.IOException;
+import java.io.Serializable;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
 /**
  * This class represents a wsdl types entry that is supported by the WSDL2Java emitter.
@@ -108,7 +111,8 @@ import java.io.IOException;
  *
  * @author Rich Scheuerle  (scheu@us.ibm.com)
  */
-public abstract class TypeEntry extends SymTabEntry {
+public abstract class TypeEntry extends SymTabEntry
+    implements Serializable {
 
     protected Node    node;      // Node
 
