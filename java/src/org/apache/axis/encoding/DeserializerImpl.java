@@ -99,7 +99,9 @@ public class DeserializerImpl extends SOAPHandler
     protected Vector targets = null;
 
     protected QName defaultType = null;
-    
+
+    boolean componentsReadyFlag = false;
+
     /**
      * A set of sub-deserializers whose values must complete before our
      * value is complete.
@@ -257,7 +259,8 @@ public class DeserializerImpl extends SOAPHandler
      * The default (true) is useful for most Deserializers.
      */
     public boolean componentsReady() {
-        return (!isHref && isEnded && activeDeserializers.isEmpty());
+        return (componentsReadyFlag ||
+                (!isHref && isEnded && activeDeserializers.isEmpty()));
     }
 
     /** 
@@ -410,7 +413,7 @@ public class DeserializerImpl extends SOAPHandler
                              prefix, attributes,
                              context);
                       ref = dser.getValue();       
-                             
+                      componentsReadyFlag = true;
                     }         
                }
                 
