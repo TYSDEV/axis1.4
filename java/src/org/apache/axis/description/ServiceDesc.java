@@ -646,6 +646,9 @@ public class ServiceDesc {
 
                 oper.setReturnClass(method.getReturnType());
 
+                // Do the faults
+                createFaultMetadata(method, oper);
+                
                 // At some point we might want to check here to see if this
                 // Method is already associated with another Operation, but
                 // this doesn't seem critital.
@@ -1080,6 +1083,13 @@ public class ServiceDesc {
             }
         }
 
+        createFaultMetadata(method, operation);
+
+        addOperationDesc(operation);
+        method2OperationMap.put(method, operation);
+    }
+
+    private void createFaultMetadata(Method method, OperationDesc operation) {
         // Create Exception Types
         Class[] exceptionTypes = new Class[method.getExceptionTypes().length];
         exceptionTypes = method.getExceptionTypes();
@@ -1147,9 +1157,6 @@ public class ServiceDesc {
                 operation.addFault(fault);
             }
         }
-
-        addOperationDesc(operation);
-        method2OperationMap.put(method, operation);
     }
 
     private String[] getParamNames(Method method) {
