@@ -944,7 +944,7 @@ public class J2meGeneratorFactory implements GeneratorFactory {
 				signature = signature + Utils.getParameterTypeName(p) + " " + javifiedName;
 			}
 			else {
-				signature = signature + Utils.holder(p.getMIMEInfo(), p.getType(), emitter) + " "
+				signature = signature + Utils.holder(p.getType(), emitter) + " "
 						+ javifiedName;
 			}
 		}
