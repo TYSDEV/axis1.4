@@ -430,7 +430,7 @@ public class WrapWriter extends CPPClassWriter{
 
 	private void writeExceptions(String faulttype,String faultInfoName,String paramName,String langName) throws WrapperFault{
 			try{
-					writer.write("\tcatch("+faulttype+" pObjFault)\n"); 
+					writer.write("\tcatch("+faultInfoName+" pObjFault)\n"); 
 					writer.write("\t{\n"); 
 				writer.write("\t\tif (pObjFault)\n"); 
 				writer.write("\t\t{\n");                     
