@@ -6,8 +6,12 @@ HOME_DIR=$PWD
 CHECKOUT_DIR=cvsautobuild
 LOG=${HOME_DIR}/log
 ERROR_LOG=${HOME_DIR}/log_error
-SOURCE_BUILD_MESSAGES=${HOME_DIR}/log_source_build_messages_`date +%Y-%m-%d@%H:%M:%S`
-SOURCE_BUILD_ERRORS=${HOME_DIR}/log_source_build_errors_`date +%Y-%m-%d@%H:%M:%S`
+#SOURCE_BUILD_MESSAGES=${HOME_DIR}/log_source_build_messages_`date +%Y-%m-%d@%H:%M:%S`
+#SOURCE_BUILD_ERRORS=${HOME_DIR}/log_source_build_errors_`date +%Y-%m-%d@%H:%M:%S`
+SOURCE_BUILD_MESSAGES=${HOME_DIR}/log_source_build_messages
+SOURCE_BUILD_ERRORS=${HOME_DIR}/log_source_build_errors
+SOURCE_INSTALL_MESSAGES=${HOME_DIR}/log_source_install_messages
+SOURCE_INSTALL_ERRORS=${HOME_DIR}/log_source_install_errors
 
 export CVSROOT HOME_DIR CHECKOUT_DIR LOG ERROR_LOG SOURCE_BUILD_MESSAGES SOURCE_BUILD_ERRORS
 
@@ -69,19 +73,24 @@ cd ${AXISCPP_HOME}
 echo Build messages of build @ `date` > ${SOURCE_BUILD_MESSAGES}
 echo Build errors/warnings of build @ `date` > ${SOURCE_BUILD_ERRORS}
 cp -f ../build.sh ./build.sh
-sh build.sh >> ${SOURCE_BUILD_MESSAGES} 2>>${SOURCE_BUILD_ERRORS}
+sh build.sh >> ${SOURCE_INSTALL_MESSAGES} 2>>${SOURCE_INSTALL_ERRORS}
 
 echo Installing...
-make install
+echo Install messages of build @ `date` > ${SOURCE_INSTALL_MESSAGES}
+echo Install errors/warnings of build @ `date` > ${SOURCE_INSTALL_ERRORS}
+make install >> ${SOURCE_INSTALL_MESSAGES} 2>>${SOURCE_INSTALL_ERRORS}
 
 if [ $? = 0 ]
 then
-	echo Source Build  Sucessfull
-	echo `date` Source Build  Sucessfull >> ${LOG}
+    echo Source Build/Install  Sucessfull
+    echo `date` Source Build/Install  Sucessfull >> ${LOG}
 else
-	echo Source Build Failed
-	echo `date` Source Build Failed >> ${LOG}
-	exit
+    echo Source Build/Install Failed
+    echo `date` Source Build/Install Failed >> ${LOG}
+    if test -f $HOME_DIR/mailto; then
+        cat $HOME_DIR/log_source_build_messages $HOME_DIR/log_source_install_messages $HOME_DIR/log | mutt -s "[test-results]Axis C++ Autobuild and regression test" -a "$HOME_DIR/log_source_build_errors" -a "$HOME_DIR/log_source_install_errors" -x axis-c-dev@ws.apache.org
+    fi
+    exit
 fi
 
 echo See the following log files for details
@@ -140,7 +149,7 @@ sh runAllTests.sh
 #Only if there is a file called mailto in the current folder, do the step.
 #If you need to mail results create a file called mailto in the current
 #folder. This file has no meaning except this purpose
-if test -f mailto; then
-cd testcases/build
-cat runTestCase.log | mutt -s "[test-results]Axis C++ Autobuild" -a "buildTestCase.log" -x axis-c-dev@ws.apache.org
+if test -f $HOME_DIR/mailto; then
+    cd testcases/build
+    cat runTestCase.log | mutt -s "[test-results]Axis C++ Autobuild and regression test" -a "buildTestCase.log" -x axis-c-dev@ws.apache.org
 fi
