@@ -87,7 +87,7 @@ import java.beans.IntrospectionException;
  * @author Rich Scheuerle <scheu@us.ibm.com>
  * @author Sam Ruby <rubys@us.ibm.com>
  */
-public class EnumSerializer extends SimpleSerializer
+public class EnumSerializer extends SimpleSerializer implements Serializer
 {
     protected static Log log =
         LogFactory.getLog(EnumSerializer.class.getName());
@@ -106,21 +106,21 @@ public class EnumSerializer extends SimpleSerializer
         throws IOException
     {
         context.startElement(name, attributes);
-        context.writeString(getValueAsString(value, context));
-        context.endElement();
-    }
-
-    public String getValueAsString(Object value, SerializationContext context) {
+        
         // Invoke the toString method on the enumeration class and
         // write out the result as a string.
         try {
             if (toStringMethod == null) {
                 toStringMethod = javaType.getMethod("toString", null);
             }
-            return (String) toStringMethod.invoke(value, null);
+            String propValue = (String) toStringMethod.invoke(value, null);
+            context.writeString(propValue);
         } catch (Exception e) {
             log.error(JavaUtils.getMessage("exception00"), e);
+            throw new IOException(e.toString());
         }
-        return null;
+        
+        context.endElement();
     }
+    
 }

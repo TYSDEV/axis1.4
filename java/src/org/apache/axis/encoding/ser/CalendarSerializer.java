@@ -63,8 +63,8 @@ import java.io.IOException;
 
 import org.apache.axis.Constants;
 import org.apache.axis.wsdl.fromJava.Types;
+import org.apache.axis.encoding.Serializer;
 import org.apache.axis.encoding.SerializationContext;
-import org.apache.axis.encoding.SimpleValueSerializer;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -78,7 +78,7 @@ import java.util.TimeZone;
  * Modified by @author Rich scheuerle <scheu@us.ibm.com>
  * @see <a href="http://www.w3.org/TR/xmlschema-2/#dateTime">XML Schema 3.2.16</a>
  */
-public class CalendarSerializer implements SimpleValueSerializer {
+public class CalendarSerializer implements Serializer {
 
     private static SimpleDateFormat zulu =
        new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
@@ -96,19 +96,18 @@ public class CalendarSerializer implements SimpleValueSerializer {
         throws IOException
     {
         context.startElement(name, attributes);
-        context.writeString(getValueAsString(value, context));
-        context.endElement();
-    }
 
-    public String getValueAsString(Object value, SerializationContext context) {
-        Date date = value instanceof Date ? (Date) value :
-                ((Calendar) value).getTime();
+        Date date = value instanceof Date ? (Date) value : ((Calendar) value).getTime();
 
-        // Serialize including convert to GMT
+        // Sun JDK bug http://developer.java.sun.com/developer/bugParade/bugs/4229798.html
+        String format = null;
         synchronized (zulu) {
-            // Sun JDK bug http://developer.java.sun.com/developer/bugParade/bugs/4229798.html
-            return zulu.format(date);
+            format = zulu.format(date);
         }
+        // Serialize including convert to GMT
+        context.writeString(format);
+
+        context.endElement();
     }
 
     public String getMechanismType() { return Constants.AXIS_SAX; }

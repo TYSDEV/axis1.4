@@ -54,6 +54,7 @@
  */
 package org.apache.axis.utils;
 
+import java.util.Hashtable;
 import java.io.*;
 
 /**
@@ -101,17 +102,10 @@ public class JWSClassLoader extends ClassLoader {
         /* Create a new Class object from it */
         /*************************************/
         byte[] data = baos.toByteArray();
+//        Class  cls =
         defineClass( name, data, 0, data.length );
 
         ClassUtils.setClassLoader(name,this);
-    }
-
-    public Class loadClass(String s) throws ClassNotFoundException {
-        return super.loadClass(s);
-    }
-
-    protected Class findClass(String s) throws ClassNotFoundException {
-        return super.findClass(s);
     }
 
     /**
