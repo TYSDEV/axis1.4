@@ -430,11 +430,11 @@ public class WrapWriter extends CPPClassWriter{
 
 	private void writeExceptions(String faulttype,String faultInfoName,String paramName,String langName) throws WrapperFault{
 			try{
-					writer.write("\tcatch("+faultInfoName+" pObjFault)\n"); 
+					writer.write("\tcatch("+faulttype+" pObjFault)\n"); 
 					writer.write("\t{\n"); 
 				writer.write("\t\tif (pObjFault)\n"); 
 				writer.write("\t\t{\n");                     
-					writer.write("\t\tpIWSSZ->createSoapFault(\""+langName+"\", \""+wscontext.getWrapInfo().getTargetNameSpaceOfWSDL()+"\",\"AxisC++ Faultcode\", \"Custom Out of bound exception\");\n");                                                             
+					writer.write("\t\tpIWSSZ->createSoapFault(\""+faultInfoName+"\", \""+wscontext.getWrapInfo().getTargetNameSpaceOfWSDL()+"\",\"AxisC++ Faultcode\", \"Custom Out of bound exception\");\n");                                                             
 				//	writer.write("\t\t"+faulttype+" pObjFault = new "+langName+"();\n");//damitha			                 
 					writer.write("\t\t\tpIWSSZ->addFaultDetail(pObjFault, (void*) Axis_Serialize_"+langName+",\n");
 					writer.write("\t\t\t(void*) Axis_Delete_"+langName+",\""+faultInfoName+"\", Axis_URI_"+langName+");\n");
