@@ -96,10 +96,11 @@ public class InternalBasedWrapperClassWriter extends JavaClassWriter {
     }
 
     protected String getimplementsPart() {
-        return " implements " + j2eewscontext.getMiscInfo().getJaxrpcSEI();
+        return " implements " + j2eewscontext.getMiscInfo().getJaxrpcSEI()+","+"org.apache.geronimo.ews.ws4j2ee.wsutils.ContextAccssible";
     }
 
     protected void writeAttributes() throws GenerationFault {
+        out.write("private org.apache.axis.MessageContext msgcontext;\n");
         out.write("\tprivate " + seiName + " bean = null;\n");
         out.write("\tprivate org.openejb.EJBContainer container;\n");
     }
@@ -110,6 +111,10 @@ public class InternalBasedWrapperClassWriter extends JavaClassWriter {
     }
 
     protected void writeMethods() throws GenerationFault {
+        out.write("\tpublic void setMessageContext(org.apache.axis.MessageContext msgcontext){;\n");
+        out.write("\t\tthis.msgcontext = msgcontext;\n");
+        out.write("\t}\n");
+        
         String parmlistStr = null;
         ArrayList operations = j2eewscontext.getMiscInfo().getSEIOperations();
         for (int i = 0; i < operations.size(); i++) {
@@ -149,7 +154,7 @@ public class InternalBasedWrapperClassWriter extends JavaClassWriter {
             out.write(
                 "\t\tjava.lang.reflect.Method callMethod = Utils.getJavaMethod(\""
                     + seiName
-                    + "\",\"methodName\");\n");
+                    + "\",methodName);\n");
             out.write(
                 "\t\tClass[] classes = callMethod.getParameterTypes();\n");
 
@@ -170,13 +175,13 @@ public class InternalBasedWrapperClassWriter extends JavaClassWriter {
             if (!"void".equals(returnType)) {
                 out.write(
 					"\t\t\treturn "
-						+ Utils.getReturnCode(returnType, "GeronimoUtils.invokeEJB(\""
+						+ Utils.getReturnCode(returnType, "AxisGeronimoUtils.invokeEJB(\""
                         + ejbName
                         + "\",methodName,classes,arguments)")
 						+ ";\n");
             } else {
                 out.write(
-                    "\t\t\tGeronimoUtils.invokeEJB(\""
+                    "\t\t\tAxisGeronimoUtils.invokeEJB(\""
                         + ejbName
                         + "\",methodName,classes,arguments);\n");
             }
@@ -187,7 +192,7 @@ public class InternalBasedWrapperClassWriter extends JavaClassWriter {
      * @see org.apache.geronimo.ews.ws4j2ee.toWs.JavaClassWriter#writeImportStatements()
      */
     protected void writeImportStatements() throws GenerationFault {
-		out.write("import org.apache.geronimo.ews.ws4j2ee.wsutils.GeronimoUtils;\n");
+		out.write("import org.apache.geronimo.axis.AxisGeronimoUtils;\n");
 		out.write("import org.apache.geronimo.ews.ws4j2ee.utils.Utils;\n");
     }
 
