@@ -402,7 +402,7 @@
 	<service name="SimpleRpcEncService">
 		<port name="SimpleRpcEncPort" binding="tns:SimpleRpcEncBinding">
 			<soap:address
-				location="http://localhost:8080/axis/services/FaultSimpleRpcEnc"/>
+				location="http://localhost:8080/axis/services/SimpleRpcEncPort"/>
 		</port>
 	</service>
 </definitions>
