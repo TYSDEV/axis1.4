@@ -200,6 +200,10 @@ public class BeanDeserializer extends DeserializerImpl implements Serializable
         }  
         prevQName = elemQName;
 
+        // Fastpath nil checks...
+        if (context.isNil(attributes))
+            return null;
+        
         if (typeDesc != null) {       
             // Lookup the name appropriately (assuming an unqualified
             // name for SOAP encoding, using the namespace otherwise)
