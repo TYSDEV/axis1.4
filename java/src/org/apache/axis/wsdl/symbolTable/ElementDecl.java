@@ -67,6 +67,8 @@ import javax.xml.namespace.QName;
 public class ElementDecl {
     private QName name;
     private TypeEntry type;
+
+
     // The following property is set if minOccurs=0.
     // An item that is not set and has minOccurs=0 
     // should not be passed over the wire.  This

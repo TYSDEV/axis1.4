@@ -58,12 +58,12 @@ import javax.xml.namespace.QName;
 /**
  * Get the base language name for a qname
  */
-public abstract class BaseTypeMapping  {
+public abstract class BaseTypeMapping {
     /**
      * If the qname is registered in the target language,
      * return the name of the registered type.
      * @param qName QName representing a type
      * @return name of the registered type or null if not registered.
      */
-     public abstract String getBaseName(QName qName);
+    public abstract String getBaseName(QName qName);
 };

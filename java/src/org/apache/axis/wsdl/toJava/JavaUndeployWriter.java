@@ -57,15 +57,16 @@ package org.apache.axis.wsdl.toJava;
 import org.apache.axis.deployment.wsdd.WSDDConstants;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.wsdl.symbolTable.SymbolTable;
+import org.xml.sax.SAXException;
 
 import javax.wsdl.Definition;
 import javax.wsdl.Port;
 import javax.wsdl.Service;
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -87,7 +88,7 @@ public class JavaUndeployWriter extends JavaWriter {
      * Generate undeploy.wsdd.  Only generate it if the emitter
      * is generating server-side mappings.
      */
-    public void generate() throws IOException {
+    public void generate() throws IOException,SAXException {
         if (emitter.isServerSide()) {
             super.generate();
         }

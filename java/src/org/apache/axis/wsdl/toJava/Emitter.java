@@ -64,24 +64,23 @@ import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.wsdl.gen.GeneratorFactory;
 import org.apache.axis.wsdl.gen.Parser;
 import org.apache.axis.wsdl.symbolTable.BaseTypeMapping;
+import org.apache.axis.wsdl.symbolTable.SymTabEntry;
 import org.apache.axis.wsdl.symbolTable.SymbolTable;
-import org.apache.axis.wsdl.symbolTable.SymTabEntry;												   
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 import javax.wsdl.WSDLException;
 import javax.xml.namespace.QName;
 import javax.xml.parsers.ParserConfigurationException;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 import java.util.Vector;
-import java.util.Iterator;
 
 /**
  * This class produces java files for stubs, skeletons, and types from a

@@ -67,7 +67,7 @@ public class SkeletonImpl implements Skeleton {
     /**
      * Constructor 
      */
-    public SkeletonImpl() { 
+    public SkeletonImpl() {
         if (table == null) {
             table = new HashMap();
         }
@@ -80,8 +80,12 @@ public class SkeletonImpl implements Skeleton {
         String outputNamespace;
         String soapAction;
 
-        MetaInfo(QName[] names, ParameterMode[] modes, String inputNamespace,
-                String outputNamespace, String soapAction) {
+        MetaInfo(
+            QName[] names,
+            ParameterMode[] modes,
+            String inputNamespace,
+            String outputNamespace,
+            String soapAction) {
             this.names = names;
             this.modes = modes;
             this.inputNamespace = inputNamespace;
@@ -95,25 +99,46 @@ public class SkeletonImpl implements Skeleton {
      * The first name in the array is either the return name (which
      * should be set to null if there is no return name)
      **/
-    public void add(String operation, QName[] names, ParameterMode[] modes,
-            String inputNamespace, String outputNamespace, String soapAction) {
-        table.put(operation, new MetaInfo(names, modes, inputNamespace, 
-                outputNamespace, soapAction));
+    public void add(
+        String operation,
+        QName[] names,
+        ParameterMode[] modes,
+        String inputNamespace,
+        String outputNamespace,
+        String soapAction) {
+        table.put(
+            operation,
+            new MetaInfo(
+                names,
+                modes,
+                inputNamespace,
+                outputNamespace,
+                soapAction));
     }
 
     /**
      * Convenience method which allows passing an array of Strings which
      * will be converted into QNames with no namespace.
      **/
-    public void add(String operation, String[] names, ParameterMode[] modes,
-            String inputNamespace, String outputNamespace, String soapAction) {
-        QName [] qnames = new QName [names.length];
+    public void add(
+        String operation,
+        String[] names,
+        ParameterMode[] modes,
+        String inputNamespace,
+        String outputNamespace,
+        String soapAction) {
+        QName[] qnames = new QName[names.length];
         for (int i = 0; i < names.length; i++) {
             QName qname = new QName(null, names[i]);
             qnames[i] = qname;
         }
-        add(operation, qnames, modes, inputNamespace, 
-            outputNamespace, soapAction);
+        add(
+            operation,
+            qnames,
+            modes,
+            inputNamespace,
+            outputNamespace,
+            soapAction);
     }
 
     /**
@@ -123,12 +148,12 @@ public class SkeletonImpl implements Skeleton {
      */
     public QName getParameterName(String operationName, int n) {
         MetaInfo value = (MetaInfo) table.get(operationName);
-        if (value == null ||
-            value.names == null ||
-            value.names.length <= n+1) {
+        if (value == null
+            || value.names == null
+            || value.names.length <= n + 1) {
             return null;
         }
-        return value.names[n+1];
+        return value.names[n + 1];
     }
 
     /**
@@ -138,12 +163,12 @@ public class SkeletonImpl implements Skeleton {
      */
     public ParameterMode getParameterMode(String operationName, int n) {
         MetaInfo value = (MetaInfo) table.get(operationName);
-        if (value == null ||
-            value.modes == null ||
-            value.modes.length <= n+1) {
+        if (value == null
+            || value.modes == null
+            || value.modes.length <= n + 1) {
             return null;
         }
-        return value.modes[n+1];
+        return value.modes[n + 1];
     }
 
     /**

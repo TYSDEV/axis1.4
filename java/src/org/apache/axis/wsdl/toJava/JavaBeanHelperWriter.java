@@ -55,27 +55,32 @@
 package org.apache.axis.wsdl.toJava;
 
 import org.apache.axis.utils.Messages;
-import org.apache.axis.wsdl.symbolTable.ElementDecl;
-import org.apache.axis.wsdl.symbolTable.TypeEntry;
-import org.apache.axis.wsdl.symbolTable.DefinedElement;
 import org.apache.axis.wsdl.symbolTable.DefinedType;
+import org.apache.axis.wsdl.symbolTable.ElementInfo;
+import org.apache.axis.wsdl.symbolTable.SchemaType;
 import org.apache.axis.wsdl.symbolTable.SchemaUtils;
+import org.apache.axis.wsdl.symbolTable.SymbolTable;
+import org.apache.axis.wsdl.symbolTable.TypeEntry;
+import org.xml.sax.SAXException;
 
 import javax.xml.namespace.QName;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Vector;
+import java.util.HashMap;
+import java.util.Iterator;
 
 /**
  * This is Wsdl2java's Helper Type Writer.  It writes the <typeName>.java file.
  */
 public class JavaBeanHelperWriter extends JavaClassWriter {
     protected TypeEntry type;
-    protected Vector elements;
-    protected Vector attributes;
+    protected HashMap elements;
+    protected HashMap attributes;
     protected TypeEntry extendType;
     protected PrintWriter wrapperPW = null;
-    protected Vector elementMetaData = null;
+    protected SymbolTable symboltable; 
+//TODO jaxme 
+//    protected Vector elementMetaData = null;
     protected boolean canSearchParents;
 
     /**
@@ -89,10 +94,12 @@ public class JavaBeanHelperWriter extends JavaClassWriter {
     protected JavaBeanHelperWriter(
         Emitter emitter,
         TypeEntry type,
-        Vector elements,
+	    HashMap elements,
         TypeEntry extendType,
-        Vector attributes) {
+		HashMap attributes,
+	    SymbolTable symboltable)throws SAXException {
         super(emitter, type.getName() + "_Helper", "helper");
+        this.symboltable = symboltable;
         this.type = type;
         this.elements = elements;
         this.attributes = attributes;
@@ -105,9 +112,16 @@ public class JavaBeanHelperWriter extends JavaClassWriter {
         // description associated with the current type provides
         // all of the types (and only those types) allowed in
         // the restricted derivation.
+//JAXME_REFACTOR////////////////////////////////////////////////////////////////////////////////
         if (null != extendType
             && null != SchemaUtils.getComplexElementRestrictionBase(type.getNode(),
                                                                     emitter.getSymbolTable())) {
+//NEW_CODE//////////////////////////////////////////////////////////////////////////
+//	TODO wait for  jaxme suppot the Complex content extensions 
+// 		SchemaType stype = symboltable.getSchemaType(type.getQName());
+//  		if (null != extendType
+//	  		&& null != stype.getExtentionBase()) {
+////////////////////////////////////////////////////////////////////////////////////                                                                    	
             this.canSearchParents = false;
         } else {
             this.canSearchParents = true;
@@ -207,8 +221,10 @@ public class JavaBeanHelperWriter extends JavaClassWriter {
     protected void writeMetaData(PrintWriter pw) throws IOException {
         // Collect elementMetaData
         if (elements != null) {
-            for (int i = 0; i < elements.size(); i++) {
-                ElementDecl elem = (ElementDecl)elements.get(i);
+        	Iterator elementNames = elements.keySet().iterator();
+            for (;elementNames.hasNext();) {
+				elementNames.next();
+///                ElementDecl elem = (ElementDecl)elements.get(i);
                 // String elemName = elem.getName().getLocalPart();
                 // String javaName = Utils.xmlNameToJava(elemName);
 
@@ -233,10 +249,10 @@ public class JavaBeanHelperWriter extends JavaClassWriter {
                 //elem.getMinOccursIs0()) {
                 // If we did some mangling, make sure we'll write out the XML
                 // the correct way.
-                if (elementMetaData == null)
-                    elementMetaData = new Vector();
-
-                elementMetaData.add(elem);
+//                if (elementMetaData == null)
+//                    elementMetaData = new Vector();
+//
+//                elementMetaData.add(elem);
                 //}
             }
         }
@@ -252,18 +268,30 @@ public class JavaBeanHelperWriter extends JavaClassWriter {
         pw.println("    static {");
         pw.println("        typeDesc.setXmlType(" + Utils.getNewQName(type.getQName()) + ");");
 
+//////////////////////////////////////////////////////////////////////////////
+//verify commented code
+//  if (attributes != null || elementMetaData != null) {
+//	  if (attributes != null) {
+//		  boolean wroteAttrDecl = false;
+//		for (i=0; elementMetaData.size();i=i+2) {
+//				TypeEntry te = (TypeEntry) attributes.get(i);
+//				QName attrName = (QName) attributes.get(i + 1);
+//			String fieldName = Utils.xmlNameToJava(attrLocalName);
+//			fieldName = getAsFieldName(fieldName);       
+//			QName attrXmlType = te.getQName();
+//NEWCODE///////////////////////////////////////////////////////////////////////
         // Add attribute and element field descriptors
-        if (attributes != null || elementMetaData != null) {
+        if (attributes != null || elements != null) {
             if (attributes != null) {
                 boolean wroteAttrDecl = false;
-
-                for (int i = 0; i < attributes.size(); i += 2) {
-                    TypeEntry te = (TypeEntry) attributes.get(i);
-                    QName attrName = (QName) attributes.get(i + 1);
+				Iterator attribNames = attributes.keySet().iterator();
+                for (; attribNames.hasNext();) {
+					QName attrName = (QName)attribNames.next();
                     String attrLocalName = attrName.getLocalPart();
                     String fieldName = Utils.xmlNameToJava(attrLocalName);
                     fieldName = getAsFieldName(fieldName);
-                    QName attrXmlType = te.getQName();
+                    QName attrXmlType = (QName)attributes.get(attrName);
+///////////////////////////////////////////////////////////////////////////////////                    
                     pw.print("        ");
                     if (!wroteAttrDecl) {
                         pw.print("org.apache.axis.description.AttributeDesc ");
@@ -278,24 +306,94 @@ public class JavaBeanHelperWriter extends JavaClassWriter {
                     pw.println("        typeDesc.addFieldDesc(attrField);");
                 }
             }
+//TODO//////////////////////////////////////////////////////////////////////////////////
+//	if (elementMetaData != null) {
+//		boolean wroteElemDecl = false;
+//                
+//		for (int i=0; i<elementMetaData.size(); i++) {
+//			ElementDecl elem = (ElementDecl) elementMetaData.elementAt(i);
+//
+//			if (elem.getAnyElement()) {
+//				continue;
+//			}
+//
+//			String elemLocalName = elem.getName().getLocalPart();
+//			String fieldName = Utils.xmlNameToJava(elemLocalName);
+//			fieldName = getAsFieldName(fieldName);
+//			QName xmlName = elem.getName();
+//                    
+//			// Some special handling for arrays.
+//			TypeEntry elemType = elem.getType();
+//			QName xmlType = null;
+//
+//			if (elemType.getDimensions().length() > 1 &&
+//				(elemType.getClass() == DefinedType.class)) {
+//				// If we have a DefinedType with dimensions, it must
+//				// be a SOAP array derived type.  In this case, use
+//				// the refType's QName for the metadata.
+//				xmlType = elemType.getRefType().getQName();
+//			} else {
+//				// Otherwise, use the type at the end of the ref
+//				// chain.
+//				while (elemType.getRefType() != null) {
+//					elemType = elemType.getRefType();
+//				}
+//				xmlType = elemType.getQName();
+//			}
+//                    
+//			pw.print("        ");
+//			if (!wroteElemDecl) {
+//				pw.print("org.apache.axis.description.ElementDesc ");
+//				wroteElemDecl = true;
+//			}
+//			pw.println("elemField = new org.apache.axis.description.ElementDesc();");
+//			pw.println("        elemField.setFieldName(\"" + fieldName + "\");");
+//			pw.println("        elemField.setXmlName(" + Utils.getNewQName(xmlName) + ");");
+//			if (xmlType != null) {
+//				pw.println("        elemField.setXmlType(" + Utils.getNewQName(xmlType) + ");");
+//			}
+//			if (elem.getMinOccursIs0()) {
+//				pw.println("        elemField.setMinOccurs(0);");
+//			}
+//			pw.println("        typeDesc.addFieldDesc(elemField);");
+//		}
+//	}
+//}
+////////////////////////////////////////////////////////////////////////
+		  HashMap inheritedAttributes = null; 
+  		  HashMap inheritedElements = null;
+  		  if(extendType != null && extendType.getQName()!= null){ 
+	  		SchemaType superType =  symboltable.getSchemaType(extendType.getQName());
+		    inheritedElements = superType.getElementInfo();
+  		  }
 
-            if (elementMetaData != null) {
+	
+
+            if (elements != null) {
                 boolean wroteElemDecl = false;
-                
-                for (int i=0; i<elementMetaData.size(); i++) {
-                    ElementDecl elem = (ElementDecl) elementMetaData.elementAt(i);
-
-                    if (elem.getAnyElement()) {
+				Iterator elementNames = elements.keySet().iterator();         
+                for (;elementNames.hasNext();) {
+					QName elementName = (QName)elementNames.next();
+					
+					//wirte this code IFF the element is not inherited 
+					if(inheritedElements!= null 
+						&& inheritedElements.containsKey(elementName))
+						continue;
+						
+					ElementInfo elementinfo = (ElementInfo)elements.get(elementName);
+                    if ("any".equals(elementinfo.getName().getLocalPart())) 
                         continue;
-                    }
 
-                    String elemLocalName = elem.getName().getLocalPart();
+					System.out.println(elementName);
+                    String elemLocalName = elementName.getLocalPart();
                     String fieldName = Utils.xmlNameToJava(elemLocalName);
                     fieldName = getAsFieldName(fieldName);
-                    QName xmlName = elem.getName();
+ 
                     
                     // Some special handling for arrays.
-                    TypeEntry elemType = elem.getType();
+                    //TODO we do not know how to support arrays with JAXME 
+                    //so use the TypeEntry
+                    TypeEntry elemType = symboltable.getType(elementinfo.getType());
                     QName xmlType = null;
 
                     if (elemType.getDimensions().length() > 1 &&
@@ -320,16 +418,17 @@ public class JavaBeanHelperWriter extends JavaClassWriter {
                     }
                     pw.println("elemField = new org.apache.axis.description.ElementDesc();");
                     pw.println("        elemField.setFieldName(\"" + fieldName + "\");");
-                    pw.println("        elemField.setXmlName(" + Utils.getNewQName(xmlName) + ");");
+                    pw.println("        elemField.setXmlName(" + Utils.getNewQName(elementName) + ");");
                     if (xmlType != null) {
                         pw.println("        elemField.setXmlType(" + Utils.getNewQName(xmlType) + ");");
                     }
-                    if (elem.getMinOccursIs0()) {
+                    if (elementinfo.getMinOccursIs0()) {
                         pw.println("        elemField.setMinOccurs(0);");
                     }
                     pw.println("        typeDesc.addFieldDesc(elemField);");
                 }
             }
+//////////////////////////////////////////////////////////////////////////////////////            
         }
 
         pw.println("    }");

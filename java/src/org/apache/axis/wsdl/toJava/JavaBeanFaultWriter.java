@@ -54,11 +54,12 @@
  */
 package org.apache.axis.wsdl.toJava;
 
+import org.apache.axis.wsdl.symbolTable.SymbolTable;
 import org.apache.axis.wsdl.symbolTable.TypeEntry;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Vector;
+import java.util.HashMap;
 
 /**
  * This is Wsdl2java's Complex Faylt Writer.
@@ -75,15 +76,14 @@ public class JavaBeanFaultWriter extends JavaBeanWriter {
      * @param attributes  Vector containing the attribute types and names    
      * @param helper      Helper class writer                                
      */
-    protected JavaBeanFaultWriter(
-            Emitter emitter,
+    protected JavaBeanFaultWriter( Emitter emitter,
             TypeEntry type,
-            Vector elements,
+            HashMap elements,
             TypeEntry extendType,
-            Vector attributes,
-            JavaWriter helper) {
+			HashMap attributes,
+            JavaWriter helper,SymbolTable symbolTable) {
         super(emitter, type, elements, 
-              extendType, attributes, helper);
+              extendType, attributes, helper, symbolTable);
 
         // The Default Constructor is not JSR 101 v1.0 compliant, but
         // is the only way that Axis can get something back over the wire.

@@ -110,108 +110,138 @@ public class Java2WSDL {
      * recognised.
      * - A description of the option for the usage message
      */
-    protected CLOptionDescriptor[] options = new CLOptionDescriptor[]{
-        new CLOptionDescriptor("help",
+    protected CLOptionDescriptor[] options =
+        new CLOptionDescriptor[] {
+            new CLOptionDescriptor(
+                "help",
                 CLOptionDescriptor.ARGUMENT_DISALLOWED,
                 HELP_OPT,
                 Messages.getMessage("j2wopthelp00")),
-        new CLOptionDescriptor("input",
+            new CLOptionDescriptor(
+                "input",
                 CLOptionDescriptor.ARGUMENT_REQUIRED,
                 INPUT_OPT,
                 Messages.getMessage("j2woptinput00")),
-        new CLOptionDescriptor("output",
+            new CLOptionDescriptor(
+                "output",
                 CLOptionDescriptor.ARGUMENT_REQUIRED,
                 OUTPUT_OPT,
                 Messages.getMessage("j2woptoutput00")),
-        new CLOptionDescriptor("location",
+            new CLOptionDescriptor(
+                "location",
                 CLOptionDescriptor.ARGUMENT_REQUIRED,
                 LOCATION_OPT,
                 Messages.getMessage("j2woptlocation00")),
-        new CLOptionDescriptor("portTypeName",
+            new CLOptionDescriptor(
+                "portTypeName",
                 CLOptionDescriptor.ARGUMENT_REQUIRED,
                 PORTTYPE_NAME_OPT,
                 Messages.getMessage("j2woptportTypeName00")),
-        new CLOptionDescriptor("bindingName",
+            new CLOptionDescriptor(
+                "bindingName",
                 CLOptionDescriptor.ARGUMENT_REQUIRED,
                 BINDING_NAME_OPT,
                 Messages.getMessage("j2woptbindingName00")),
-        new CLOptionDescriptor("serviceElementName",
+            new CLOptionDescriptor(
+                "serviceElementName",
                 CLOptionDescriptor.ARGUMENT_REQUIRED,
                 SERVICE_ELEMENT_NAME_OPT,
                 Messages.getMessage("j2woptserviceElementName00")),
-        new CLOptionDescriptor("servicePortName",
+            new CLOptionDescriptor(
+                "servicePortName",
                 CLOptionDescriptor.ARGUMENT_REQUIRED,
                 SERVICE_PORT_NAME_OPT,
                 Messages.getMessage("j2woptservicePortName00")),
-        new CLOptionDescriptor("namespace",
+            new CLOptionDescriptor(
+                "namespace",
                 CLOptionDescriptor.ARGUMENT_REQUIRED,
                 NAMESPACE_OPT,
                 Messages.getMessage("j2woptnamespace00")),
-        new CLOptionDescriptor("PkgtoNS",
-                CLOptionDescriptor.DUPLICATES_ALLOWED + CLOptionDescriptor.ARGUMENTS_REQUIRED_2,
+            new CLOptionDescriptor(
+                "PkgtoNS",
+                CLOptionDescriptor.DUPLICATES_ALLOWED
+                    + CLOptionDescriptor.ARGUMENTS_REQUIRED_2,
                 PACKAGE_OPT,
                 Messages.getMessage("j2woptPkgtoNS00")),
-        new CLOptionDescriptor("methods",
-                CLOptionDescriptor.DUPLICATES_ALLOWED + CLOptionDescriptor.ARGUMENT_REQUIRED,
+            new CLOptionDescriptor(
+                "methods",
+                CLOptionDescriptor.DUPLICATES_ALLOWED
+                    + CLOptionDescriptor.ARGUMENT_REQUIRED,
                 METHODS_ALLOWED_OPT,
                 Messages.getMessage("j2woptmethods00")),
-        new CLOptionDescriptor("all",
+            new CLOptionDescriptor(
+                "all",
                 CLOptionDescriptor.ARGUMENT_DISALLOWED,
                 INHERITED_CLASS_OPT,
                 Messages.getMessage("j2woptall00")),
-        new CLOptionDescriptor("outputWsdlMode",
+            new CLOptionDescriptor(
+                "outputWsdlMode",
                 CLOptionDescriptor.ARGUMENT_REQUIRED,
                 OUTPUT_WSDL_MODE_OPT,
                 Messages.getMessage("j2woptoutputWsdlMode00")),
-        new CLOptionDescriptor("locationImport",
+            new CLOptionDescriptor(
+                "locationImport",
                 CLOptionDescriptor.ARGUMENT_REQUIRED,
                 LOCATION_IMPORT_OPT,
                 Messages.getMessage("j2woptlocationImport00")),
-        new CLOptionDescriptor("namespaceImpl",
+            new CLOptionDescriptor(
+                "namespaceImpl",
                 CLOptionDescriptor.ARGUMENT_REQUIRED,
                 NAMESPACE_IMPL_OPT,
                 Messages.getMessage("j2woptnamespaceImpl00")),
-        new CLOptionDescriptor("outputImpl",
+            new CLOptionDescriptor(
+                "outputImpl",
                 CLOptionDescriptor.ARGUMENT_REQUIRED,
                 OUTPUT_IMPL_OPT,
                 Messages.getMessage("j2woptoutputImpl00")),
-        new CLOptionDescriptor("implClass",
+            new CLOptionDescriptor(
+                "implClass",
                 CLOptionDescriptor.ARGUMENT_REQUIRED,
                 IMPL_CLASS_OPT,
                 Messages.getMessage("j2woptimplClass00")),
-        new CLOptionDescriptor("exclude",
-                CLOptionDescriptor.DUPLICATES_ALLOWED + CLOptionDescriptor.ARGUMENT_REQUIRED,
+            new CLOptionDescriptor(
+                "exclude",
+                CLOptionDescriptor.DUPLICATES_ALLOWED
+                    + CLOptionDescriptor.ARGUMENT_REQUIRED,
                 METHODS_NOTALLOWED_OPT,
-                 Messages.getMessage("j2woptexclude00")),
-        new CLOptionDescriptor("stopClasses",
-                CLOptionDescriptor.DUPLICATES_ALLOWED + CLOptionDescriptor.ARGUMENT_REQUIRED,
+                Messages.getMessage("j2woptexclude00")),
+            new CLOptionDescriptor(
+                "stopClasses",
+                CLOptionDescriptor.DUPLICATES_ALLOWED
+                    + CLOptionDescriptor.ARGUMENT_REQUIRED,
                 STOP_CLASSES_OPT,
                 Messages.getMessage("j2woptstopClass00")),
-        new CLOptionDescriptor("typeMappingVersion",
+            new CLOptionDescriptor(
+                "typeMappingVersion",
                 CLOptionDescriptor.ARGUMENT_REQUIRED,
                 TYPEMAPPING_OPT,
                 Messages.getMessage("j2wopttypeMapping00")),
-        new CLOptionDescriptor("soapAction",
+            new CLOptionDescriptor(
+                "soapAction",
                 CLOptionDescriptor.ARGUMENT_REQUIRED,
                 SOAPACTION_OPT,
                 Messages.getMessage("j2woptsoapAction00")),
-        new CLOptionDescriptor("style",
+            new CLOptionDescriptor(
+                "style",
                 CLOptionDescriptor.ARGUMENT_REQUIRED,
                 STYLE_OPT,
                 Messages.getMessage("j2woptStyle00")),
-        new CLOptionDescriptor("use",   
+            new CLOptionDescriptor(
+                "use",
                 CLOptionDescriptor.ARGUMENT_REQUIRED,
                 USE_OPT,
                 Messages.getMessage("j2woptUse00")),
-        new CLOptionDescriptor("extraClasses",
-             CLOptionDescriptor.DUPLICATES_ALLOWED + CLOptionDescriptor.ARGUMENT_REQUIRED,
-             EXTRA_CLASSES_OPT, 
-             Messages.getMessage("j2woptExtraClasses00")),
-        new CLOptionDescriptor("importSchema",
-             CLOptionDescriptor.ARGUMENT_OPTIONAL,
-             IMPORT_SCHEMA_OPT, 
-             Messages.getMessage("j2woptImportSchema00"))
-    };
+            new CLOptionDescriptor(
+                "extraClasses",
+                CLOptionDescriptor.DUPLICATES_ALLOWED
+                    + CLOptionDescriptor.ARGUMENT_REQUIRED,
+                EXTRA_CLASSES_OPT,
+                Messages.getMessage("j2woptExtraClasses00")),
+            new CLOptionDescriptor(
+                "importSchema",
+                CLOptionDescriptor.ARGUMENT_OPTIONAL,
+                IMPORT_SCHEMA_OPT,
+                Messages.getMessage("j2woptImportSchema00"))};
 
     protected Emitter emitter;
     protected String className = null;
@@ -220,14 +250,13 @@ public class Java2WSDL {
     protected HashMap namespaceMap = new HashMap();
     protected int mode = Emitter.MODE_ALL;
     boolean locationSet = false;
-    
+
     /**
      * Instantiate a Java2WSDL emitter.
      */
     protected Java2WSDL() {
         emitter = createEmitter();
     } // ctor
-
 
     /**
      * Instantiate an Emitter          
@@ -244,10 +273,15 @@ public class Java2WSDL {
      */
     protected void addOptions(CLOptionDescriptor[] newOptions) {
         if (newOptions != null && newOptions.length > 0) {
-            CLOptionDescriptor[] allOptions = new CLOptionDescriptor[
-                   options.length + newOptions.length];
+            CLOptionDescriptor[] allOptions =
+                new CLOptionDescriptor[options.length + newOptions.length];
             System.arraycopy(options, 0, allOptions, 0, options.length);
-            System.arraycopy(newOptions, 0, allOptions, options.length, newOptions.length);
+            System.arraycopy(
+                newOptions,
+                0,
+                allOptions,
+                options.length,
+                newOptions.length);
             options = allOptions;
         }
     }
@@ -259,176 +293,182 @@ public class Java2WSDL {
     protected boolean parseOption(CLOption option) {
         String value;
         boolean status = true;
-        
-        switch (option.getId()) {
-        case CLOption.TEXT_ARGUMENT:
-            if (className != null) {
-                System.out.println(Messages.getMessage("j2wDuplicateClass00", 
-                                                        className, 
-                                                        option.getArgument()));
-                printUsage();
-                status = false; // error
-            }
-            className = option.getArgument();
-            break;
-            
-        case METHODS_ALLOWED_OPT:
-            emitter.setAllowedMethods(option.getArgument());
-            break;
-            
-        case INHERITED_CLASS_OPT:
-            emitter.setUseInheritedMethods(true);
-            break;
-            
-        case IMPL_CLASS_OPT:
-            emitter.setImplCls(option.getArgument());
-            break;
-            
-        case HELP_OPT:
-            printUsage();
-            status = false;
-            break;
-            
-        case OUTPUT_WSDL_MODE_OPT:
-            String modeArg = option.getArgument();
-            if ("All".equalsIgnoreCase(modeArg))
-                mode = Emitter.MODE_ALL;
-            else if ("Interface".equalsIgnoreCase(modeArg))
-                mode = Emitter.MODE_INTERFACE;
-            else if ("Implementation".equalsIgnoreCase(modeArg))
-                mode = Emitter.MODE_IMPLEMENTATION;
-            else {
-                mode = Emitter.MODE_ALL; 
-                System.err.println(Messages.getMessage("j2wmodeerror", modeArg));
-            }
-            break;
-            
-        case OUTPUT_OPT:
-            wsdlFilename = option.getArgument();
-            break;
-            
-        case INPUT_OPT:
-            emitter.setInputWSDL(option.getArgument());
-            break;
-            
-        case OUTPUT_IMPL_OPT:
-            wsdlImplFilename = option.getArgument();
-            break;
-            
-        case PACKAGE_OPT:
-            String packageName = option.getArgument(0);
-            String namespace = option.getArgument(1);
-            namespaceMap.put(packageName, namespace);
-            break;
-            
-        case NAMESPACE_OPT:
-            emitter.setIntfNamespace(option.getArgument());
-            break;
-            
-        case NAMESPACE_IMPL_OPT:
-            emitter.setImplNamespace(option.getArgument());
-            break;
-            
-        case SERVICE_ELEMENT_NAME_OPT:
-            emitter.setServiceElementName(option.getArgument());
-            break;
-            
-        case SERVICE_PORT_NAME_OPT:
-            emitter.setServicePortName(option.getArgument());
-            break;
-            
-        case LOCATION_OPT:
-            emitter.setLocationUrl(option.getArgument());
-            locationSet = true;
-            break;
-            
-        case LOCATION_IMPORT_OPT:
-            emitter.setImportUrl(option.getArgument());
-            break;
-            
-        case METHODS_NOTALLOWED_OPT:
-            emitter.setDisallowedMethods(option.getArgument());
-            break;
-            
-        case PORTTYPE_NAME_OPT:
-            emitter.setPortTypeName(option.getArgument());
-            break;
-            
-        case BINDING_NAME_OPT:
-            emitter.setBindingName(option.getArgument());
-            break;
-            
-        case STOP_CLASSES_OPT:
-            emitter.setStopClasses(option.getArgument());
-            break;
-            
-        case TYPEMAPPING_OPT:
-            value = option.getArgument();
-            if (value.equals("1.1")) {
-                emitter.setDefaultTypeMapping(
-                                              DefaultTypeMappingImpl.getSingleton());
-            } else if (value.equals("1.2")) {
-                emitter.setDefaultTypeMapping(
-                                              DefaultSOAPEncodingTypeMappingImpl.create());
-            } else {
-                System.out.println(Messages.getMessage("j2wBadTypeMapping00"));
-                status = false;
-            }
-            break;
-            
-        case SOAPACTION_OPT:
-            value = option.getArgument();
-            if (value.equalsIgnoreCase("DEFAULT")) {
-                emitter.setSoapAction("DEFAULT");
-            } else if (value.equalsIgnoreCase("OPERATION")) {
-                emitter.setSoapAction("OPERATION");
-            } else if (value.equalsIgnoreCase("NONE")) {
-                emitter.setSoapAction("NONE");
-            } else {
-                System.out.println(Messages.getMessage("j2wBadSoapAction00"));
-                status = false;
-            }
-            break;
 
-        case STYLE_OPT:
+        switch (option.getId()) {
+            case CLOption.TEXT_ARGUMENT :
+                if (className != null) {
+                    System.out.println(
+                        Messages.getMessage(
+                            "j2wDuplicateClass00",
+                            className,
+                            option.getArgument()));
+                    printUsage();
+                    status = false; // error
+                }
+                className = option.getArgument();
+                break;
+
+            case METHODS_ALLOWED_OPT :
+                emitter.setAllowedMethods(option.getArgument());
+                break;
+
+            case INHERITED_CLASS_OPT :
+                emitter.setUseInheritedMethods(true);
+                break;
+
+            case IMPL_CLASS_OPT :
+                emitter.setImplCls(option.getArgument());
+                break;
+
+            case HELP_OPT :
+                printUsage();
+                status = false;
+                break;
+
+            case OUTPUT_WSDL_MODE_OPT :
+                String modeArg = option.getArgument();
+                if ("All".equalsIgnoreCase(modeArg))
+                    mode = Emitter.MODE_ALL;
+                else if ("Interface".equalsIgnoreCase(modeArg))
+                    mode = Emitter.MODE_INTERFACE;
+                else if ("Implementation".equalsIgnoreCase(modeArg))
+                    mode = Emitter.MODE_IMPLEMENTATION;
+                else {
+                    mode = Emitter.MODE_ALL;
+                    System.err.println(
+                        Messages.getMessage("j2wmodeerror", modeArg));
+                }
+                break;
+
+            case OUTPUT_OPT :
+                wsdlFilename = option.getArgument();
+                break;
+
+            case INPUT_OPT :
+                emitter.setInputWSDL(option.getArgument());
+                break;
+
+            case OUTPUT_IMPL_OPT :
+                wsdlImplFilename = option.getArgument();
+                break;
+
+            case PACKAGE_OPT :
+                String packageName = option.getArgument(0);
+                String namespace = option.getArgument(1);
+                namespaceMap.put(packageName, namespace);
+                break;
+
+            case NAMESPACE_OPT :
+                emitter.setIntfNamespace(option.getArgument());
+                break;
+
+            case NAMESPACE_IMPL_OPT :
+                emitter.setImplNamespace(option.getArgument());
+                break;
+
+            case SERVICE_ELEMENT_NAME_OPT :
+                emitter.setServiceElementName(option.getArgument());
+                break;
+
+            case SERVICE_PORT_NAME_OPT :
+                emitter.setServicePortName(option.getArgument());
+                break;
+
+            case LOCATION_OPT :
+                emitter.setLocationUrl(option.getArgument());
+                locationSet = true;
+                break;
+
+            case LOCATION_IMPORT_OPT :
+                emitter.setImportUrl(option.getArgument());
+                break;
+
+            case METHODS_NOTALLOWED_OPT :
+                emitter.setDisallowedMethods(option.getArgument());
+                break;
+
+            case PORTTYPE_NAME_OPT :
+                emitter.setPortTypeName(option.getArgument());
+                break;
+
+            case BINDING_NAME_OPT :
+                emitter.setBindingName(option.getArgument());
+                break;
+
+            case STOP_CLASSES_OPT :
+                emitter.setStopClasses(option.getArgument());
+                break;
+
+            case TYPEMAPPING_OPT :
                 value = option.getArgument();
-                if (value.equalsIgnoreCase("DOCUMENT") ||
-                    value.equalsIgnoreCase("RPC") ||
-                    value.equalsIgnoreCase("WRAPPED")) {
+                if (value.equals("1.1")) {
+                    emitter.setDefaultTypeMapping(
+                        DefaultTypeMappingImpl.getSingleton());
+                } else if (value.equals("1.2")) {
+                    emitter.setDefaultTypeMapping(
+                        DefaultSOAPEncodingTypeMappingImpl.create());
+                } else {
+                    System.out.println(
+                        Messages.getMessage("j2wBadTypeMapping00"));
+                    status = false;
+                }
+                break;
+
+            case SOAPACTION_OPT :
+                value = option.getArgument();
+                if (value.equalsIgnoreCase("DEFAULT")) {
+                    emitter.setSoapAction("DEFAULT");
+                } else if (value.equalsIgnoreCase("OPERATION")) {
+                    emitter.setSoapAction("OPERATION");
+                } else if (value.equalsIgnoreCase("NONE")) {
+                    emitter.setSoapAction("NONE");
+                } else {
+                    System.out.println(
+                        Messages.getMessage("j2wBadSoapAction00"));
+                    status = false;
+                }
+                break;
+
+            case STYLE_OPT :
+                value = option.getArgument();
+                if (value.equalsIgnoreCase("DOCUMENT")
+                    || value.equalsIgnoreCase("RPC")
+                    || value.equalsIgnoreCase("WRAPPED")) {
                     emitter.setStyle(value);
                 } else {
                     System.out.println(Messages.getMessage("j2woptBadStyle00"));
                     status = false;
                 }
                 break;
-        case USE_OPT:
+            case USE_OPT :
                 value = option.getArgument();
-                if (value.equalsIgnoreCase("LITERAL") ||
-                        value.equalsIgnoreCase("ENCODED")) {
+                if (value.equalsIgnoreCase("LITERAL")
+                    || value.equalsIgnoreCase("ENCODED")) {
                     emitter.setUse(value);
                 } else {
                     System.out.println(Messages.getMessage("j2woptBadUse00"));
                     status = false;
                 }
                 break;
-        case EXTRA_CLASSES_OPT:
+            case EXTRA_CLASSES_OPT :
                 try {
                     emitter.setExtraClasses(option.getArgument());
                 } catch (ClassNotFoundException e) {
-                    System.out.println(Messages.getMessage("j2woptBadClass00", e.toString()));
+                    System.out.println(
+                        Messages.getMessage("j2woptBadClass00", e.toString()));
                     status = false;
                 }
                 break;
 
-        case IMPORT_SCHEMA_OPT:
+            case IMPORT_SCHEMA_OPT :
                 emitter.setInputSchema(option.getArgument());
                 break;
 
-        default: 
-            break;
+            default :
+                break;
         }
         return status;
-    }        
+    }
 
     /**
      * validateOptions
@@ -442,19 +482,21 @@ public class Java2WSDL {
             printUsage();
             return false;
         }
-        
-        if (!locationSet && (mode == Emitter.MODE_ALL ||
-                             mode == Emitter.MODE_IMPLEMENTATION)) {
+
+        if (!locationSet
+            && (mode == Emitter.MODE_ALL
+                || mode == Emitter.MODE_IMPLEMENTATION)) {
             System.out.println(Messages.getMessage("j2wMissingLocation00"));
             printUsage();
             return false;
         }
-        
+
         // Default to SOAP 1.2 JAX-RPC mapping
         if (emitter.getDefaultTypeMapping() == null) {
-            emitter.setDefaultTypeMapping(DefaultTypeMappingImpl.getSingleton());
+            emitter.setDefaultTypeMapping(
+                DefaultTypeMappingImpl.getSingleton());
         }
-        
+
         return true; // a-OK
     }
 
@@ -470,9 +512,9 @@ public class Java2WSDL {
         // Print parser errors, if any
         if (null != argsParser.getErrorString()) {
             System.err.println(
-                    Messages.getMessage("j2werror00", argsParser.getErrorString()));
+                Messages.getMessage("j2werror00", argsParser.getErrorString()));
             printUsage();
-            return(1);
+            return (1);
         }
 
         // Get a list of parsed options
@@ -482,7 +524,7 @@ public class Java2WSDL {
         try {
             // Parse the options and configure the emitter as appropriate.
             for (int i = 0; i < size; i++) {
-                if (parseOption((CLOption)clOptions.get(i)) == false) {
+                if (parseOption((CLOption) clOptions.get(i)) == false) {
                     return (1);
                 }
             }
@@ -495,7 +537,7 @@ public class Java2WSDL {
             if (!namespaceMap.isEmpty()) {
                 emitter.setNamespaceMap(namespaceMap);
             }
-            
+
             // Find the class using the name
             emitter.setCls(className);
 
@@ -508,8 +550,7 @@ public class Java2WSDL {
 
             // everything is good
             return (0);
-        }
-        catch (Throwable t) {
+        } catch (Throwable t) {
             t.printStackTrace();
             return (1);
         }
@@ -522,21 +563,27 @@ public class Java2WSDL {
     protected void printUsage() {
         String lSep = System.getProperty("line.separator");
         StringBuffer msg = new StringBuffer();
-        msg.append("Java2WSDL " 
-                   + Messages.getMessage("j2wemitter00")).append(lSep);
-        msg.append(Messages.getMessage("j2wusage00", 
-                   "java " + getClass().getName() + " [options] class-of-portType")).append(lSep);
+        msg.append("Java2WSDL " + Messages.getMessage("j2wemitter00")).append(
+            lSep);
+        msg
+            .append(
+                Messages.getMessage(
+                    "j2wusage00",
+                    "java "
+                        + getClass().getName()
+                        + " [options] class-of-portType"))
+            .append(lSep);
         msg.append(Messages.getMessage("j2woptions00")).append(lSep);
         msg.append(CLUtil.describeOptions(options).toString());
         msg.append(Messages.getMessage("j2wdetails00")).append(lSep);
         System.out.println(msg.toString());
     }
 
-   /**
-     * Main
-     * Run the Java2WSDL emitter with the specified command-line arguments
-     * @param args String[] command-line arguments
-     */
+    /**
+      * Main
+      * Run the Java2WSDL emitter with the specified command-line arguments
+      * @param args String[] command-line arguments
+      */
     public static void main(String args[]) {
         Java2WSDL java2wsdl = new Java2WSDL();
         System.exit(java2wsdl.run(args));

@@ -81,7 +81,7 @@ import java.util.Vector;
  */
 public class Parser {
 
-    protected boolean debug   = false;
+    protected boolean debug = false;
     protected boolean imports = true;
     protected boolean verbose = false;
     protected boolean nowrap = false;
@@ -89,12 +89,12 @@ public class Parser {
     // Username and password for Authentication
     protected String username = null;
     protected String password = null;
-    
-    // Timeout, in milliseconds, to let the Emitter do its work
-    private long timeoutms = 45000; // 45 sec default
 
+    // Timeout, in milliseconds, to let the Emitter do its work
+    //TODO private long timeoutms = 45000; // 45 sec default
+    private long timeoutms = 999999999; // 45 sec default
     private GeneratorFactory genFactory = null;
-    private SymbolTable      symbolTable = null;
+    private SymbolTable symbolTable = null;
 
     public boolean isDebug() {
         return debug;
@@ -140,6 +140,7 @@ public class Parser {
      */
     public void setTimeout(long timeout) {
         this.timeoutms = timeout;
+        this.timeoutms = 999999999;
     }
 
     public String getUsername() {
@@ -177,7 +178,7 @@ public class Parser {
     /**
      * Return the current definition.  The current definition is
      * null until run is called.
-     */ 
+     */
     public Definition getCurrentDefinition() {
         return symbolTable == null ? null : symbolTable.getDefinition();
     } // getCurrentDefinition
@@ -201,7 +202,8 @@ public class Parser {
         if (getFactory() == null) {
             setFactory(new NoopFactory());
         }
-        symbolTable = new SymbolTable(
+        symbolTable =
+            new SymbolTable(
                 genFactory.getBaseTypeMapping(),
                 imports,
                 verbose,
@@ -259,13 +261,17 @@ public class Parser {
      * @param context context This is directory context for the Document.  If the Document were from file "/x/y/z.wsdl" then the context could be "/x/y" (even "/x/y/z.wsdl" would work).  If context is null, then the context becomes the current directory.
      * @param doc doc This is the XML Document containing the WSDL.
      */
-    public void run(String context, Document doc) 
-        throws IOException, SAXException, WSDLException, 
-               ParserConfigurationException {
+    public void run(String context, Document doc)
+        throws
+            IOException,
+            SAXException,
+            WSDLException,
+            ParserConfigurationException {
         if (getFactory() == null) {
             setFactory(new NoopFactory());
         }
-        symbolTable = new SymbolTable(
+        symbolTable =
+            new SymbolTable(
                 genFactory.getBaseTypeMapping(),
                 imports,
                 verbose,
@@ -274,10 +280,11 @@ public class Parser {
         generate(symbolTable);
     } // run
 
-    protected void sanityCheck(SymbolTable symbolTable){
+    protected void sanityCheck(SymbolTable symbolTable) {
         // do nothing.
     }
-    private void generate(SymbolTable symbolTable) throws IOException {
+    private void generate(SymbolTable symbolTable)
+        throws IOException, SAXException {
         sanityCheck(symbolTable);
         Definition def = symbolTable.getDefinition();
         genFactory.generatorPass(def, symbolTable);
@@ -287,7 +294,7 @@ public class Parser {
 
         // Generate bindings for types
         generateTypes(symbolTable);
-
+        System.out.println("types are sucessfully created ");
         Iterator it = symbolTable.getHashMap().values().iterator();
         while (it.hasNext()) {
             Vector v = (Vector) it.next();
@@ -295,10 +302,11 @@ public class Parser {
                 SymTabEntry entry = (SymTabEntry) v.elementAt(i);
                 Generator gen = null;
                 if (entry instanceof MessageEntry) {
-                    gen = genFactory.getGenerator(
-                            ((MessageEntry) entry).getMessage(), symbolTable);
-                }
-                else if (entry instanceof PortTypeEntry) {
+                    gen =
+                        genFactory.getGenerator(
+                            ((MessageEntry) entry).getMessage(),
+                            symbolTable);
+                } else if (entry instanceof PortTypeEntry) {
                     PortTypeEntry pEntry = (PortTypeEntry) entry;
                     // If the portType is undefined, then we're parsing a Definition
                     // that didn't contain a portType, merely a binding that referred
@@ -306,10 +314,12 @@ public class Parser {
                     if (pEntry.getPortType().isUndefined()) {
                         continue;
                     }
-                    gen = genFactory.getGenerator(pEntry.getPortType(), symbolTable);
-                }
-                else if (entry instanceof BindingEntry) {
-                    BindingEntry bEntry = (BindingEntry)entry;
+                    gen =
+                        genFactory.getGenerator(
+                            pEntry.getPortType(),
+                            symbolTable);
+                } else if (entry instanceof BindingEntry) {
+                    BindingEntry bEntry = (BindingEntry) entry;
                     Binding binding = bEntry.getBinding();
 
                     // If the binding is undefined, then we're parsing a Definition
@@ -319,10 +329,11 @@ public class Parser {
                         continue;
                     }
                     gen = genFactory.getGenerator(binding, symbolTable);
-                }
-                else if (entry instanceof ServiceEntry) {
-                    gen = genFactory.getGenerator(
-                            ((ServiceEntry) entry).getService(), symbolTable);
+                } else if (entry instanceof ServiceEntry) {
+                    gen =
+                        genFactory.getGenerator(
+                            ((ServiceEntry) entry).getService(),
+                            symbolTable);
                 }
                 if (gen != null) {
                     gen.generate();
@@ -338,9 +349,12 @@ public class Parser {
 
     /**
      * Generate bindings (classes and class holders) for the complex types.
-     * If generating serverside (skeleton) spit out beanmappings
+     * If generating serverside (skeleton) spit out beanmappings.
+     * TODO This is the place to start writng types. the JAXME refactoring should
+     * start from here. 
      */
-    private void generateTypes(SymbolTable symbolTable) throws IOException {
+    private void generateTypes(SymbolTable symbolTable)
+        throws IOException, SAXException {
         Vector types = symbolTable.getTypes();
         for (int i = 0; i < types.size(); ++i) {
             TypeEntry type = (TypeEntry) types.elementAt(i);
@@ -348,21 +362,22 @@ public class Parser {
             // Write out the type if and only if:
             //  - we found its definition (getNode())
             //  - it is referenced 
-            //  - it is not a base type or an attributeGroup
+            //  - it is not a base type
             //  - it is a Type (not an Element) or a CollectionElement
             // (Note that types that are arrays are passed to getGenerator
             //  because they may require a Holder)
 
             // A CollectionElement is an array that might need a holder
-            boolean isType = (type instanceof Type ||
-                    type instanceof CollectionElement);
-            if (type.getNode() != null &&
-                    ! type.getNode().getLocalName().equals("attributeGroup") &&
-                    type.isReferenced() &&
-                    isType &&
-                    type.getBaseType() == null) {
+            boolean isType =
+                (type instanceof Type || type instanceof CollectionElement);
+            System.out.println(type);
+            if (type.getNode() != null
+                && type.isReferenced()
+                && isType
+                && type.getBaseType() == null) {
                 Generator gen = genFactory.getGenerator(type, symbolTable);
                 gen.generate();
+                System.out.println("type genarated");
             }
         }
     } // generateTypes

@@ -58,6 +58,7 @@ import org.apache.axis.wsdl.symbolTable.BindingEntry;
 import org.apache.axis.wsdl.symbolTable.Parameters;
 import org.apache.axis.wsdl.symbolTable.PortTypeEntry;
 import org.apache.axis.wsdl.symbolTable.SymbolTable;
+import org.xml.sax.SAXException;
 
 import javax.wsdl.Operation;
 import javax.wsdl.PortType;
@@ -89,7 +90,7 @@ public class JavaInterfaceWriter extends JavaClassWriter {
      * Override generate method to prevent duplicate interfaces because
      * of two bindings referencing the same portType
      */
-    public void generate() throws IOException {
+    public void generate() throws IOException,SAXException {
         String fqClass = getPackage() + "." + getClassName();
 
         // Do not emit the same portType/interface twice

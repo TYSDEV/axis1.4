@@ -54,13 +54,13 @@
  */
 package org.apache.axis.wsdl.toJava;
 
+import org.apache.axis.Constants;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.wsdl.symbolTable.BindingEntry;
 import org.apache.axis.wsdl.symbolTable.FaultInfo;
 import org.apache.axis.wsdl.symbolTable.Parameter;
 import org.apache.axis.wsdl.symbolTable.Parameters;
 import org.apache.axis.wsdl.symbolTable.SymbolTable;
-import org.apache.axis.Constants;
 
 import javax.wsdl.Binding;
 import javax.wsdl.BindingInput;

@@ -54,20 +54,21 @@
  */
 package org.apache.axis.wsdl.toJava;
 
+import org.apache.axis.Constants;
 import org.apache.axis.enum.Style;
 import org.apache.axis.enum.Use;
-import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 import org.apache.axis.wsdl.symbolTable.BindingEntry;
 import org.apache.axis.wsdl.symbolTable.CollectionTE;
 import org.apache.axis.wsdl.symbolTable.Element;
 import org.apache.axis.wsdl.symbolTable.FaultInfo;
+import org.apache.axis.wsdl.symbolTable.MimeInfo;
 import org.apache.axis.wsdl.symbolTable.Parameter;
 import org.apache.axis.wsdl.symbolTable.Parameters;
 import org.apache.axis.wsdl.symbolTable.SymbolTable;
 import org.apache.axis.wsdl.symbolTable.TypeEntry;
-import org.apache.axis.wsdl.symbolTable.MimeInfo;
-import org.apache.axis.Constants;
+import org.xml.sax.SAXException;
 
 import javax.wsdl.Binding;
 import javax.wsdl.BindingOperation;
@@ -77,9 +78,9 @@ import javax.wsdl.Operation;
 import javax.wsdl.OperationType;
 import javax.wsdl.Part;
 import javax.wsdl.PortType;
-import javax.wsdl.extensions.soap.SOAPOperation;
-import javax.wsdl.extensions.soap.SOAPBinding;
 import javax.wsdl.extensions.UnknownExtensibilityElement;
+import javax.wsdl.extensions.soap.SOAPBinding;
+import javax.wsdl.extensions.soap.SOAPOperation;
 import javax.xml.namespace.QName;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -100,11 +101,6 @@ public class JavaStubWriter extends JavaClassWriter {
     private BindingEntry bEntry;
     private Binding binding;
     private SymbolTable symbolTable;
-    // the maximum number of java type <-> qname binding instructions we'll
-    // emit in a single method.  This is important for stubs that handle
-    // a large number of schema types, as the generated source can exceed
-    // the size in a single method by the VM.
-    private static final int MAXIMUM_BINDINGS_PER_METHOD = 100;
 
     static String [] modeStrings = new String [] { "",
                                             "org.apache.axis.description.ParameterDesc.IN",
@@ -154,7 +150,7 @@ public class JavaStubWriter extends JavaClassWriter {
     /**
      * Write the body of the binding's stub file.
      */
-    protected void writeFileBody(PrintWriter pw) throws IOException {
+    protected void writeFileBody(PrintWriter pw) throws IOException,SAXException {
         PortType portType = binding.getPortType();
 
         HashSet types = getTypesInPortType(portType);
@@ -190,7 +186,6 @@ public class JavaStubWriter extends JavaClassWriter {
         pw.println("            super.service = service;");
         pw.println("        }");
 
-        List deferredBindings = new ArrayList();
         // keep track of how many type mappings we write out
         int typeMappingCount = 0;
         if (types.size() > 0) {
@@ -199,7 +194,7 @@ public class JavaStubWriter extends JavaClassWriter {
                 TypeEntry type = (TypeEntry) it.next();
                 // Note this same check is repeated in JavaDeployWriter.
 
-                // 1) Don't register types that are base (primitive) types or attributeGroups.
+                // 1) Don't register types that are base (primitive) types.
                 //    If the baseType != null && getRefType() != null this
                 //    is a simpleType that must be registered.
                 // 2) Don't register the special types for collections
@@ -210,9 +205,7 @@ public class JavaStubWriter extends JavaClassWriter {
                     type instanceof CollectionTE ||
                     type instanceof Element ||
                     !type.isReferenced() ||
-                    type.isOnlyLiteralReferenced() ||
-                    (type.getNode() != null &&
-                      type.getNode().getLocalName().equals("attributeGroup"))) {
+                    type.isOnlyLiteralReferenced()) {
                     continue;
                 }
 
@@ -222,8 +215,7 @@ public class JavaStubWriter extends JavaClassWriter {
                 }
 
                 // write the type mapping for this type
-                //writeSerializationInit(pw, type);
-                deferredBindings.add(type);
+                writeSerializationInit(pw, type);
 
                 // increase the number of type mappings count
                 typeMappingCount++;
@@ -236,32 +228,8 @@ public class JavaStubWriter extends JavaClassWriter {
             typeMappingCount++;
         }
 
-        // track whether the number of bindings exceeds the threshold
-        // that we allow per method.
-        boolean needsMultipleBindingMethods = false;
-        if (deferredBindings.size() < MAXIMUM_BINDINGS_PER_METHOD) {
-            // small number of bindings, just inline them:
-            for (Iterator it = deferredBindings.iterator(); it.hasNext();) {
-                writeSerializationInit(pw, (TypeEntry)it.next());
-            }
-        } else {
-            needsMultipleBindingMethods = true;
-            int methodCount = calculateBindingMethodCount(deferredBindings);
-
-            // invoke each of the soon-to-be generated addBindings methods
-            // from the constructor.
-            for (int i = 0; i < methodCount; i++) {
-                pw.println("        addBindings" + i + "();");
-            }
-        }
-
         pw.println("    }");
         pw.println();
-        // emit any necessary methods for assembling binding metadata.
-        if (needsMultipleBindingMethods) {
-            writeBindingMethods(pw, deferredBindings);
-            pw.println();
-        }
         pw.println("    private org.apache.axis.client.Call createCall() throws java.rmi.RemoteException {");
         pw.println("        try {");
         pw.println("            org.apache.axis.client.Call _call =");
@@ -393,50 +361,6 @@ public class JavaStubWriter extends JavaClassWriter {
         }
     } // writeFileBody
 
-    /**
-     * Compute the number of addBindings methods we need to generate for the
-     * set of TypeEntries used by the generated stub.
-     *
-     * @param deferredBindings a <code>List</code> value
-     * @return an <code>int</code> value
-     */
-    private int calculateBindingMethodCount(List deferredBindings) {
-        int methodCount = deferredBindings.size() / MAXIMUM_BINDINGS_PER_METHOD;
-        if ((deferredBindings.size() % MAXIMUM_BINDINGS_PER_METHOD) != 0) {
-            methodCount++;
-        }
-        return methodCount;
-    }
-
-    /**
-     * for each of the TypeEntry objects in the deferredBindings list, we need
-     * to write code that will associate a class with a schema namespace/name.
-     * This method writes a number of private methods out that do this in
-     * batches of size MAXIMUM_BINDINGS_PER_METHOD so that generated classes
-     * do not end up with a single method that exceeds the 64K limit that the
-     * VM imposes on all methods.
-     *
-     * @param pw a <code>PrintWriter</code> value
-     * @param deferredBindings a <code>List</code> of TypeEntry objects
-     */
-    private void writeBindingMethods(PrintWriter pw, List deferredBindings) {
-        int methodCount = calculateBindingMethodCount(deferredBindings);
-        for (int i = 0; i < methodCount; i++) {
-            pw.println("    private void addBindings" + i + "() {");
-            // each method gets its own local variables for use in generating
-            // the binding code
-            writeSerializationDecls(pw, false, null);
-            for (int j = 0; j < MAXIMUM_BINDINGS_PER_METHOD; j++) {
-                int absolute = i * MAXIMUM_BINDINGS_PER_METHOD + j;
-                if (absolute == deferredBindings.size()) {
-                    break;      // last one
-                }
-                writeSerializationInit(pw, (TypeEntry) deferredBindings.get(absolute));
-            }
-            pw.println("    }");
-        }
-    }
-    
     private void writeOperationMap(PrintWriter pw) {
         List operations = binding.getBindingOperations();
         pw.println("    static {");
@@ -593,7 +517,7 @@ public class JavaStubWriter extends JavaClassWriter {
      * This method returns a set of all the TypeEntry in a given PortType.
      * The elements of the returned HashSet are Types.
      */
-    private HashSet getTypesInPortType(PortType portType) {
+    private HashSet getTypesInPortType(PortType portType)throws SAXException {
         HashSet types = new HashSet();
         HashSet firstPassTypes = new HashSet();
 

@@ -54,6 +54,8 @@
  */
 package org.apache.axis.wsdl.gen;
 
+import org.xml.sax.SAXException;
+
 import java.io.IOException;
 
 /**
@@ -74,5 +76,5 @@ public interface Generator {
     /**
      * Generate something.
      */
-    public void generate() throws IOException;
+    public void generate() throws IOException, SAXException;
 }

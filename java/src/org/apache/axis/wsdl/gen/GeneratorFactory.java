@@ -57,6 +57,7 @@ package org.apache.axis.wsdl.gen;
 import org.apache.axis.wsdl.symbolTable.BaseTypeMapping;
 import org.apache.axis.wsdl.symbolTable.SymbolTable;
 import org.apache.axis.wsdl.symbolTable.TypeEntry;
+import org.xml.sax.SAXException;
 
 import javax.wsdl.Binding;
 import javax.wsdl.Definition;
@@ -86,7 +87,8 @@ public interface GeneratorFactory {
      * the Java names for each object and constructing signature
      * strings.
      */
-    public void generatorPass(Definition def, SymbolTable symbolTable);
+    public void generatorPass(Definition def, SymbolTable symbolTable)
+        throws SAXException;
 
     /**
      * Get a Generator implementation that will generate bindings for the given Message.
@@ -111,13 +113,16 @@ public interface GeneratorFactory {
     /**
      * Get a Generator implementation that will generate bindings for the given Type.
      */
-    public Generator getGenerator(TypeEntry type, SymbolTable symbolTable);
+    public Generator getGenerator(TypeEntry type, SymbolTable symbolTable)
+        throws SAXException;
 
     /**
      * Get a Generator implementation that will generate anything that doesn't
      * fit into the scope of any of the other Generators.
      */
-    public Generator getGenerator(Definition definition, SymbolTable symbolTable);
+    public Generator getGenerator(
+        Definition definition,
+        SymbolTable symbolTable);
 
     /**
      * Get TypeMapping to use for translating
@@ -125,5 +130,5 @@ public interface GeneratorFactory {
      */
     public void setBaseTypeMapping(BaseTypeMapping btm);
     public BaseTypeMapping getBaseTypeMapping();
-   
+
 }

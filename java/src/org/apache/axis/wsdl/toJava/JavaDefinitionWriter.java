@@ -60,6 +60,7 @@ import org.apache.axis.wsdl.symbolTable.BindingEntry;
 import org.apache.axis.wsdl.symbolTable.FaultInfo;
 import org.apache.axis.wsdl.symbolTable.MessageEntry;
 import org.apache.axis.wsdl.symbolTable.SymbolTable;
+import org.xml.sax.SAXException;
 
 import javax.wsdl.Binding;
 import javax.wsdl.Definition;
@@ -95,7 +96,7 @@ public class JavaDefinitionWriter implements Generator {
     /**
      * Write other items from the definition as needed.
      */
-    public void generate() throws IOException {
+    public void generate() throws IOException,SAXException {
         writeFaults();
     } // generate
 
@@ -104,7 +105,7 @@ public class JavaDefinitionWriter implements Generator {
      * The complexType Faults are automatically handled by JavaTypeWriter.
      * The fault name is derived from the fault message name per JAX-RPC
      */
-    private void writeFaults() throws IOException {
+    private void writeFaults() throws IOException,SAXException {
         ArrayList faults = new ArrayList();
         collectFaults(definition, faults);
         

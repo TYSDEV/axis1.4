@@ -69,7 +69,6 @@ import javax.xml.namespace.QName;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.StringTokenizer;
