@@ -46,6 +46,9 @@
 </dd>
 <dd>
 <a href="#handlers">Handlers</a>
+</dd>
+<dd>
+<a href="#ssl">SSL Client</a>
 <br>
 </dd>
 <dd>
@@ -567,9 +570,25 @@ $ ant
 <strong><strong><strong>cvs -d :pserver:anoncvs@cvs.apache.org:/home/cvspublic checkout -d &lt;your local folder&gt; ws-axis/c"</strong></strong></strong>
 </p>
 <br>
+
+<p><a name="ssl"></a> </p>
+<h3>SSL Client </h3>
+<p>To build the ssl channel library configure with <br>
+configure --with-axis2-ssl=PATH <br> <br>
+Add the following entry to the axiscpp.conf  <br> <br>
+<b>Channel_ssl:/usr/local/axiscpp_deploy/lib/libaxis2_ssl_channel.so </b> <br> <br>
+<b>Note:</b>If you don't add the above entry, lib will be taken from LD_LIBRARY_PATH <br> </p>
+<p>Then send your request with https://... <br> <br>
+Axis2Transport loads the ssl channel library when it is https and sends your
+request through ssh tunnelling. <br> <br>
+Currently I use openssl libraries for ssh tunnelling. <br> <br>
+The API to write a new ssl channel library(using a library other than openssl) is in <b>src/transport/SSLChannel.hpp </b> <br> <br>
+All openssl ssl related implementations are  in <b>src/transport/axis2/ssl folder</b> 
+
 <br>
 <div id="pdf" align="right">
 <a href="linuser-guide.pdf"><img alt="PDF" src="../skin/images/pdfdoc.gif" class="skin"><br>
           PDF</a>
+</p>
 </body>
 </html>
