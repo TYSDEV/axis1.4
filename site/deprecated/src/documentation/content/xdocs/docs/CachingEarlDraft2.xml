@@ -281,7 +281,7 @@ Java docs) will be provided after translation and review.
 <H1 id="section6">6. Appendix: Sample Application</H1>
 <DIV>
   This sample application uses the WeatherForecastService to enable a cacheable scenario. When
-an end-user sets a location (like as Tokyo, Osaka, or Nagoya) and invokes the service, the
+an end-user sets a location (like as Tokyo, Osaka, or Kyoto) and invokes the service, the
 system returns chance of rains for the specified area. Additionally, if the request is cached data
 and the cache is still valid data, the response message will be picked up from the cache
 repository.
