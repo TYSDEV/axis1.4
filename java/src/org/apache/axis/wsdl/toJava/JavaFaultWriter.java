@@ -77,7 +77,7 @@ public class JavaFaultWriter extends JavaClassWriter {
      * Constructor.
      */
     protected JavaFaultWriter(Emitter emitter, QName qname, Fault fault, SymbolTable symbolTable) {
-        super(emitter, Utils.getFullExceptionName(fault, emitter), "fault");
+        super(emitter, Utils.getFullExceptionName(fault, symbolTable), "fault");
         this.fault = fault;
         this.symbolTable = symbolTable;
     } // ctor
@@ -136,6 +136,28 @@ public class JavaFaultWriter extends JavaClassWriter {
                 String variable = param.getName();
                 pw.println("        this." + variable + " = " + variable + ";");
             }
+            pw.println("    }");
+        }
+        
+        // Hack alert!
+        // We need a QName for the exception part that we are going to
+        // serialize, but <part name=""> isn't NOT a QName - go figure
+        // So we will use the namespace of the Message, and the name of the part
+        // NOTE: we do the same thing when creating the fault map in JavaStubWriter
+        String namespace = fault.getMessage().getQName().getNamespaceURI();
+        
+        // method that serializes exception data (writeDetail)
+        pw.println();
+        pw.println("    /**");
+        pw.println("     * Writes the exception data to the faultDetails");
+        pw.println("     */");
+        pw.println("    public void writeDetails(org.apache.axis.encoding.SerializationContext context) throws java.io.IOException {");
+        for (int i = 0; i < params.size(); i++) {
+            Parameter param = (Parameter)params.get(i);
+            String variable = param.getName();
+            QName qname = new QName(namespace, param.getQName().getLocalPart());
+            pw.println("        javax.xml.namespace.QName qname = " + Utils.getNewQName(qname) + ";");
+            pw.println("        context.serialize(qname, null, " + Utils.wrapPrimitiveType(param.getType(), variable) + ");");
             pw.println("    }");
         }
     } // writeFileBody

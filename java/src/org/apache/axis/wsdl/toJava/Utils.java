@@ -223,19 +223,51 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
      * of the exception to be generated from this fault
      * 
      * @param fault The WSDL fault object
-     * @param emitter the Emitter being used
+     * @param symbolTable the current symbol table
      * @return A Java class name for the fault
      */ 
-    public static String getFullExceptionName(
-            Fault fault, Emitter emitter) {
-
-        // Get the Message referenced in the message attribute of the
-        // fault.
+    public static String getFullExceptionName(Fault fault, 
+                                              SymbolTable symbolTable) {
+        // Get the Message referenced in the message attribute of the fault.
         Message faultMessage = fault.getMessage();
-        MessageEntry me = emitter.getSymbolTable().getMessageEntry(
-            faultMessage.getQName()); 
+        MessageEntry me = symbolTable.getMessageEntry(faultMessage.getQName()); 
         return (String) me.getDynamicVar(JavaGeneratorFactory.EXCEPTION_CLASS_NAME);
     } // getFullExceptionName
+
+    /**
+     * Given a fault, return the XML type of the exception data.
+     * 
+     * @param fault The WSDL fault object
+     * @param symbolTable the current symbol table
+     * @return A QName for the XML type of the data
+     */ 
+    public static QName getFaultDataType(Fault fault, 
+                                         SymbolTable symbolTable) {
+        // Get the Message referenced in the message attribute of the fault.
+        Message faultMessage = fault.getMessage();
+        MessageEntry me = symbolTable.getMessageEntry(faultMessage.getQName()); 
+        return (QName) me.getDynamicVar(JavaGeneratorFactory.EXCEPTION_DATA_TYPE);
+    } // getFaultDataType
+
+    /**
+     * Given a fault, return TRUE if the fault is a complex type fault
+     * 
+     * @param fault The WSDL fault object
+     * @param symbolTable the current symbol table
+     * @return A Java class name for the fault
+     */ 
+    public static boolean isFaultComplex(Fault fault, 
+                                         SymbolTable symbolTable) {
+        // Get the Message referenced in the message attribute of the fault.
+        Message faultMessage = fault.getMessage();
+        MessageEntry me = symbolTable.getMessageEntry(faultMessage.getQName()); 
+        Boolean ret = (Boolean) me.getDynamicVar(JavaGeneratorFactory.COMPLEX_TYPE_FAULT);
+        if (ret != null) {
+            return ret.booleanValue();
+        } else {
+            return false;
+        }
+    } // isFaultComplex
 
     /**
      * If the specified node represents a supported JAX-RPC enumeration,

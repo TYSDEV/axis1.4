@@ -54,7 +54,6 @@
  */
 package org.apache.axis.wsdl.toJava;
 
-import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.wsdl.symbolTable.BindingEntry;
 import org.apache.axis.wsdl.symbolTable.CollectionTE;
@@ -67,6 +66,7 @@ import org.apache.axis.wsdl.symbolTable.TypeEntry;
 import javax.wsdl.Binding;
 import javax.wsdl.BindingOperation;
 import javax.wsdl.Fault;
+import javax.wsdl.Message;
 import javax.wsdl.Operation;
 import javax.wsdl.OperationType;
 import javax.wsdl.Part;
@@ -194,6 +194,9 @@ public class JavaStubWriter extends JavaClassWriter {
             typeMappingCount++;
         }
         
+        // Register fault/exception information
+        writeFaultInfo(pw, portType);
+
         pw.println("    }");
         pw.println();
         pw.println("    private org.apache.axis.client.Call createCall() throws java.rmi.RemoteException {");
@@ -395,6 +398,54 @@ public class JavaStubWriter extends JavaClassWriter {
         
     } // partTypes
 
+    /**
+     * This function returns the faults in an operation
+     */
+    private void writeFaultInfo(PrintWriter pw, PortType portType) {
+        // Get all the faults from all the operations
+        List operations = portType.getOperations();
+        for (int i = 0; i < operations.size(); ++i) {
+            Operation operation = (Operation) operations.get(i);
+            Map faults = operation.getFaults();
+            
+            if (faults != null) {
+                Iterator it = faults.values().iterator();
+                while (it.hasNext()) {
+                    Fault fault = (Fault) it.next();
+
+                    // get the name of the part - there can be only one!
+                    Message message = fault.getMessage();
+                    Map parts = message.getParts();
+                    String partName = (String) parts.keySet().iterator().next();
+
+                    // Hack alert!
+                    // We need a QName for the exception part that we are going to
+                    // serialize, but <part name=""> isn't NOT a QName - go figure
+                    // So we will use the namespace of the Message, and the name of the part
+                    // NOTE: we do the same thing when writing the fault in JavaFaultWriter
+                    String namespace = message.getQName().getNamespaceURI();
+
+                    // Now make a QName
+                    QName qname = new QName(namespace, partName);
+                    
+                    // Get the Exception class name
+                    String className = Utils.getFullExceptionName(fault, symbolTable);
+                    
+                    // Get the xmlType of the exception data
+                    QName xmlType = Utils.getFaultDataType(fault, symbolTable);
+
+                    // output the registration API call
+                    pw.print("      ((org.apache.axis.client.Service)service).registerFaultInfo(");
+                     pw.print( Utils.getNewQName(qname) + ", ");
+                     pw.print( className + ".class, ");
+                     pw.print( Utils.getNewQName(xmlType) + ", ");
+                     pw.print( Utils.isFaultComplex(fault, symbolTable));
+                    pw.println(");");
+                }
+            }
+        }
+    }
+    
     /**
      * In the stub constructor, write the serializer code for the complex types.
      */
