@@ -391,7 +391,7 @@ public class ArrayDeserializer extends DeserializerImpl
 
         // Get the deserializer for the type. 
         Deserializer dSer = null;
-        if (itemType != null) {
+        if (itemType != null && (context.getCurElement().getHref() == null)) {
             dSer = context.getDeserializerForType(itemType);
         }
 

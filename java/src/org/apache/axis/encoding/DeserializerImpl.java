@@ -303,7 +303,7 @@ public class DeserializerImpl extends SOAPHandler
         // lets us know when it's done so we can take it off our list.
         dSer.registerValueTarget(new CallbackTarget(this, dSer));
     }
-    
+
     protected boolean isHref = false;
     protected boolean isNil  = false;  // xsd:nil attribute is set to true
     protected String id = null;  // Set to the id of the element
@@ -446,12 +446,13 @@ public class DeserializerImpl extends SOAPHandler
                              DeserializationContext context)
         throws SAXException
     {
+        QName type = context.getTypeFromAttributes(namespace,
+                                                   localName,
+                                                   attributes);
+
         // If I'm the base class, try replacing myself with an
         // appropriate deserializer gleaned from type info.
         if (this.getClass().equals(DeserializerImpl.class)) {
-            QName type = context.getTypeFromAttributes(namespace,
-                                                       localName,
-                                                       attributes);
             // If no type is specified, use the defaultType if available.
             // xsd:string is used if no type is provided.
             if (type == null) {

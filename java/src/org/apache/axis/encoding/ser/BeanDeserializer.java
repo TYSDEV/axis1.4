@@ -432,7 +432,7 @@ public class BeanDeserializer extends DeserializerImpl implements Serializable
         
         Deserializer dSer = null;
 
-        if (xmlType != null) {
+        if (xmlType != null && href == null) {
             // Use the xmlType to get the deserializer.
             dSer = context.getDeserializerForType(xmlType);
         } else {
