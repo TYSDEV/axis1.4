@@ -19,7 +19,7 @@ InteropTestPortType::InteropTestPortType()
 	m_pCall = new Call();
 	m_pCall->SetProtocol(APTHTTP);
 	m_pCall->SetHeader("SOAPAction", "InteropBase");
-	m_pCall->SetEndpointURI("http://192.168.101.4/axis/InteropBase");
+	m_pCall->SetEndpointURI("http://localhost/axis/InteropBase");
 }
 
 InteropTestPortType::~InteropTestPortType()
