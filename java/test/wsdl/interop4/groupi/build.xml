@@ -62,9 +62,11 @@ Copyright:
     <mkdir dir="${build.dest}"/>
 
     <copy file="Round4XSDTestTestCase.java"
-         todir="${root.dir}/build/work/test/wsdl/interop4/groupi/"/>
+         todir="${root.dir}/build/work/test/wsdl/interop4/groupi/"
+         overwrite="yes"/>
     <copy file="Round4XSDTestSoapImpl.java"
-         todir="${root.dir}/build/work/test/wsdl/interop4/groupi/"/>
+         todir="${root.dir}/build/work/test/wsdl/interop4/groupi/"
+         overwrite="yes"/>
 
     <!-- compile the skeletons -->
     <javac srcdir="${build.dir}/work"
