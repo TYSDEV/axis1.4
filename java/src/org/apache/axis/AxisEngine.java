@@ -56,7 +56,6 @@
 package org.apache.axis;
 
 import org.apache.axis.deployment.DeploymentException;
-//import org.apache.axis.deployment.wsdd.*;
 import org.apache.axis.encoding.DeserializerFactory;
 import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.encoding.Serializer;
