@@ -220,7 +220,11 @@ public class JavaSkelWriter extends JavaClassWriter {
 
                 if (retType != null) {
                     pw.println("        _oper.setReturnType(" +
-                               Utils.getNewQName(retType) + ");");            
+                               Utils.getNewQName(retType) + ");");
+                    if (parameters.returnParam != null &&
+                        parameters.returnParam.isOutHeader()) {
+                        pw.println("        _oper.setReturnHeader(true);");
+                    }
                 }
 
                 // If we need to know the QName (if we have a namespace or

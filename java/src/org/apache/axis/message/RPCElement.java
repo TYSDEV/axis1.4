@@ -164,7 +164,7 @@ public class RPCElement extends SOAPBodyElement
         // We're going to need this below, so create one.
         RPCHandler rpcHandler = new RPCHandler(this, isResponse);
 
-        if (operations != null && !msgContext.isClient()) {
+        if (operations != null) {
             int numParams = (getChildren() == null) ? 0 : getChildren().size();
 
             SAXException savedException = null;
@@ -248,7 +248,7 @@ public class RPCElement extends SOAPBodyElement
 
             if (savedException != null) {
                 throw savedException;
-            } else {
+            } else if (!msgContext.isClient()) {
                 throw new SAXException(
                     Messages.getMessage("noSuchOperation", name));
             }

@@ -199,9 +199,6 @@ public class Call implements javax.xml.rpc.Call {
     // The desired return Java type, so we can do conversions if needed
     private Class              returnJavaType  = null;
 
-    // If a parameter is sent as a header, this flag will be set to true;
-    private boolean            headerParameters = false;
-
     public static final String SEND_TYPE_ATTR    = "send_type_attr" ;
     public static final String TRANSPORT_NAME    = "transport_name" ;
     public static final String TRANSPORT_PROPERTY= "java.protocol.handler.pkgs";
@@ -837,33 +834,47 @@ public class Call implements javax.xml.rpc.Call {
     }
 
     /**
-     * Adds a parameter type as a soap:header.  Note that we do not
-     * currently support an INOUT parameter split between header and
-     * body of the soap message.  It's either header both ways or
-     * body both ways.
+     * Adds a parameter type as a soap:header.
+     * @param paramName - Name of the parameter
+     * @param xmlType - XML datatype of the parameter
+     * @param javaType - The Java class of the parameter
+     * @param parameterMode - Mode of the parameter-whether IN, OUT or INOUT
+     * @param headerMode - Mode of the header.  Even if this is an INOUT
+     *                     parameter, it need not be in the header in both
+     *                     directions.
+     * @exception JAXRPCException - if isParameterAndReturnSpecRequired returns
+     *                              false, then addParameter MAY throw
+     *                              JAXRPCException....actually Axis allows
+     *                              modification in such cases
      */
     public void addParameterAsHeader(QName paramName, QName xmlType,
-            Class javaType, ParameterMode parameterMode) {
+            Class javaType, ParameterMode parameterMode,
+            ParameterMode headerMode) {
         ParameterDesc param = new ParameterDesc();
         param.setQName(paramName);
         param.setTypeQName(xmlType);
         param.setJavaType(javaType);
         if (parameterMode == ParameterMode.IN) {
             param.setMode(ParameterDesc.IN);
-            param.setInHeader(true);
         }
         else if (parameterMode == ParameterMode.INOUT) {
             param.setMode(ParameterDesc.INOUT);
-            param.setInHeader(true);
-            param.setOutHeader(true);
         }
         else if (parameterMode == ParameterMode.OUT) {
             param.setMode(ParameterDesc.OUT);
+        }
+        if (headerMode == ParameterMode.IN) {
+            param.setInHeader(true);
+        }
+        else if (headerMode == ParameterMode.INOUT) {
+            param.setInHeader(true);
+            param.setOutHeader(true);
+        }
+        else if (headerMode == ParameterMode.OUT) {
             param.setOutHeader(true);
         }
         operation.addParameter(param);
         parmAndRetReq = true;
-        headerParameters = true;
     } // addParameterAsHeader
 
     /**
@@ -931,6 +942,22 @@ public class Call implements javax.xml.rpc.Call {
         returnJavaType = javaType;
         operation.setReturnClass(javaType);  // Use specified type as the operation return
     }
+
+    /**
+     * Set the return type as a header
+     */
+    public void setReturnTypeAsHeader(QName xmlType) {
+        setReturnType(xmlType);
+        operation.setReturnHeader(true);
+    } // setReturnTypeAsHeader
+
+    /**
+     * Set the return type as a header
+     */
+    public void setReturnTypeAsHeader(QName xmlType, Class javaType) {
+        setReturnType(xmlType, javaType);
+        operation.setReturnHeader(true);
+    } // setReturnTypeAsHeader
 
     /**
      * Returns the QName of the type of the return value of this Call - or null if
