@@ -32,5 +32,6 @@ unsigned int SoapBinInputStream::readBytes(XMLByte* const toFill, const unsigned
 {
 	int nRead = 0;
 	m_pReadFunct((char*)toFill, maxToRead, &nRead, m_pContext);
+    
 	return nRead;
 }

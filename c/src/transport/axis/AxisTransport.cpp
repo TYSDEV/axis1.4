@@ -54,7 +54,7 @@
  */
  /**
  *
- * @author Damitha Kumarage (damitha@opensource.lk, damitha@jkcsworld.com)
+ * @author Damitha Kumarage (damitha@jkcsworld.com, damitha@opensource.lk)
  * @author Susantha Kumara (susantha@opensource.lk, skumara@virtusa.com)
  *
  */
@@ -140,19 +140,23 @@ int AxisTransport::Send_bytes(const char* pSendBuffer, const void* pStream)
 
 int AxisTransport::Get_bytes(char* pRecvBuffer, int nBuffSize, int* pRecvSize, const void* pStream)
 {
-    Receiver* pReceiver = (Receiver*) pStream;
-    const char* strReceive =  pReceiver->Recv(nBuffSize);
-	int nLen;
-	if (strReceive)
+  Receiver* pReceiver = (Receiver*) pStream;
+  const char* strReceive =  pReceiver->Recv(nBuffSize);
+  int nLen;
+  if (strReceive)
 	{
+        //printf("strReceive:%s\n", strReceive);
 		nLen = strlen(strReceive);
 		nLen = (nLen < nBuffSize) ? nLen : nBuffSize; 
-        strncpy(pRecvBuffer, strReceive, nLen);
-        *pRecvSize = nLen;
-        return AXIS_SUCCESS;
-    }
-    else
-        return AXIS_FAIL;
+    strncpy(pRecvBuffer, strReceive, nLen);
+    *pRecvSize = nLen;
+    //printf("nLen:%d\n", nLen);    
+    return AXIS_SUCCESS;
+  }
+  else
+  {
+    return AXIS_FAIL;
+  }
     
 }
 
@@ -179,3 +183,4 @@ int AxisTransport::Receive_transport_information(void* pSoapStream)
 {
 	return AXIS_SUCCESS;
 }
+

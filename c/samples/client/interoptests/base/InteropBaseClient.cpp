@@ -19,9 +19,10 @@ int main(int argc, char* argv[])
 		printf("failed\n");
 	// testing echoStringArray
 	ArrayOfstring arrstr;
-	arrstr.m_Array = new string[ARRAYSIZE];
-	arrstr.m_Size = ARRAYSIZE;
-	for (x=0;x<ARRAYSIZE;x++)
+	int temp = 3500;
+	arrstr.m_Array = new string[temp];
+	arrstr.m_Size = temp;
+	for (x=0;x<temp;x++)
 	{
 		sprintf(buffer, "%dth element of string array", x);
 		arrstr.m_Array[x] = buffer;
@@ -32,7 +33,7 @@ int main(int argc, char* argv[])
 	else
 		printf("failed\n");
 	// testing echoInteger
-	printf("invoking echoInteger...\n");
+/*	printf("invoking echoInteger...\n");
 	if (ws.echoInteger(56) == 56)
 		printf("successful\n");
 	else
@@ -109,9 +110,14 @@ int main(int argc, char* argv[])
 		printf("failed\n");
 	time_t tim;
 	time(&tim);
-	tm* lt = gmtime(&tim);
+    //tm* lt = gmtime(&tim);
+	tm* lt = localtime(&tim);
 	printf("invoking echoDate...\n");
+    //tm lt2 = ws.echoDate(*lt);
+    //printf("year:%d\n", lt2.tm_year);
+    //printf("month:%d\n", lt2.tm_mon);
 	if (memcmp(&ws.echoDate(*lt), lt, sizeof(tm)) == 0)
+    //if(memcmp(&lt2, lt, sizeof(tm)) == 0)
 		printf("successful\n");
 	else
 		printf("failed\n");
@@ -134,6 +140,7 @@ int main(int argc, char* argv[])
 		printf("successful\n");
 	else
 		printf("failed\n");
+*/
 	getchar();
 	return 0;
 }

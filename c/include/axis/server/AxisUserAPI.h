@@ -70,7 +70,7 @@ typedef struct Axis_ArrayTag
 	int m_Size;
 } Axis_Array;
 
-typedef struct tm Axis_Time;
+//typedef struct tm Axis_Time;
 typedef struct tm Axis_Date;
 typedef struct tm Axis_DateTime;
 typedef double Axis_Decimal;
