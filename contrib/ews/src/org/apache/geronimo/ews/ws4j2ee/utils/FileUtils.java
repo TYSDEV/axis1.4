@@ -94,7 +94,6 @@ public class FileUtils {
             if (val < 0 || val == 0)
                 break;
             os.write(data, 0, val);
-            System.out.println(val);
         }
         is.close();
         os.close();

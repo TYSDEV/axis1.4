@@ -60,8 +60,6 @@ public class Packager {
                                 new JARFileEntry(filename,
                                     new FileInputStream(temp));
                             jfile.addJarEntry(newEntry);
-                            System.out.println(filename);
-							
                         }
                     }
                 }
