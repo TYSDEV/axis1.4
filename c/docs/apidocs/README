@@ -1,0 +1,3 @@
+to geneate the uptodate documentation do
+
+$ doxygen doxygenconf
