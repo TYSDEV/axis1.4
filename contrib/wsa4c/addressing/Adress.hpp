@@ -35,16 +35,9 @@
 #include "AttributedURI.hpp"
 #include <string>
 
-class Address:public AttributedUri {
+class Address:public AttributedUri 
+{
 public:
-    /***
-     * Constructor Adress
-     * 
-     * @param uri 
-     */
-    Address(AxisChar * pachUri);
-
-    
-      
+    Address(const AxisChar * pachUri);      
 };
 #endif

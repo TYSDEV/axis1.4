@@ -31,7 +31,7 @@
 
 #include "MessageID.hpp" 	
 
-MessageId::MessageId(AxisChar * pachUri)
+MessageId::MessageId(const AxisChar * pachUri)
 :AttributedUri(Constants.MESSAGE_ID,pachUri)
 {
 }

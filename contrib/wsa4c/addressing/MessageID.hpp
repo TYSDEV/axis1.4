@@ -36,15 +36,10 @@
 #include <string>
 using namespace std;
 
-class MessageId:public AttributedUri {
+class MessageId:public AttributedUri 
+{
 public:
-    /*
-     * Constructor MessageId
-     * 
-     * @param uri 
-     */
-	MessageId(AxisChar * pachUri);	
-
-  };
+	MessageId(const AxisChar * pachUri);	
+};
 
 #endif

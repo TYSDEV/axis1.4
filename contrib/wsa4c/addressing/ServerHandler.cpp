@@ -28,17 +28,38 @@
 
  */
 
+#include "WsaServerHandler.hpp"
 
-#if !defined(__TO_OF_AXIS_INCLUDED__)
-#define __TO_OF_AXIS_INCLUDED__
+extern "C" {
 
-#include "AttributedURI.hpp"
-#include <string>
-
-class To:public AttributedUri 
+STORAGE_CLASS_INFO
+int GetClassInstance(BasicHandler **inst)
 {
-public:  
-	To(const AxisChar * pachUri);         
-};
+	*inst = new BasicHandler();
+	
+	WsaServerHandler* pWsaHandler = new WsaServerHandler();
+	(*inst)->_functions = 0;
+	if (pWsaHandler)
+	{
+		(*inst)->_object = pWsaHandler;
+		return pWsaHandler->init();
+	}
+	
+	return AXIS_FAIL;
+}
 
-#endif
+STORAGE_CLASS_INFO
+int DestroyInstance(BasicHandler *inst)
+{
+	if (inst)
+	{
+		Handler* pH = static_cast<Handler*>(inst->_object);
+		pH->fini();
+		delete pH;
+		delete inst;
+		return AXIS_SUCCESS;
+	}
+	return AXIS_FAIL;
+}
+
+}

@@ -35,13 +35,9 @@
 
 class ReplyTo:public EndpointReferenceType 
 {
-      /***
-       * Constructor ReplyTo
-       * 
-       * @param address 
-       */
 public:
     ReplyTo();
     ReplyTo(AxisChar * address);   
+    ReplyTo(IHeaderBlock * pIHeaderBlock);
   };
 #endif

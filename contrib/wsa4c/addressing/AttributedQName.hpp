@@ -31,9 +31,9 @@
 
 #if !defined(__ATTRIBUTED_QNAME_INCLUDED__)
 #define __ATTRIBUTED_QNAME_INCLUDED__
-#include <axis/server/BasicNode.hpp>
-#include <axis/server/IHeaderBlock.hpp>
-#include <axis/server/IMessageData.hpp>
+#include <axis/BasicNode.hpp>
+#include <axis/IHeaderBlock.hpp>
+#include <axis/IMessageData.hpp>
 
 AXIS_CPP_NAMESPACE_USE
 
@@ -47,12 +47,13 @@ public:
 	AttributedQName();
 	~AttributedQName();
 	AttributedQName(const AxisChar* pachLocalName, const AxisChar* pachUri);
+    AttributedQName(const AxisChar* pachQName);    
 	const AxisChar * toUri();
 	AxisChar * getLocalName();
-	void setLocalName(AxisChar * pachLocalName);
+	void setLocalName(const AxisChar * pachLocalName);
 	AxisChar * getUri();
 	AxisChar * getQname();
-	void setUri(AxisChar * pachUri);
+	void setUri(const AxisChar * pachUri);
 	virtual IHeaderBlock * toSoapHeaderBlock(IMessageData *pIMsg);
    
 };

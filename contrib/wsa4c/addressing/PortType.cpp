@@ -41,6 +41,11 @@ PortType::PortType(const AxisChar* pachLocalName, const AxisChar* pachUri)
 {
 }
 
+PortType::PortType(const AxisChar* pachQname)
+:AttributedQName(pachQname)
+{
+}
+
 IHeaderBlock * PortType::toSoapHeaderBlock(IMessageData *pIMsg)
 {
    	IHandlerSoapSerializer* pISZ;

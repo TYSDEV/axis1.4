@@ -171,8 +171,6 @@ void MacAddress::findMacAddress(char * pachMacAddress)
   } while (!ret);         /* Stop only on an error.  An error will occur
                              when we go exhaust the list of interfaces to
                              be examined */
-  getch();
-
   FreeLibrary(m_hInst);
   /* Free the bindings */
   SNMP_FreeVarBind(&varBind[0]);

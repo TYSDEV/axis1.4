@@ -34,20 +34,30 @@
 
 ServiceNameType::ServiceNameType()
 {
-	m_pachPortName = "\0";
+	m_pachPortName = NULL;
 }
 ServiceNameType::~ServiceNameType()
 {
-	free(m_pachPortName);
+    if(m_pachPortName != NULL)
+	    delete(m_pachPortName);
 }
 
 ServiceNameType::ServiceNameType(const AxisChar* pachLocalName, const AxisChar* pachUri, const AxisChar* pachPortName)
 :AttributedQName(pachLocalName,pachUri)
 {
-	free(m_pachPortName);
-	m_pachPortName = (AxisChar*) malloc(strlen(pachPortName)+1);
+    if(m_pachPortName != NULL)
+	    delete(m_pachPortName);
+	m_pachPortName = new AxisChar(strlen(pachPortName)+1);
 	strcpy(m_pachPortName,pachPortName);
+}
 
+ServiceNameType::ServiceNameType(const AxisChar* pachQname, const AxisChar * pachPortName)
+:AttributedQName(pachQname)
+{   
+    if(m_pachPortName != NULL)
+        delete(m_pachPortName);
+	m_pachPortName = new AxisChar(strlen(pachPortName)+1);
+	strcpy(m_pachPortName,pachPortName);
 }
 
 AxisChar * ServiceNameType::getPortName()
@@ -57,8 +67,8 @@ AxisChar * ServiceNameType::getPortName()
 
 void ServiceNameType::setPortName(AxisChar * pachPortName)
 {
-	free(m_pachPortName);
-	m_pachPortName = (AxisChar*) malloc(strlen(pachPortName)+1);
+	delete(m_pachPortName);
+	m_pachPortName = new AxisChar(strlen(pachPortName)+1);
 	strcpy(m_pachPortName,pachPortName);
 }
 
@@ -71,14 +81,10 @@ IHeaderBlock * ServiceNameType::toSoapHeaderBlock(IMessageData *pIMsg)
 
 	pIHeaderBlock->setLocalName(Constants.PORT_TYPE);
 	pIHeaderBlock->setUri(Constants.NS_URI_ADDRESSING);
-   		        
-	printf("in the WsaHandler::Invoke : %s\n");	
-    
-	if(strlen(m_pachPortName)!=0){
-    
+   		          
+	if(m_pachPortName!=NULL && strlen(m_pachPortName)!=0)   
 		pIHeaderBlock->createAttribute(Constants.PORT_NAME,"",m_pachPortName);
-	}
-
+	
 	BasicNode * pBasicNode = pIHeaderBlock->createChild(CHARACTER_NODE);
 	pBasicNode->setValue(getQname());
 	pIHeaderBlock->addChild(pBasicNode);

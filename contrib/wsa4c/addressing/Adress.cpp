@@ -31,9 +31,10 @@
 
 #include "Adress.hpp" 	
 
-Address::Address(AxisChar * pachUri)
+Address::Address(const AxisChar * pachUri)
 :AttributedUri(Constants.ADDRESS,pachUri)
 {
+    
 }
   
 

@@ -33,9 +33,9 @@
 #define __PORTTYPE_OF_AXIS_INCLUDED__
 
 #include "AttributedQName.hpp"
-#include <axis/server/BasicNode.hpp>
-#include <axis/server/IHeaderBlock.hpp>
-#include <axis/server/IMessageData.hpp>
+#include <axis/BasicNode.hpp>
+#include <axis/IHeaderBlock.hpp>
+#include <axis/IMessageData.hpp>
 
 AXIS_CPP_NAMESPACE_USE
 
@@ -55,11 +55,12 @@ AXIS_CPP_NAMESPACE_USE
   * </pre>
   * 
   */
-class PortType:public AttributedQName{
-      
+class PortType:public AttributedQName
+{      
 public:
     PortType();
-	PortType(const AxisChar* pLocalName, const AxisChar* pUri);
+	PortType(const AxisChar* pachLocalName, const AxisChar* pachUri);
+    PortType(const AxisChar* pachQname);
 	IHeaderBlock * toSoapHeaderBlock(IMessageData *pIMsg);   
 
 };

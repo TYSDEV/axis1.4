@@ -39,6 +39,10 @@ ReplyTo::ReplyTo(AxisChar * address)
 :EndpointReferenceType(Constants.REPLY_TO,address)
 {
 }
+ReplyTo::ReplyTo(IHeaderBlock * pIHeaderBlock)
+:EndpointReferenceType(pIHeaderBlock)
+{
+}
   
 
       

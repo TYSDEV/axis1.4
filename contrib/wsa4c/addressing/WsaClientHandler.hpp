@@ -29,16 +29,30 @@
  */
 
 
-#if !defined(__TO_OF_AXIS_INCLUDED__)
-#define __TO_OF_AXIS_INCLUDED__
+#if !defined(_WSA_CLIENT_HANDLER_H____OF_AXIS_INCLUDED_)
+#define _WSA_CLIENT_HANDLER_H____OF_AXIS_INCLUDED_
 
-#include "AttributedURI.hpp"
-#include <string>
+#include <axis/Handler.hpp>
+#include <axis/IMessageData.hpp>
+#include ".\..\utils\UUIDGen.hpp"
 
-class To:public AttributedUri 
+AXIS_CPP_NAMESPACE_USE
+
+class WsaClientHandler : public Handler
 {
-public:  
-	To(const AxisChar * pachUri);         
+protected:
+	UUIDGen * pUUIDGen;
+
+public:
+	int AXISCALL fini();
+	int AXISCALL init();
+	void AXISCALL onFault(void* pvIMsg);
+	int AXISCALL invoke(void* pvIMsg);
+	WsaClientHandler();
+	virtual ~WsaClientHandler();   
+    void processClientResponse(IMessageData * pIMsg);
+    void processClientRequest(IMessageData * pIMsg);
+    
 };
 
-#endif
+#endif 

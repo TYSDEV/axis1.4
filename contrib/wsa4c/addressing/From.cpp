@@ -35,8 +35,12 @@ From::From()
 :EndpointReferenceType(Constants.FROM)
 {
 }
-From::From(AxisChar * address)
-:EndpointReferenceType(Constants.FROM,address)
+From::From(AxisChar * pachAddress)
+:EndpointReferenceType(Constants.FROM,pachAddress)
+{
+}
+From::From(IHeaderBlock * pIHeaderBlock)
+:EndpointReferenceType(pIHeaderBlock)
 {
 }
   

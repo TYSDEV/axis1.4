@@ -39,6 +39,7 @@
 #include "ServiceNameType.hpp"
 #include "AttributedQName.hpp"
 #include "AttributedUri.hpp"
+#include <axis/IHeaderBlock.hpp>
   
   /***
    * <p>The following schema fragment specifies the expected content contained within this java content object. (defined at http://schemas.xmlsoap.org/ws/2003/03/addressing/ line 46)
@@ -61,105 +62,51 @@
    * 
    */
 class EndpointReferenceType
-{
-     
-	 private:
-      /***
-       * Field address
-       */
-		 AttributedUri * m_pAddress;
+{    
+private:
+    /***
+     * Field address
+     */
+	AttributedUri * m_pAddress;
+    /***
+     * Field properties
+     */
+    ReferenceProperties * m_pRefprops;  
+    /***
+     * Field portType
+     */
+    AttributedQName * m_pPortType; 
+    /***
+     * Field serviceName
+     */
+    ServiceNameType * m_pServiceName;
+    /***
+     * Field localname
+     */
+    AxisChar * m_pachLocalName;
 
-      /***
-       * Field properties
-       */
-         ReferenceProperties * m_pRefprops;
+    bool m_bMustUnderstand;
   
-      /***
-       * Field portType
-       */
-         AttributedQName * m_pPortType;
-  
-      /***
-       * Field serviceName
-       */
-         ServiceNameType * m_pServiceName;
-
-         AxisChar * m_pachLocalName;
-  
+public:
     
-	 public:
-
-         EndpointReferenceType(AxisChar* pachLocalName);
-  	  
-      /***
-       * Constructor EndpointReferenceType
-       * 
-       * @param address 
-       */
-         EndpointReferenceType(AxisChar* pachLocalName,AxisChar * pachAddress);
-  
-         ~EndpointReferenceType();
-      
-      /***
-       * Method getAddress
-       * 
-       * @return 
-       */
-         AttributedUri * getAddress();
- 
-      /***
-       * Method setAddress
-       * 
-       * @param address 
-       */
-         void setAddress(AxisChar * pachAddress);
- 
-      /***
-       * Method getPortType
-       * 
-       * @return 
-       */
-         AttributedQName * getPortType();
- 
-      /***
-       * Method setPortType
-       * 
-       * @param portType 
-       */
-         void setPortType(AttributedQName * portType);
- 
-      /***
-       * Method getProperties
-       * 
-       * @return 
-       */
-         ReferenceProperties * getProperties();
- 
-      /***
-       * Method setProperties
-       * 
-       * @param properties 
-       */
-         void setProperties(ReferenceProperties * pRefprops);
- 
-      /***
-       * Method getServiceName
-       * 
-       * @return 
-       */
-        ServiceNameType * getServiceName();
- 
-      /***
-       * Method setServiceName
-       * 
-       * @param serviceName 
-       */
-        void setServiceName(ServiceNameType * pServiceName);
-
-        
-        IHeaderBlock * toSoapHeaderBlock(IMessageData *pIMsg);
-
-         
+    EndpointReferenceType(const AxisChar* pachLocalName); 	
+    EndpointReferenceType(const AxisChar* pachLocalName,const AxisChar * pachAddress);
+    EndpointReferenceType(EndpointReferenceType * pEndpoint);
+    EndpointReferenceType(IHeaderBlock * pIHeaderBlock);  
+    ~EndpointReferenceType();      
+    void init();
+    AttributedUri * getAddress();
+    void setAddress(const AxisChar * pachAddress); 
+    AttributedQName * getPortType();
+    void setPortType(AttributedQName * portType);
+    ReferenceProperties * getProperties(); 
+    void setProperties(ReferenceProperties * pRefprops);
+    ServiceNameType * getServiceName(); 
+    void setServiceName(ServiceNameType * pServiceName);
+    void setMustUnderstand(bool bMustUnderstand);
+    bool isMustUnderstand();
+    virtual IHeaderBlock * toSoapHeaderBlock(IMessageData *pIMsg);      
+    void setLocalName(const AxisChar * pachLocalName);
  };
 
 #endif

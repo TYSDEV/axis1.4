@@ -31,7 +31,7 @@
 
 #include "Action.hpp" 	
 
-Action::Action(AxisChar * pachUri)
+Action::Action(const AxisChar * pachUri)
 :AttributedUri(Constants.ACTION,pachUri)
 {
 }
