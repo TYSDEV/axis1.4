@@ -57,6 +57,8 @@
 
 import org.apache.axis.AxisEngine;
 import org.apache.axis.ConfigurationProvider;
+import org.apache.axis.deployment.wsdd.SimpleWsddDeploymentManager;
+import org.apache.axis.deployment.DeploymentRegistry;
 import org.apache.axis.utils.Admin;
 import org.apache.axis.utils.XMLUtils;
 import org.w3c.dom.Document;
@@ -76,6 +78,8 @@ public class XMLStringProvider implements ConfigurationProvider
 {
     String xmlConfiguration;
 
+    private DeploymentRegistry deploymentRegistry;
+
     /**
      * Constructor
      *
@@ -85,6 +89,14 @@ public class XMLStringProvider implements ConfigurationProvider
     public XMLStringProvider(String xmlConfiguration)
     {
         this.xmlConfiguration = xmlConfiguration;
+    }
+
+    public DeploymentRegistry getDeploymentRegistry()
+    {
+        if (deploymentRegistry == null) {
+            deploymentRegistry = new SimpleWsddDeploymentManager();
+        }
+        return deploymentRegistry;
     }
 
     public void configureEngine(AxisEngine engine) throws Exception
