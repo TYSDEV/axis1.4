@@ -55,11 +55,8 @@
  *
  *
  *
- *
- * @author Roshan Weerasuriya (roshan@jkcs.slt.lk, roshan@opensource.lk)
- *
  */
-// ISoapDeSerializer.h: interface for the ISoapDeSerializer class.
+// ISoapDeSerializer.h: 
 //
 //////////////////////////////////////////////////////////////////////
 
@@ -70,6 +67,14 @@
 using namespace std;
 class IParam;
 
+
+/**
+    @class ISoapDeSerializer
+    @brief interface for the ISoapDeSerializer class.
+
+    
+    @author Roshan Weerasuriya (roshan@jkcs.slt.lk, roshan@opensource.lk)
+*/
 class ISoapDeSerializer
 {
 public:

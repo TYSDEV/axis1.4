@@ -55,13 +55,9 @@
  * <http://www.apache.org/>.
  *
  *
- *
- *
- * @author Roshan Weerasuriya (roshan@jkcs.slt.lk, roshan@opensource.lk)
- *
  */
 
-// IWrapperSoapSerializer.h: interface for the IWrapperSoapSerializer class.
+// IWrapperSoapSerializer.h: 
 //
 //////////////////////////////////////////////////////////////////////
 
@@ -76,6 +72,14 @@ union uParamValue;
 #include "ISoapSerializer.h"
 #include "IArrayBean.h"
 
+/**
+    @class IWrapperSoapSerializer
+    @brief interface for the IWrapperSoapSerializer class.
+
+
+    @author Roshan Weerasuriya (roshan@jkcs.slt.lk, roshan@opensource.lk)
+
+*/
 class IWrapperSoapSerializer  : public virtual ISoapSerializer
 {
 public:	

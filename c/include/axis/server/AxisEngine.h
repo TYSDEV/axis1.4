@@ -55,10 +55,6 @@
  * <http://www.apache.org/>.
  *
  *
- *
- *
- * @author Susantha Kumara (skumara@virtusa.com)
- *
  */
 #ifdef WIN32
 #pragma warning (disable : 4786)
@@ -76,6 +72,14 @@
 #include "../common/MessageData.h"
 #include "HandlerChain.h"
 
+
+/**
+    @class AxisEngine
+    @brief
+
+
+    @author Susantha Kumara (skumara@virtusa.com)
+*/
 class AxisEngine 
 {
 protected:	

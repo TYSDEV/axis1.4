@@ -55,12 +55,8 @@
  * <http://www.apache.org/>.
  *
  *
- *
- *
- * @author Roshan Weerasuriya (roshan@jkcs.slt.lk, roshan@opensource.lk)
- *
  */
-// ISoapMethod.h: interface for the ISoapMethod class.
+// ISoapMethod.h: 
 //
 //////////////////////////////////////////////////////////////////////
 
@@ -70,6 +66,13 @@
 #include <string>
 using namespace std;
 
+/**
+    @class ISoapMethod
+    @brief interface for the ISoapMethod class.
+
+
+    @author Roshan Weerasuriya (roshan@jkcs.slt.lk, roshan@opensource.lk)
+*/
 class ISoapMethod
 {
 public:

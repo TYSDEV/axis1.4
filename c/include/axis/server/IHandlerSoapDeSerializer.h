@@ -54,13 +54,9 @@
  * <http://www.apache.org/>.
  *
  *
- *
- *
- * @author Roshan Weerasuriya (roshan@jkcs.slt.lk, roshan@opensource.lk)
- *
  */
 
-// IHandlerSoapDeSerializer.h: interface for the IHandlerSoapDeSerializer class.
+// IHandlerSoapDeSerializer.h: 
 //
 //////////////////////////////////////////////////////////////////////
 
@@ -70,6 +66,13 @@
 #include "ISoapDeSerializer.h"
 class ISoapHeader;
 
+/**
+    @class IHandlerSoapDeSerializer
+    @brief interface for the IHandlerSoapDeSerializer class.
+
+
+    @author Roshan Weerasuriya (roshan@jkcs.slt.lk, roshan@opensource.lk)
+*/
 class IHandlerSoapDeSerializer : public virtual ISoapDeSerializer
 {
 public:

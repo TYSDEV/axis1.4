@@ -53,8 +53,8 @@
  * <http://www.apache.org/>.
  *
  *
- *
- *
+ */
+ /**
  * @author Susantha Kumara (susantha@opensource.lk, skumara@virtusa.com)
  *
  */

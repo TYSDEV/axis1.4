@@ -53,11 +53,8 @@
  * <http://www.apache.org/>.
  *
  *
- *
- *
- * @author Damitha Kumarage (damitha@opensource.lk, damitha@jkcsworld.com)
- *
  */
+ 
 
 #ifndef __AXISLOG_H_INCLUDED_
 #define __AXISLOG_H_INCLUDED_
@@ -82,9 +79,15 @@
 
 //extern unsigned char chEBuf[1024];
 using namespace std;
+
 /**
-This is class is used to log messages when AXISTRACE is defined.
+    @class AxisTrace
+    @brief This is class is used to log messages when AXISTRACE is defined.
+
+    
+    @author Damitha Kumarage (damitha@opensource.lk, damitha@jkcsworld.com)
 */
+
 class AxisTrace
 {
 public:

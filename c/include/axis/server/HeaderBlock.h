@@ -55,13 +55,9 @@
  * <http://www.apache.org/>.
  *
  *
- *
- *
- * @author Roshan Weerasuriya (roshan@jkcs.slt.lk, roshan@opensource.lk)
- *
  */
 
-// HeaderBlock.h: interface for the HeaderBlock class.
+// HeaderBlock.h: 
 //
 //////////////////////////////////////////////////////////////////////
 
@@ -74,6 +70,13 @@
 
 using namespace std;
 
+/**
+    @class BasicNode
+    @brief interface for the HeaderBlock class.
+
+
+    @author Roshan Weerasuriya (roshan@jkcs.slt.lk, roshan@opensource.lk)
+*/
 class BasicNode;
 #include "../common/IHeaderBlock.h"
 
