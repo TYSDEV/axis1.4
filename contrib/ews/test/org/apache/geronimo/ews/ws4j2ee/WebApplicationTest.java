@@ -34,6 +34,7 @@ import org.apache.axis.client.Call;
 import org.apache.axis.deployment.wsdd.WSDDDocument;
 import org.apache.axis.transport.http.SimpleAxisServer;
 import org.apache.axis.utils.ClassUtils;
+import org.apache.axis.utils.tcpmon;
 import org.apache.geronimo.ews.AbstractTestCase;
 import org.apache.geronimo.ews.ws4j2ee.toWs.Ws4J2ee;
 
@@ -41,35 +42,47 @@ import org.apache.geronimo.ews.ws4j2ee.toWs.Ws4J2ee;
  * @author Srinath Perera(hemapani@opensource.lk)
  */
 public class WebApplicationTest extends AbstractTestCase{
+    private boolean useTcpMon = true;
+    private tcpmon tcpmon;
+    private int sendPort = 4444;
+    private int serverport = 4444;
+    
     public WebApplicationTest(String testName) {
         super(testName);
     }
     protected void setUp() throws Exception {
-//        File wsddFile = new File(getTestFile("target/server-config.wsdd"));
-//        wsddFile.delete();
-//        wsddFile.createNewFile();
-//        OutputStream out = new FileOutputStream(wsddFile);
+        if(useTcpMon){
+            sendPort = 5555;
+            tcpmon = new tcpmon(sendPort,"127.0.0.1",serverport);
+            
+        }
+        
+        
+        File wsddFile = new File(getTestFile("target/server-config.wsdd"));
+        wsddFile.delete();
+        wsddFile.createNewFile();
+        OutputStream out = new FileOutputStream(wsddFile);
         
         InputStream in = Thread.currentThread().getContextClassLoader()
             .getResourceAsStream("org/apache/axis/server/server-config.wsdd");
         
-//        byte[] buf = new byte[1024];
-//        int read = in.read(buf);
-//    
-//        while(read > 0){
-//            out.write(buf,0,read);
-//            read = in.read(buf);
-//        }
-//        in.close();
-//        out.close();
+        byte[] buf = new byte[1024];
+        int read = in.read(buf);
+    
+        while(read > 0){
+            out.write(buf,0,read);
+            read = in.read(buf);
+        }
+        in.close();
+        out.close();
                         
 
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         dbf.setNamespaceAware(true);
         DocumentBuilder db = dbf.newDocumentBuilder();
-        WSDDDocument wsdddoc = new WSDDDocument(db.parse(in));
+        WSDDDocument wsdddoc = new WSDDDocument(db.parse(wsddFile));
         SimpleAxisServer sas = new SimpleAxisServer();
-        sas.setServerSocket(new ServerSocket(5555));
+        sas.setServerSocket(new ServerSocket(serverport));
         sas.setMyConfig(wsdddoc.getDeployment());
         sas.start();
         
@@ -84,7 +97,7 @@ public class WebApplicationTest extends AbstractTestCase{
 
         File jarFile = new File("target/generated/samples/withoutWSDL/echo-war/echo-ewsimpl.jar");
         
-        URLClassLoader cl = new URLClassLoader(new URL[]{jarFile.toURL()});
+        URLClassLoader cl = new URLClassLoader(new URL[]{jarFile.toURL()},Thread.currentThread().getContextClassLoader());
         InputStream deplydd = cl.getResourceAsStream("deploy.wsdd");
         assertNotNull(deplydd);
 
@@ -92,7 +105,7 @@ public class WebApplicationTest extends AbstractTestCase{
         ClassUtils.setDefaultClassLoader(cl);
         AdminClient adminClient = new AdminClient();
 
-        URL requestUrl = new URL("http://localhost:5555/axis/services/AdminService");
+        URL requestUrl = new URL("http://localhost:"+sendPort+"/axis/services/AdminService");
         Call call = adminClient.getCall();
         call.setTargetEndpointAddress(requestUrl);
         String result = adminClient.process(null, deplydd);
@@ -104,7 +117,7 @@ public class WebApplicationTest extends AbstractTestCase{
         Object echoLoacater = echoLoacaterClass.newInstance();
         Method getportMethod = echoLoacaterClass.getMethod("getechoPort", new Class[]{URL.class});
 
-        URL serviceURL = new URL("http://localhost:5555/axis/services/echoPort");
+        URL serviceURL = new URL("http://localhost:"+sendPort+"/axis/services/echoPort");
         Object echoPort = getportMethod.invoke(echoLoacater, new Object[]{serviceURL});
         Class echoClass = echoPort.getClass();
 

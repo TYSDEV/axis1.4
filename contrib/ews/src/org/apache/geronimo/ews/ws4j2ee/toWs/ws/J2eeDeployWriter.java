@@ -41,6 +41,7 @@ import org.apache.geronimo.ews.ws4j2ee.context.j2eeDD.WebContext;
 import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.interfaces.WSCFHandler;
 import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.interfaces.WSCFInitParam;
 import org.apache.geronimo.ews.ws4j2ee.toWs.GenerationConstants;
+import org.apache.geronimo.ews.ws4j2ee.wsutils.EWSProvider;
 
 import javax.wsdl.Binding;
 import javax.wsdl.BindingOperation;
@@ -363,7 +364,7 @@ public class J2eeDeployWriter extends JavaWriter {
 //			pw.println("  <service name=\"" + serviceName + "\" provider=\""
 //					+ prefix + ":RPC" + "\"" + styleStr + useStr + ">");
 //		}
-        if (useProvider) {
+        if (this.useProvider) {
             String continer = wscontext.getMiscInfo().getTargetJ2EEContainer();
             if (GenerationConstants.GERONIMO_CONTAINER.equals(continer)) {
                 pw.println("  <service name=\"" + serviceName + "\" provider=\"java:geronimo\""
@@ -378,30 +379,33 @@ public class J2eeDeployWriter extends JavaWriter {
         }
         EJBContext ejbcontext = wscontext.getEJBDDContext();
         if (ejbcontext != null) {
+            pw.println("      <parameter name=\""+EWSProvider.OPTION_USE_EJB+"\" value=\"ejb\"/>");
             if (ejbcontext.getEjbhomeInterface() != null) {
-                pw.println("      <parameter name=\"homeInterfaceName\" value=\""
+                pw.println("      <parameter name=\""+EWSProvider.OPTION_HOMEINTERFACE_NAME+"\" value=\""
                         + ejbcontext.getEjbhomeInterface() + "\"/>");
             }
             if (ejbcontext.getEjbRemoteInterface() != null) {
-                pw.println("      <parameter name=\"remoteInterfaceName\" value=\""
+                pw.println("      <parameter name=\""+EWSProvider.OPTION_REMOTEINTERFACE_NAME+"\" value=\""
                         + ejbcontext.getEjbRemoteInterface() + "\"/>");
             }
             if (ejbcontext.getEjbLocalHomeInterfce() != null) {
-                pw.println("      <parameter name=\"localHomeInterfaceName\" value=\""
+                pw.println("      <parameter name=\""+EWSProvider.OPTION_LOCALHOMEINTERFACE_NAME+"\" value=\""
                         + ejbcontext.getEjbLocalHomeInterfce() + "\"/>");
             }
             if (ejbcontext.getEjbLocalInterface() != null) {
-                pw.println("      <parameter name=\"localInterfaceName\" value=\""
+                pw.println("      <parameter name=\""+EWSProvider.OPTION_LOCALINTERFACE_NAME+"\" value=\""
                         + ejbcontext.getEjbLocalInterface() + "\"/>");
             }
             if (ejbcontext.getEjbRemoteInterface() != null) {
-                pw.println("      <parameter name=\"beanJndiName\" value=\""
+                pw.println("      <parameter name=\""+EWSProvider.OPTION_HOMEINTERFACE_NAME+"\" value=\""
                         + "ejb/" + ejbcontext.getEjbName() + "\"/>");
             }
             if (ejbcontext.getEjbRemoteInterface() != null) {
-                pw.println("      <parameter name=\"beanName\" value=\""
+                pw.println("      <parameter name=\""+EWSProvider.OPTION_EJB_NAME+"\" value=\""
                         + ejbcontext.getEjbName() + "\"/>");
             }
+        }else{
+            pw.println("      <parameter name=\""+EWSProvider.OPTION_USE_EJB+"\" value=\"web\"/>");
         }
         pw.println("      <parameter name=\"wsdlTargetNamespace\" value=\""
                 + service.getQName().getNamespaceURI() + "\"/>");
@@ -441,7 +445,7 @@ public class J2eeDeployWriter extends JavaWriter {
         } else {
             className += "Impl";
         }
-        if (useProvider) {
+        if (this.useProvider) {
             WebContext webContext = wscontext.getWebDDContext();
             if (webContext != null) {
                 pw.println("      <parameter name=\"className\" value=\"" + webContext.getServletClass()
