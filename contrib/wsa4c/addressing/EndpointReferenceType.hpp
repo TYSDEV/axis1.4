@@ -1,5 +1,36 @@
-#if !defined(__ENDPOINT_TYPE_REFERENCE_TYPE_OF_AXIS_INCLUDED__)
-#define __ENDPOINT_TYPE_REFERENCE_TYPE_OF_AXIS_INCLUDED__
+/*
+
+ * Copyright 2001-2004 The Apache Software Foundation.
+
+ * 
+
+ * Licensed under the Apache License, Version 2.0 (the "License");
+
+ * you may not use this file except in compliance with the License.
+
+ * You may obtain a copy of the License at
+
+ * 
+
+ *      http://www.apache.org/licenses/LICENSE-2.0
+
+ * 
+
+ * Unless required by applicable law or agreed to in writing, software
+
+ * distributed under the License is distributed on an "AS IS" BASIS,
+
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+
+ * See the License for the specific language governing permissions and
+
+ * limitations under the License.
+
+ */
+
+
+#if !defined(__ENDPOINT_REFERENCE_TYPE_OF_AXIS_INCLUDED__)
+#define __ENDPOINT_REFERENCE_TYPE_OF_AXIS_INCLUDED__
 
 #include "Adress.hpp"
 #include "PortType.hpp"
@@ -51,7 +82,7 @@ class EndpointReferenceType
       /***
        * Field serviceName
        */
-         AttributedQName * m_pServiceName;
+         ServiceNameType * m_pServiceName;
 
          AxisChar * m_pachLocalName;
   
@@ -116,14 +147,14 @@ class EndpointReferenceType
        * 
        * @return 
        */
-        AttributedQName * getServiceName();
+        ServiceNameType * getServiceName();
  
       /***
        * Method setServiceName
        * 
        * @param serviceName 
        */
-        void setServiceName(AttributedQName * pServiceName);
+        void setServiceName(ServiceNameType * pServiceName);
 
         
         IHeaderBlock * toSoapHeaderBlock(IMessageData *pIMsg);
