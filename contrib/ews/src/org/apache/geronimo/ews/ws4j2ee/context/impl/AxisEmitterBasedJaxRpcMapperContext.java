@@ -294,7 +294,7 @@ public class AxisEmitterBasedJaxRpcMapperContext implements JaxRpcMapperContext 
 //            
 //                //this work only when the method names are same
 //                //im printing it so that it is easier for user to change 
-//                //it am sure that no body will writing nor webservice.xml 
+//                //it am sure that no body will writing nor webservices.xml 
 //                //or jaxrpcmapping.xml files if there is a short cut.
 //				
 //            	

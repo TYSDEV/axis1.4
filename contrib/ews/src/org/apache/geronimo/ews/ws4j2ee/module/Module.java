@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package org.apache.geronimo.ews.ws4j2ee.utils.packager.load;
+package org.apache.geronimo.ews.ws4j2ee.module;
 
 import java.io.InputStream;
-import java.util.Vector;
+import java.util.ArrayList;
 
 import org.apache.geronimo.ews.ws4j2ee.toWs.GenerationFault;
 
@@ -27,7 +27,7 @@ import org.apache.geronimo.ews.ws4j2ee.toWs.GenerationFault;
  * a class loader that load the class files in the jar file.</p>
  * @author hemapani
  */
-public interface PackageModule {
+public interface Module {
     public InputStream getEjbJarfile() throws GenerationFault;
     public InputStream getWebddfile() throws GenerationFault; 
     public InputStream getWscfFile() throws GenerationFault;
@@ -35,6 +35,6 @@ public interface PackageModule {
     public void setWebddfile(InputStream stream) throws GenerationFault;
     public void setWscfFile(InputStream stream) throws GenerationFault;
     public ClassLoader getClassLoaderWithPackageLoaded() throws GenerationFault;
-    public Vector getClassPathElements() throws GenerationFault;
+    public ArrayList getClassPathElements() throws GenerationFault;
     public InputStream findFileInModule(String path)throws GenerationFault;
 }

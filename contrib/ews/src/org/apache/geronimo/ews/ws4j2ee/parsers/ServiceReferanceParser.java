@@ -69,7 +69,6 @@ public class ServiceReferanceParser {
 	 */
 	public Element findServiceReferance(Element ele){
 		if("service-ref".equals((ele).getLocalName())){
-			//System.out.println((ele).getLocalName());
 			return ele;
 		}else{
 			NodeList nodes = ele.getChildNodes();

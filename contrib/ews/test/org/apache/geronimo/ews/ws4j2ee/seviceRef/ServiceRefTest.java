@@ -45,7 +45,6 @@ public class ServiceRefTest extends AbstractTestCase{
 			Assert.assertEquals("service/Joe",ref.getServicerefName());
 			Assert.assertEquals("javax.xml.rpc.Service",ref.getServiceInterface());
 			Assert.assertEquals("WEB-INF/joe.xml",ref.getJaxrpcmappingFile());
-			//System.out.println(ref.getJaxrpcmappingFile());
 			Assert.assertEquals("WEB-INF/joe.wsdl",ref.getWsdlFile());
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -61,7 +60,7 @@ public class ServiceRefTest extends AbstractTestCase{
 			ServiceReferanceContext ref = 	parser.getRef();
 			Assert.assertEquals("service/Joe",ref.getServicerefName());
 			Assert.assertEquals("javax.xml.rpc.Service",ref.getServiceInterface());
-			//System.out.println(ref.getJaxrpcmappingFile());
+
 			Assert.assertEquals("WEB-INF/joe.xml",ref.getJaxrpcmappingFile());
 			Assert.assertEquals("WEB-INF/joe.wsdl",ref.getWsdlFile());
 		} catch (Exception e) {

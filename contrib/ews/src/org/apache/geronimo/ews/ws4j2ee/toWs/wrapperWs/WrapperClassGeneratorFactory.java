@@ -33,7 +33,7 @@ public class WrapperClassGeneratorFactory {
 		
 		String implStyle = context.getMiscInfo().getImplStyle();
 		String container = context.getMiscInfo().getTargetJ2EEContainer();
-//		System.out.println(implStyle+"|"+container);
+
 		
 		if(!context.getMiscInfo().isImplwithEJB()){
 			return new WebEndpointWrapperClassWriter(context);

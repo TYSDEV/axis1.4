@@ -17,7 +17,7 @@
 	</target>
 	
 	<target name="jar" depends="compile" unless="jars.uptodate">
-		<copy file ="${basedir}/WEB-INF/webservice.xml" todir="${build.classes}/.."/>
+		<copy file ="${basedir}/WEB-INF/webservices.xml" todir="${build.classes}/.."/>
 		<copy file ="${basedir}/WEB-INF/web.xml" todir="${build.classes}/.."/>
 		<mkdir dir="${jar.dir}"/>
 		

@@ -17,10 +17,10 @@
 package org.apache.geronimo.ews.ws4j2ee.utils;
 
 import org.apache.axis.wsdl.fromJava.Emitter;
+import org.apache.geronimo.ews.ws4j2ee.module.Module;
+import org.apache.geronimo.ews.ws4j2ee.module.ModuleFactory;
 import org.apache.geronimo.ews.ws4j2ee.toWs.GenerationConstants;
 import org.apache.geronimo.ews.ws4j2ee.toWs.Ws4J2eeDeployContext;
-import org.apache.geronimo.ews.ws4j2ee.utils.packager.load.PackageModule;
-import org.apache.geronimo.ews.ws4j2ee.utils.packager.load.PackageModuleFactory;
 
 /**
  * @author hemapani@opensource.lk
@@ -34,7 +34,7 @@ public class AntDeployContext implements Ws4J2eeDeployContext{
 		/**
 		 * Field module
 		 */
-		private PackageModule module;
+		private Module module;
 
 		/**
 		 * Field moduleLocation
@@ -58,7 +58,7 @@ public class AntDeployContext implements Ws4J2eeDeployContext{
                                 String implStyle,
                                 String j2eeContiner) {
             module =
-                    PackageModuleFactory.createPackageModule(moduleLocation,parentCL, true);
+                    ModuleFactory.createPackageModule(moduleLocation,parentCL);
             this.moduleLocation = moduleLocation;
             this.outputLocation = outputLocation;
             this.implStyle = implStyle;
@@ -75,7 +75,7 @@ public class AntDeployContext implements Ws4J2eeDeployContext{
 									   String outputLocation,
                                        ClassLoader parentCL) {
 			module =
-					PackageModuleFactory.createPackageModule(moduleLocation,parentCL, true);
+					ModuleFactory.createPackageModule(moduleLocation,parentCL);
 			this.moduleLocation = moduleLocation;
 			this.outputLocation = outputLocation;
 		}
@@ -103,7 +103,7 @@ public class AntDeployContext implements Ws4J2eeDeployContext{
 		 *
 		 * @return
 		 */
-		public PackageModule getModule() {
+		public Module getModule() {
 			return module;
 		}
 

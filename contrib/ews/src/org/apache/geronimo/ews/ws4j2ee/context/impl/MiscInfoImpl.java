@@ -59,7 +59,7 @@ public class MiscInfoImpl implements MiscInfo {
     private String targetJ2EEContainer = GenerationConstants.JBOSS_CONTAINER;
     private String implStyle = GenerationConstants.USE_LOCAL_AND_REMOTE;
     private boolean seiExists = false;
-    private Vector classpathelements;
+    private ArrayList classpathelements;
     private boolean compile = true;
 
     private WSCFHandler[] handlers;
@@ -283,14 +283,14 @@ public class MiscInfoImpl implements MiscInfo {
     /* (non-Javadoc)
      * @see org.apache.geronimo.ews.ws4j2ee.context.MiscInfo#getClasspathElements()
      */
-    public Vector getClasspathElements() {
+    public ArrayList getClasspathElements() {
         return classpathelements;
     }
 
     /* (non-Javadoc)
      * @see org.apache.geronimo.ews.ws4j2ee.context.MiscInfo#setClassPathElements()
      */
-    public void setClassPathElements(Vector classpathelements) {
+    public void setClassPathElements(ArrayList classpathelements) {
         this.classpathelements = classpathelements;
     }
     /**

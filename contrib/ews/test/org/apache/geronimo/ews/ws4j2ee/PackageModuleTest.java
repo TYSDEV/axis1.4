@@ -22,9 +22,9 @@ import java.net.URL;
 import java.net.URLClassLoader;
 
 import org.apache.geronimo.ews.AbstractTestCase;
+import org.apache.geronimo.ews.ws4j2ee.module.Module;
+import org.apache.geronimo.ews.ws4j2ee.module.ModuleFactory;
 import org.apache.geronimo.ews.ws4j2ee.toWs.GenerationFault;
-import org.apache.geronimo.ews.ws4j2ee.utils.packager.load.PackageModule;
-import org.apache.geronimo.ews.ws4j2ee.utils.packager.load.PackageModuleFactory;
 
 /**
  * @author Srinath Perera(hemapani@opensource.lk)
@@ -40,19 +40,17 @@ public class PackageModuleTest extends AbstractTestCase {
 
     public void testLoadWarFile()
         throws GenerationFault, ClassNotFoundException {
-        PackageModule wmod =
-            PackageModuleFactory.createPackageModule(
-                getTestFile("target/generated/samples/simple.war"),
-                true);
+        Module wmod =
+            ModuleFactory.createPackageModule(
+                getTestFile("target/generated/samples/simple.war"));
         ClassLoader cl = wmod.getClassLoaderWithPackageLoaded();
         cl.loadClass("com.jwsbook.jaxrpc.BookQuote");
     }
     public void testLoadEarFile()
         throws GenerationFault, ClassNotFoundException {
-        PackageModule wmod =
-            PackageModuleFactory.createPackageModule(
-                getTestFile("target/generated/samples/bookquote.ear"),
-                true);
+        Module wmod =
+            ModuleFactory.createPackageModule(
+                getTestFile("target/generated/samples/bookquote.ear"));
         ClassLoader cl = wmod.getClassLoaderWithPackageLoaded();
         cl.loadClass("com.jwsbook.jaxrpc.BookQuote");
     }

@@ -28,8 +28,8 @@ import org.apache.axis.utils.CLOptionDescriptor;
 import org.apache.axis.utils.CLUtil;
 import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.wsdl.fromJava.Emitter;
-import org.apache.geronimo.ews.ws4j2ee.utils.packager.load.PackageModule;
-import org.apache.geronimo.ews.ws4j2ee.utils.packager.load.PackageModuleFactory;
+import org.apache.geronimo.ews.ws4j2ee.module.Module;
+import org.apache.geronimo.ews.ws4j2ee.module.ModuleFactory;
 
 
 
@@ -37,7 +37,7 @@ import org.apache.geronimo.ews.ws4j2ee.utils.packager.load.PackageModuleFactory;
  * @author hemapani
  */
 public class Ws4J2eeServerCLOptionParser implements Ws4J2eeDeployContext{
-	private PackageModule module;
+	private Module module;
 	private String outPutLocation;
 	private String moduleLocation = null;
 	private String implStyle = GenerationConstants.USE_LOCAL_AND_REMOTE;
@@ -374,7 +374,7 @@ public class Ws4J2eeServerCLOptionParser implements Ws4J2eeDeployContext{
 				 }
 
 				moduleLocation = option.getArgument();
-				module = PackageModuleFactory.createPackageModule(moduleLocation,true); 
+				module = ModuleFactory.createPackageModule(moduleLocation); 
 				break;
 
 			 case METHODS_ALLOWED_OPT:
@@ -687,7 +687,7 @@ public class Ws4J2eeServerCLOptionParser implements Ws4J2eeDeployContext{
     /**
      * @return
      */
-    public PackageModule getModule() {
+    public Module getModule() {
         return module;
     }
 
@@ -701,7 +701,7 @@ public class Ws4J2eeServerCLOptionParser implements Ws4J2eeDeployContext{
     /**
      * @param module
      */
-    public void setModule(PackageModule module) {
+    public void setModule(Module module) {
         this.module = module;
     }
 

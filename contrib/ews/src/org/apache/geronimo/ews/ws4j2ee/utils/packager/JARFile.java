@@ -95,20 +95,13 @@ public class JARFile {
         BufferedOutputStream bo =
             new BufferedOutputStream(new FileOutputStream(path));
         JarOutputStream jo = new JarOutputStream(bo);
+        
         Iterator it = jarEntries.values().iterator();
         for (; it.hasNext();) {
 
             JARFileEntry jarentry = (JARFileEntry) it.next();
-			log.info(jarentry.getJarEntry().getName() + " adding");
+			System.out.println(jarentry.getJarEntry().getName() + " adding");
             InputStream instream = null;
-            //            File input = new File(jarentry.getSource());
-
-            //
-            //            if (input.exists())
-            //                instream = new FileInputStream(input);
-            //            else
-            //                instream = JARFile.class.getClassLoader()
-            //                        .getResourceAsStream(jarentry.getSource());
             instream = jarentry.getSource();
 
             BufferedInputStream source = new BufferedInputStream(instream);

@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Properties;
 import java.util.Vector;
 import java.util.jar.JarOutputStream;
@@ -112,7 +113,7 @@ public class AntExecuter{
         ModulePackager module = new ModulePackager(new File(outDir,jarName+"-ewsImpl.jar"));
         module.addClassFiles(dest);
             
-        Vector classpathelements = wscontext.getMiscInfo().getClasspathElements();
+        ArrayList classpathelements = wscontext.getMiscInfo().getClasspathElements();
         if(classpathelements != null){
             for(int i = 0;i<classpathelements.size();i++){
                 module.addJarFile((File)classpathelements.get(i));               

@@ -16,7 +16,7 @@
 
 package org.apache.geronimo.ews.ws4j2ee.toWs;
 
-import org.apache.geronimo.ews.ws4j2ee.utils.packager.load.PackageModule;
+import org.apache.geronimo.ews.ws4j2ee.module.Module;
 
 /**
  * @author hemapani@opensource.lk
@@ -24,7 +24,7 @@ import org.apache.geronimo.ews.ws4j2ee.utils.packager.load.PackageModule;
 public interface Ws4J2eeDeployContext {
 	public int getMode();
 	public String getWsdlImplFilename();
-	public PackageModule getModule();
+	public Module getModule();
 	public String getModuleLocation();
 	public String getContanier();
 	public String getImplStyle();

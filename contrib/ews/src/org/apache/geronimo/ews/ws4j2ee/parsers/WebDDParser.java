@@ -22,6 +22,7 @@ import org.apache.geronimo.ews.ws4j2ee.context.J2EEWebServiceContext;
 import org.apache.geronimo.ews.ws4j2ee.context.impl.WebDDContextImpl;
 import org.apache.geronimo.ews.ws4j2ee.context.j2eeDD.WebContext;
 import org.apache.geronimo.ews.ws4j2ee.toWs.GenerationFault;
+import org.apache.geronimo.ews.ws4j2ee.toWs.UnrecoverableGenerationFault;
 import org.apache.geronimo.ews.ws4j2ee.utils.EWSUtils;
 import org.apache.geronimo.ews.ws4j2ee.utils.Utils;
 import org.w3c.dom.Document;
@@ -54,19 +55,21 @@ public class WebDDParser {
 	}
 
 	public void parse(InputStream inputStream) throws GenerationFault {
-		try {
 			Document doc = EWSUtils.createDocument(inputStream);
 			Element root =  doc.getDocumentElement();
 			NodeList sevlele = root.getElementsByTagName("servlet");
-			if(sevlele.getLength()>0){
-				Element serv = (Element)sevlele.item(0);
-				servletClass = Utils.getElementValue(serv.getElementsByTagName("servlet-class"));
-				servletName = Utils.getElementValue(serv.getElementsByTagName("servlet-name"));
+            int count = 0;
+            while(count < sevlele.getLength()){
+				Element serv = (Element)sevlele.item(count);
+                servletName = Utils.getElementValue(serv.getElementsByTagName("servlet-name"));
+                if(servletName.equals(j2eewscontext.getMiscInfo().getJ2eeComponetLink())){
+                    servletClass = Utils.getElementValue(serv.getElementsByTagName("servlet-class"));
+                    context = new WebDDContextImpl(servletClass,servletName);
+                    return;
+                }    
+                count++;
 			}
-			context = new WebDDContextImpl(servletClass,servletName);
-		} catch (Exception e) {
-			throw GenerationFault.createGenerationFault(e);
-		}
+			throw new UnrecoverableGenerationFault("J2EE link not found");
 	}
 	
 	
