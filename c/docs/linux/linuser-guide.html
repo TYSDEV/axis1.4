@@ -1328,8 +1328,13 @@
 </strong><strong>- ansi -g -O2 -c ./*.cpp -fPIC</strong>
 </p>
 <p>
-<strong>$ g++ -g -O2 -o interopbase InteropBaseClient.o SOAPStruct.o InteropTestPortType.o $AXISCPP_HOME/lib/axis/libaxiscpp_client.a $AXISCPP_HOME/bin/libaxiscpp_mod.a -L$AXISCPP_HOME/lib/xerces-c -lxerces-c -ldl<br>
+<strong>$ g++ -g -O2 -o interopbase InteropBaseClient.o SOAPStruct.o InteropTestPortType.o $AXISCPP_HOME/lib/axis/libaxiscpp_client.a $AXISCPP_HOME/bin/libaxiscpp_mod.a -L$AXISCPP_HOME/lib/xerces-c -lxerces-c -ldl</strong><br>
 
+</p>
+
+<p>
+Note that in the above command replace libaxiscpp_mod.a with libaxiscpp_mod2.a if you work with
+apache2
 </p>
 <p>Start the Apache Server(Assuming base service is deployed.)</p>
 <p>
@@ -2269,8 +2274,14 @@
 </p>
 
 <p>
-<strong>$ g++ -g -O2 -o interopbase InteropBaseClient.o SOAPStruct.o InteropTestPortType.o $AXISCPP_HOME/lib/axis/libaxiscpp_client.a $AXISCPP_HOME/bin/libaxiscpp_mod.a -L$AXISCPP_HOME/lib/xerces-c -lxerces-c -ldl<br>
+<strong>$ g++ -g -O2 -o interopbase InteropBaseClient.o SOAPStruct.o InteropTestPortType.o $AXISCPP_HOME/lib/axis/libaxiscpp_client.a $AXISCPP_HOME/bin/libaxiscpp_mod.a -L$AXISCPP_HOME/lib/xerces-c -lxerces-c -ldl </strong><br>
 </p>
+<p>
+Note that in the above command replace libaxiscpp_mod.a with libaxiscpp_mod2.a if you work with
+apache2
+</p>
+
+
 <p>Start the Apache Server(Assuming base service is deployed.)</p>
 
 <p>
