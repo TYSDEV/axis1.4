@@ -87,6 +87,7 @@ private:
 	const Ax_soapstream* m_pInputStream;
 	char m_hugebuffer[HUGE_BUFFER_SIZE];
 	Param* m_pLastArrayParam;
+	int m_Status;
 public:
 	int GetVersion();
 	const AxisChar* GetMethodName();
@@ -138,6 +139,7 @@ public:
     long GetDuration();
 	void* CreateArray(XSDTYPE nType, int nSize);
 	void DeleteArray(Axis_Array* pArray , XSDTYPE nType);
+	int GetStatus(){ return m_Status;};
 };
 
 #endif // !defined(AFX_SOAPDESERIALIZER_H__FD0E7C3B_B887_480A_9E2A_20736A88B09B__INCLUDED_)

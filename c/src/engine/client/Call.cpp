@@ -273,14 +273,14 @@ int Call::Invoke()
 			if (!m_ReturnCplxObj.pObject)
 				return AXIS_FAIL;
 			m_ReturnCplxObj.pDZFunct(m_ReturnCplxObj.pObject, m_pMsgData->m_pDZ);
-
+			return m_pIWSDZ->GetStatus();
 		}
 		else if (XSD_ARRAY == m_nReturnType)
 		{
 			IParam *param0 = m_pIWSDZ->GetParam(); 
 			/* now we know that this is an array. if needed we can check that too */
 			if (!m_pArray) return AXIS_FAIL; //No array expected ?
-			m_pArray->m_Size = param0->GetArraySize();
+			if (AXIS_SUCCESS != param0->GetArraySize(&(m_pArray->m_Size))) return AXIS_FAIL;
 			if (AXIS_SUCCESS == MakeArray()) //Array is allocated successfully
 			{
 				if (USER_TYPE == m_nArrayType)
@@ -288,6 +288,7 @@ int Call::Invoke()
 				else
 					param0->SetArrayElements((void*)(m_pArray->m_Array));
 				m_pIWSDZ->Deserialize(param0,0);
+				return m_pIWSDZ->GetStatus();
 			}
 			else 
 				return AXIS_FAIL; //CF_ZERO_ARRAY_SIZE_ERROR
@@ -295,6 +296,7 @@ int Call::Invoke()
 		else if (XSD_UNKNOWN != m_nReturnType)//basic type
 		{
 			m_pReturnValue = (Param*)m_pIWSDZ->GetParam();
+			return m_pIWSDZ->GetStatus();
 		}
 		else if (!m_OutParams.empty()) //there are out parameters
 		{
@@ -328,14 +330,14 @@ int Call::Invoke()
 					if (!pOutParam->m_OutCplxObj.pObject)
 						return AXIS_FAIL;
 					pOutParam->m_OutCplxObj.pDZFunct(pOutParam->m_OutCplxObj.pObject, m_pMsgData->m_pDZ);
-
+					if (AXIS_SUCCESS != m_pIWSDZ->GetStatus()) return AXIS_FAIL;
 				}
 				else if (XSD_ARRAY == pOutParam->m_nOutType)
 				{
 					IParam *param0 = m_pIWSDZ->GetParam(); 
 					/* now we know that this is an array. if needed we can check that too */
 					if (!pOutParam->m_pArray) return AXIS_FAIL; //No array expected ?
-					pOutParam->m_pArray->m_Size = param0->GetArraySize();
+					if (AXIS_SUCCESS != param0->GetArraySize(&(m_pArray->m_Size))) return AXIS_FAIL;
 					if (pOutParam->m_pArray->m_Size < 1) return AXIS_FAIL;
 					if (USER_TYPE == pOutParam->m_nArrayType)
 					{
@@ -352,6 +354,7 @@ int Call::Invoke()
 						else
 							param0->SetArrayElements((void*)(pOutParam->m_pArray->m_Array));
 						m_pIWSDZ->Deserialize(param0,0);
+						if (AXIS_SUCCESS != m_pIWSDZ->GetStatus()) return AXIS_FAIL;
 					}
 					else 
 						return AXIS_FAIL; //CF_ZERO_ARRAY_SIZE_ERROR
@@ -359,6 +362,7 @@ int Call::Invoke()
 				else if (XSD_UNKNOWN != pOutParam->m_nOutType)//basic type
 				{
 					pOutParam->m_pOutValue = (Param*)m_pIWSDZ->GetParam();
+					if (AXIS_SUCCESS != m_pIWSDZ->GetStatus()) return AXIS_FAIL;
 				}
 				else // this is an unexpected situation
 				{

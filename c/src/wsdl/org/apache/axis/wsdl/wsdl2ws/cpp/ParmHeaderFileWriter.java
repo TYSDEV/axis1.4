@@ -87,6 +87,8 @@ public class ParmHeaderFileWriter extends ParamWriter{
 			writePreprocssorStatements();
 			this.writer.write("class "+classname+"\n{\n");
 			writeAttributes();
+			writer.write("\t"+classname+"();\n");
+			writer.write("\t~"+classname+"();\n");
 			this.writer.write("};\n\n");
 			this.writer.write("#endif // !defined(__"+classname.toUpperCase()+"_"+getFileType().toUpperCase()+"_H__INCLUDED_)\n");
 			writer.flush();

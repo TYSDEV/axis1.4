@@ -208,7 +208,7 @@ int ArrayBean::DeSerialize(IWrapperSoapDeSerializer *pDZ)
 			{
 				p = (Param*)pDZ->GetParam();
 				if (!p) return AXIS_FAIL;
-				a[ix] = p->GetByte();
+				if(AXIS_SUCCESS != p->GetByte(&a[ix])) return AXIS_FAIL;
 			}		
 		}
 		break;
@@ -222,7 +222,7 @@ int ArrayBean::DeSerialize(IWrapperSoapDeSerializer *pDZ)
 			{
 				p = (Param*)pDZ->GetParam();
 				if (!p) return AXIS_FAIL;
-				a[ix] = p->GetShort();
+				if(AXIS_SUCCESS != p->GetShort(&a[ix])) return AXIS_FAIL;
 			}		
 		}
 		break;
@@ -238,7 +238,7 @@ int ArrayBean::DeSerialize(IWrapperSoapDeSerializer *pDZ)
 			{
 				p = (Param*)pDZ->GetParam();
 				if (!p) return AXIS_FAIL;
-				a[ix] = p->GetLong();
+				if(AXIS_SUCCESS != p->GetLong(&a[ix])) return AXIS_FAIL;
 			}		
 		}
 		break;
@@ -252,7 +252,7 @@ int ArrayBean::DeSerialize(IWrapperSoapDeSerializer *pDZ)
 			{
 				p = (Param*)pDZ->GetParam();
 				if (!p) return AXIS_FAIL;
-				a[ix] = p->GetDouble();
+				if(AXIS_SUCCESS != p->GetDouble(&a[ix])) return AXIS_FAIL;
 			}		
 		}
 		break;
@@ -272,7 +272,7 @@ int ArrayBean::DeSerialize(IWrapperSoapDeSerializer *pDZ)
 			{
 				p = (Param*)pDZ->GetParam();
 				if (!p) return AXIS_FAIL;
-				a[ix] = p->GetDate();
+				if(AXIS_SUCCESS != p->GetDate(&a[ix])) return AXIS_FAIL;
 			}		
 		}
 		break;	
@@ -287,7 +287,7 @@ int ArrayBean::DeSerialize(IWrapperSoapDeSerializer *pDZ)
 			{
 				p = (Param*)pDZ->GetParam();
 				if (!p) return AXIS_FAIL;
-				a[ix] = p->GetInt();
+				if(AXIS_SUCCESS != p->GetInt(&a[ix])) return AXIS_FAIL;
 			}
 		}
 		break;
@@ -300,7 +300,7 @@ int ArrayBean::DeSerialize(IWrapperSoapDeSerializer *pDZ)
 			{
 				p = (Param*)pDZ->GetParam();
 				if (!p) return AXIS_FAIL;
-				a[ix] = p->GetFloat();
+				if(AXIS_SUCCESS != p->GetFloat(&a[ix])) return AXIS_FAIL;
 			}
 		}
 		break;
@@ -312,13 +312,15 @@ int ArrayBean::DeSerialize(IWrapperSoapDeSerializer *pDZ)
 	case XSD_NOTATION:			
 		{
 			AxisString* a = (AxisString*)m_value.sta;
+			const AxisChar* pch;
 			list<int>::iterator it = m_size.begin();
 			int blocksize = GetArrayBlockSize(it);
 			for (int ix=0;ix<blocksize;ix++)
 			{
 				p = (Param*)pDZ->GetParam();
 				if (!p) return AXIS_FAIL;
-				a[ix] = p->GetString();
+				if(AXIS_SUCCESS != p->GetString(&pch)) return AXIS_FAIL;
+				if (pch) a[ix] = pch;
 			}
 		}
 		break;
