@@ -789,7 +789,7 @@
 <p>The Folder called deploy in the <strong>$AXISCPP_HOME/</strong> should be copied to apache root folder .Rename the deploy folder as <strong>"Axis"</strong>. Give all permissions to this folder.</p>
 
 <p>
-<strong>$ cp &ndash;rf $AXISCPP_HOME/deloy /usr/local/apache</strong>
+<strong>$ cp &ndash;rf $AXISCPP_HOME/deploy /usr/local/apache</strong>
 </p>
 <p>
 <strong>$ cd /usr/local/apache</strong>
@@ -823,7 +823,7 @@
 <p>
 <strong>-lxerces-c -Wl,-soname -Wl,libinteropbase.so.0 -o libinteropbase.so ./*.o</strong>
 </p>
-<p>By typing this in the command line the dynamic library ( <strong>libinteropbase.so</strong> for example) is created which is used for the deployment. This library is automatically is placed in</p>
+<p>By typing this in the command line the dynamic library ( <strong>libinteropbase.so</strong> for example) is created which is used for the deployment. This library has to be placed in</p>
 
 <p>
 <strong>$AXIS_HOME/webservices where $AXIS_HOME = /usr/local/apache/Axis</strong>
@@ -834,8 +834,6 @@
 <br>
 <strong>&lt;deployment xmlns="http://xml.apache.org/axis/wsdd/"xmlns:C="http://xml.apache.org/axis/wsdd/providers/c"&gt;</strong>
 <br>
-<strong>&lt;globalConfiguration&gt;</strong>
-
 <br>
 <strong>&lt; service name="InteropBase" provider="C:RPC" description="SOAPBuilders Interoperability Lab Round 2 base test suite described at http://www.whitemesa.com/interop/proposal2.html "&gt;</strong>
 <br>
@@ -1342,6 +1340,9 @@ apache2
 </p>
 <p>to run</p>
 <p>
+<strong>$ cd $AXISCPP_HOME/samples/client/interoptests/base
+</p>
+<p>
 <strong>$ ./interopbase</strong>
 </p>
 <p>
@@ -1351,7 +1352,7 @@ apache2
 
 <h3>Handler Sample</h3>
 </div>
-<p>If you want to test handlers go into the <strong>$AXISCPP_HOME/src/server/handlers</strong> folder where example handlers are included (If you use the binary download sample handler libraries are included in <strong>$(AXIS_HOME)/handlers</strong> folder(assuming that you created this folder as described in installation guide). Several sample handlers are included there covering the concepts of service specific, global and transport handlers. We will show you the detail of running a service specific handler named loghandler. The task of this handler is writing to a file the number of times the service is accessed.</p>
+<p>If you want to test handlers go into the <strong>$AXISCPP_HOME/src/server/handlers</strong> folder where example handlers are included. Several sample handlers are included there covering the concepts of service specific, global and transport handlers. We will show you the detail of running a service specific handler named loghandler. The task of this handler is writing to a file the number of times the service is accessed.</p>
 <p>
 <strong>cd $AXISCPP_HOME/src/server/handlers/custom/loghandler</strong>
 </p>
@@ -1401,7 +1402,7 @@ apache2
 <br>
 <strong>&lt;/service&gt;</strong>
 </p>
-<p>Restart the apache web server and test your handler using the web service client for InteropBase webservice. When the client is run an entry will be added to <strong>/usr/local/apache/Axis/handlers/custom/loghandler/LogAccessCountFile</strong> Note that the folder in which the LogAccessCountFile is created should have write access. You can test the global handlers and transport handlers in a similar manner. Note the change you have to make in server.wsdd. You can see how this is done in the specimen folder <strong>$AXISCPP_HOME/deploy/conf/server.wsdd</strong>.</p>
+<p>Restart the apache web server and test your handler using the web service client for InteropBase webservice. When the client is run an entry will be added to <strong>$AXIS_HOME/handlers/custom/loghandler/LogAccessCountFile</strong> Note that the folder in which the LogAccessCountFile is created should have write access. You can test the global handlers and transport handlers in a similar manner. Note the change you have to make in server.wsdd. You can see how this is done in the specimen folder <strong>$AXISCPP_HOME/deploy/conf/server.wsdd</strong>.</p>
 <p>
 <a name="Download1"></a>
 </p>
@@ -1755,7 +1756,7 @@ apache2
 </div>
 <p>The Folder called deploy in the <strong>$AXISCPP_HOME</strong> should be copied to apache root folder .Rename the deploy folder as <strong>"Axis"</strong>. Give all permissions to this folder.</p>
 <p>
-<strong>$ cp &ndash;rf $AXISCPP_HOME/deloy /usr/local/apache</strong>
+<strong>$ cp &ndash;rf $AXISCPP_HOME/deploy /usr/local/apache</strong>
 </p>
 
 <p>
@@ -1774,7 +1775,7 @@ apache2
 </p>
 <p>Type the Following Command to build the service(You can always use makefiles instead of the following commands to build.)</p>
 <p>
-<strong>cd $AXISCPP_HOME/samples/server/introptest/base</strong>
+<strong>cd $AXISCPP_HOME/samples/server/introptests/base</strong>
 </p>
 <p>
 <strong>$ g++ -DHAVE_CONFIG_H -I. -I. -I.. -I$AXISCPP_HOME/include -Wshadow -Wall<br>
@@ -1782,10 +1783,9 @@ apache2
 </p>
 <p>
 
-<strong>$ g++ -shared -Wl,--whole-archive -Wl,--no-whole-archive -I. -I.. -L$AXISCPP_HOME/lib/xerces-c<br>
-</strong><strong>-lxerces-c -Wl,-soname -Wl,libinteropbase.so.0 -o libinteropbase.so ./*.o</strong>
+<strong>$ g++ -shared -Wl,--whole-archive -Wl,--no-whole-archive -I. -I.. -L$AXISCPP_HOME/lib/xerces-c -lxerces-c -Wl,-soname -Wl,libinteropbase.so.0 -o libinteropbase.so ./*.o</strong>
 </p>
-<p>By typing this in the command line the dynamic library ( <strong>libinteropbase.so</strong> for example) is created which is used for the deployment. This library is automatically is placed in</p>
+<p>By typing this in the command line the dynamic library ( <strong>libinteropbase.so</strong> for example) is created which is used for the deployment. This library has to be placed in</p>
 <p>
 <strong>$AXIS_HOME/webservices where $AXIS_HOME = /usr/local/apache/Axis</strong>
 </p>
@@ -1796,8 +1796,6 @@ apache2
 <br>
 <strong>&lt;deployment xmlns="http://xml.apache.org/axis/wsdd/" xmlns:C="http://xml.apache.org/axis/wsdd/providers/c"&gt;</strong>
 </p>
-<p>
-<strong>&lt;globalConfiguration&gt;</strong>
 <br>
 <strong>&lt; service name="InteropBase" provider="C:RPC" description="SOAPBuilders Interoperability Lab Round 2 base test suite described at http://www.whitemesa.com/interop/proposal2.html "&gt;</strong>
 <br>
@@ -2289,6 +2287,9 @@ apache2
 </p>
 <p>To Run</p>
 <p>
+<strong>$ cd $AXISCPP_HOME/samples/client/interoptests/base
+</p>
+<p>
 <strong>$ ./interopbase</strong>
 </p>
 <p>
@@ -2298,7 +2299,7 @@ apache2
 <h3>Handler Sample</h3>
 </div>
 
-<p>Sample handler libraries are included in <strong>$(AXIS_HOME)/handlers</strong> folder(assuming that you created this folder as described in installation guide). Several sample handlers are included there covering the concepts of service specific, global and transport handlers. We will show you the detail of running a service specific handler named loghandler. The task of this handler is writing to a file the number of times the service is accessed.</p>
+<p>Sample handler libraries are included in <strong>$(AXISCPP_HOME)/src/server/handlers</strong> folder. Several sample handlers are included there covering the concepts of service specific, global and transport handlers. We will show you the detail of running a service specific handler named loghandler. The task of this handler is writing to a file the number of times the service is accessed.</p>
 <p>
 <strong>cp -rf $AXISCPP_HOME/deploy/handlers $(AXIS_HOME)/</strong>
 </p>
