@@ -62,7 +62,6 @@ import org.apache.axis.message.SAX2EventRecorder;
 import org.apache.axis.message.SAXOutputter;
 import org.apache.axis.message.SOAPHandler;
 import org.apache.axis.Part;
-import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
 
 import org.apache.axis.components.logger.LogFactory;
@@ -99,7 +98,7 @@ public class DeserializerImpl extends SOAPHandler
     protected Vector targets = null;
 
     protected QName defaultType = null;
-    private boolean componentsReady = true;
+    protected boolean componentsReady = true;
 
 
     /** 

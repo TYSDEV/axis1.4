@@ -56,24 +56,18 @@ package org.apache.axis.message;
 
 import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
-import org.apache.axis.MessageContext;
-import org.apache.axis.client.Service;
-import org.apache.axis.client.Call;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.Deserializer;
 import org.apache.axis.encoding.Callback;
 import org.apache.axis.encoding.CallbackTarget;
-import org.apache.axis.utils.ClassUtils;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.w3c.dom.Element;
-import org.w3c.dom.Text;
 
 import javax.xml.namespace.QName;
 
 import java.util.HashMap;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.lang.reflect.Constructor;
 
 /** 
@@ -85,6 +79,9 @@ import java.lang.reflect.Constructor;
  */
 public class SOAPFaultBuilder extends SOAPHandler implements Callback
 {
+    boolean waiting = false;
+    boolean passedEnd = false;
+
     protected SOAPFault element;
     protected DeserializationContext context;
     static HashMap fields = new HashMap();
@@ -113,6 +110,12 @@ public class SOAPFaultBuilder extends SOAPHandler implements Callback
     
     void setFaultData(Object data) {
         faultData = data;
+        if (waiting && passedEnd) {
+            // This happened after the end of the <soap:Fault>, so make
+            // sure we set up the fault.
+            createFault();
+        }
+        waiting = false;
     }
 
     public void setFaultClass(Class faultClass) {
@@ -126,7 +129,21 @@ public class SOAPFaultBuilder extends SOAPHandler implements Callback
                            DeserializationContext context)
             throws SAXException {
         super.endElement(namespace, localName, context);
-        
+        if (!waiting) {
+            createFault();
+        } else {
+            passedEnd = true;
+        }
+    }
+
+    void setWaiting(boolean waiting) {
+        this.waiting = waiting;
+    }
+
+    /**
+     * When we're sure we have everything, this gets called.
+     */
+    private void createFault() {
         AxisFault f = null;
         if (faultClass != null) {
             // Custom fault handling
@@ -139,10 +156,10 @@ public class SOAPFaultBuilder extends SOAPHandler implements Callback
                         // This is our exception class
                         f = (AxisFault) faultData;
                     } else {
-                        // We need to create the exception, 
+                        // We need to create the exception,
                         // passing the data to the constructor.
                         Class argClass = ConvertWrapper(faultData.getClass());
-                        Constructor con = 
+                        Constructor con =
                                 faultClass.getConstructor(
                                         new Class[] { argClass });
                         f = (AxisFault) con.newInstance(new Object[] { faultData });
@@ -167,12 +184,12 @@ public class SOAPFaultBuilder extends SOAPHandler implements Callback
         }
 
         if (f == null) {
-            f  = new AxisFault(faultCode, 
-                               faultString, 
-                               faultActor, 
+            f  = new AxisFault(faultCode,
+                               faultString,
+                               faultActor,
                                faultDetails);
         }
-        
+
         element.setFault(f);
     }
 
@@ -248,7 +265,6 @@ public class SOAPFaultBuilder extends SOAPHandler implements Callback
         } else if (name.equals(Constants.ELEM_FAULT_ACTOR)) {
             faultActor = (String) value;
         }
-        
     }
 
     /**

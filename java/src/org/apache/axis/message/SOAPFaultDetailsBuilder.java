@@ -54,7 +54,6 @@
  */
 package org.apache.axis.message;
 
-import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
 import org.apache.axis.MessageContext;
 import org.apache.axis.client.Service;
@@ -66,17 +65,10 @@ import org.apache.axis.encoding.CallbackTarget;
 import org.apache.axis.utils.ClassUtils;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
-import org.w3c.dom.Element;
-import org.w3c.dom.Text;
 
 import javax.xml.namespace.QName;
 
-import java.util.HashMap;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.lang.reflect.Constructor;
-
-/** 
+/**
  * Handle deserializing fault details.
  * 
  * @author Glen Daniels (gdaniels@macromedia.com)
@@ -90,7 +82,6 @@ public class SOAPFaultDetailsBuilder extends SOAPHandler implements Callback
         this.builder = builder;
     }
 
-
     public SOAPHandler onStartChild(String namespace,
                                     String name,
                                     String prefix,
@@ -98,8 +89,6 @@ public class SOAPFaultDetailsBuilder extends SOAPHandler implements Callback
                                     DeserializationContext context)
         throws SAXException
     {
-        Deserializer currentDeser = null;
-        
         // Get QName of element
         QName qn = new QName(namespace, name); 
                         
@@ -122,6 +111,7 @@ public class SOAPFaultDetailsBuilder extends SOAPHandler implements Callback
             if (info != null && info.cls != null) {
                 // Set the class
                 builder.setFaultClass(info.cls);
+                builder.setWaiting(true);
                 // register callback for the data, use the xmlType from fault info
                 Deserializer dser = context.getDeserializerForType(info.xmlType);
                 dser.registerValueTarget(new CallbackTarget(this, "faultData"));
@@ -140,7 +130,6 @@ public class SOAPFaultDetailsBuilder extends SOAPHandler implements Callback
      */
     public void setValue(Object value, Object hint)
     {
-        String name = (String)hint;
         if ("faultData".equals(hint)) {
             builder.setFaultData(value);
         } else if ("exceptionName".equals(hint)) {

@@ -213,6 +213,7 @@ public class SimpleDeserializer extends DeserializerImpl {
         }
         try {
             value = makeValue(val.toString());
+            componentsReady = true;
         } catch (InvocationTargetException ite) {
             Throwable realException = ite.getTargetException();
             if (realException instanceof Exception)
