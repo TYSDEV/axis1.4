@@ -188,7 +188,7 @@ public class BeanParamWriter extends ParamCPPFileWriter{
 					elm = attribs[i].getTypeName();					
 				writer.write("\tparam->"+attribs[i].getParamNameAsMember()+" = ("+attribs[i].getTypeName()+"*)pIWSDZ->getCmplxObject((void*)Axis_DeSerialize_"+attribs[i].getTypeName()+
 					"\n\t\t, (void*)Axis_Create_"+attribs[i].getTypeName()+", (void*)Axis_Delete_"+attribs[i].getTypeName()+
-					"\n\t\t, \""+ attribs[i].getParamName()+"\", Axis_URI_"+attribs[i].getTypeName()+");\n");				
+					"\n\t\t, \""+ attribs[i].getParamNameAsSOAPElement()+"\", Axis_URI_"+attribs[i].getTypeName()+");\n");				
 			}		
 		}
 		writer.write("\treturn pIWSDZ->getStatus();\n");
