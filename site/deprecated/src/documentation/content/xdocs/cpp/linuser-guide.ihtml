@@ -141,10 +141,8 @@
 <h3>Installing Axis and Using this Guide</h3>
 </div>
 <p>See the Axis Installation Guide for instructions on installing Axis C++</p>
-<p>Before running the examples in this guide, you'll need to make sure that your environment variables and other configurations are set correctly as described in Installation guide. That is you need</p>
-<p>- Axis C++</p>
-<p>- Apache1.3 (or Apache2.0)</p>
-<p>- expat</p>
+<p>Before running the examples in this guide, you'll need to make sure that your environment variables and other configurations are set correctly as described in Installation guide. In addition you need </p>
+
 <p>- j2SDK1.4</p>
 <p>installed and configured.</p>
 <p>
@@ -252,34 +250,16 @@ $ ant
 <a name="Deploying"></a>
 </p>
 <div class="h3">
-<h3>Deploying the Service</h3>
+<h3>Building and Deploying the Service</h3>
 </div>
-<p>The Folder called deploy in the <strong>$AXISCPP_HOME/</strong> should be copied to a folder of your choice .Rename the deploy folder as <strong>"Axis"</strong> . Give all permissions to this folder.</p>
-<p>
-<strong>$ cp &ndash;rf $AXISCPP_HOME/deploy /usr/local</strong>
-</p>
-<p>
-<strong>$ cd /usr/local</strong>
-</p>
-<p>
-<strong>$ mv deploy Axis</strong>
-</p>
-<p>
-<strong>$ chmod -R 777 Axis</strong>
-</p>
-<p>Now set the environment variable <strong>AXIS_HOME</strong> pointing to this directory.</p>
-<p>
-<strong>AXIS_HOME="/usr/local/Axis"</strong>
-</p>
-<p>Note that inside $AXIS_HOME directory there are files called axiscpp.conf_linux and axiscpp.conf_win. Rename axiscpp.conf_linux to axiscpp.conf.&nbsp; Make sure that it has read permissions. This file contains key, value pairs of paths used by the Axis Soap Engine. You can change the WSDDFILEPATH and AXISLOGPATH inside this file according to your choice.</p>
-<p>$ <strong>cd</strong> <strong>$AXISCPP_HOME/samples/server<br>$ sh build.sh<br>
-</strong>
-<br>
-<br>By typing above in&nbsp; the command line the dynamic library ( <strong>libcalculator.so</strong> for example) is created and installed<br>in<br>
-</p>
-<p>
-<strong>$AXIS_HOME/webservices where $AXIS_HOME = /usr/local/apache/Axis</strong>
-</p>
+<p> To build the service library </p>
+
+<p> <strong> g++ -shared -I$AXISCPP_HOME/include -olibmyservice.so *.cpp </strong> </p>
+
+<p>  libmyservice.so is the name you give to your service library. You can give any name you wish. But remeber to prefix with lib and suffix with .so </p>
+
+<p> Copy this service library int $AXICPP_DEPLOY/lib  </p>
+
 <p>Modify the <strong>$AXIS_HOME/conf/</strong><strong>server.wsdd</strong> .&nbsp; (You have a sample server.wsdd file entry given below appropriately filled for this service).</p>
 <p>
 <strong>&lt;?xml version="1.0" encoding="UTF-8"?&gt;</strong>
