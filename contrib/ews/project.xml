@@ -170,6 +170,13 @@
           <include>**/*.properties</include>
         </includes>
       </resource>
+      <resource>
+        <directory>schema</directory>
+        <includes>
+              <include>*.dtd</include>
+		  <include>*.xsd</include>
+        </includes>
+      </resource>
     </resources>
   </build>
 
