@@ -85,6 +85,7 @@ public class Cldc10TypeMappingImpl extends DefaultTypeMappingImpl {
     }
 
     protected Cldc10TypeMappingImpl() {
+        super(true); // Follow JAX-RPC 1.1 mapping first
         registerSOAPTypes();        
     }
 

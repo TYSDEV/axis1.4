@@ -90,8 +90,8 @@ public class J2meEmitter extends Emitter {
 
     		final TypeMapping defaultTM =
     		isCldc10 ? Cldc10TypeMappingImpl.createWithDelegate() :
-    		DefaultSOAPEncodingTypeMappingImpl.createWithDelegate() ;
-
+    		DefaultSOAPEncodingTypeMappingImpl.createWithDelegate(true) ; // Follow JAX-RPC 1.1 mapping
+        
     		public String getBaseName(QName qNameIn) {
 
     			javax.xml.namespace.QName qName =
