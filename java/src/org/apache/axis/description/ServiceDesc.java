@@ -1140,21 +1140,27 @@ public class ServiceDesc {
                 operation.addFault(fault);
                 */
 
-                // Create a single part with the dummy name "fault"
-                // that locates the complexType for this exception.
-                ParameterDesc param = new ParameterDesc(
-                     new QName("", "fault"),
-                     ParameterDesc.IN,
-                     tm.getTypeQName(ex));
-                param.setJavaType(ex);
-                ArrayList exceptionParams = new ArrayList();
-                exceptionParams.add(param);
+                FaultDesc fault = operation.getFaultByClass(ex);
+                if (fault == null) {
+                    QName xmlType = tm.getTypeQName(ex);
+                    // Create a single part with the dummy name "fault"
+                    // that locates the complexType for this exception.
+                    ParameterDesc param = new ParameterDesc(
+                         new QName("", "fault"),
+                         ParameterDesc.IN,
+                         xmlType);
+                    param.setJavaType(ex);
+                    ArrayList exceptionParams = new ArrayList();
+                    exceptionParams.add(param);
+                
+                    fault = new FaultDesc();
+                    String pkgAndClsName = ex.getName();
+                    fault.setName(pkgAndClsName);
+                    fault.setParameters(exceptionParams);
+                    fault.setClassName(pkgAndClsName);
+                    fault.setXmlType(xmlType);
+                }
 
-                String pkgAndClsName = ex.getName();
-                FaultDesc fault = new FaultDesc();
-                fault.setName(pkgAndClsName);
-                fault.setParameters(exceptionParams);
-                fault.setClassName(pkgAndClsName);
                 operation.addFault(fault);
             }
         }

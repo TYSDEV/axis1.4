@@ -70,6 +70,10 @@ import java.io.IOException;
 public class WSDDFault extends WSDDElement {
     FaultDesc desc;
 
+    public WSDDFault(FaultDesc desc) {
+        this.desc = desc;
+    }
+
     /**
      * Construct a WSDDFault from a DOM Element
      * @param e the &lt;fault&gt; Element
@@ -78,13 +82,19 @@ public class WSDDFault extends WSDDElement {
     public WSDDFault(Element e) throws WSDDException {
         super(e);
 
+        desc = new FaultDesc();
+        
         String qNameStr = e.getAttribute(ATTR_QNAME);
         if (qNameStr != null && !qNameStr.equals(""))
             desc.setQName(XMLUtils.getQNameFromString(qNameStr, e));
 
-        String classNameStr = e.getAttribute(ATTR_CLASSNAME);
+        String classNameStr = e.getAttribute(ATTR_CLASS);
         if (classNameStr != null && !classNameStr.equals(""))
             desc.setClassName(classNameStr);
+
+        String xmlTypeStr = e.getAttribute(ATTR_TYPE);
+        if (xmlTypeStr != null && !xmlTypeStr.equals(""))
+            desc.setXmlType(XMLUtils.getQNameFromString(xmlTypeStr, e));
     }
 
     /**
@@ -105,8 +115,12 @@ public class WSDDFault extends WSDDElement {
                            "CDATA",
                            context.qName2String(desc.getQName()));
 
-        attrs.addAttribute("", ATTR_CLASSNAME, ATTR_CLASSNAME,
+        attrs.addAttribute("", ATTR_CLASS, ATTR_CLASS,
                            "CDATA", desc.getClassName());
+
+        attrs.addAttribute("", ATTR_TYPE, ATTR_TYPE,
+                           "CDATA",
+                           context.qName2String(desc.getXmlType()));
 
         context.startElement(getElementName(), attrs);
         context.endElement();

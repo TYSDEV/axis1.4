@@ -1495,6 +1495,8 @@ public class SymbolTable {
             HashMap attributes = new HashMap();
             List bindList = binding.getBindingOperations();
             Map mimeTypes = new HashMap();
+            HashMap faultMap = new HashMap(); // name to SOAPFault from WSDL4J
+            
             for (Iterator opIterator = bindList.iterator(); opIterator.hasNext();) {
                 BindingOperation bindOp = (BindingOperation) opIterator.next();
                 BindingInput bindingInput = bindOp.getBindingInput();
@@ -1572,7 +1574,6 @@ public class SymbolTable {
                 }
 
                 // faults
-                HashMap faultMap = new HashMap(); // name to SOAPFault from WSDL4J
                 ArrayList faults = new ArrayList();
                 Iterator faultMapIter = bindOp.getBindingFaults().values().iterator();
                 for (; faultMapIter.hasNext(); ) {
@@ -1624,9 +1625,15 @@ public class SymbolTable {
                                           bindOp.getName(), 
                                           binding.getQName().toString()}));
                     }
+                    
+                    // FIXME
+                    Part p = (Part)(opFault.getMessage().getParts().values().iterator().next());
+                    QName xmlType = p.getTypeName();
+                    
                     // put the updated entry back in the map
                     faults.add(new JavaDefinitionWriter.FaultInfo(opFault, 
-                                                                  soapFault));
+                                                                  soapFault,
+                                                                  xmlType));
                 }
                 // Add this fault name and info to the map
                 faultMap.put(bindOp, faults);
@@ -1644,6 +1651,7 @@ public class SymbolTable {
                 }
             } // binding operations
             BindingEntry bEntry = new BindingEntry(binding, bindingType, bindingStyle, hasLiteral, attributes, mimeTypes);
+            bEntry.setFaults(faultMap);
             symbolTablePut(bEntry);
         }
     } // populateBindings

@@ -58,8 +58,6 @@ import org.apache.axis.Constants;
 import org.apache.axis.MessageContext;
 import org.apache.axis.description.OperationDesc;
 import org.apache.axis.description.FaultDesc;
-import org.apache.axis.client.Service;
-import org.apache.axis.client.Call;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.Deserializer;
 import org.apache.axis.encoding.Callback;
@@ -116,7 +114,9 @@ public class SOAPFaultDetailsBuilder extends SOAPHandler implements Callback
                 builder.setWaiting(true);
                 // register callback for the data, use the xmlType from fault info
                 Deserializer dser = context.getDeserializerForType(faultDesc.getXmlType());
-                dser.registerValueTarget(new CallbackTarget(this, "faultData"));
+                if (dser != null) {
+                    dser.registerValueTarget(new CallbackTarget(this, "faultData"));
+                }
                 return (SOAPHandler)dser;
             }
         }
