@@ -476,8 +476,11 @@ public class DeserializerImpl extends SOAPHandler
                     dser.moveValueTargets(this);
                     context.replaceElementHandler((SOAPHandler) dser);
                     // And don't forget to give it the start event...
+                    boolean isRef = context.isProcessingRef();
+                    context.setProcessingRef(true);
                     dser.startElement(namespace, localName, prefix,
                                       attributes, context);
+                    context.setProcessingRef(isRef);
                 } else {
                     throw new SAXException(
                                            Messages.getMessage("noDeser00", "" + type));

@@ -734,6 +734,14 @@ public class DeserializationContextImpl extends DefaultHandler implements Lexica
         return result;
     }
 
+    boolean processingRef = false;
+    public void setProcessingRef(boolean ref) {
+        processingRef = ref;
+    }
+    public boolean isProcessingRef() {
+        return processingRef;
+    }
+
     /****************************************************************
      * SAX event handlers
      */
