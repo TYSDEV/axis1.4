@@ -147,22 +147,32 @@
   <build>
     <nagEmailAddress>geronimo-dev@jakarta.apache.org</nagEmailAddress>
     <sourceDirectory>src</sourceDirectory>
-    <!--
+
     <sourceModifications> 
     	<sourceModification> 
     	  <className>org.apache.geronimo.ews.jaxrpcmapping.descriptor.JavaXmlTypeMappingType</className>
     	  <excludes>
-    			 <exclude>**/jaxb/*.java</exclude>
+    			 <exclude>org/apache/geronimo/ews/ws4j2ee/context/webservices/server/jaxb/*.java</exclude>
+          </excludes>
+       	  <excludes>
+    			 <exclude>org/apache/geronimo/ews/jaxrpcmapping/JAXBJaxRpcMapper.java</exclude>
+          </excludes>
+       	  <excludes>
+    			 <exclude>org/apache/geronimo/ews/ws4j2ee/parsers/EJBDDParser.java</exclude>
+          </excludes>
+       	  <excludes>
+    			 <exclude>org/apache/geronimo/ews/jaxrpcmapping/JAXBJaxRpcMapper.java</exclude>
           </excludes>
 		</sourceModification>
 	 </sourceModifications>
-	 -->
+
     <unitTestSourceDirectory>test</unitTestSourceDirectory>
 
     <unitTest>
       <includes>
         <include>**/*Test.java</include>
 		<exclude>**/*WebApplicationTest.java</exclude> 
+		<exclude>**/*MapperTest.java</exclude> 
       </includes>
     </unitTest>
 
@@ -197,7 +207,7 @@
     <!-- ============ -->
 
     <dependencies>
-		<!-- -->
+		<!-- 	
         <dependency>
             <groupId>jaxb-ri</groupId>
             <artifactId>jaxb-api</artifactId>
@@ -254,6 +264,7 @@
                 <module>true</module>
             </properties>
         </dependency>
+        -->
 
         <dependency>
             <groupId>sec</groupId>

@@ -19,48 +19,21 @@ package org.apache.geronimo.ews.ws4j2ee.context.impl;
 import java.io.InputStream;
 import java.io.Writer;
 import java.lang.reflect.Method;
-import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 
-import javax.wsdl.Binding;
 import javax.wsdl.Operation;
-import javax.wsdl.Part;
 import javax.wsdl.Port;
-import javax.wsdl.Service;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
 import javax.xml.namespace.QName;
 
 import org.apache.axis.wsdl.fromJava.Emitter;
 import org.apache.axis.wsdl.symbolTable.BindingEntry;
 import org.apache.axis.wsdl.symbolTable.PortTypeEntry;
 import org.apache.axis.wsdl.symbolTable.ServiceEntry;
-//import org.apache.geronimo.ews.jaxrpcmapping.descriptor.FullyQualifiedClassType;
-//import org.apache.geronimo.ews.jaxrpcmapping.descriptor.JavaTypeType;
-//import org.apache.geronimo.ews.jaxrpcmapping.descriptor.JavaWsdlMapping;
-//import org.apache.geronimo.ews.jaxrpcmapping.descriptor.MethodParamPartsMappingType;
-//import org.apache.geronimo.ews.jaxrpcmapping.descriptor.ObjectFactory;
-//import org.apache.geronimo.ews.jaxrpcmapping.descriptor.PackageMappingType;
-//import org.apache.geronimo.ews.jaxrpcmapping.descriptor.ParameterModeType;
-//import org.apache.geronimo.ews.jaxrpcmapping.descriptor.PortMappingType;
-//import org.apache.geronimo.ews.jaxrpcmapping.descriptor.ServiceEndpointMethodMappingType;
-//import org.apache.geronimo.ews.jaxrpcmapping.descriptor.WsdlMessageMappingType;
-//import org.apache.geronimo.ews.jaxrpcmapping.descriptor.WsdlMessagePartNameType;
-//import org.apache.geronimo.ews.jaxrpcmapping.descriptor.WsdlMessageType;
-//import org.apache.geronimo.ews.jaxrpcmapping.descriptor.WsdlReturnValueMappingType;
-//import org.apache.geronimo.ews.jaxrpcmapping.descriptor.XsdAnyURIType;
-//import org.apache.geronimo.ews.jaxrpcmapping.descriptor.XsdNonNegativeIntegerType;
-//import org.apache.geronimo.ews.jaxrpcmapping.descriptor.XsdQNameType;
 import org.apache.geronimo.ews.ws4j2ee.context.J2EEWebServiceContext;
 import org.apache.geronimo.ews.ws4j2ee.context.JaxRpcMapperContext;
 import org.apache.geronimo.ews.ws4j2ee.toWs.GenerationFault;
 import org.apache.geronimo.ews.ws4j2ee.toWs.UnrecoverableGenerationFault;
 import org.apache.geronimo.ews.ws4j2ee.toWs.dd.JaxRpcMappingFileWriter;
-import org.apache.geronimo.ews.ws4j2ee.utils.Utils;
 
 /**
  * This class wrap the JAXRPCMapper and only expose a interface to
