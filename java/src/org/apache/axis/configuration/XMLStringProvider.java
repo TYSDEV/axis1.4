@@ -78,6 +78,8 @@ public class XMLStringProvider implements ConfigurationProvider
 {
     String xmlConfiguration;
 
+    private DeploymentRegistry deploymentRegistry;
+
     /**
      * Constructor
      *
@@ -91,7 +93,10 @@ public class XMLStringProvider implements ConfigurationProvider
 
     public DeploymentRegistry getDeploymentRegistry()
     {
-        return new SimpleWsddDeploymentManager();
+        if (deploymentRegistry == null) {
+            deploymentRegistry = new SimpleWsddDeploymentManager();
+        }
+        return deploymentRegistry;
     }
 
     public void configureEngine(AxisEngine engine) throws Exception

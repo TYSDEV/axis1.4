@@ -90,6 +90,8 @@ public class FileProvider implements ConfigurationProvider
     // the specified location?
     boolean searchClasspath = true;
 
+    private DeploymentRegistry deploymentRegistry;
+
     /**
      * Constructor which accesses a file in the current directory of the
      * engine.
@@ -131,7 +133,10 @@ public class FileProvider implements ConfigurationProvider
 
     public DeploymentRegistry getDeploymentRegistry()
     {
-        return new SimpleWsddDeploymentManager();
+        if (deploymentRegistry == null) {
+            deploymentRegistry = new SimpleWsddDeploymentManager();
+        }
+        return deploymentRegistry;
     }
 
     public void configureEngine(AxisEngine engine) throws Exception

@@ -67,10 +67,14 @@ import org.apache.axis.deployment.DeploymentRegistry;
  */
 public class NullProvider implements ConfigurationProvider
 {
+    private DeploymentRegistry deploymentRegistry;
+
     public DeploymentRegistry getDeploymentRegistry()
     {
-        // yeuch!
-        return new SimpleWsddDeploymentManager();
+        if (deploymentRegistry == null) {
+            deploymentRegistry = new SimpleWsddDeploymentManager();
+        }
+        return deploymentRegistry;
     }
 
     public void configureEngine(AxisEngine engine) throws Exception
