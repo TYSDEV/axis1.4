@@ -32,7 +32,7 @@ Copyright:
 </description>
 ==================================================================== -->
 
-<project name="Round3" default="main">
+<project name="Round4" default="main">
 <property name="axis.home" location="../../../../.." />
 <property name="componentName" value="test/wsdl/interop4/groupH/simpleRPCenc" />
         &properties;
@@ -58,9 +58,10 @@ Copyright:
 <!--    <copy file="SoapInteropImport1BindingImpl.java" overwrite="true"-->
 <!--          todir="${root.dir}/build/work/test/wsdl/interop3/${testname}"/>-->
 <!---->
-<!--    <copy file="Import1TestCase.java"-->
-<!--          todir="${root.dir}/build/work/test/wsdl/interop3/${testname}"/>-->
-<!---->
+
+    <copy file="SimpleRpcEncServiceTestCase.java"
+         todir="${root.dir}/build/work/test/wsdl/interop4/groupH/${testname}"/>
+
     <!-- compile the skeletons -->
     <javac srcdir="${build.dir}/work"
       destdir="${build.dest}" debug="on">
