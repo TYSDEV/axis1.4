@@ -1,4 +1,4 @@
--This folder contains the sources needed to build the Axis java service needed to run the soap header based session client
+-This folder contains the sources (inside the counters folder, which is the package of these classes)  needed to build the Axis java service needed to run the soap header based session client
 (These server side skeletons were generated from the Counter.wsdl)
 
 -compile these java source files and deploy them in Axis java (visit http://ws.apache.org/axis/java/index.html on how to 
