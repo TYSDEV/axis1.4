@@ -72,7 +72,6 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.io.IOException;
 import java.util.Iterator;
-import java.io.Serializable;
 
 /**
  * A complete SOAP (and/or XML-RPC, eventually) message.
@@ -87,8 +86,7 @@ import java.io.Serializable;
  * @author Glen Daniels (gdaniels@allaire.com)
  * @author Rick Rineholt
  */
-public class Message extends javax.xml.soap.SOAPMessage
-            implements Serializable {
+public class Message extends javax.xml.soap.SOAPMessage {
     protected static Log log =
         LogFactory.getLog(Message.class.getName());
 

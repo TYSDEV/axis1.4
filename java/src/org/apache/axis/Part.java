@@ -62,7 +62,6 @@ import org.apache.commons.logging.LogFactory;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.Serializable;
 import java.util.Hashtable;
 
 /**
@@ -82,7 +81,7 @@ import java.util.Hashtable;
 
 import org.apache.axis.transport.http.HTTPConstants;
 
-public interface Part extends Serializable
+public interface Part
 {
     /**
      * Gets all the values of the <CODE>MimeHeader</CODE> object

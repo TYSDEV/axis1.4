@@ -58,10 +58,6 @@ public class ExtensibilityQueryTestCase extends junit.framework.TestCase {
         catch (java.rmi.RemoteException re) {
             throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re);
         }
-        catch (Throwable ex) {
-            ex.printStackTrace();
-            throw new junit.framework.AssertionFailedError("Throwable caught: " + ex);
-        }
     }
 
     private void isValid(QueryResultType result, String name, String value) {
