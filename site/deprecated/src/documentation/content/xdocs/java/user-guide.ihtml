@@ -18,7 +18,7 @@
 
   <H1>Axis User's Guide</H1>
 
-  <P><I>1.1 Version</I><BR>
+  <P><I>1.2 Version</I><BR>
   <I>Feedback: <A href=
   "mailto:axis-dev@ws.apache.org">axis-dev@ws.apache.org</A></I></P>
 
@@ -71,15 +71,11 @@
 
   <P>SOAP is an XML<I>-</I>based communication protocol and
   encoding format for inter-application communication. Originally
-  conceived by Microsoft and Userland software, it has evolved
-  through several generations and the current spec, <A href=
-  "http://w3.org/TR/soap">SOAP 1.1</A>, is fast growing in
-  popularity and usage. The W3C's <A href=
-  "http://www.w3.org/2000/xp/Group/">XML Protocol working group</A>
-  is in the process of turning SOAP into a true open standard, and
-  as of this writing has released a working draft of SOAP 1.2,
-  which cleans up some of the more confusing areas of the 1.1
-  spec.</P>
+  conceived by Microsoft and Userland software, it has
+  evolved through several generations; the current spec is version,
+  <a href="http://w3.org/TR/soap">SOAP 1.2</a>, though version 1.1
+  is more widespread. The W3C's <a href="http://www.w3.org/2000/xp/Group/">
+  XML Protocol working group</a> is in charge of the specification. </P>
 
   <P>SOAP is widely viewed as the backbone to a new generation of
   cross-platform cross-language distributed computing applications,
@@ -244,26 +240,26 @@
   <P>Before running the examples in this guide, you'll need to make
   sure that your CLASSPATH includes (Note: If you build Axis from a
   CVS checkout, these will be in xml-axis/java/build/lib instead of
-  axis-1_1/lib):</P>
+  axis-1_2/lib):</P>
 
   <UL>
- <LI>axis-1_1/lib/axis.jar</LI>
+ <LI>axis-1_2/lib/axis.jar</LI>
 
- <LI>axis-1_1/lib/jaxrpc.jar</LI>
+ <LI>axis-1_2/lib/jaxrpc.jar</LI>
 
- <LI>axis-1_1/lib/saaj.jar</LI>
+ <LI>axis-1_2/lib/saaj.jar</LI>
 
- <LI>axis-1_1/lib/commons-logging.jar</LI>
+ <LI>axis-1_2/lib/commons-logging.jar</LI>
 
- <LI>axis-1_1/lib/commons-discovery.jar</LI>
+ <LI>axis-1_2/lib/commons-discovery.jar</LI>
 
- <LI>axis-1_1/lib/wsdl4j.jar</LI>
+ <LI>axis-1_2/lib/wsdl4j.jar</LI>
 
- <LI>axis-1_1/ <I><FONT color="#9966FF">(for the sample
- code)</FONT></I></LI>
+ <LI>axis-1_2/ <i><font color="#9966FF">(for the sample code)</font></i></LI>
 
- <LI>A JAXP-1.1 compliant XML parser such as Xerces or
- Crimson</LI>
+ <LI>A JAXP-1.1 compliant XML parser such as Xerces or Crimson. We recommend 
+ <A href="http://xml.apache.org/xerces2-j/">Xerces</A>, as it is the one
+ that the product has been tested against.</LI>
   </UL>
 
   <P><A name="ConsumingServices"></A></P>
@@ -274,34 +270,31 @@
   <P>Let's take a look at an example Web Service client that will
   call the <B>echoString</B> method on the public Axis server at
   Apache.</P>
-  <PRE class="example">
-1  import org.apache.axis.client.Call;
-2  import org.apache.axis.client.Service;
-3  import javax.xml.namespace.QName;
-4  
-5  public class TestClient {
-6   public static void main(String [] args) {
-7 try {
-8  String endpoint =
-9   "http://nagoya.apache.org:5049/axis/services/echo";
-10 
-11 Service  service = new Service();
-12 Call  call = (Call) service.createCall();
-13 
-14 call.setTargetEndpointAddress( new java.net.URL(endpoint) );
-15 call.setOperationName(new QName("<FONT color=
-"#009933">http://soapinterop.org/</FONT>", "<FONT color=
-"#993333">echoString</FONT>"));
-16 
-17 String ret = (String) call.invoke( new Object[] { "<FONT color="#CC00CC">Hello!</FONT>" } );
+<pre class="example">1   import org.apache.axis.client.Call;
+2   import org.apache.axis.client.Service;
+3   import javax.xml.namespace.QName;
+4   
+5   public class TestClient {
+6      public static void main(String [] args) {
+7          try {
+8              String endpoint =
+9                       "http://nagoya.apache.org:5049/axis/services/echo";
+10  
+11             Service  service = new Service();
+12             Call     call    = (Call) service.createCall();
+13  
+14             call.setTargetEndpointAddress( new java.net.URL(endpoint) );
+15             call.setOperationName(new QName("<font color="#009933">http://soapinterop.org/</font>", <font color="#993333">echoString</font>"));
+16  
+17             String ret = (String) call.invoke( new Object[] { "<font color="#CC00CC">Hello!</font>" } );
 18  
-19 System.out.println("Sent 'Hello!', got '" + ret + "'");
-20   } catch (Exception e) {
-21 System.err.println(e.toString());
-22   }
-23  }
-24 }
-</PRE>
+19             System.out.println("Sent 'Hello!', got '" + ret + "'");
+20         } catch (Exception e) {
+21             System.err.println(e.toString());
+22         }
+23     }
+24  }</pre>
+
 
   <P>(You'll find this file in <A href=
   "http://cvs.apache.org/viewcvs.cgi/*checkout*/ws-axis/java/samples/userguide/example1/TestClient.java">samples/userguide/example1/TestClient.java</A>)</P>
@@ -638,7 +631,7 @@ You typed : test me!
   <P>If you want to prove to yourself that the deployment really
   worked, try undeploying the service and calling it again. 
   There's an "undeploy.wsdd" file in the example3/ directory which
-  you can use just as you did the deploy.wsdd file above.  Run the
+  you can use just as you did the deploy.wsdd file above. Run the
   AdminClient on that file, then try the service Client again and
   see what happens.</P>
 
@@ -1073,20 +1066,6 @@ public Element[] echoElements(Element [] elems)
   <H3>What Axis can send via SOAP with restricted
   Interoperability</H3>
 
-  <H5>Unsigned data</H5>
-
-  <P>You cannot consume or generate services that use unsigned
-  datatypes with pure JAX-RPC, because there are no unsigned
-  dataypes in Java.</P>
-
-  <P>Axis does have support for the unsigned types, so you can
-  consume services written in C++, C# and the like, and
-  re-implement interfaces designed for those languages. Be very
-  wary about exporting unsigned datatypes, however, as to do so
-  will stop Java clients that do not use Axis or another SOAP
-  client library with unsigned support from using them. The current
-  JAX-RPC specification does not address this issue.</P>
-
   <H5>Java Collections</H5>
 
   <P>Some of the Collection classes, such as <TT>Hashtable</TT>, do
@@ -1110,8 +1089,11 @@ public Element[] echoElements(Element [] elems)
   any class that follows the JavaBean pattern of accessor and
   mutator. To serve up objects you must either register your
   classes with this BeanSerializer, or there must be serialization
-  support built in to Axis. Remote References Remote references are
-  neither part of the SOAP specification, nor the JAX-RPC
+  support built in to Axis.</P>
+
+  <H5>Remote References</H5>
+
+  <P>Remote references are neither part of the SOAP specification, nor the JAX-RPC
   specification. You cannot return some object reference and expect
   the caller to be able to use it as an endpoint for SOAP calls or
   as a parameter in other calls. Instead you must use some other
@@ -2319,8 +2301,11 @@ public interface WidgetPrice {
 
   <P>The port used by the SOAP monitor service to comminicate with
   applets is configurable. Edit the web.xml file for the Axis web
-  application to change the port to be used. <B>Note: The SOAP
-  Monitor is NOT enabled by default for security reasons.</B></P>
+  application to change the port to be used.<BR>
+  
+  <B>Note: The SOAP Monitor is NOT enabled by default for security reasons.</B>
+   To enable it, read <a href="install.html#soapmon">Enabling the 
+   SOAP Monitor</a> in the Installation instructions.</P>
 
   <P><A name="Glossary"></A></P>
   <H2>Glossary</H2>

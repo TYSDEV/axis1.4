@@ -18,7 +18,7 @@
 
   <H1>Axis Developer's Guide</H1>
 
-  <P><I>1.1 Version</I><BR>
+  <P><I>1.2 Version</I><BR>
   <I>Feedback: <A href=
   "mailto:axis-dev@ws.apache.org">axis-dev@ws.apache.org</A></I></P>
 
@@ -118,14 +118,14 @@
   <BLOCKQUOTE>
     <BLOCKQUOTE>
 <PRE>
-D:\\xerces\\xerces-1_4_2\\xerces.jar
-G:\\junit3.7\\junit.jar
-G:\\xml-axis\\java\\build\\lib\\commons-discovery.jar
-G:\\xml-axis\\java\\build\\lib\\commons-logging.jar
-G:\\xml-axis\\java\\build\\lib\\wsdl4j.jar
-G:\\xml-axis\\java\\build\\lib\\axis.jar
-G:\\xml-axis\\java\\build\\lib\\log4j-1.2.8.jar
-G:\\xml-axis\\java\\build\\classes
+G:\xerces\xerces-1_4_2\xerces.jar
+G:\junit3.7\junit.jar
+G:\xml-axis\java\build\lib\commons-discovery.jar
+G:\xml-axis\java\build\lib\commons-logging.jar
+G:\xml-axis\java\build\lib\wsdl4j.jar
+G:\xml-axis\java\build\lib\axis.jar
+G:\xml-axis\java\build\lib\log4j-1.2.8.jar
+G:\xml-axis\java\build\classes
 </PRE>
     </BLOCKQUOTE>
   </BLOCKQUOTE>
