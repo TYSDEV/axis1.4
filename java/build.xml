@@ -163,7 +163,6 @@ Copyright:
       <include name="samples/**/*.java" />
       <exclude name="samples/**/*SMTP*.java" unless="smtp.present" />
       <exclude name="**/old/**/*.java" />
-      <exclude name="samples/userguide/example2/*.java"/>
     </javac>
   </target>
 
@@ -306,25 +305,13 @@ Copyright:
   <!-- =================================================================== -->
   <!-- Creates the source distribution                                     -->
   <!-- =================================================================== -->
-  <target name="srcdist" depends="javadocs" >
-    <copy todir="${dist.dir}">
-      <fileset dir=".">
-        <include name="build.xml"/>
-        <include name="README"/>
-        <include name="docs/**"/>
-        <include name="lib/**"/>
-        <include name="samples/**"/>
-        <include name="src/**"/>
-        <include name="test/**"/>
-        <include name="webapps/**"/>
+  <target name="srcdist">
+    <copy todir="${dist.dir}/src">
+      <fileset dir="${src.dir}"/>
+    </copy>
 
-        <exclude name="**/CVS/**"/>
-      </fileset>
-    </copy>
-    <copy todir="${dist.dir}/docs/apiDocs">
-      <fileset dir="${build.javadocs}"/>
-    </copy>
-    <copy file="../LICENSE" tofile="${dist.dir}/LICENSE"/>
+    <copy file="LICENSE" tofile="${dist.dir}/LICENSE"/>
+    <copy file="${build.file}" tofile="${dist.dir}/${build.file}"/>
   </target>
 
   <!-- =================================================================== -->
