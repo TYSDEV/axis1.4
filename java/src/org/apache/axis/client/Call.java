@@ -380,7 +380,7 @@ public class Call implements javax.xml.rpc.Call {
                         (String) value, ATTACHMENT_ENCAPSULATION_FORMAT_MIME + " "
                         +ATTACHMENT_ENCAPSULATION_FORMAT_DIME  }));
         }
-        else {
+        else if (name.startsWith("java.") || name.startsWith("javax.")) {
             throw new IllegalArgumentException(
                     JavaUtils.getMessage("badProp05", name));
         }
@@ -454,7 +454,8 @@ public class Call implements javax.xml.rpc.Call {
     }
 
     public boolean isPropertySupported(String name) {
-        return propertyNames.contains(name);
+        return propertyNames.contains(name) ||
+            !(name.startsWith("java.") || name.startsWith("javax."));
     }
 
     /**
