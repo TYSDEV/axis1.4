@@ -17,9 +17,17 @@
 package org.apache.geronimo.ews.ws4j2ee.utils;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.Vector;
+import java.util.jar.JarOutputStream;
 
+import org.apache.geronimo.ews.ws4j2ee.context.J2EEWebServiceContext;
+import org.apache.geronimo.ews.ws4j2ee.toWs.GenerationFault;
+import org.apache.geronimo.ews.ws4j2ee.utils.packager.ModulePackager;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Ant;
+import org.apache.tools.ant.taskdefs.Javac;
+import org.apache.tools.ant.types.Path;
 
 /**
  * <p>To call this Class and execute a ant task the $JAVA_HOME/lib/tool.jar need
@@ -28,7 +36,12 @@ import org.apache.tools.ant.taskdefs.Ant;
  * @author hemapani
  */
 public class AntExecuter{
-    public void execute(String buildFile) {
+    private J2EEWebServiceContext wscontext;
+    private JarOutputStream jarFile;
+    public AntExecuter(J2EEWebServiceContext wscontext){
+        this.wscontext = wscontext;
+    }
+    public void execute(String buildFile)throws GenerationFault {
         //wait till the ant jar added
         try{
 			Class.forName("com.sun.tools.javac.Main");
@@ -43,7 +56,7 @@ public class AntExecuter{
 			File file = new File(buildFile);
 			ant.setAntfile(file.getAbsolutePath());
 			ant.setDir(file.getParentFile());
-			ant.execute();        
+			ant.execute();      
 		}catch(ClassNotFoundException e){
 			System.out.println("Ant file will not be run programatcally as the " +
 				"$JAVA_HOME/lib/tool.jar is not in the class path. To run the ant " +
@@ -57,4 +70,102 @@ public class AntExecuter{
 //			"directory in the conf/ws4j2ee.propertites Build fill ignore the faliure");
         }
     }
+    public void execute()throws GenerationFault {
+        try{
+            Class.forName("com.sun.tools.javac.Main");
+            File outDir = new File(wscontext.getMiscInfo().getOutPutPath());
+            File dest = new File(outDir,"build/classes");
+            
+            Project project = new Project();
+            project.init();
+            project.setCoreLoader(Thread.currentThread().getContextClassLoader());
+                
+                
+            Javac comp = new Javac();
+            comp.setProject(project);
+            
+            dest.mkdirs();
+            comp.setDestdir(dest);
+                
+            Path path = new Path(project);
+            path.setLocation(outDir);
+            comp.setSrcdir(path);
+
+                        
+            comp.init();
+            comp.execute();
+        
+            String jarName = wscontext.getWSDLContext().getTargetPortType().getName().toLowerCase();
+            int index = jarName.lastIndexOf(".");
+            if(index>0){
+                jarName = jarName.substring(index+1);
+            } 
+
+        
+            ModulePackager module = new ModulePackager(new File(outDir,jarName+"-ewsImpl.jar"));
+            module.addClassFiles(dest);
+            
+            Vector classpathelements = wscontext.getMiscInfo().getClasspathElements();
+            if(classpathelements != null){
+                for(int i = 0;i<classpathelements.size();i++){
+                    module.addJarFile((File)classpathelements.get(i));               
+                }
+            }
+
+            File dir = outDir;
+            File[] files = dir.listFiles();
+            if(files != null){
+                for(int i = 0;i<files.length;i++){
+                    String file = files[i].getName();
+                    if(files[i].isFile() && 
+                        !(file.endsWith(".jar")||
+                            file.endsWith(".zip")||
+                            file.endsWith(".war")||
+                            file.endsWith(".ear")||
+                            file.endsWith(".java"))
+                        ){
+                            module.addFileToJar(file,files[i]);
+                    }
+                        
+                }
+            }
+                
+            dir = new File(outDir,"META-INF");
+            files = dir.listFiles();
+            if(files != null){
+                for(int i = 0;i<files.length;i++){
+                    String file = files[i].getName();
+                    if(files[i].isFile() && 
+                        !(file.endsWith(".jar")||
+                            file.endsWith(".zip")||
+                            file.endsWith(".war")||
+                            file.endsWith(".ear")||
+                            file.endsWith(".java"))
+                        ){
+                            module.addFileToJar("META-INF/"+file,files[i]);
+                    }
+                        
+                }
+            }
+
+            module.finalizeJar();
+            
+            
+        }catch(IOException e){
+            throw GenerationFault.createGenerationFault(e);
+        }catch(ClassNotFoundException e){
+            System.out.println("Ant file will not be run programatcally as the " +
+                "$JAVA_HOME/lib/tool.jar is not in the class path. To run the ant " +
+                "prgramatically add that jar to classpath");
+//NOW as the code is used by Geronimo we can not afford to let the build
+//failure tests beside if you use maven it works fine. it will find your maven 
+//repository itself :) 
+//        }catch(BuildException e){
+//          System.out.println(e.getMessage() +
+//          "if it is a compile error you may not have set the maven reposiroty " +
+//          "directory in the conf/ws4j2ee.propertites Build fill ignore the faliure");
+        }
+    }
+    
+    
 }

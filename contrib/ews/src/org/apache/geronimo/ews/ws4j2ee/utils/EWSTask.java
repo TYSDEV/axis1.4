@@ -21,6 +21,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import org.apache.geronimo.ews.ws4j2ee.toWs.GenerationConstants;
 import org.apache.geronimo.ews.ws4j2ee.toWs.Ws4J2ee;
 import org.apache.tools.ant.AntClassLoader;
 import org.apache.tools.ant.BuildException;
@@ -37,19 +38,22 @@ public class EWSTask extends Task{
 	private Path classpath;
     private File root;
     private boolean compile = false;
+    private String implStyle = GenerationConstants.USE_INTERNALS;
+    private String j2eeContainer =  GenerationConstants.GERONIMO_CONTAINER;
+    
     
     public void execute() throws BuildException {
         try{
             if(module == null){
                 throw new BuildException("the module name not specifed");
             }
-            root = getProject().getBaseDir();
+            root = project.getBaseDir();
             File moduleFile = new File(root,module);
             File outDirFile = new File(root,outDir);
             
             AntClassLoader cl = new AntClassLoader(
                                 getClass().getClassLoader(),
-                                getProject(),
+                                project,
                                 classpath,
                                 true);
             Thread.currentThread().setContextClassLoader(cl);
@@ -58,7 +62,7 @@ public class EWSTask extends Task{
                 throw new Exception("error loding properties");
             AntDeployContext deployContext 
                 = new AntDeployContext(moduleFile.getAbsolutePath(),
-                                outDirFile.getAbsolutePath(),cl);
+                                outDirFile.getAbsolutePath(),cl,implStyle,j2eeContainer);
                  
            Ws4J2ee ws4j2ee = new Ws4J2ee(deployContext,null);
            ws4j2ee.generate();
@@ -139,7 +143,7 @@ public class EWSTask extends Task{
     }
     public Path createClasspath() {
       if (classpath == null) {
-        classpath = new Path(getProject());
+        classpath = new Path(project);
       }
       return classpath.createPath();
     }
@@ -155,6 +159,34 @@ public class EWSTask extends Task{
      */
     public void setCompile(boolean b) {
         compile = b;
+    }
+
+    /**
+     * @return
+     */
+    public String getImplStyle() {
+        return implStyle;
+    }
+
+    /**
+     * @return
+     */
+    public String getJ2eeContainer() {
+        return j2eeContainer;
+    }
+
+    /**
+     * @param string
+     */
+    public void setImplStyle(String string) {
+        implStyle = string;
+    }
+
+    /**
+     * @param string
+     */
+    public void setJ2eeContainer(String string) {
+        j2eeContainer = string;
     }
 
 }
