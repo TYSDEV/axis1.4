@@ -13,6 +13,11 @@
             <path refid="maven.dependency.classpath"/>
         </path>
     </goal>
+
+	<goal name="fixcrlf">
+		<chmod dir="${basedir}/src" perm="u+w" includes="**/*.java"/>
+		<fixcrlf srcdir="${basedir}/src" includes="**/*.java"/>
+    </goal>
     
     <goal name="generate:xmlbeans"
         description="Generates the XML beans using XMLBeans">
