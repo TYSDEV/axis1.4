@@ -142,7 +142,7 @@ public class ParameterDesc implements Serializable {
      * @param typeQName the parameter's XML type QName
      * @param javaType the parameter's javaType
      * @param inHeader does this parameter go into the input message header?
-     * @param inHeader does this parameter go into the output message header?
+     * @param outHeader does this parameter go into the output message header?
      */
     public ParameterDesc(QName name, byte mode, QName typeQName,
             Class javaType, boolean inHeader, boolean outHeader) {

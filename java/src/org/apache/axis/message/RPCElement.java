@@ -382,70 +382,72 @@ public class RPCElement extends SOAPBodyElement
     {
         // Inform handler that subsequent elements come from
         // the header
-
-        handler.setHeaderElement(true);
-        // Get the soap envelope
-        SOAPElement envelope = getParentElement();
-        while (envelope != null &&
-               !(envelope instanceof SOAPEnvelope)) {
-            envelope = envelope.getParentElement();
-        }
-        if (envelope == null) 
-            return;
-
-        // Find parameters that have instance
-        // data in the header.
-        ArrayList paramDescs = operation.getParameters();
-        if (paramDescs != null) {
-            for (int j=0; j<paramDescs.size(); j++) {
-                ParameterDesc paramDesc = (ParameterDesc) paramDescs.get(j);
-                if ((!isResponse && paramDesc.isInHeader()) ||
-                    (isResponse && paramDesc.isOutHeader())) {
-                    // Get the headers that match the parameter's
-                    // QName
-                    Enumeration headers = ((SOAPEnvelope) envelope).
-                        getHeadersByName(
-                           paramDesc.getQName().getNamespaceURI(),
-                           paramDesc.getQName().getLocalPart(),
-                           true);
-                    // Publish each of the found elements to the
-                    // handler.  The pushElementHandler and
-                    // setCurElement calls are necessary to 
-                    // have the message element recognized as a
-                    // child of the RPCElement.
-                    while(headers != null &&
-                          headers.hasMoreElements()) {
-                        context.pushElementHandler(handler);
-                        context.setCurElement(null);
-                        ((MessageElement) headers.nextElement()).
-                            publishToHandler(
-                               (org.xml.sax.ContentHandler)context);
+        try {
+            handler.setHeaderElement(true);
+            // Get the soap envelope
+            SOAPElement envelope = getParentElement();
+            while (envelope != null &&
+                   !(envelope instanceof SOAPEnvelope)) {
+                envelope = envelope.getParentElement();
+            }
+            if (envelope == null) 
+                return;
+            
+            // Find parameters that have instance
+            // data in the header.
+            ArrayList paramDescs = operation.getParameters();
+            if (paramDescs != null) {
+                for (int j=0; j<paramDescs.size(); j++) {
+                    ParameterDesc paramDesc = 
+                        (ParameterDesc) paramDescs.get(j);
+                    if ((!isResponse && paramDesc.isInHeader()) ||
+                        (isResponse && paramDesc.isOutHeader())) {
+                        // Get the headers that match the parameter's
+                        // QName
+                        Enumeration headers = ((SOAPEnvelope) envelope).
+                            getHeadersByName(
+                                 paramDesc.getQName().getNamespaceURI(),
+                                 paramDesc.getQName().getLocalPart(),
+                                 true);
+                        // Publish each of the found elements to the
+                        // handler.  The pushElementHandler and
+                        // setCurElement calls are necessary to 
+                        // have the message element recognized as a
+                        // child of the RPCElement.
+                        while(headers != null &&
+                              headers.hasMoreElements()) {
+                            context.pushElementHandler(handler);
+                            context.setCurElement(null);
+                            ((MessageElement) headers.nextElement()).
+                                publishToHandler(
+                                   (org.xml.sax.ContentHandler)context);
+                        }
                     }
                 }
             }
+            
+            // Now do the same processing for the return parameter.
+            if (isResponse && 
+                operation.getReturnParamDesc() != null &&
+                operation.getReturnParamDesc().isOutHeader()) {
+                ParameterDesc paramDesc = operation.getReturnParamDesc();
+                Enumeration headers =
+                    ((SOAPEnvelope) envelope).
+                    getHeadersByName(
+                        paramDesc.getQName().getNamespaceURI(),
+                        paramDesc.getQName().getLocalPart(),
+                        true);
+                while(headers != null &&
+                      headers.hasMoreElements()) {
+                    context.pushElementHandler(handler);
+                    context.setCurElement(null);
+                    
+                    ((MessageElement) headers.nextElement()).
+                        publishToHandler((org.xml.sax.ContentHandler)context);
+                }                                                                 
+            }
+        } finally {
+            handler.setHeaderElement(false);
         }
-        
-        // Now do the same processing for the return parameter.
-        if (isResponse && 
-            operation.getReturnParamDesc() != null &&
-            operation.getReturnParamDesc().isOutHeader()) {
-            ParameterDesc paramDesc = operation.getReturnParamDesc();
-            Enumeration headers =
-                ((SOAPEnvelope) envelope).
-                getHeadersByName(
-                    paramDesc.getQName().getNamespaceURI(),
-                    paramDesc.getQName().getLocalPart(),
-                    true);
-            while(headers != null &&
-                  headers.hasMoreElements()) {
-                context.pushElementHandler(handler);
-                context.setCurElement(null);
-                
-                ((MessageElement) headers.nextElement()).
-                    publishToHandler((org.xml.sax.ContentHandler)context);
-            }                                                                 
-        }
-
-        handler.setHeaderElement(false);
     }
 }
