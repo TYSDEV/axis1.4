@@ -84,14 +84,14 @@ int ChannelFactory::uninitialize()
 /**
  * Should create an instance of Secure Channel
  */
-SecureChannel* ChannelFactory::getSecureChannelObject()
+SSLChannel* ChannelFactory::getSSLChannelObject()
 {
-	SecureChannel* pSecure = 0;
+	SSLChannel* pSecure = 0;
 	if (m_Create) m_Create(&pSecure);
 	return pSecure;
 }
 
-void ChannelFactory::destroySecureChannelObject(SecureChannel* pObject)
+void ChannelFactory::destroySSLChannelObject(SSLChannel* pObject)
 {
 	m_Delete(pObject);
 }

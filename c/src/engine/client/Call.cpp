@@ -310,11 +310,13 @@ int Call::openConnection(int secure)
         if (!m_pTransport) 
             m_pTransport = SOAPTransportFactory::getTransportObject(m_nTransportType);
 	if (!m_pTransport) return AXIS_FAIL;
-
+	//printf("m_pcEndPointUri:%s\n", m_pcEndPointUri);
         m_pTransport->setEndpointUri(m_pcEndPointUri);
         /* damitha:SSLChannelFactory needs the ssl channel library name to load the 
            optional ssl channel library*/
         char* pcLibraryPath = g_pConfig->getAxisConfProperty(AXCONF_SSLCHANNEL);
+	//printf("pcLibraryPath:%s\n", pcLibraryPath);
+        if(pcLibraryPath)
         m_pTransport->setTransportProperty(DLL_NAME, pcLibraryPath);
     
         //if use proxy then set proxy
