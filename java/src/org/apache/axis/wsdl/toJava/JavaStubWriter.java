@@ -517,7 +517,7 @@ public class JavaStubWriter extends JavaClassWriter {
 
             // Generate the addParameter call with the
             // name qname, typeQName, optional javaType, and mode
-            if (p.getMode() != Parameter.OUT && p.inHeader()) {
+            if (p.getMode() != Parameter.OUT && p.isInHeader()) {
                 pw.println("        _call.addParameterAsHeader(" + paramNameText + ", "
                            + paramTypeText + ", " 
                            + javaType + "javax.xml.rpc.ParameterMode.IN);");

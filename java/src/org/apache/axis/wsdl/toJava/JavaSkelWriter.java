@@ -187,12 +187,8 @@ public class JavaSkelWriter extends JavaClassWriter {
                     QName paramType = Utils.getXSIType(p);
 
                     // Is this parameter a header?
-                    // NOTE:  the symbol table will have to change eventually to distinguish
-                    // between the input and output aspects of INOUT parameters.  One COULD
-                    // be in the header while the other could be in the body.  Right now the
-                    // symbol table assumes it's all or nothing.
-                    String inHeader = p.inHeader() ? "true" : "false";
-                    String outHeader = inHeader;
+                    String inHeader = p.isInHeader() ? "true" : "false";
+                    String outHeader = p.isOutHeader() ? "true" : "false";
                     pw.println("            " +
                         "new org.apache.axis.description.ParameterDesc(" +
                         Utils.getNewQName(paramName) +
