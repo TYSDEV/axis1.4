@@ -87,7 +87,7 @@ install_sh = /home/damitha/projects/cvshead/install-sh
 bin_PROGRAMS = soapHeaderTest2RPC
 SUBDIRS = 
 AM_CPPFLAGS = $(CPPFLAGS)
-soapHeaderTest2RPC_SOURCES = TestClient.cpp  ../../gen_src/rpc/InteropTestPortType.cpp ../../gen_src/rpc/SOAPStruct.cpp 
+soapHeaderTest2RPC_SOURCES = TestClient.cpp  ../../gen_src/rpc/InteropTestPortType.cpp ../../gen_src/rpc/SOAPStruct.cpp ../../gen_src/rpc/AxisClientException.cpp
 
 soapHeaderTest2RPC_LDADD = $(LDFLAGS) -laxiscpp_client
 INCLUDES = -I$(AXISCPP_HOME)/include
@@ -99,7 +99,8 @@ bin_PROGRAMS = soapHeaderTest2RPC$(EXEEXT)
 PROGRAMS = $(bin_PROGRAMS)
 
 am_soapHeaderTest2RPC_OBJECTS = TestClient.$(OBJEXT) \
-	InteropTestPortType.$(OBJEXT) SOAPStruct.$(OBJEXT)
+	InteropTestPortType.$(OBJEXT) SOAPStruct.$(OBJEXT) \
+	AxisClientException.$(OBJEXT)
 soapHeaderTest2RPC_OBJECTS = $(am_soapHeaderTest2RPC_OBJECTS)
 soapHeaderTest2RPC_DEPENDENCIES =
 soapHeaderTest2RPC_LDFLAGS =
@@ -111,7 +112,8 @@ LDFLAGS = -s -L/home/damitha/projects/cvshead/bin -laxiscpp_client -ldl -lstdc++
 LIBS = 
 depcomp = $(SHELL) $(top_srcdir)/../depcomp
 am__depfiles_maybe = depfiles
-DEP_FILES = ./$(DEPDIR)/InteropTestPortType.Po \
+DEP_FILES = ./$(DEPDIR)/AxisClientException.Po \
+	./$(DEPDIR)/InteropTestPortType.Po \
 	./$(DEPDIR)/SOAPStruct.Po ./$(DEPDIR)/TestClient.Po
 CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
@@ -172,6 +174,7 @@ clean-binPROGRAMS:
 	done
 InteropTestPortType.$(OBJEXT): ../../gen_src/rpc/InteropTestPortType.cpp
 SOAPStruct.$(OBJEXT): ../../gen_src/rpc/SOAPStruct.cpp
+AxisClientException.$(OBJEXT): ../../gen_src/rpc/AxisClientException.cpp
 soapHeaderTest2RPC$(EXEEXT): $(soapHeaderTest2RPC_OBJECTS) $(soapHeaderTest2RPC_DEPENDENCIES) 
 	@rm -f soapHeaderTest2RPC$(EXEEXT)
 	$(CXXLINK) $(soapHeaderTest2RPC_LDFLAGS) $(soapHeaderTest2RPC_OBJECTS) $(soapHeaderTest2RPC_LDADD) $(LIBS)
@@ -182,6 +185,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+include ./$(DEPDIR)/AxisClientException.Po
 include ./$(DEPDIR)/InteropTestPortType.Po
 include ./$(DEPDIR)/SOAPStruct.Po
 include ./$(DEPDIR)/TestClient.Po
@@ -242,6 +246,24 @@ SOAPStruct.lo: ../../gen_src/rpc/SOAPStruct.cpp
 	depfile='$(DEPDIR)/SOAPStruct.Plo' tmpdepfile='$(DEPDIR)/SOAPStruct.TPlo' \
 	$(CXXDEPMODE) $(depcomp) \
 	$(LIBTOOL) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o SOAPStruct.lo `test -f '../../gen_src/rpc/SOAPStruct.cpp' || echo '$(srcdir)/'`../../gen_src/rpc/SOAPStruct.cpp
+
+AxisClientException.o: ../../gen_src/rpc/AxisClientException.cpp
+	source='../../gen_src/rpc/AxisClientException.cpp' object='AxisClientException.o' libtool=no \
+	depfile='$(DEPDIR)/AxisClientException.Po' tmpdepfile='$(DEPDIR)/AxisClientException.TPo' \
+	$(CXXDEPMODE) $(depcomp) \
+	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o AxisClientException.o `test -f '../../gen_src/rpc/AxisClientException.cpp' || echo '$(srcdir)/'`../../gen_src/rpc/AxisClientException.cpp
+
+AxisClientException.obj: ../../gen_src/rpc/AxisClientException.cpp
+	source='../../gen_src/rpc/AxisClientException.cpp' object='AxisClientException.obj' libtool=no \
+	depfile='$(DEPDIR)/AxisClientException.Po' tmpdepfile='$(DEPDIR)/AxisClientException.TPo' \
+	$(CXXDEPMODE) $(depcomp) \
+	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o AxisClientException.obj `cygpath -w ../../gen_src/rpc/AxisClientException.cpp`
+
+AxisClientException.lo: ../../gen_src/rpc/AxisClientException.cpp
+	source='../../gen_src/rpc/AxisClientException.cpp' object='AxisClientException.lo' libtool=yes \
+	depfile='$(DEPDIR)/AxisClientException.Plo' tmpdepfile='$(DEPDIR)/AxisClientException.TPlo' \
+	$(CXXDEPMODE) $(depcomp) \
+	$(LIBTOOL) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o AxisClientException.lo `test -f '../../gen_src/rpc/AxisClientException.cpp' || echo '$(srcdir)/'`../../gen_src/rpc/AxisClientException.cpp
 CXXDEPMODE = depmode=gcc3
 
 mostlyclean-libtool:

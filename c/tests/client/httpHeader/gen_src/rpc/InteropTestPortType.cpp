@@ -39,10 +39,6 @@ InteropTestPortType::~InteropTestPortType()
 xsd__string InteropTestPortType::echoString(xsd__string Value0)
 {
 	xsd__string Ret;
-	char* cFaultcode;
-	char* cFaultstring;
-	char* cFaultactor;
-	char* cFaultdetail;
 	try
 	{
 		if (AXIS_SUCCESS != m_pCall->initialize(CPP_RPC_PROVIDER, NORMAL_CHANNEL)) 
@@ -62,20 +58,19 @@ xsd__string InteropTestPortType::echoString(xsd__string Value0)
 		m_pCall->unInitialize();
 		return Ret;
 	}
-	catch(AxisGenException& e)
+	catch(AxisException& e)
 	{
 		int iExceptionCode = e.getExceptionCode();
 		if(AXISC_NODE_VALUE_MISMATCH_EXCEPTION != iExceptionCode)
 		{
 			throw;
 		}
-		else if (AXIS_SUCCESS == m_pCall->checkFault("Fault","http://localhost/axis/InteropBase" ))//Exception handling code goes here
-		{
-			cFaultcode = m_pCall->getElementAsString("faultcode", 0);
-			cFaultstring = m_pCall->getElementAsString("faultstring", 0);
-			cFaultactor = m_pCall->getElementAsString("faultactor", 0);
-				  cFaultdetail = m_pCall->getElementAsString("faultdetail", 0);
-				  throw AxisGenException(cFaultdetail);
+                ISoapFault* pSoapFault = (ISoapFault*) m_pCall->checkFault("Fault",
+		    "http://localhost/axis/InteropBase");
+                if(pSoapFault)
+                {
+		    m_pCall->unInitialize();
+                    throw AxisClientException(pSoapFault);
 		}
 		else throw;
 	}
@@ -88,10 +83,6 @@ xsd__string InteropTestPortType::echoString(xsd__string Value0)
 xsd__string_Array InteropTestPortType::echoStringArray(xsd__string_Array Value0)
 {
 	xsd__string_Array RetArray = {NULL, 0};
-	char* cFaultcode;
-	char* cFaultstring;
-	char* cFaultactor;
-	char* cFaultdetail;
 	try
 	{
 		if (AXIS_SUCCESS != m_pCall->initialize(CPP_RPC_PROVIDER, NORMAL_CHANNEL)) 
@@ -111,20 +102,19 @@ xsd__string_Array InteropTestPortType::echoStringArray(xsd__string_Array Value0)
 		m_pCall->unInitialize();
 		return RetArray;
 	}
-	catch(AxisGenException& e)
+	catch(AxisException& e)
 	{
 		int iExceptionCode = e.getExceptionCode();
 		if(AXISC_NODE_VALUE_MISMATCH_EXCEPTION != iExceptionCode)
 		{
 			throw;
 		}
-		else if (AXIS_SUCCESS == m_pCall->checkFault("Fault","http://localhost/axis/InteropBase" ))//Exception handling code goes here
-		{
-			cFaultcode = m_pCall->getElementAsString("faultcode", 0);
-			cFaultstring = m_pCall->getElementAsString("faultstring", 0);
-			cFaultactor = m_pCall->getElementAsString("faultactor", 0);
-				  cFaultdetail = m_pCall->getElementAsString("faultdetail", 0);
-				  throw AxisGenException(cFaultdetail);
+                ISoapFault* pSoapFault = (ISoapFault*) m_pCall->checkFault("Fault",
+		    "http://localhost/axis/InteropBase");
+                if(pSoapFault)
+                {
+		    m_pCall->unInitialize();
+                    throw AxisClientException(pSoapFault);
 		}
 		else throw;
 	}
@@ -137,10 +127,6 @@ xsd__string_Array InteropTestPortType::echoStringArray(xsd__string_Array Value0)
 int InteropTestPortType::echoInteger(int Value0)
 {
 	int Ret;
-	char* cFaultcode;
-	char* cFaultstring;
-	char* cFaultactor;
-	char* cFaultdetail;
 	try
 	{
 		if (AXIS_SUCCESS != m_pCall->initialize(CPP_RPC_PROVIDER, NORMAL_CHANNEL)) 
@@ -160,20 +146,19 @@ int InteropTestPortType::echoInteger(int Value0)
 		m_pCall->unInitialize();
 		return Ret;
 	}
-	catch(AxisGenException& e)
+	catch(AxisException& e)
 	{
 		int iExceptionCode = e.getExceptionCode();
 		if(AXISC_NODE_VALUE_MISMATCH_EXCEPTION != iExceptionCode)
 		{
 			throw;
 		}
-		else if (AXIS_SUCCESS == m_pCall->checkFault("Fault","http://localhost/axis/InteropBase" ))//Exception handling code goes here
-		{
-			cFaultcode = m_pCall->getElementAsString("faultcode", 0);
-			cFaultstring = m_pCall->getElementAsString("faultstring", 0);
-			cFaultactor = m_pCall->getElementAsString("faultactor", 0);
-				  cFaultdetail = m_pCall->getElementAsString("faultdetail", 0);
-				  throw AxisGenException(cFaultdetail);
+                ISoapFault* pSoapFault = (ISoapFault*) m_pCall->checkFault("Fault",
+		    "http://localhost/axis/InteropBase");
+                if(pSoapFault)
+                {
+		    m_pCall->unInitialize();
+                    throw AxisClientException(pSoapFault);
 		}
 		else throw;
 	}
@@ -186,10 +171,6 @@ int InteropTestPortType::echoInteger(int Value0)
 xsd__int_Array InteropTestPortType::echoIntegerArray(xsd__int_Array Value0)
 {
 	xsd__int_Array RetArray = {NULL, 0};
-	char* cFaultcode;
-	char* cFaultstring;
-	char* cFaultactor;
-	char* cFaultdetail;
 	try
 	{
 		if (AXIS_SUCCESS != m_pCall->initialize(CPP_RPC_PROVIDER, NORMAL_CHANNEL)) 
@@ -209,20 +190,19 @@ xsd__int_Array InteropTestPortType::echoIntegerArray(xsd__int_Array Value0)
 		m_pCall->unInitialize();
 		return RetArray;
 	}
-	catch(AxisGenException& e)
+	catch(AxisException& e)
 	{
 		int iExceptionCode = e.getExceptionCode();
 		if(AXISC_NODE_VALUE_MISMATCH_EXCEPTION != iExceptionCode)
 		{
 			throw;
 		}
-		else if (AXIS_SUCCESS == m_pCall->checkFault("Fault","http://localhost/axis/InteropBase" ))//Exception handling code goes here
-		{
-			cFaultcode = m_pCall->getElementAsString("faultcode", 0);
-			cFaultstring = m_pCall->getElementAsString("faultstring", 0);
-			cFaultactor = m_pCall->getElementAsString("faultactor", 0);
-				  cFaultdetail = m_pCall->getElementAsString("faultdetail", 0);
-				  throw AxisGenException(cFaultdetail);
+                ISoapFault* pSoapFault = (ISoapFault*) m_pCall->checkFault("Fault",
+		    "http://localhost/axis/InteropBase");
+                if(pSoapFault)
+                {
+		    m_pCall->unInitialize();
+                    throw AxisClientException(pSoapFault);
 		}
 		else throw;
 	}
@@ -235,10 +215,6 @@ xsd__int_Array InteropTestPortType::echoIntegerArray(xsd__int_Array Value0)
 float InteropTestPortType::echoFloat(float Value0)
 {
 	float Ret;
-	char* cFaultcode;
-	char* cFaultstring;
-	char* cFaultactor;
-	char* cFaultdetail;
 	try
 	{
 		if (AXIS_SUCCESS != m_pCall->initialize(CPP_RPC_PROVIDER, NORMAL_CHANNEL)) 
@@ -258,20 +234,19 @@ float InteropTestPortType::echoFloat(float Value0)
 		m_pCall->unInitialize();
 		return Ret;
 	}
-	catch(AxisGenException& e)
+	catch(AxisException& e)
 	{
 		int iExceptionCode = e.getExceptionCode();
 		if(AXISC_NODE_VALUE_MISMATCH_EXCEPTION != iExceptionCode)
 		{
 			throw;
 		}
-		else if (AXIS_SUCCESS == m_pCall->checkFault("Fault","http://localhost/axis/InteropBase" ))//Exception handling code goes here
-		{
-			cFaultcode = m_pCall->getElementAsString("faultcode", 0);
-			cFaultstring = m_pCall->getElementAsString("faultstring", 0);
-			cFaultactor = m_pCall->getElementAsString("faultactor", 0);
-				  cFaultdetail = m_pCall->getElementAsString("faultdetail", 0);
-				  throw AxisGenException(cFaultdetail);
+                ISoapFault* pSoapFault = (ISoapFault*) m_pCall->checkFault("Fault",
+		    "http://localhost/axis/InteropBase");
+                if(pSoapFault)
+                {
+		    m_pCall->unInitialize();
+                    throw AxisClientException(pSoapFault);
 		}
 		else throw;
 	}
@@ -284,10 +259,6 @@ float InteropTestPortType::echoFloat(float Value0)
 xsd__float_Array InteropTestPortType::echoFloatArray(xsd__float_Array Value0)
 {
 	xsd__float_Array RetArray = {NULL, 0};
-	char* cFaultcode;
-	char* cFaultstring;
-	char* cFaultactor;
-	char* cFaultdetail;
 	try
 	{
 		if (AXIS_SUCCESS != m_pCall->initialize(CPP_RPC_PROVIDER, NORMAL_CHANNEL)) 
@@ -307,20 +278,19 @@ xsd__float_Array InteropTestPortType::echoFloatArray(xsd__float_Array Value0)
 		m_pCall->unInitialize();
 		return RetArray;
 	}
-	catch(AxisGenException& e)
+	catch(AxisException& e)
 	{
 		int iExceptionCode = e.getExceptionCode();
 		if(AXISC_NODE_VALUE_MISMATCH_EXCEPTION != iExceptionCode)
 		{
 			throw;
 		}
-		else if (AXIS_SUCCESS == m_pCall->checkFault("Fault","http://localhost/axis/InteropBase" ))//Exception handling code goes here
-		{
-			cFaultcode = m_pCall->getElementAsString("faultcode", 0);
-			cFaultstring = m_pCall->getElementAsString("faultstring", 0);
-			cFaultactor = m_pCall->getElementAsString("faultactor", 0);
-				  cFaultdetail = m_pCall->getElementAsString("faultdetail", 0);
-				  throw AxisGenException(cFaultdetail);
+                ISoapFault* pSoapFault = (ISoapFault*) m_pCall->checkFault("Fault",
+		    "http://localhost/axis/InteropBase");
+                if(pSoapFault)
+                {
+		    m_pCall->unInitialize();
+                    throw AxisClientException(pSoapFault);
 		}
 		else throw;
 	}
@@ -333,10 +303,6 @@ xsd__float_Array InteropTestPortType::echoFloatArray(xsd__float_Array Value0)
 SOAPStruct* InteropTestPortType::echoStruct(SOAPStruct* Value0)
 {
 	SOAPStruct* pReturn = NULL;
-	char* cFaultcode;
-	char* cFaultstring;
-	char* cFaultactor;
-	char* cFaultdetail;
 	try
 	{
 		if (AXIS_SUCCESS != m_pCall->initialize(CPP_RPC_PROVIDER, NORMAL_CHANNEL)) 
@@ -356,20 +322,19 @@ SOAPStruct* InteropTestPortType::echoStruct(SOAPStruct* Value0)
 		m_pCall->unInitialize();
 		return pReturn;
 	}
-	catch(AxisGenException& e)
+	catch(AxisException& e)
 	{
 		int iExceptionCode = e.getExceptionCode();
 		if(AXISC_NODE_VALUE_MISMATCH_EXCEPTION != iExceptionCode)
 		{
 			throw;
 		}
-		else if (AXIS_SUCCESS == m_pCall->checkFault("Fault","http://localhost/axis/InteropBase" ))//Exception handling code goes here
-		{
-			cFaultcode = m_pCall->getElementAsString("faultcode", 0);
-			cFaultstring = m_pCall->getElementAsString("faultstring", 0);
-			cFaultactor = m_pCall->getElementAsString("faultactor", 0);
-				  cFaultdetail = m_pCall->getElementAsString("faultdetail", 0);
-				  throw AxisGenException(cFaultdetail);
+                ISoapFault* pSoapFault = (ISoapFault*) m_pCall->checkFault("Fault",
+		    "http://localhost/axis/InteropBase");
+                if(pSoapFault)
+                {
+		    m_pCall->unInitialize();
+                    throw AxisClientException(pSoapFault);
 		}
 		else throw;
 	}
@@ -382,10 +347,6 @@ SOAPStruct* InteropTestPortType::echoStruct(SOAPStruct* Value0)
 SOAPStruct_Array InteropTestPortType::echoStructArray(SOAPStruct_Array Value0)
 {
 	SOAPStruct_Array RetArray = {NULL, 0};
-	char* cFaultcode;
-	char* cFaultstring;
-	char* cFaultactor;
-	char* cFaultdetail;
 	try
 	{
 		if (AXIS_SUCCESS != m_pCall->initialize(CPP_RPC_PROVIDER, NORMAL_CHANNEL)) 
@@ -405,20 +366,19 @@ SOAPStruct_Array InteropTestPortType::echoStructArray(SOAPStruct_Array Value0)
 		m_pCall->unInitialize();
 		return RetArray;
 	}
-	catch(AxisGenException& e)
+	catch(AxisException& e)
 	{
 		int iExceptionCode = e.getExceptionCode();
 		if(AXISC_NODE_VALUE_MISMATCH_EXCEPTION != iExceptionCode)
 		{
 			throw;
 		}
-		else if (AXIS_SUCCESS == m_pCall->checkFault("Fault","http://localhost/axis/InteropBase" ))//Exception handling code goes here
-		{
-			cFaultcode = m_pCall->getElementAsString("faultcode", 0);
-			cFaultstring = m_pCall->getElementAsString("faultstring", 0);
-			cFaultactor = m_pCall->getElementAsString("faultactor", 0);
-				  cFaultdetail = m_pCall->getElementAsString("faultdetail", 0);
-				  throw AxisGenException(cFaultdetail);
+                ISoapFault* pSoapFault = (ISoapFault*) m_pCall->checkFault("Fault",
+		    "http://localhost/axis/InteropBase");
+                if(pSoapFault)
+                {
+		    m_pCall->unInitialize();
+                    throw AxisClientException(pSoapFault);
 		}
 		else throw;
 	}
@@ -430,10 +390,6 @@ SOAPStruct_Array InteropTestPortType::echoStructArray(SOAPStruct_Array Value0)
  */
 void InteropTestPortType::echoVoid()
 {
-	char* cFaultcode;
-	char* cFaultstring;
-	char* cFaultactor;
-	char* cFaultdetail;
 	try
 	{
 		if (AXIS_SUCCESS != m_pCall->initialize(CPP_RPC_PROVIDER, NORMAL_CHANNEL)) 
@@ -451,20 +407,19 @@ void InteropTestPortType::echoVoid()
 		}
 		m_pCall->unInitialize();
 	}
-	catch(AxisGenException& e)
+	catch(AxisException& e)
 	{
 		int iExceptionCode = e.getExceptionCode();
 		if(AXISC_NODE_VALUE_MISMATCH_EXCEPTION != iExceptionCode)
 		{
 			throw;
 		}
-		else if (AXIS_SUCCESS == m_pCall->checkFault("Fault","http://localhost/axis/InteropBase" ))//Exception handling code goes here
-		{
-			cFaultcode = m_pCall->getElementAsString("faultcode", 0);
-			cFaultstring = m_pCall->getElementAsString("faultstring", 0);
-			cFaultactor = m_pCall->getElementAsString("faultactor", 0);
-				  cFaultdetail = m_pCall->getElementAsString("faultdetail", 0);
-				  throw AxisGenException(cFaultdetail);
+                ISoapFault* pSoapFault = (ISoapFault*) m_pCall->checkFault("Fault",
+		    "http://localhost/axis/InteropBase");
+                if(pSoapFault)
+                {
+		    m_pCall->unInitialize();
+                    throw AxisClientException(pSoapFault);
 		}
 		else throw;
 	}
@@ -477,10 +432,6 @@ void InteropTestPortType::echoVoid()
 xsd__base64Binary InteropTestPortType::echoBase64(xsd__base64Binary Value0)
 {
 	xsd__base64Binary Ret;
-	char* cFaultcode;
-	char* cFaultstring;
-	char* cFaultactor;
-	char* cFaultdetail;
 	try
 	{
 		if (AXIS_SUCCESS != m_pCall->initialize(CPP_RPC_PROVIDER, NORMAL_CHANNEL)) 
@@ -500,20 +451,19 @@ xsd__base64Binary InteropTestPortType::echoBase64(xsd__base64Binary Value0)
 		m_pCall->unInitialize();
 		return Ret;
 	}
-	catch(AxisGenException& e)
+	catch(AxisException& e)
 	{
 		int iExceptionCode = e.getExceptionCode();
 		if(AXISC_NODE_VALUE_MISMATCH_EXCEPTION != iExceptionCode)
 		{
 			throw;
 		}
-		else if (AXIS_SUCCESS == m_pCall->checkFault("Fault","http://localhost/axis/InteropBase" ))//Exception handling code goes here
-		{
-			cFaultcode = m_pCall->getElementAsString("faultcode", 0);
-			cFaultstring = m_pCall->getElementAsString("faultstring", 0);
-			cFaultactor = m_pCall->getElementAsString("faultactor", 0);
-				  cFaultdetail = m_pCall->getElementAsString("faultdetail", 0);
-				  throw AxisGenException(cFaultdetail);
+                ISoapFault* pSoapFault = (ISoapFault*) m_pCall->checkFault("Fault",
+		    "http://localhost/axis/InteropBase");
+                if(pSoapFault)
+                {
+		    m_pCall->unInitialize();
+                    throw AxisClientException(pSoapFault);
 		}
 		else throw;
 	}
@@ -526,10 +476,6 @@ xsd__base64Binary InteropTestPortType::echoBase64(xsd__base64Binary Value0)
 xsd__dateTime InteropTestPortType::echoDate(xsd__dateTime Value0)
 {
 	xsd__dateTime Ret;
-	char* cFaultcode;
-	char* cFaultstring;
-	char* cFaultactor;
-	char* cFaultdetail;
 	try
 	{
 		if (AXIS_SUCCESS != m_pCall->initialize(CPP_RPC_PROVIDER, NORMAL_CHANNEL)) 
@@ -549,20 +495,19 @@ xsd__dateTime InteropTestPortType::echoDate(xsd__dateTime Value0)
 		m_pCall->unInitialize();
 		return Ret;
 	}
-	catch(AxisGenException& e)
+	catch(AxisException& e)
 	{
 		int iExceptionCode = e.getExceptionCode();
 		if(AXISC_NODE_VALUE_MISMATCH_EXCEPTION != iExceptionCode)
 		{
 			throw;
 		}
-		else if (AXIS_SUCCESS == m_pCall->checkFault("Fault","http://localhost/axis/InteropBase" ))//Exception handling code goes here
-		{
-			cFaultcode = m_pCall->getElementAsString("faultcode", 0);
-			cFaultstring = m_pCall->getElementAsString("faultstring", 0);
-			cFaultactor = m_pCall->getElementAsString("faultactor", 0);
-				  cFaultdetail = m_pCall->getElementAsString("faultdetail", 0);
-				  throw AxisGenException(cFaultdetail);
+                ISoapFault* pSoapFault = (ISoapFault*) m_pCall->checkFault("Fault",
+		    "http://localhost/axis/InteropBase");
+                if(pSoapFault)
+                {
+		    m_pCall->unInitialize();
+                    throw AxisClientException(pSoapFault);
 		}
 		else throw;
 	}
@@ -575,10 +520,6 @@ xsd__dateTime InteropTestPortType::echoDate(xsd__dateTime Value0)
 xsd__hexBinary InteropTestPortType::echoHexBinary(xsd__hexBinary Value0)
 {
 	xsd__hexBinary Ret;
-	char* cFaultcode;
-	char* cFaultstring;
-	char* cFaultactor;
-	char* cFaultdetail;
 	try
 	{
 		if (AXIS_SUCCESS != m_pCall->initialize(CPP_RPC_PROVIDER, NORMAL_CHANNEL)) 
@@ -598,20 +539,19 @@ xsd__hexBinary InteropTestPortType::echoHexBinary(xsd__hexBinary Value0)
 		m_pCall->unInitialize();
 		return Ret;
 	}
-	catch(AxisGenException& e)
+	catch(AxisException& e)
 	{
 		int iExceptionCode = e.getExceptionCode();
 		if(AXISC_NODE_VALUE_MISMATCH_EXCEPTION != iExceptionCode)
 		{
 			throw;
 		}
-		else if (AXIS_SUCCESS == m_pCall->checkFault("Fault","http://localhost/axis/InteropBase" ))//Exception handling code goes here
-		{
-			cFaultcode = m_pCall->getElementAsString("faultcode", 0);
-			cFaultstring = m_pCall->getElementAsString("faultstring", 0);
-			cFaultactor = m_pCall->getElementAsString("faultactor", 0);
-				  cFaultdetail = m_pCall->getElementAsString("faultdetail", 0);
-				  throw AxisGenException(cFaultdetail);
+                ISoapFault* pSoapFault = (ISoapFault*) m_pCall->checkFault("Fault",
+		    "http://localhost/axis/InteropBase");
+                if(pSoapFault)
+                {
+		    m_pCall->unInitialize();
+                    throw AxisClientException(pSoapFault);
 		}
 		else throw;
 	}
@@ -624,10 +564,6 @@ xsd__hexBinary InteropTestPortType::echoHexBinary(xsd__hexBinary Value0)
 xsd__decimal InteropTestPortType::echoDecimal(xsd__decimal Value0)
 {
 	xsd__decimal Ret;
-	char* cFaultcode;
-	char* cFaultstring;
-	char* cFaultactor;
-	char* cFaultdetail;
 	try
 	{
 		if (AXIS_SUCCESS != m_pCall->initialize(CPP_RPC_PROVIDER, NORMAL_CHANNEL)) 
@@ -647,20 +583,19 @@ xsd__decimal InteropTestPortType::echoDecimal(xsd__decimal Value0)
 		m_pCall->unInitialize();
 		return Ret;
 	}
-	catch(AxisGenException& e)
+	catch(AxisException& e)
 	{
 		int iExceptionCode = e.getExceptionCode();
 		if(AXISC_NODE_VALUE_MISMATCH_EXCEPTION != iExceptionCode)
 		{
 			throw;
 		}
-		else if (AXIS_SUCCESS == m_pCall->checkFault("Fault","http://localhost/axis/InteropBase" ))//Exception handling code goes here
-		{
-			cFaultcode = m_pCall->getElementAsString("faultcode", 0);
-			cFaultstring = m_pCall->getElementAsString("faultstring", 0);
-			cFaultactor = m_pCall->getElementAsString("faultactor", 0);
-				  cFaultdetail = m_pCall->getElementAsString("faultdetail", 0);
-				  throw AxisGenException(cFaultdetail);
+                ISoapFault* pSoapFault = (ISoapFault*) m_pCall->checkFault("Fault",
+		    "http://localhost/axis/InteropBase");
+                if(pSoapFault)
+                {
+		    m_pCall->unInitialize();
+                    throw AxisClientException(pSoapFault);
 		}
 		else throw;
 	}
@@ -673,10 +608,6 @@ xsd__decimal InteropTestPortType::echoDecimal(xsd__decimal Value0)
 xsd__boolean InteropTestPortType::echoBoolean(xsd__boolean Value0)
 {
 	xsd__boolean Ret;
-	char* cFaultcode;
-	char* cFaultstring;
-	char* cFaultactor;
-	char* cFaultdetail;
 	try
 	{
 		if (AXIS_SUCCESS != m_pCall->initialize(CPP_RPC_PROVIDER, NORMAL_CHANNEL)) 
@@ -696,20 +627,19 @@ xsd__boolean InteropTestPortType::echoBoolean(xsd__boolean Value0)
 		m_pCall->unInitialize();
 		return Ret;
 	}
-	catch(AxisGenException& e)
+	catch(AxisException& e)
 	{
 		int iExceptionCode = e.getExceptionCode();
 		if(AXISC_NODE_VALUE_MISMATCH_EXCEPTION != iExceptionCode)
 		{
 			throw;
 		}
-		else if (AXIS_SUCCESS == m_pCall->checkFault("Fault","http://localhost/axis/InteropBase" ))//Exception handling code goes here
-		{
-			cFaultcode = m_pCall->getElementAsString("faultcode", 0);
-			cFaultstring = m_pCall->getElementAsString("faultstring", 0);
-			cFaultactor = m_pCall->getElementAsString("faultactor", 0);
-				  cFaultdetail = m_pCall->getElementAsString("faultdetail", 0);
-				  throw AxisGenException(cFaultdetail);
+                ISoapFault* pSoapFault = (ISoapFault*) m_pCall->checkFault("Fault",
+		    "http://localhost/axis/InteropBase");
+                if(pSoapFault)
+                {
+		    m_pCall->unInitialize();
+                    throw AxisClientException(pSoapFault);
 		}
 		else throw;
 	}
