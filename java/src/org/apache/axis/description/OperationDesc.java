@@ -355,6 +355,20 @@ public class OperationDesc {
     {
         return faults;
     }
+    
+    /**
+     * Returns the FaultDesc for the fault class given.
+     * Returns null if not found.
+     */ 
+    public FaultDesc getFaultByClass(Class cls) {
+        for (Iterator iterator = faults.iterator(); iterator.hasNext();) {
+            FaultDesc desc = (FaultDesc) iterator.next();
+            if (desc.getClassName().equals(cls.getName())) {
+                return desc;
+            }
+        }
+        return null;
+    }
 
     public ParameterDesc getReturnParamDesc() {
         return returnDesc;
