@@ -109,19 +109,21 @@ public class BuildFileGenerator implements Generator {
             if (tempfile == null) {
                 tempfile = new File("./target/classes");
             }
-            out.write("		<pathelement location=\"/" + tempfile.getAbsolutePath() + "\"/>");
+            out.write("		<pathelement location=\"" + tempfile.getCanonicalPath() + "\"/>");
             tempfile = new File("target/test-classes");
-            out.write("		<pathelement location=\"/" + tempfile.getAbsolutePath() + "\"/>");
+            out.write("		<pathelement location=\"" + tempfile.getCanonicalPath() + "\"/>");
             ArrayList classpathelements = j2eewscontext.getMiscInfo().getClasspathElements();
             if (classpathelements != null) {
                 for (int i = 0; i < classpathelements.size(); i++) {
                     out.write("		<pathelement location=\""
-                            + ((File) classpathelements.get(i)).getAbsolutePath() + "\"/>\n");
+                            + ((File) classpathelements.get(i)).getCanonicalPath() + "\"/>\n");
                 }
             }
             if (prpertyIn != null) {
                 out.write("		<fileset dir=\"${maven.repo.local}\">\n");
                 out.write("		    <include name=\"axis/**/*.jar\"/>\n");
+                out.write("			<include name=\"commons-logging/**/*.jar\"/>\n");
+                out.write("			<include name=\"commons-discovery/**/*.jar\"/>\n");
                 out.write("			<include name=\"geronimo-spec/**/*.jar\"/>\n");
                 out.write("			<include name=\"geronimo/**/*.jar\"/>\n");
                 out.write("			<include name=\"sec/**/*.jar\"/>\n");
@@ -132,10 +134,7 @@ public class BuildFileGenerator implements Generator {
                 out.write("         <include name=\"openejb/**/*.jar\"/>\n");
                 out.write("		</fileset>\n");
             }
-//            StringTokenizer tok = getClasspathComponets();
-//            while (tok.hasMoreTokens()) {
-//                out.write("		<pathelement location=\"" + tok.nextToken() + "\"/>\n");
-//            }
+
             out.write("	</path>\n");
             out.write("	<target name=\"compile\">\n");
             out.write("	   <mkdir dir=\"${build.classes}\"/>\n");
@@ -156,30 +155,6 @@ public class BuildFileGenerator implements Generator {
             writeFileCopyStatement(j2eewscontext.getMiscInfo().getWsdlFile(), out);
             writeFileCopyStatement(j2eewscontext.getMiscInfo().getWsconffile(), out);
 			
-//			if(j2eewscontext.getMiscInfo().isImplwithEJB()){
-//				File ejbDD = 	new File(j2eewscontext.getMiscInfo().getOutPutPath()+"/META-INF/ejb-jar.xml");
-//				if(ejbDD.exists())
-//					out.write("		<copy file =\""+ejbDD.getAbsolutePath()+"\" todir=\"${build.classes}/META-INF\"/>\n");
-//				
-//				File contianerDD = null;	
-//				if(GenerationConstants.JBOSS_CONTAINER.equals(j2eewscontext.getMiscInfo().getTargetJ2EEContainer())){
-//					contianerDD = new File(j2eewscontext.getMiscInfo().getOutPutPath()+"/META-INF/"+GenerationConstants.JBOSS_DD);
-//				}else if(GenerationConstants.JONAS_CONTAINER.equals(j2eewscontext.getMiscInfo().getTargetJ2EEContainer())){
-//					contianerDD = new File(j2eewscontext.getMiscInfo().getOutPutPath()+"/META-INF/"+GenerationConstants.JONAS_DD);
-//				}else if(GenerationConstants.GERONIMO_CONTAINER.equals(j2eewscontext.getMiscInfo().getTargetJ2EEContainer())){
-//					contianerDD = new File(j2eewscontext.getMiscInfo().getOutPutPath()+"/META-INF/"+GenerationConstants.GERONIMO_DD);
-//				}	
-//				if(contianerDD.exists()){
-//						out.write("		<copy file =\""+contianerDD.getAbsolutePath()+"\" todir=\"${build.classes}/META-INF\"/>\n ");
-//				}
-//				
-//									
-//			}else{
-//				File file = new File(j2eewscontext.getMiscInfo().getOutPutPath()+"/WEB-INF/web.xml");
-//				if(file.exists()){
-//					out.write("		<copy file =\"${src}/WEB-INF/web.xml\" todir=\"${build.classes}/META-INF\"/>\n ");				
-//				}
-//			}
             out.write("		<copy todir=\"${build.classes}\">\n");
             out.write("			<fileset dir=\"${src}\">\n");
             out.write("             <include name=\"*.properties\"/>\n");
@@ -212,38 +187,19 @@ public class BuildFileGenerator implements Generator {
             out.write("		</manifest>\n");
             out.write("		</jar>\n");
             out.write("     <java classname=\"org.apache.geronimo.ews.ws4j2ee.utils.packager.Packager\" fork=\"no\" >\n");
-            out.write("     	<arg value=\"" + jarFile.getAbsolutePath() + "\"/>\n");
+            out.write("     	<arg value=\"" + jarFile.getCanonicalPath() + "\"/>\n");
             out.write("     	<arg value=\"" + tempFile + "\"/>\n");
             out.write("     	<classpath refid=\"classpath\" />\n");
             for (int i = 0; i < classpathelements.size(); i++) {
                 out.write("     	<arg value=\""
-                        + ((File) classpathelements.get(i)).getAbsolutePath() + "\"/>\n");
+                        + ((File) classpathelements.get(i)).getCanonicalPath() + "\"/>\n");
             }
             out.write("     </java>\n");
-//			out.write("		<delete dir=\"${build}\"/>\n");
             out.write("	</target>\n");
             out.write("	<target name=\"dist\" depends=\"jar\"/>\n  ");
             out.write("	<target name=\"clean\">\n");
             out.write("		<delete dir=\"${build}\"/>\n");
             out.write("	</target>\n");
-			
-			
-//			out.write("	<target name=\"deploy\" depends=\"jar\">\n");
-//			out.write("		<copy file=\""+ jarName + 
-//				".jar\" todir=\"${axis-webapps-lib}\"/>\n");
-//				out.write("		<copy file=\""+ jarName + 
-//					".jar\" todir=\"${ejb-deploy}\"/>\n");
-//				
-//			out.write("		<java classname=\"org.apache.axis.client.AdminClient\" fork=\"no\" >\n");
-//			out.write("			<classpath refid=\"classpath\" />\n");
-//
-//			out.write("			<arg value=\"-h\"/>\n");
-//			out.write("			<arg value=\"axis-host\"/>\n");
-//			out.write("			<arg value=\"-p\"/>\n");
-//			out.write("			<arg value=\"axis-port\"/>\n"); 
-//			out.write("			<arg value=\"deploy.wsdd\"/>\n");
-//			out.write("		</java>\n");
-//			out.write("	</target>\n");
 			
             out.write("</project>\n");
             out.close();
@@ -266,7 +222,7 @@ public class BuildFileGenerator implements Generator {
                 if (fileName != null) {
                     File absFile = new File(fileName);
                     if (absFile.exists())
-                        out.write("		<copy file =\"" + absFile.getAbsolutePath() + "\" todir=\"${build.classes}/META-INF\"/>\n");
+                        out.write("		<copy file =\"" + absFile.getCanonicalPath() + "\" todir=\"${build.classes}/META-INF\"/>\n");
                 }
             }
         } catch (Exception e) {
