@@ -25,7 +25,7 @@ import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.interfaces.WSC
  * This is the root element of the webservices.xml file. The parsing of elements will be initiated from here and will be 
  * parsed in a depth first manner
  */
-public class AbstractWSCFWebservicesImpl extends WSCFElement implements WSCFWebservices{
+public class AbstractWSCFWebservices extends WSCFElement implements WSCFWebservices{
 
 	//TODO figure out how the id should be encapsulated
 	

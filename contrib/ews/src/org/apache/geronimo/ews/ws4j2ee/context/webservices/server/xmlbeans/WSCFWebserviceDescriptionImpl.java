@@ -15,7 +15,7 @@
  */
 package org.apache.geronimo.ews.ws4j2ee.context.webservices.server.xmlbeans;
 
-import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.AbstractWSCFWebserviceDescriptionImpl;
+import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.AbstractWSCFWebserviceDescription;
 import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.WSCFException;
 import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.interfaces.WSCFPortComponent;
 import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.interfaces.WSCFWebserviceDescription;
@@ -28,7 +28,7 @@ import com.sun.java.xml.ns.j2Ee.PortComponentType;
  * WSCFWebServiceDescription interface
  *
  */
-public class WSCFWebserviceDescriptionImpl extends AbstractWSCFWebserviceDescriptionImpl implements WSCFWebserviceDescription{
+public class WSCFWebserviceDescriptionImpl extends AbstractWSCFWebserviceDescription implements WSCFWebserviceDescription{
 	public WSCFWebserviceDescriptionImpl(com.sun.java.xml.ns.j2Ee.WebserviceDescriptionType wsdes) throws WSCFException{
 
 		this.description = XMLBeansUtils.getStringValue(wsdes.getDescription());

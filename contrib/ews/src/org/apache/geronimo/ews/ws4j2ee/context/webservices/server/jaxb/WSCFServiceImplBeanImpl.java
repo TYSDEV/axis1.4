@@ -15,7 +15,7 @@
  */
 package org.apache.geronimo.ews.ws4j2ee.context.webservices.server.jaxb;
 
-import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.AbstractWSCFServiceImplBeanImpl;
+import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.AbstractWSCFServiceImplBean;
 import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.interfaces.WSCFServiceImplBean;
 
 /**
@@ -23,7 +23,7 @@ import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.interfaces.WSC
  * WSCFServiceImplBean
  *
  */
-public class WSCFServiceImplBeanImpl extends AbstractWSCFServiceImplBeanImpl implements WSCFServiceImplBean {
+public class WSCFServiceImplBeanImpl extends AbstractWSCFServiceImplBean implements WSCFServiceImplBean {
 	public WSCFServiceImplBeanImpl(ServiceImplBeanType jaxbServiceImplBean){
 		if(null == jaxbServiceImplBean){return;}
 //		///////////assigning the values //////////////

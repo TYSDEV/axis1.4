@@ -15,14 +15,14 @@
  */
 package org.apache.geronimo.ews.ws4j2ee.context.webservices.server.jaxb;
 
-import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.AbstractWSCFSOAPHeaderImpl;
+import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.AbstractWSCFSOAPHeader;
 import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.interfaces.WSCFSOAPHeader;
 
 /**
  * This encapsulates the soap header of the handler element. The information about this element can be accessed uaing the interface published.
  * Basically this is  a Qname
  */
-public class WSCFSOAPHeaderImpl extends AbstractWSCFSOAPHeaderImpl implements WSCFSOAPHeader {
+public class WSCFSOAPHeaderImpl extends AbstractWSCFSOAPHeader implements WSCFSOAPHeader {
 	public WSCFSOAPHeaderImpl(XsdQNameType jaxbSoapHeader){
 		if(null != jaxbSoapHeader.getValue()){	
 			this.localpart = jaxbSoapHeader.getValue().getLocalPart();

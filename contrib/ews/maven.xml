@@ -22,7 +22,7 @@
             <j:set var="src.dir" value="${basedir}/src"/>
             <j:set var="dir" value="${basedir}/target/src"/>
             <j:set var="schema.dir" value="${basedir}/schema"/>
-            <j:set var="xmlbeans.dir" value="${dir}/xmlbeans"/>
+            <j:set var="xmlbeans.dir" value="${basedir}/target/xmlbeans"/>
 
 			<taskdef name="xmlbean"
             	classname="org.apache.xmlbeans.impl.tool.XMLBean"

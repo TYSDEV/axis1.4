@@ -22,7 +22,7 @@ import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.interfaces.WSC
  * WSCFServiceImplBean
  *
  */
-public abstract class AbstractWSCFServiceImplBeanImpl extends WSCFElement implements WSCFServiceImplBean {
+public abstract class AbstractWSCFServiceImplBean extends WSCFElement implements WSCFServiceImplBean {
 	
 	/**
 	 * Service Implementation bean ejblink

@@ -30,9 +30,10 @@ import org.apache.axis.wsdl.symbolTable.BindingEntry;
 import org.apache.axis.wsdl.symbolTable.PortTypeEntry;
 import org.apache.axis.wsdl.symbolTable.ServiceEntry;
 import org.apache.geronimo.ews.jaxrpcmapping.J2eeEmitter;
+
 import org.apache.geronimo.ews.jaxrpcmapping.JaxRpcMapper;
-import org.apache.geronimo.ews.jaxrpcmapping.descriptor.JavaWsdlMapping;
 import org.apache.geronimo.ews.ws4j2ee.context.JaxRpcMapperContext;
+import org.apache.geronimo.ews.ws4j2ee.toWs.GenerationFault;
 import org.apache.geronimo.ews.ws4j2ee.toWs.UnrecoverableGenerationFault;
 import org.apache.geronimo.ews.ws4j2ee.utils.Utils;
 
@@ -144,12 +145,6 @@ public class JaxRpcMapperImpl implements JaxRpcMapperContext {
 		return type;			
     }
 
-    /**
-     * @return 
-     */
-    public JavaWsdlMapping getMapping() {
-        return jaxrpcmapper.getMapping();
-    }
 
     /**
      * @param port 
@@ -201,14 +196,14 @@ public class JaxRpcMapperImpl implements JaxRpcMapperContext {
     /**
      * @param path 
      */
-    public void loadMappingFromDir(String path) {
+    public void loadMappingFromDir(String path)throws GenerationFault {
         jaxrpcmapper.loadMappingFromDir(path);
     }
 
     /**
      * @param is 
      */
-    public void loadMappingFromInputStream(InputStream is) {
+    public void loadMappingFromInputStream(InputStream is)throws GenerationFault {
         jaxrpcmapper.loadMappingFromInputStream(is);
     }
 
@@ -217,6 +212,21 @@ public class JaxRpcMapperImpl implements JaxRpcMapperContext {
      */
     public void serialize(Writer out) {
         throw new UnsupportedOperationException("when the wsdl is avalibe serialization not reqired");
+    }
+
+    /* (non-Javadoc)
+     * @see org.apache.geronimo.ews.ws4j2ee.context.JaxRpcMapperContext#getPackageMappingClassName(int)
+     */
+    public String getPackageMappingClassName(int index) {
+        return jaxrpcmapper.getPackageMappingClassName(index);        
+    }
+
+    public int getPackageMappingCount() {
+        return jaxrpcmapper.getPackageMappingCount();
+    }
+
+    public String getPackageMappingURI(int index) {
+        return jaxrpcmapper.getPackageMappingURI(index);
     }
 
 }

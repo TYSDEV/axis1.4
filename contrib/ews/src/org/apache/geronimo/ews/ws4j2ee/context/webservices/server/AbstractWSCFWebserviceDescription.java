@@ -25,7 +25,7 @@ import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.interfaces.WSC
  * WSCFWebServiceDescription interface
  *
  */
-public class AbstractWSCFWebserviceDescriptionImpl extends WSCFElement implements WSCFWebserviceDescription{
+public class AbstractWSCFWebserviceDescription extends WSCFElement implements WSCFWebserviceDescription{
 
 	/**
 	 * This will refer to the multiple port components that can be there in the webservice-description Element.
