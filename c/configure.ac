@@ -7,5 +7,5 @@ AC_PROG_CC
 AC_PROG_CXX
 AC_PROG_INSTALL
 AC_PROG_LIBTOOL
-AC_OUTPUT(Makefile src/Makefile src/common/Makefile src/engine/Makefile src/soap/Makefile src/wsdd/Makefile src/xml/Makefile src/server/Makefile src/server/apache/Makefile src/server/apache2/Makefile)
+AC_OUTPUT(Makefile src/Makefile src/common/Makefile src/engine/Makefile src/soap/Makefile src/wsdd/Makefile src/xml/Makefile src/server/Makefile src/server/apache/Makefile)
 #AC_OUTPUT(Makefile src/Makefile)
