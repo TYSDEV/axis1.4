@@ -24,6 +24,7 @@
 <section>
 <title>はじめに</title>
 
+<p>お知らせ (2005年04月06日) : 日本語対応した<a href="http://wiki.apache.org/ws/ja/axis">Axis Wiki</a>をオープンしました。</p>
 <p>お知らせ (2005年03月01日) : Axis <a href="http://www.apache.org/dyn/closer.cgi/ws/axis/1_2RC3/">1.2 RC3</a> が利用できます。</p>
 <p>お知らせ (2005年02月08日) : Axis C++ <a href="cpp/download.html">1.5 Alpha</a> が利用できます。</p>
 <p>お知らせ (2004年12月16日) : Axis C++ <a href="cpp/download.html">1.4 Final</a> が利用できます。</p>
@@ -70,8 +71,8 @@
 <p>私達はいつでも<b>あなたの</b>助けを借りることができます。あなたが私達を助けるためのいくつかのリンクをここに示します。
 <ul>
 <li><a href="bugs.html">バグ報告の仕方</a></li>
-<li><a href="http://wiki.apache.org/ws/SubmitPatches">Axis にパッチを投稿する方法</a></li> [英語]
-<li><a href="http://cvs.apache.org/snapshots/ws-axis/">最新 CVS のスナップショットの場所</a> [英語]</li> 
+<li><a href="http://wiki.apache.org/ws/ja/axis/SubmitPatches">Axis にパッチを投稿する方法</a></li>
+<li><a href="http://cvs.apache.org/snapshots/ws-axis/">最新 CVS のスナップショットの場所</a></li> 
 </ul>
 </p>
 
