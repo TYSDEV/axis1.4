@@ -463,7 +463,7 @@ public class JavaWriterFactory implements WriterFactory {
                 needComma = true;
             }
 
-            String javifiedName = Utils.xmlNameToJava(p.getName());
+            String javifiedName = Utils.xmlNameToJava(p.name);
             if (p.mode == Parameter.IN) {
                 signature = signature + p.type.getName() + " " + javifiedName;
             }

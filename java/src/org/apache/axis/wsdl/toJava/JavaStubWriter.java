@@ -391,11 +391,6 @@ public class JavaStubWriter extends JavaWriter {
             type instanceof CollectionType) {
             return;
         }
-        
-        if (type instanceof Element) {
-            return;
-        }
-        
         if ( firstSer ) {
             pw.println("            Class cls;" );
             pw.println("            javax.xml.rpc.namespace.QName qName;" );
@@ -405,8 +400,6 @@ public class JavaStubWriter extends JavaWriter {
             pw.println("            Class enumdf = org.apache.axis.encoding.ser.EnumDeserializerFactory.class;");
             pw.println("            Class arraysf = org.apache.axis.encoding.ser.ArraySerializerFactory.class;");
             pw.println("            Class arraydf = org.apache.axis.encoding.ser.ArrayDeserializerFactory.class;");
-            pw.println("            Class simplesf = org.apache.axis.encoding.ser.SimpleNonPrimitiveSerializerFactory.class;");
-            pw.println("            Class simpledf = org.apache.axis.encoding.ser.SimpleDeserializerFactory.class;");
         }
         firstSer = false ;
 
@@ -425,9 +418,6 @@ public class JavaStubWriter extends JavaWriter {
                      type.getNode(), emitter.getSymbolTable()) != null) {
             pw.println("            cachedSerFactories.add(enumsf);");
             pw.println("            cachedDeserFactories.add(enumdf);");
-        } else if (type.isSimpleType()) {
-            pw.println("            cachedSerFactories.add(simplesf);");
-            pw.println("            cachedDeserFactories.add(simpledf);");
         } else {
             pw.println("            cachedSerFactories.add(beansf);");
             pw.println("            cachedDeserFactories.add(beandf);");
@@ -461,22 +451,14 @@ public class JavaStubWriter extends JavaWriter {
             String typeString = "new javax.xml.rpc.namespace.QName(\"" +
                     qn.getNamespaceURI() + "\", \"" +
                     qn.getLocalPart() + "\")";
-            QName paramQName = p.getQName();
-            String qnName = "p" + i + "QName";
-            pw.println("        javax.xml.rpc.namespace.QName " + qnName + " = new javax.xml.rpc.namespace.QName(\"" +
-                    paramQName.getNamespaceURI() + "\", \"" +
-                    paramQName.getLocalPart() + "\");");
             if (p.mode == Parameter.IN) {
-                pw.println("        call.addParameter(" + qnName + ", "
-                           + typeString + ", javax.xml.rpc.ParameterMode.PARAM_MODE_IN);");
+                pw.println("        call.addParameter(\"" + p.name + "\", " + typeString + ", javax.xml.rpc.ParameterMode.PARAM_MODE_IN);");
             }
             else if (p.mode == Parameter.INOUT) {
-                pw.println("        call.addParameter(" + qnName + ", "
-                           + typeString + ", javax.xml.rpc.ParameterMode.PARAM_MODE_INOUT);");
+                pw.println("        call.addParameter(\"" + p.name + "\", " + typeString + ", javax.xml.rpc.ParameterMode.PARAM_MODE_INOUT);");
             }
             else { // p.mode == Parameter.OUT
-                pw.println("        call.addParameter(" + qnName + ", "
-                           + typeString + ", javax.xml.rpc.ParameterMode.PARAM_MODE_OUT);");
+                pw.println("        call.addParameter(\"" + p.name + "\", " + typeString + ", javax.xml.rpc.ParameterMode.PARAM_MODE_OUT);");
             }
         }
         // set output type
@@ -530,7 +512,7 @@ public class JavaStubWriter extends JavaWriter {
         for (int i = 0; i < parms.list.size(); ++i) {
             Parameter p = (Parameter) parms.list.get(i);
 
-            String javifiedName = Utils.xmlNameToJava(p.getName());
+            String javifiedName = Utils.xmlNameToJava(p.name);
             if (p.mode != Parameter.OUT) {
                 if (needComma) {
                     pw.print(", ");
@@ -565,7 +547,7 @@ public class JavaStubWriter extends JavaWriter {
                     while (p.mode != Parameter.INOUT) {
                         p = (Parameter) parms.list.get(++i);
                     }
-                    String javifiedName = Utils.xmlNameToJava(p.getName());
+                    String javifiedName = Utils.xmlNameToJava(p.name);
                     pw.println("            java.util.Map output;");
                     pw.println("            output = call.getOutputParams();");
                     // If expecting an array, need to call convert(..) because
@@ -578,13 +560,13 @@ public class JavaStubWriter extends JavaWriter {
                         pw.println("            " + javifiedName
                                     + ".value = (" + p.type.getName()
                                     + ") org.apache.axis.utils.JavaUtils.convert(output.get(\""
-                                    + p.getName() + "\"), " + p.type.getName()
+                                    + p.name + "\"), " + p.type.getName()
                                     + ".class);");
                     }
                     else {
                         pw.println("            " + javifiedName + ".value = "
                                 + getResponseString(p.type,
-                                "output.get(\"" + p.getName() + "\")"));
+                                "output.get(\"" + p.name + "\")"));
                     }
                 }
                 else {
@@ -616,7 +598,7 @@ public class JavaStubWriter extends JavaWriter {
                 boolean firstInoutIsResp = (parms.outputs == 0);
                 for (int i = 0; i < parms.list.size (); ++i) {
                     Parameter p = (Parameter) parms.list.get (i);
-                    String javifiedName = Utils.xmlNameToJava(p.getName());
+                    String javifiedName = Utils.xmlNameToJava(p.name);
                     if (p.mode != Parameter.IN) {
                         if (firstInoutIsResp) {
                             firstInoutIsResp = false;
@@ -627,13 +609,13 @@ public class JavaStubWriter extends JavaWriter {
                                 pw.println("             // REVISIT THIS!");
                                 pw.println ("            " + javifiedName
                                         + ".value = (" + p.type.getName()
-                                        + ") org.apache.axis.utils.JavaUtils.convert(output.get(\"" + p.getName() + "\"), "
+                                        + ") org.apache.axis.utils.JavaUtils.convert(output.get(\"" + p.name + "\"), "
                                         + p.type.getName() + ".class);");
                             }
                             else {
                                 pw.println ("            " + javifiedName +
                                             ".value = " +
-                                            getResponseString(p.type,  "output.get(\"" + p.getName() + "\")"));
+                                            getResponseString(p.type,  "output.get(\"" + p.name + "\")"));
                             }
                         }
                         else {
@@ -645,13 +627,13 @@ public class JavaStubWriter extends JavaWriter {
                                 pw.println ("            " + javifiedName
                                             + ".value = (" + p.type.getName()
                                             + ") org.apache.axis.utils.JavaUtils.convert("
-                                            + "output.get(\"" + p.getName() + "\"), "
+                                            + "output.get(\"" + p.name + "\"), "
                                             + p.type.getName() + ".class);");
                             }
                             else {
                                 pw.println ("            " + javifiedName
                                             + ".value = " + getResponseString(p.type,
-                                    "output.get(\"" + p.getName() + "\")"));
+                                    "output.get(\"" + p.name + "\")"));
                             }
                         }
                     }

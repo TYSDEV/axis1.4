@@ -114,7 +114,7 @@ public class TCPSender extends BasicHandler {
             log.debug( "---------------------------------------------------");
             log.debug( reqEnv );
 
-            if ( false ) {
+            if ( log.isDebugEnabled() ) {
                 // Special case - if the debug level is this high then something
                 // really bad must be going on - so just dump the input stream
                 // to stdout.

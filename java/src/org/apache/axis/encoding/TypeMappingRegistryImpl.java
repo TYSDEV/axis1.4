@@ -194,7 +194,6 @@ public class TypeMappingRegistryImpl implements TypeMappingRegistry {
             return;
         }
         String[]  keys = secondaryTMR.getRegisteredNamespaces();
-//        String[]  keys = null;
         if (keys != null) {
             for(int i=0; i < keys.length; i++) {
                 try {
@@ -246,7 +245,6 @@ public class TypeMappingRegistryImpl implements TypeMappingRegistry {
     public void register(String namespaceURI,
                          javax.xml.rpc.encoding.TypeMapping mapping)
         throws JAXRPCException {
-//        namespaceURI = "";
         if (mapping == null || 
             !(mapping instanceof TypeMapping)) {
             throw new IllegalArgumentException();
@@ -297,7 +295,6 @@ public class TypeMappingRegistryImpl implements TypeMappingRegistry {
      */
     public javax.xml.rpc.encoding.TypeMapping 
         getTypeMapping(String namespaceURI) {
-//        namespaceURI = "";
         TypeMapping del = (TypeMapping) mapTM.get(namespaceURI);
         TypeMapping tm = null;
         if (del != null) {

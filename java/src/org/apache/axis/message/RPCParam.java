@@ -77,7 +77,8 @@ public class RPCParam
     // Who's your daddy?
     RPCElement myCall;
     
-    private QName qname;
+    private String namespaceURI;
+    private String name;
     public Object value;
     
     private static Field valueField;
@@ -95,13 +96,14 @@ public class RPCParam
      */
     public RPCParam(String name, Object value)
     {
-        this.qname = new QName("", name);
+        this.name = name;
         this.value = value;
     }
     
     public RPCParam(String namespace, String name, Object value)
     {
-        this.qname = new QName(namespace, name);
+        this.namespaceURI = namespace;
+        this.name = name;
         this.value = value;
     }
     
@@ -122,12 +124,7 @@ public class RPCParam
     
     public String getName()
     {
-        return this.qname.getLocalPart();
-    }
-    
-    public QName getQName()
-    {
-        return this.qname;
+        return this.name;
     }
     
     public static Field getValueField()
@@ -139,9 +136,9 @@ public class RPCParam
         throws IOException
     {
         if (value != null) {
-            context.serialize(qname, null, value, value.getClass());
+            context.serialize(new QName(namespaceURI,name), null, value, value.getClass());
         } else {
-            context.serialize(qname, null, value, null);
+            context.serialize(new QName(namespaceURI,name), null, value, null);
         }
     }
 }

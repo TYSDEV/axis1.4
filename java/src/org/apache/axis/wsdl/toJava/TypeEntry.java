@@ -125,7 +125,6 @@ public abstract class TypeEntry extends SymTabEntry {
                                  // until the Undefined type is found.
     protected boolean isBaseType;// Indicates if represented by a 
                                  // java primitive or util class
-    protected boolean isSimpleType = false; // Indicates if this type is a simple type
     protected boolean onlyLiteralReference = false; // Indicates
                                  // whether this type is only referenced
                                  // via a binding's literal use.
@@ -202,14 +201,6 @@ public abstract class TypeEntry extends SymTabEntry {
         else {
             return null;
         }
-    }
-
-    public boolean isSimpleType() {
-        return isSimpleType;
-    }
-
-    public void setSimpleType(boolean simpleType) {
-        isSimpleType = simpleType;
     }
 
     /**

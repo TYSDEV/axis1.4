@@ -110,14 +110,13 @@ public class JavaUtils
      */
     public static Object convert(Object arg, Class destClass)
     {  
-        if (destClass == null) {
-            return arg;
+        if (log.isDebugEnabled()) {
+            log.debug( getMessage("convert00",
+                arg.getClass().getName(), destClass.getName()));
         }
 
-        if (log.isDebugEnabled()) {
-            String clsName = "null";
-            if (arg != null) clsName = arg.getClass().getName();
-            log.debug( getMessage("convert00", clsName, destClass.getName()));
+        if (destClass == null) {
+            return arg;
         }
 
         // See if a previously converted value is stored in the argument.
