@@ -73,6 +73,13 @@ and discuss issues, code changes/additions, etc.
 <br/>
 This list is for developers that are using Axis C++ in their own projects to 
 ask questions, share knowledge, and discuss issues related to using Axis C++.
+<form action="http://marc.theaimsgroup.com/" method="get">
+    <input type="hidden" name="l" value="axis-c-user"/>
+    <input type="hidden" name="w" value="2"/>
+<table width="100%" border="0" cellpadding="0" cellspacing="0">
+<tr><td align="left"><input type="hidden" name="r" value="1"/>Search:&nbsp;<input type="text" name="s" value="" size="25" maxlength="40"/><input type="submit" value="Search"/><input type="reset" value="Reset"/><br/>[<input type="radio" name="q" value="t"/>]&nbsp;Subjects&nbsp;[<input type="radio" name="q" value="a"/>]&nbsp;Authors&nbsp;[<input type="radio" name="q" value="b"/>]&nbsp;Bodies&nbsp;for&nbsp;list&nbsp;'axis-c-user'
+<br/></td></tr></table>
+</form>
 </p>
     </section>
 
@@ -90,8 +97,15 @@ ask questions, share knowledge, and discuss issues related to using Axis C++.
 <br/>
 This is the list where participating developers of the Axis C++ project meet 
 and discuss issues, code changes/additions, etc. 
+<form action="http://marc.theaimsgroup.com/" method="get">
+    <input type="hidden" name="l" value="axis-c-dev"/>
+    <input type="hidden" name="w" value="2"/>
+<table width="100%" border="0" cellpadding="0" cellspacing="0">
+<tr><td align="left"><input type="hidden" name="r" value="1"/>Search:&nbsp;<input type="text" name="s" value="" size="25" maxlength="40"/><input type="submit" value="Search"/><input type="reset" value="Reset"/><br/>[<input type="radio" name="q" value="t"/>]&nbsp;Subjects&nbsp;[<input type="radio" name="q" value="a"/>]&nbsp;Authors&nbsp;[<input type="radio" name="q" value="b"/>]&nbsp;Bodies&nbsp;for&nbsp;list&nbsp;'axis-c-dev'
+<br/></td></tr></table>
+</form>
 </p>
-    </section>
+   </section>
 
 
   </body>
