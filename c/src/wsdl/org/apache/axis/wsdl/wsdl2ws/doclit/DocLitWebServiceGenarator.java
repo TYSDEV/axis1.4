@@ -55,7 +55,7 @@ public class DocLitWebServiceGenarator implements WebServiceGenarator{
 				(new Genarator(WrapperConstants.GENERATOR_CLASSLOADER_CPP, wscontext)).genarate();				 				 	
 				(new Genarator(WrapperConstants.GENERATOR_DEPLOYMENT, wscontext)).genarate();
 				(new Genarator(WrapperConstants.GENERATOR_UNDEPLOYMENT, wscontext)).genarate();
-				//(new Genarator(WrapperConstants.GENERATOR_SERVICE_EXCEPTION, wscontext)).genarate();
+				(new Genarator(WrapperConstants.GENERATOR_SERVER_EXCEPTION, wscontext)).genarate();
 				(new Genarator(WrapperConstants.GENERATOR_BUILDSCRIPT, wscontext)).genarate();
 			}else{
 				(new Genarator(WrapperConstants.GENERATOR_CLIENT_STUB_CPP, wscontext)).genarate();

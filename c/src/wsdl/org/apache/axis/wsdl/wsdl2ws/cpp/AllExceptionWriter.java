@@ -17,34 +17,30 @@ import org.apache.axis.wsdl.wsdl2ws.info.WebServiceContext;
  */
 public class AllExceptionWriter implements SourceWriter{
 private WebServiceContext wscontext;
-private String strFlag;
+private String strFlag="";
 	
-  public AllExceptionWriter(WebServiceContext wscontext){
+  public AllExceptionWriter(WebServiceContext wscontext,String strFlag){
 	  this.wscontext =wscontext;
-	 // this.strFlag =strFlag;
+	  this.strFlag =strFlag;	  
    }
     /**
 	 * genarate all the Exceptions.
 	 * @see org.apache.axis.wsdl.wsdl2ws.SourceWriter#writeSource()
 	 */
 	public void writeSource() throws WrapperFault 
-	{		    
+	{		    		
 	     try
 	     {
-//	          if (strFlag.equals("Client"))
-//	          {
-//			       (new ExceptionHeaderWriter(wscontext,"Client")).writeSource();
-//				   (new ExceptionWriter(wscontext,"Client")).writeSource();
-//	          }
-//	     	  else if  (strFlag.equals("Client"))
-//	     	  {	
-//				  (new ExceptionHeaderWriter(wscontext,"Server")).writeSource();
-//				  (new ExceptionWriter(wscontext,"Server")).writeSource();
-//	     	  }		
-
-			(new ExceptionHeaderWriter(wscontext,"Client")).writeSource();
-  		    (new ExceptionWriter(wscontext,"Client")).writeSource();
-				
+          if (strFlag.equals("Client"))
+	          {
+			       (new ExceptionHeaderWriter(wscontext,"Client")).writeSource();
+				   (new ExceptionWriter(wscontext,"Client")).writeSource();
+	          }
+     	  else if (strFlag.equals("Server"))
+	     	  {		     	  	  
+				  (new ExceptionHeaderWriter(wscontext,"Service")).writeSource();
+				  (new ExceptionWriter(wscontext,"Service")).writeSource();
+	     	  }					
 		 }			
 		 catch(Exception e)
 		{

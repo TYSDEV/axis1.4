@@ -57,7 +57,7 @@ public class RPCWebServiceGenarator implements WebServiceGenarator{
 				(new Genarator(WrapperConstants.GENERATOR_PARAM_CPP_ALL, wscontext)).genarate();	
 				(new Genarator(WrapperConstants.GENERATOR_CLASSLOADER_CPP, wscontext)).genarate();
 				(new Genarator(WrapperConstants.GENERATOR_DEPLOYMENT, wscontext)).genarate();
-				//(new Genarator(WrapperConstants.GENERATOR_SERVER_EXCEPTION, wscontext)).genarate();
+				(new Genarator(WrapperConstants.GENERATOR_SERVER_EXCEPTION, wscontext)).genarate();
 				(new Genarator(WrapperConstants.GENERATOR_UNDEPLOYMENT, wscontext)).genarate();
 				/*
 				 * make sure the BuildScript generator is called at last. If you call earlier not all files will be added
