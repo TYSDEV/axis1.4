@@ -27,7 +27,7 @@ h1 {  margin-left: -30px}
   <A href="#PublishingServices">Publishing Web Services with Axis</a><br>
   <A href="#DataMapping">XML &lt;-&gt; Java Data Mapping in Axis<br>
   </a> <A href="#WSDL">Using WSDL with Axis</a><br>
-  <A href="#AttachmentsReference">SOAP with Attachments</a><br>
+  <A href="#AttachmentsReference">SOAP Messages with Attachments</a><br>
   <A href="#DeploymentReference">Deployment Reference</a><br>
   <br>
   <A href="#Glossary">Glossary</a></p>
@@ -942,12 +942,40 @@ namely &quot;http://wsdd&quot;.
     <pre>% java org.apache.axis.client.AdminClient -llocal:// list</pre>
   <dt></dt>
 </dl>
-<h2><a name="AttachmentsReference">SOAP with Attachments</a></h2>
+<h2><a name="AttachmentsReference">SOAP Messages with Attachments</a></h2>
+As mentioned earlier, SOAP is a communication protocol based on XML that governs the exchange
+of information between two end points.  After XML type messaging standards had been out for a while
+it became
+apparent that XML may not always be best format for the exchange of some types of data.
+Instead of inventing
+a new standard, an existing standard:
+<a href="http://www.ietf.org/rfc/rfc2387.txt">MIME Multipart/Related Content-type</a>  was incorporated
+into the SOAP standard as <a href="http://www.w3.org/TR/SOAP-attachments">SOAP Messages with Attachments</a> 
+In short, this allows SOAP message to be embedded as a part in a multi-part message where each part may
+specify the type of content it contains.  This can make the transferring of many types of data more
+efficient than if the data had to be contained in SOAP message it self.  Also specified is how elements
+within the SOAP part may reference data contained in other parts of the message. 
+The <a href="http://www.w3.org/TR/SOAP-attachments">SOAP Messages with Attachments</a> specification 
+can be referenced for more details in understanding how attachments with SOAP work.
+</P>
+<P>
+There are no clear cut guidelines when to transfer data within XML or to send as an attachment. 
+Attachments offer two primary advantages: The content does not have to be made XML safe; or in other words no
+processing needs to be done to change data content to that which is allowed by XML when sending
+and converting 
+that data back when receiving. And the other being the data does not have to be contained in memory 
+in its entirety to be sent or when its received. 
+</P>
+<P>Axis's implementation of attachments uses
+<a href="http://java.sun.com/products/javabeans/glasgow/jaf.html">JavaBeans Activation Framework (JAF)</a>
+as recommended by <a href="http://java.sun.com/xml/jaxrpc/">Java API for XML-Based RPC (JAX-RPC)</a>
+</P>
 <p><i><font color="#ff0000">Work in progress--- a lot more work to be done.. </font></i></p>
 <a name="tcpmon"></a><h2>Using the Axis TCP Monitor (tcpmon) </h2>
 <p>The included &quot;tcpmon&quot; utility can be found in the org.apache.axis.utils 
   package. To run it from the command line:</p>
-<pre>% java org.apache.axis.utils.tcpmon [listenPort targetHost targetPort]</pre>
+<p
+re>% java org.apache.axis.utils.tcpmon [listenPort targetHost targetPort]</pre>
 <p>Without any of the optional arguments, you will get a gui which looks like this:</p>
 <p align="center"><img src="tcpmon1.jpg" width="599" height="599"></p>
 <p align="left">To use the program, you should select a local port which tcpmon 
