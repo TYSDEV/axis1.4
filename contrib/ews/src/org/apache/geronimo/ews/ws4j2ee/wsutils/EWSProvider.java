@@ -18,6 +18,7 @@ package org.apache.geronimo.ews.ws4j2ee.wsutils;
 
 import org.apache.axis.AxisFault;
 import org.apache.axis.MessageContext;
+import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.providers.java.RPCProvider;
 import org.apache.axis.utils.ClassUtils;
 
@@ -36,6 +37,7 @@ public class EWSProvider extends RPCProvider {
     public static final String OPTION_REMOTEINTERFACE_NAME = "remoteInterfaceName";
     public static final String OPTION_LOCALHOMEINTERFACE_NAME = "localHomeInterfaceName";
     public static final String OPTION_LOCALINTERFACE_NAME = "localInterfaceName";
+    public static final String OPTION_USE_EJB = "j2eeStyle";
 
     private String ejblookupName;
     private String localhome;
@@ -43,12 +45,14 @@ public class EWSProvider extends RPCProvider {
     private String remote;
     private String local;
 
-    private boolean ejbbased = true;
+    private boolean ejbbased = false;
 
     protected Object makeNewServiceObject(MessageContext msgContext,
                                           String clsName)
             throws Exception {
-        if (ejbbased) {
+        SOAPService service = msgContext.getService();
+        String j2eeStyle = (String) service.getOption(OPTION_LOCALINTERFACE_NAME);
+        if("web".equals(j2eeStyle) ){
             java.util.Properties env = new java.util.Properties();
             InputStream jndiIn = ClassUtils.getResourceAsStream(getClass(), "jndi.properties");
             if (jndiIn != null) {
@@ -57,11 +61,11 @@ public class EWSProvider extends RPCProvider {
                 throw new AxisFault("Do not find the JNDI properties file in the class path");
             }
             javax.naming.Context initial = new javax.naming.InitialContext(env);
-            ejblookupName = (String) getOption(OPTION_JNDI_LOOKUP_NAME);
-            remote = (String) getOption(OPTION_REMOTEINTERFACE_NAME);
-            home = (String) getOption(OPTION_HOMEINTERFACE_NAME);
-            local = (String) getOption(OPTION_LOCALINTERFACE_NAME);
-            localhome = (String) getOption(OPTION_LOCALHOMEINTERFACE_NAME);
+            ejblookupName = (String) service.getOption(OPTION_JNDI_LOOKUP_NAME);
+            remote = (String) service.getOption(OPTION_REMOTEINTERFACE_NAME);
+            home = (String) service.getOption(OPTION_HOMEINTERFACE_NAME);
+            local = (String) service.getOption(OPTION_LOCALINTERFACE_NAME);
+            localhome = (String) service.getOption(OPTION_LOCALHOMEINTERFACE_NAME);
             if (remote != null && home != null && ejblookupName != null) {
                 Object objref = initial.lookup(ejblookupName);
                 Class homeClass = ClassUtils.forName(home);
@@ -74,9 +78,9 @@ public class EWSProvider extends RPCProvider {
                 Method method = homeClass.getMethod("create", new Class[]{});
                 return method.invoke(homeObj, new Object[]{});
             }
-            throw new AxisFault("Wrong configuration");
+            throw new AxisFault("Wrong configuration remote="+ remote + "home =" + home + "ejblookupName" + ejblookupName );
         } else {
-            return makeNewServiceObject(msgContext, clsName);
+            return super.makeNewServiceObject(msgContext, clsName);
         }
     }
 
