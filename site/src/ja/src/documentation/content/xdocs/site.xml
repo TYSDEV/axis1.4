@@ -19,7 +19,7 @@ See http://xml.apache.org/forrest/linking.html for more info
  <introduction label="はじめに" href="index.html"/>
  <news label="お知らせ" href="news.html"/>
 <!-- <faq label="FAQ" href="faq.html"/>-->
- <wiki label="FAQ/Wiki" href="http://ws.apache.org/axis/jp/wiki-java/index.html"/>
+ <wiki label="FAQ/Wiki" href="http://ws.apache.org/axis/ja/wiki-java/index.html"/>
  <getinvolved label="活動に参加">
   <overview label="概要" href="overview.html"/>
   <cvs label="CVS リポジトリ" href="cvs.html"/>
