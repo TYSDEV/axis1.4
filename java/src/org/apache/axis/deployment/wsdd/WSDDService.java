@@ -73,7 +73,6 @@ import org.apache.axis.encoding.TypeMappingRegistryImpl;
 import org.apache.axis.encoding.ser.BaseDeserializerFactory;
 import org.apache.axis.encoding.ser.BaseSerializerFactory;
 import org.apache.axis.enum.Style;
-import org.apache.axis.enum.Use;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.providers.java.JavaProvider;
 import org.apache.axis.utils.Messages;
@@ -109,10 +108,8 @@ public class WSDDService
 
     private String descriptionURL;
 
-    /** Style - document, wrapped, message, or RPC (the default) */
+    /** Style - document or RPC (the default) */
     private Style style = Style.DEFAULT;
-    /** Use   - encoded (the default) or literal */
-    private Use use = Use.DEFAULT;
 
     private SOAPService cachedService = null;
 
@@ -162,18 +159,6 @@ public class WSDDService
             style = Style.getStyle(styleStr, Style.DEFAULT);
             desc.setStyle(style);
             providerQName = style.getProvider();
-        }
-
-        String useStr = e.getAttribute(ATTR_USE);
-        if (useStr != null && !useStr.equals("")) {
-            use = Use.getUse(useStr, Use.DEFAULT);
-            desc.setUse(use);
-        } else {
-            if (style != Style.RPC) {
-                // Default to use=literal if not style=RPC
-                use = Use.LITERAL;
-                desc.setUse(use);
-            }
         }
 
         String streamStr = e.getAttribute(ATTR_STREAMING);
@@ -282,7 +267,7 @@ public class WSDDService
             initTMR();
         }
         desc.setTypeMappingRegistry(tmr);
-        desc.setTypeMapping(getTypeMapping(desc.getUse().getEncoding()));
+        desc.setTypeMapping(getTypeMapping(desc.getStyle().getEncoding()));
 
         String allowedMethods = getParameter(JavaProvider.OPTION_ALLOWEDMETHODS);
         if (allowedMethods != null && !"*".equals(allowedMethods)) {
@@ -346,15 +331,15 @@ public class WSDDService
         this.providerQName = providerQName;
     }
 
-    public ServiceDesc getServiceDesc() {
-        return desc;
-    }
-
     /**
      * Get the service style - document or RPC
      */
     public Style getStyle() {
         return style;
+    }
+
+    public ServiceDesc getServiceDesc() {
+        return desc;
     }
 
     /**
@@ -364,19 +349,6 @@ public class WSDDService
         this.style = style;
     }
 
-    /**
-     * Get the service use - literal or encoded
-     */
-    public Use getUse() {
-        return use;
-    }
-
-    /**
-     * Set the service use - literal or encoded
-     */
-    public void setUse(Use use) {
-        this.use = use;
-    }
     /**
      *
      * @return XXX
@@ -464,7 +436,6 @@ public class WSDDService
         SOAPService service = new SOAPService(reqHandler, providerHandler,
                                               respHandler);
         service.setStyle(style);
-        service.setUse(use);
         service.setHighFidelityRecording(!streaming);
         service.setSendType(sendType);
 
@@ -474,9 +445,8 @@ public class WSDDService
 
         service.setEngine(((WSDDDeployment)registry).getEngine());
 
-        if (use != Use.ENCODED) {
-            // If not encoded, turn off multi-refs and prefer
-            // not to sent xsi:type and xsi:nil
+        if (style != Style.RPC) {
+            // No Multirefs/xsi:types
             service.setOption(AxisEngine.PROP_DOMULTIREFS, Boolean.FALSE);
             service.setOption(AxisEngine.PROP_SEND_XSI, Boolean.FALSE);
         }
@@ -524,10 +494,10 @@ public class WSDDService
         }
         try {
             // Get the encoding style from the mapping, if it isn't set
-            // use the use of the service to map doc/lit or rpc/enc
+            // use the style of the service to map doc/lit or rpc/enc
             String encodingStyle = mapping.getEncodingStyle();
             if (encodingStyle == null) {
-                encodingStyle = use.getEncoding();
+                encodingStyle = style.getEncoding();
             }
             TypeMapping tm = (TypeMapping) tmr.getTypeMapping(encodingStyle);
             TypeMapping df = (TypeMapping) tmr.getDefaultTypeMapping();
@@ -590,11 +560,6 @@ public class WSDDService
         if (style != Style.DEFAULT) {
             attrs.addAttribute("", ATTR_STYLE, ATTR_STYLE,
                                "CDATA", style.getName());
-        }
-
-        if (use != Use.DEFAULT) {
-            attrs.addAttribute("", ATTR_USE, ATTR_USE,
-                               "CDATA", use.getName());
         }
 
         if (streaming) {

@@ -71,8 +71,6 @@ import javax.xml.namespace.QName;
 import javax.wsdl.Service;
 
 import org.apache.axis.Constants;
-import org.apache.axis.enum.Style;
-import org.apache.axis.enum.Use;
 
 import org.apache.axis.deployment.wsdd.WSDDConstants;
 import org.apache.axis.enum.Scope;
@@ -287,24 +285,18 @@ public class JavaDeployWriter extends JavaWriter {
 
         String prefix = WSDDConstants.NS_PREFIX_WSDD_JAVA;
         String styleStr = "";
-        String useStr = "";
+
+        if (hasLiteral) {
+            styleStr = " style=\"document\"";
+        }
 
         if (symbolTable.isWrapped()) {
-            styleStr = " style=\"" + Style.WRAPPED + "\"";
-            useStr = " use=\"" + Use.LITERAL + "\"";
-        } else {
-            styleStr = " style=\"" + 
-                bEntry.getBindingStyle().getName() + "\"";
-            if (hasLiteral) {
-                useStr = " use=\"" + Use.LITERAL + "\"";
-            } else {
-                useStr = " use=\"" + Use.ENCODED + "\"";
-            }
+            styleStr = " style=\"wrapped\"";
         }
 
         pw.println("  <service name=\"" + serviceName
                 + "\" provider=\"" + prefix +":RPC"
-                + "\"" + styleStr + useStr + ">");
+                + "\"" + styleStr + ">");
 
         pw.println("      <parameter name=\"wsdlTargetNamespace\" value=\""
                          + service.getQName().getNamespaceURI() + "\"/>");
@@ -367,8 +359,7 @@ public class JavaDeployWriter extends JavaWriter {
                 if (params != null) {
                     
                     // Get the operation QName
-                    QName elementQName = 
-                        Utils.getOperationQName(bindingOper, bEntry, symbolTable);
+                    QName elementQName = Utils.getOperationQName(bindingOper);
 
                     // Get the operation's return QName and type
                     QName returnQName = null;
@@ -425,9 +416,6 @@ public class JavaDeployWriter extends JavaWriter {
                      Utils.genQNameAttributeString(returnType, "rtns") +
                      "\"");
         }
-        if (params.returnParam != null && params.returnParam.isOutHeader()) {
-            pw.print(" returnHeader=\"true\"");
-        }
         pw.println(" >");
 
         Vector paramList = params.list;
@@ -454,15 +442,6 @@ public class JavaDeployWriter extends JavaWriter {
             if (param.getMode() != Parameter.IN) {
                 pw.print(" mode=\"" + getModeString(param.getMode()) + "\"");
             }
-
-            // Is this a header?
-            if (param.isInHeader()) {
-                pw.print(" inHeader=\"true\"");
-            }
-            if (param.isOutHeader()) {
-                pw.print(" outHeader=\"true\"");
-            }
-
             pw.println("/>");
         }
 

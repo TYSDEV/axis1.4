@@ -66,7 +66,6 @@ import org.apache.axis.soap.SOAPConstants;
 import org.apache.axis.description.OperationDesc;
 import org.apache.axis.description.ParameterDesc;
 import org.apache.axis.enum.Style;
-import org.apache.axis.enum.Use;
 import org.apache.axis.encoding.DeserializerFactory;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.encoding.SerializationContextImpl;
@@ -78,7 +77,6 @@ import org.apache.axis.encoding.ser.BaseDeserializerFactory;
 import org.apache.axis.encoding.ser.BaseSerializerFactory;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.message.RPCElement;
-import org.apache.axis.message.RPCHeaderParam;
 import org.apache.axis.message.RPCParam;
 import org.apache.axis.message.SOAPBodyElement;
 import org.apache.axis.message.SOAPEnvelope;
@@ -171,8 +169,7 @@ public class Call implements javax.xml.rpc.Call {
     private String             username        = null;
     private String             password        = null;
     private boolean            maintainSession = false;
-    private Style              operationStyle  = Style.RPC;
-    private Use                operationUse    = Use.ENCODED;
+    private Style              operationStyle  = Style.DEFAULT;
     private boolean            useSOAPAction   = false;
     private String             SOAPActionURI   = null;
     private Integer            timeout         = null;
@@ -331,12 +328,6 @@ public class Call implements javax.xml.rpc.Call {
                         name, "java.lang.String", value.getClass().getName()}));
             }
             setOperationStyle((String) value);
-            if (getOperationStyle() == Style.DOCUMENT ||
-                getOperationStyle() == Style.WRAPPED) {
-                setOperationUse(Use.LITERAL_STR);
-            } else if (getOperationStyle() == Style.RPC) {
-                setOperationUse(Use.ENCODED_STR);
-            }
         }
         else if (name.equals(SOAPACTION_USE_PROPERTY)) {
             if (!(value instanceof Boolean)) {
@@ -532,35 +523,27 @@ public class Call implements javax.xml.rpc.Call {
     }
 
     /**
-     * Set the operation style: "document", "rpc"
-     * @param operationStyle string designating style
+     * Set the operation style.  IllegalArgumentException is thrown if operationStyle
+     * is not "rpc" or "document".
+     *
+     * @exception IllegalArgumentException if operationStyle is not "rpc" or "document".
      */
     public void setOperationStyle(String operationStyle) {
-        this.operationStyle = 
-            Style.getStyle(operationStyle, Style.DEFAULT);
+        this.operationStyle = Style.getStyle(operationStyle, Style.DEFAULT);
+
+/*  Not being used for now... --GD
+        throw new IllegalArgumentException(Messages.getMessage(
+                "badProp01",
+                new String[] {OPERATION_STYLE_PROPERTY,
+                              "\"rpc\", \"document\"", operationStyle}));
+*/
     } // setOperationStyle
- 
+
     /**
      * Get the operation style.
      */
     public Style getOperationStyle() {
         return operationStyle;
-    } // getOperationStyle
-
-    /**
-     * Set the operation use: "literal", "encoded"
-     * @param operationUse string designating use
-     */
-    public void setOperationUse(String operationUse) {
-        this.operationUse = 
-            Use.getUse(operationUse, Use.DEFAULT);
-    } // setOperationUse
- 
-    /**
-     * Get the operation use.
-     */
-    public Use getOperationUse() {
-        return operationUse;
     } // getOperationStyle
 
     /**
@@ -834,50 +817,6 @@ public class Call implements javax.xml.rpc.Call {
     }
 
     /**
-     * Adds a parameter type as a soap:header.
-     * @param paramName - Name of the parameter
-     * @param xmlType - XML datatype of the parameter
-     * @param javaType - The Java class of the parameter
-     * @param parameterMode - Mode of the parameter-whether IN, OUT or INOUT
-     * @param headerMode - Mode of the header.  Even if this is an INOUT
-     *                     parameter, it need not be in the header in both
-     *                     directions.
-     * @exception JAXRPCException - if isParameterAndReturnSpecRequired returns
-     *                              false, then addParameter MAY throw
-     *                              JAXRPCException....actually Axis allows
-     *                              modification in such cases
-     */
-    public void addParameterAsHeader(QName paramName, QName xmlType,
-            Class javaType, ParameterMode parameterMode,
-            ParameterMode headerMode) {
-        ParameterDesc param = new ParameterDesc();
-        param.setQName(paramName);
-        param.setTypeQName(xmlType);
-        param.setJavaType(javaType);
-        if (parameterMode == ParameterMode.IN) {
-            param.setMode(ParameterDesc.IN);
-        }
-        else if (parameterMode == ParameterMode.INOUT) {
-            param.setMode(ParameterDesc.INOUT);
-        }
-        else if (parameterMode == ParameterMode.OUT) {
-            param.setMode(ParameterDesc.OUT);
-        }
-        if (headerMode == ParameterMode.IN) {
-            param.setInHeader(true);
-        }
-        else if (headerMode == ParameterMode.INOUT) {
-            param.setInHeader(true);
-            param.setOutHeader(true);
-        }
-        else if (headerMode == ParameterMode.OUT) {
-            param.setOutHeader(true);
-        }
-        operation.addParameter(param);
-        parmAndRetReq = true;
-    } // addParameterAsHeader
-
-    /**
      * Return the QName of the type of the parameters with the given name.
      *
      * @param  paramName  name of the parameter to return
@@ -942,22 +881,6 @@ public class Call implements javax.xml.rpc.Call {
         returnJavaType = javaType;
         operation.setReturnClass(javaType);  // Use specified type as the operation return
     }
-
-    /**
-     * Set the return type as a header
-     */
-    public void setReturnTypeAsHeader(QName xmlType) {
-        setReturnType(xmlType);
-        operation.setReturnHeader(true);
-    } // setReturnTypeAsHeader
-
-    /**
-     * Set the return type as a header
-     */
-    public void setReturnTypeAsHeader(QName xmlType, Class javaType) {
-        setReturnType(xmlType, javaType);
-        operation.setReturnHeader(true);
-    } // setReturnTypeAsHeader
 
     /**
      * Returns the QName of the type of the return value of this Call - or null if
@@ -1561,6 +1484,7 @@ public class Call implements javax.xml.rpc.Call {
      */
     private Object[] getParamList(Object[] params) {
         int  numParams = 0 ;
+        int  i ;
 
         // If we never set-up any names... then just return what was passed in
         //////////////////////////////////////////////////////////////////////
@@ -1586,35 +1510,28 @@ public class Call implements javax.xml.rpc.Call {
         int    j = 0 ;
         ArrayList parameters = operation.getParameters();
 
-        for (int i = 0; i < parameters.size(); i++) {
+        for ( i = 0 ; i < parameters.size() ; i++ ) {
             ParameterDesc param = (ParameterDesc)parameters.get(i);
-            if (param.getMode() != ParameterDesc.OUT) {
-                QName paramQName = param.getQName();
+            if (param.getMode() == ParameterDesc.OUT)
+                continue ;
 
-                // Create an RPCParam if param isn't already an RPCParam.
-                RPCParam rpcParam = null;
-                Object p = params[j++];
-                if(p instanceof RPCParam) {
-                    rpcParam = (RPCParam)p;
-                } else {
-                    rpcParam = new RPCParam(paramQName.getNamespaceURI(),
-                                            paramQName.getLocalPart(),
-                                            p);
-                }
-                // Attach the ParameterDescription to the RPCParam
-                // so that the serializer can use the (javaType, xmlType)
-                // information.
-                rpcParam.setParamDesc(param);
-                
-                // Add the param to the header or vector depending
-                // on whether it belongs in the header or body.
-                if (param.isInHeader()) {
-                    addHeader(new RPCHeaderParam(rpcParam));
-                } else {
-                    result.add(rpcParam);
-                }
+            QName paramQName = param.getQName();
+            RPCParam rpcParam = null;
+            Object p = params[j++];
+            if(p instanceof RPCParam) {
+                rpcParam = (RPCParam)p;
+            } else {
+                rpcParam = new RPCParam(paramQName.getNamespaceURI(),
+                                      paramQName.getLocalPart(),
+                                      p );
             }
+            // Attach the ParameterDescription to the RPCParam
+            // so that the serializer can use the (javaType, xmlType)
+            // information.
+            rpcParam.setParamDesc(param);
+            result.add( rpcParam );
         }
+
         return( result.toArray() );
     }
 
@@ -2100,9 +2017,7 @@ public class Call implements javax.xml.rpc.Call {
         msgContext.setOperation(operation);
 
         operation.setStyle(getOperationStyle());
-        operation.setUse(getOperationUse());
         msgContext.setOperationStyle(getOperationStyle());
-        msgContext.setOperationUse(getOperationUse());
 
         if (useSOAPAction) {
             msgContext.setUseSOAPAction(true);

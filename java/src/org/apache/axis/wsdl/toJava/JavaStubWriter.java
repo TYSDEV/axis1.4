@@ -56,8 +56,6 @@ package org.apache.axis.wsdl.toJava;
 
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
-import org.apache.axis.enum.Style;
-import org.apache.axis.enum.Use;
 import org.apache.axis.wsdl.symbolTable.BindingEntry;
 import org.apache.axis.wsdl.symbolTable.CollectionTE;
 import org.apache.axis.wsdl.symbolTable.Element;
@@ -365,8 +363,7 @@ public class JavaStubWriter extends JavaClassWriter {
                 Fault f = (Fault) i.next();
                 partTypes(v,
                         f.getMessage().getOrderedParts(null),
-                        (bEntry.getFaultBodyType(operation, 
-                                                 f.getName()) == Use.LITERAL));
+                        (bEntry.getFaultBodyType(operation, f.getName()) == BindingEntry.USE_LITERAL));
             }
         }
         // Put all these types into a set.  This operation eliminates all duplicates.
@@ -520,21 +517,7 @@ public class JavaStubWriter extends JavaClassWriter {
 
             // Generate the addParameter call with the
             // name qname, typeQName, optional javaType, and mode
-            boolean isInHeader = p.isInHeader();
-            boolean isOutHeader = p.isOutHeader();
-            if (isInHeader || isOutHeader) {
-                String headerMode = isInHeader ?
-                        (isOutHeader ? "javax.xml.rpc.ParameterMode.INOUT" :
-                        "javax.xml.rpc.ParameterMode.IN") :
-                        "javax.xml.rpc.ParameterMode.OUT";
-                pw.println("        _call.addParameterAsHeader("
-                           + paramNameText + ", "
-                           + paramTypeText + ", " 
-                           + javaType
-                           + "javax.xml.rpc.ParameterMode.IN, "
-                           + headerMode + ");");
-            }
-            else if (p.getMode() == Parameter.IN) {
+            if (p.getMode() == Parameter.IN) {
                 pw.println("        _call.addParameter(" + paramNameText + ", "
                            + paramTypeText + ", " 
                            + javaType + "javax.xml.rpc.ParameterMode.IN);");
@@ -555,7 +538,7 @@ public class JavaStubWriter extends JavaClassWriter {
 
             // Get the QName for the return Type
             QName returnType = Utils.getXSIType(parms.returnParam);
-
+            
             // Get the javaType
             String javaType = null;
             if (parms.returnParam.getMIMEType() != null) {
@@ -565,21 +548,12 @@ public class JavaStubWriter extends JavaClassWriter {
                 javaType = parms.returnParam.getType().getName();
             }
             if (javaType == null) {
-                javaType = "";
-            }
-            else {
-                javaType = ", " + javaType + ".class";
-            }
-            String method = "setReturnType";
-            if (parms.returnParam.isOutHeader()) {
-                method = "setReturnTypeAsHeader";
-            }
-            pw.println("        _call." + method + "("
-                    + Utils.getNewQName(returnType)
-                    + javaType + ");");
-            QName returnQName = parms.returnParam.getQName();
-            if (returnQName != null) {
-                pw.println("        _call.setReturnQName(" + Utils.getNewQName(returnQName) + ");");
+                pw.println("        _call.setReturnType(" + 
+                           Utils.getNewQName(returnType) + ");");
+            } else {
+                pw.println("        _call.setReturnType(" + 
+                           Utils.getNewQName(returnType) + 
+                           ", " + javaType + ".class);");
             }
         }
         else {
@@ -595,14 +569,14 @@ public class JavaStubWriter extends JavaClassWriter {
         boolean hasMIME = Utils.hasMIME(bEntry, operation);
 
         // Encoding: literal or encoded use.
-        Use use = bEntry.getInputBodyType(operation.getOperation());
-        if (use == Use.LITERAL) {
+        int use = bEntry.getInputBodyType(operation.getOperation());
+        if (use == BindingEntry.USE_LITERAL) {
             // Turn off encoding
             pw.println("        _call.setEncodingStyle(null);");
             // turn off XSI types
             pw.println("        _call.setScopedProperty(org.apache.axis.client.Call.SEND_TYPE_ATTR, Boolean.FALSE);");
         }
-        if (hasMIME || use == Use.LITERAL) {
+        if (hasMIME || use == BindingEntry.USE_LITERAL) {
             // If it is literal, turn off multirefs.
             //
             // If there are any MIME types, turn off multirefs.
@@ -611,18 +585,28 @@ public class JavaStubWriter extends JavaClassWriter {
             pw.println("        _call.setScopedProperty(org.apache.axis.AxisEngine.PROP_DOMULTIREFS, Boolean.FALSE);");
         }
 
-        Style style = Style.getStyle(opStyle, bEntry.getBindingStyle());
-        if (style == Style.DOCUMENT && symbolTable.isWrapped()) {
-            style = Style.WRAPPED;
+        // Style: document, RPC, or wrapped
+        String styleStr = opStyle;  // operation style override binding
+        if (styleStr == null) {     // get default from binding
+            styleStr = "rpc";
+            int style = bEntry.getBindingStyle();
+            if (style == BindingEntry.STYLE_DOCUMENT) {
+                styleStr = "document";
+            }
+        }
+            
+        // FIXME: this only checks for wrapped in a global way, which
+        // is not really right as some ops can be wrapped and some not
+        if (styleStr.equals("document") && symbolTable.isWrapped()) {
+            styleStr = "wrapped";
         }
 
         if (!hasMIME) {
-            pw.println("        _call.setOperationStyle(\"" + style.getName() + "\");");
-            pw.println("        _call.setOperationUse(\"" + use.getName() + "\");");
+            pw.println("        _call.setOperationStyle(\"" + styleStr + "\");");
         }
 
         // Operation name
-        if (style == Style.WRAPPED) {
+        if (styleStr.equals("wrapped")) {
             // We need to make sure the operation name, which is what we
             // wrap the elements in, matches the Qname of the parameter
             // element.
@@ -630,9 +614,17 @@ public class JavaStubWriter extends JavaClassWriter {
             Part p = (Part)partsMap.values().iterator().next();
             QName q = p.getElementName();
             pw.println("        _call.setOperationName(" + Utils.getNewQName(q) + ");" );
+            
+            // Special return info for wrapped - the QName of the element
+            // which is the return type
+            if (parms.returnParam != null) {
+                QName returnQName = parms.returnParam.getQName();
+                if (returnQName != null) {
+                    pw.println("        _call.setReturnQName(" + Utils.getNewQName(returnQName) + ");" );
+                }
+            }
         } else {
-            QName elementQName = 
-                Utils.getOperationQName(operation, bEntry, symbolTable);
+            QName elementQName = Utils.getOperationQName(operation);
             if (elementQName != null) {
                 pw.println("        _call.setOperationName(" +
                         Utils.getNewQName(elementQName) + ");" );
