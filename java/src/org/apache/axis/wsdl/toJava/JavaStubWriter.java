@@ -401,9 +401,9 @@ public class JavaStubWriter extends JavaClassWriter {
     } // partTypes
 
     /**
-     * This function returns the faults in an operation
+     * This function writes the regsiterFaultInfo API calls
      */
-    private void writeFaultInfo(PrintWriter pw, PortType portType) {
+    private void writeFaultInfo(PrintWriter pw, PortType portType) throws IOException {
         // Where we remember which QName we have already written out
         Vector emitted = new Vector();
         // Get all the faults from all the operations
@@ -422,11 +422,22 @@ public class JavaStubWriter extends JavaClassWriter {
                     // get the name of the part - there can be only one!
                     Message message = fault.getMessage();
                     Map parts = message.getParts();
+                    // If no parts, skip it
+                    if (parts.size() == 0) {
+                        continue;
+                    }
                     String partName = (String) parts.keySet().iterator().next();
 
                     // Use the namespace in the binding for this fault
                     // NOTE: we do the same thing when writing the fault in JavaFaultWriter
                     BindingFault bindFault = bindOp.getBindingFault(fault.getName());
+                    if (bindFault == null) {
+                        throw new IOException(
+                                Messages.getMessage("noBindingFault", 
+                                  new String[] {fault.getName(), 
+                                                bindOp.getName(), 
+                                                binding.getQName().toString()}));
+                    }
                     List extList = bindFault.getExtensibilityElements();
                     String namespace = "";
                     for (Iterator iterator = extList.iterator(); iterator.hasNext();) {
