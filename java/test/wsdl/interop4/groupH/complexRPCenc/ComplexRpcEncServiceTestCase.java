@@ -173,17 +173,17 @@ public class ComplexRpcEncServiceTestCase extends junit.framework.TestCase {
             try {
                 binding.echoMultipleFaults2(i, base, extended, moreExtended);
             }
-            catch (test.wsdl.interop4.groupH.complexRPCenc.MoreExtendedStruct e3) {
+            catch (MoreExtendedStruct e3) {
                 assertEquals("Wrong fault thrown: " + e3.getClass(), 3, i);
                 assertEquals("Bad data echoed", moreExtended, e3);
                 continue;
             }
-            catch (test.wsdl.interop4.groupH.complexRPCenc.ExtendedStruct e2) {
+            catch (ExtendedStruct e2) {
                 assertEquals("Wrong fault thrown: " + e2.getClass(), 2, i);
                 assertEquals("Bad data echoed", extended, e2);
                 continue;
             }
-            catch (test.wsdl.interop4.groupH.complexRPCenc.BaseStruct e1) {
+            catch (BaseStruct e1) {
                 assertEquals("Wrong fault thrown: " + e1.getClass(), 1, i);
                 assertEquals("Bad data echoed", base, e1);
                 continue;
