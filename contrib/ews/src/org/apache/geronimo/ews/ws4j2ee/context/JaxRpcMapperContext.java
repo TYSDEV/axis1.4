@@ -79,10 +79,9 @@ public interface JaxRpcMapperContext {
      */
     public abstract String getJavaType(QName typeQName);
 
-    /**
-     * @return 
-     */
-    public abstract JavaWsdlMapping getMapping();
+    public int getPackageMappingCount();
+    public String getPackageMappingClassName(int index);
+    public String getPackageMappingURI(int index);
 
     /**
      * get the name of the port used in this webservice 
@@ -109,12 +108,12 @@ public interface JaxRpcMapperContext {
     /**
      * @param path 
      */
-    public abstract void loadMappingFromDir(String path);
+    public abstract void loadMappingFromDir(String path)throws GenerationFault;
 
     /**
      * @param is 
      */
-    public abstract void loadMappingFromInputStream(InputStream is);
+    public abstract void loadMappingFromInputStream(InputStream is)throws GenerationFault;
 
     public void serialize(Writer out) throws GenerationFault;
 }

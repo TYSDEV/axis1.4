@@ -31,6 +31,7 @@ import org.apache.axis.wsdl.symbolTable.ServiceEntry;
 import org.apache.geronimo.ews.AbstractTestCase;
 import org.apache.geronimo.ews.jaxrpcmapping.J2eeEmitter;
 import org.apache.geronimo.ews.jaxrpcmapping.JaxRpcMapper;
+
 import org.apache.geronimo.ews.ws4j2ee.context.J2EEWebServiceContext;
 import org.apache.geronimo.ews.ws4j2ee.context.JaxRpcMapperContext;
 import org.apache.geronimo.ews.ws4j2ee.context.wsdl.WSDLContext;
@@ -70,7 +71,7 @@ public class JaxRpcMappingTest extends AbstractTestCase{
 	           PortEntry port = wscontext.getPort(new QName("GoogleSearchPort"));
 	           BindingEntry be = wscontext.getBinding(new QName("urn:GoogleSearch","GoogleSearchBinding"));
 	           PortTypeEntry pe = wscontext.getPortType(new QName("urn:GoogleSearch","GoogleSearchPort"));
-	           JaxRpcMapper mapper = j2ee.getJaxRpcMapper();
+               JaxRpcMapper mapper = j2ee.getJaxRpcMapper();
 	           JaxRpcMapperContext mc =factory.getContextFactory().createJaxRpcMapperContext(mapper,j2ee);
 	           context.setJAXRPCMappingContext(mc);
 	           Assert.assertNotNull(port);
@@ -103,11 +104,12 @@ public class JaxRpcMappingTest extends AbstractTestCase{
 	           BindingEntry be = wscontext.getBinding(new QName("http://www.Monson-Haefel.com/jwsbook/BookQuote","BookQuoteBinding"));
 	           PortTypeEntry pe = wscontext.getPortType(new QName("http://www.Monson-Haefel.com/jwsbook/BookQuote","BookQuote"));
 	           ServiceEntry se = wscontext.getService(new QName("http://www.Monson-Haefel.com/jwsbook/BookQuote","BookQuoteService"));
-	           JaxRpcMapper mapper = j2ee.getJaxRpcMapper();
+               JaxRpcMapper mapper = j2ee.getJaxRpcMapper();
 	           JaxRpcMapperContext mc =factory.getContextFactory().createJaxRpcMapperContext(mapper,j2ee);
 	           Assert.assertNotNull(port);
 	           Assert.assertNotNull(be);
 	           Assert.assertNotNull(pe);
+               System.out.println(mc.getExceptionType(new QName("http://www.Monson-Haefel.com/jwsbook/BookQuote","InvalidIsbnFault")));
 	           Assert.assertEquals(mc.getExceptionType(new QName("http://www.Monson-Haefel.com/jwsbook/BookQuote","InvalidIsbnFault")),"com.jwsbook.jaxrpc.InvalidIsbnException");
 	        
 	           String sei = mc.getServiceEndpointInterfaceName(pe,be);

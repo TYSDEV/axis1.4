@@ -17,7 +17,7 @@ package org.apache.geronimo.ews.ws4j2ee.context.webservices.server.jaxb;
 
 import java.util.List;
 
-import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.AbstractWSCFWebservicesImpl;
+import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.AbstractWSCFWebservices;
 import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.WSCFException;
 import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.interfaces.WSCFWebserviceDescription;
 import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.interfaces.WSCFWebservices;
@@ -27,7 +27,7 @@ import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.interfaces.WSC
  * This is the root element of the webservices.xml file. The parsing of elements will be initiated from here and will be 
  * parsed in a depth first manner
  */
-public class WSCFWebservicesImpl extends AbstractWSCFWebservicesImpl implements WSCFWebservices{
+public class WSCFWebservicesImpl extends AbstractWSCFWebservices implements WSCFWebservices{
 		/**
 		 * Constructor
 		 * This is the constructor that was written to make the code jaxb complient. THis class

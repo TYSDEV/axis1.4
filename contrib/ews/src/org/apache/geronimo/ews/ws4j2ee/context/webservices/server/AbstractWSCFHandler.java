@@ -27,7 +27,7 @@ import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.interfaces.WSC
  * is also the concrete implementation of the WSCFHandler.
  *
  */
-public abstract class AbstractWSCFHandlerImpl extends WSCFElement implements WSCFHandler {
+public abstract class AbstractWSCFHandler extends WSCFElement implements WSCFHandler {
 
 	/**
 	 * handler derscription 

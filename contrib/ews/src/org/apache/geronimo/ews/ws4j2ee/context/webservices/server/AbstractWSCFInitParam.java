@@ -22,7 +22,7 @@ import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.interfaces.WSC
  * using the interface published.
  *
  */
-public abstract class AbstractWSCFInitParamImpl extends WSCFElement implements WSCFInitParam {
+public abstract class AbstractWSCFInitParam extends WSCFElement implements WSCFInitParam {
 
 	/**
 	 * Init parameter name 
@@ -39,7 +39,7 @@ public abstract class AbstractWSCFInitParamImpl extends WSCFElement implements W
 	 */
 	protected String description;
     
-    public AbstractWSCFInitParamImpl(){}
+    public AbstractWSCFInitParam(){}
 	
 	
 	////////////////////////////////////////jaxb intefacing block////////////////////////////

@@ -15,7 +15,7 @@
  */
 package org.apache.geronimo.ews.ws4j2ee.context.webservices.server.jaxb;
 
-import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.AbstractWSCFWebserviceDescriptionImpl;
+import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.AbstractWSCFWebserviceDescription;
 import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.WSCFException;
 import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.interfaces.WSCFPortComponent;
 import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.interfaces.WSCFWebserviceDescription;
@@ -25,7 +25,7 @@ import org.apache.geronimo.ews.ws4j2ee.context.webservices.server.interfaces.WSC
  * WSCFWebServiceDescription interface
  *
  */
-public class WSCFWebserviceDescriptionImpl extends AbstractWSCFWebserviceDescriptionImpl implements WSCFWebserviceDescription{
+public class WSCFWebserviceDescriptionImpl extends AbstractWSCFWebserviceDescription implements WSCFWebserviceDescription{
 	public WSCFWebserviceDescriptionImpl(WebserviceDescriptionType jaxbWebserviesDescription) throws WSCFException{
 		///////////////assigning the values //////////////
 		if(null != jaxbWebserviesDescription.getDescription())
