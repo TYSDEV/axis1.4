@@ -87,7 +87,7 @@ import org.apache.axis.wsdl.symbolTable.SymbolTable;
 import org.apache.axis.wsdl.symbolTable.TypeEntry;
 
 /**
-* This is Wsdl2java's deploy Writer.  It writes the deploy.java file.
+* This is Wsdl2java's deploy Writer.  It writes the deploy.wsdd file.
 */
 public class JavaDeployWriter extends JavaWriter {
     protected Definition definition;

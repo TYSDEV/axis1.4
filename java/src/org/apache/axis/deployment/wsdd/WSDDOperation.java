@@ -122,6 +122,13 @@ public class WSDDOperation extends WSDDElement
             WSDDParameter parameter = new WSDDParameter(paramEl, desc);
             desc.addParameter(parameter.getParameter());
         }
+        
+        Element [] faultElems = getChildElements(e, ELEM_WSDD_FAULT);
+        for (int i = 0; i < faultElems.length; i++) {
+            Element faultElem = faultElems[i];
+            WSDDFault fault = new WSDDFault(faultElem);
+            desc.addFault(fault.getFaultDesc());
+        }
     }
 
     /**
