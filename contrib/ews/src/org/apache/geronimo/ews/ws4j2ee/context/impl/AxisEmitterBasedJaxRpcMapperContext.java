@@ -39,26 +39,27 @@ import org.apache.axis.wsdl.fromJava.Emitter;
 import org.apache.axis.wsdl.symbolTable.BindingEntry;
 import org.apache.axis.wsdl.symbolTable.PortTypeEntry;
 import org.apache.axis.wsdl.symbolTable.ServiceEntry;
-import org.apache.geronimo.ews.jaxrpcmapping.descriptor.FullyQualifiedClassType;
-import org.apache.geronimo.ews.jaxrpcmapping.descriptor.JavaTypeType;
-import org.apache.geronimo.ews.jaxrpcmapping.descriptor.JavaWsdlMapping;
-import org.apache.geronimo.ews.jaxrpcmapping.descriptor.MethodParamPartsMappingType;
-import org.apache.geronimo.ews.jaxrpcmapping.descriptor.ObjectFactory;
-import org.apache.geronimo.ews.jaxrpcmapping.descriptor.PackageMappingType;
-import org.apache.geronimo.ews.jaxrpcmapping.descriptor.ParameterModeType;
-import org.apache.geronimo.ews.jaxrpcmapping.descriptor.PortMappingType;
-import org.apache.geronimo.ews.jaxrpcmapping.descriptor.ServiceEndpointMethodMappingType;
-import org.apache.geronimo.ews.jaxrpcmapping.descriptor.WsdlMessageMappingType;
-import org.apache.geronimo.ews.jaxrpcmapping.descriptor.WsdlMessagePartNameType;
-import org.apache.geronimo.ews.jaxrpcmapping.descriptor.WsdlMessageType;
-import org.apache.geronimo.ews.jaxrpcmapping.descriptor.WsdlReturnValueMappingType;
-import org.apache.geronimo.ews.jaxrpcmapping.descriptor.XsdAnyURIType;
-import org.apache.geronimo.ews.jaxrpcmapping.descriptor.XsdNonNegativeIntegerType;
-import org.apache.geronimo.ews.jaxrpcmapping.descriptor.XsdQNameType;
+//import org.apache.geronimo.ews.jaxrpcmapping.descriptor.FullyQualifiedClassType;
+//import org.apache.geronimo.ews.jaxrpcmapping.descriptor.JavaTypeType;
+//import org.apache.geronimo.ews.jaxrpcmapping.descriptor.JavaWsdlMapping;
+//import org.apache.geronimo.ews.jaxrpcmapping.descriptor.MethodParamPartsMappingType;
+//import org.apache.geronimo.ews.jaxrpcmapping.descriptor.ObjectFactory;
+//import org.apache.geronimo.ews.jaxrpcmapping.descriptor.PackageMappingType;
+//import org.apache.geronimo.ews.jaxrpcmapping.descriptor.ParameterModeType;
+//import org.apache.geronimo.ews.jaxrpcmapping.descriptor.PortMappingType;
+//import org.apache.geronimo.ews.jaxrpcmapping.descriptor.ServiceEndpointMethodMappingType;
+//import org.apache.geronimo.ews.jaxrpcmapping.descriptor.WsdlMessageMappingType;
+//import org.apache.geronimo.ews.jaxrpcmapping.descriptor.WsdlMessagePartNameType;
+//import org.apache.geronimo.ews.jaxrpcmapping.descriptor.WsdlMessageType;
+//import org.apache.geronimo.ews.jaxrpcmapping.descriptor.WsdlReturnValueMappingType;
+//import org.apache.geronimo.ews.jaxrpcmapping.descriptor.XsdAnyURIType;
+//import org.apache.geronimo.ews.jaxrpcmapping.descriptor.XsdNonNegativeIntegerType;
+//import org.apache.geronimo.ews.jaxrpcmapping.descriptor.XsdQNameType;
 import org.apache.geronimo.ews.ws4j2ee.context.J2EEWebServiceContext;
 import org.apache.geronimo.ews.ws4j2ee.context.JaxRpcMapperContext;
 import org.apache.geronimo.ews.ws4j2ee.toWs.GenerationFault;
 import org.apache.geronimo.ews.ws4j2ee.toWs.UnrecoverableGenerationFault;
+import org.apache.geronimo.ews.ws4j2ee.toWs.dd.JaxRpcMappingFileWriter;
 import org.apache.geronimo.ews.ws4j2ee.utils.Utils;
 
 /**
@@ -185,240 +186,244 @@ public class AxisEmitterBasedJaxRpcMapperContext implements JaxRpcMapperContext 
     }
 
     public void serialize(Writer out) throws GenerationFault {
-
-        try {
-            JAXBContext jc = JAXBContext.newInstance("org.apache.geronimo.ews.jaxrpcmapping.descriptor");
-            ObjectFactory objFactory = new ObjectFactory();
-
-            JavaWsdlMapping jaxrpcmap = objFactory.createJavaWsdlMapping();
-            jaxrpcmap.setVersion(new BigDecimal("1.0"));
-            
-//adding pckage mappings
-            Map map = emitter.getNamespaceMap();
-            if (map != null) {
-                Iterator packages = map.keySet().iterator();
-                while (packages.hasNext()) {
-                    PackageMappingType pkgmap = objFactory.createPackageMappingType();
-                    //set the package name
-                    FullyQualifiedClassType packagename = objFactory.createFullyQualifiedClassType();
-                    String pkg = (String) packages.next();
-                    String jaxrpcsei = j2eewscontext.getMiscInfo().getJaxrpcSEI();
-                    if(pkg == null){
-                    	//TODO this is temporrary work around to make sure 
-                    	//the mapping is defined.
-                    	String pkgName = Utils.getPackageNameFromQuallifiedName(jaxrpcsei);
-						String val = (String)map.get(pkgName);
-						if(val == null){
-							val = Utils.javapkgToURI(pkgName);
-							packagename.setValue(pkgName);
-							pkgmap.setPackageType(packagename);
-							//set the namespace URI
-							XsdAnyURIType nsuri = objFactory.createXsdAnyURIType();
-							nsuri.setValue(val);
-							pkgmap.setNamespaceURI(nsuri);
-						}else{
-							continue;
-						}
-                    }else if(pkg.equals(jaxrpcsei)){
-                   		continue;
-                    }else{
-						packagename.setValue(pkg);
-						pkgmap.setPackageType(packagename);
-						//set the namespace URI
-						XsdAnyURIType nsuri = objFactory.createXsdAnyURIType();
-						nsuri.setValue((String) map.get(pkg));
-						pkgmap.setNamespaceURI(nsuri);
-
-                    }
-                    //done :) add the package type
-                    jaxrpcmap.getPackageMapping().add(pkgmap);
-                }
-            }
-            
-//adding Service mappings
-///////////////////////////
-            Service service = j2eewscontext.getWSDLContext().gettargetService().getService();
-            org.apache.geronimo.ews.jaxrpcmapping.descriptor.JavaWsdlMappingType.ServiceInterfaceMapping servciemaping = objFactory.createJavaWsdlMappingTypeServiceInterfaceMapping();
-			
-            	
-            //get the sevice QName	
-            XsdQNameType serviceName = objFactory.createXsdQNameType();
-            serviceName.setValue(service.getQName());
-            servciemaping.setWsdlServiceName(serviceName);
-        	
-            //set the service java Name 
-            FullyQualifiedClassType serviceJavaName = objFactory.createFullyQualifiedClassType();
-
-            String name = emitter.getCls().getName();
-            int index = name.lastIndexOf('.');
-            String packageName = "";
-            if (index > 0)
-                packageName = name.substring(0, index + 1);
-
-            serviceJavaName.setValue(packageName + emitter.getServiceElementName());
-
-            servciemaping.setServiceInterface(serviceJavaName);
-            jaxrpcmap.getServiceInterfaceMappingAndServiceEndpointInterfaceMapping().add(servciemaping);
-
-            Port wsdlport = j2eewscontext.getWSDLContext().getTargetPort();
-            Binding binding = wsdlport.getBinding();
-         	
-            //create a portmap
-            PortMappingType portmap = objFactory.createPortMappingType();
-            //java port name 
-            org.apache.geronimo.ews.jaxrpcmapping.descriptor.String javaportname = objFactory.createString();
-            javaportname.setValue(emitter.getServicePortName());
-            portmap.setJavaPortName(javaportname);
-            //wsdl port name 
-            org.apache.geronimo.ews.jaxrpcmapping.descriptor.String wsdlportname = objFactory.createString();
-            wsdlportname.setValue(wsdlport.getName());
-            portmap.setPortName(wsdlportname);
-
-            servciemaping.getPortMapping().add(portmap);
-
-            if (binding == null)
-                throw new UnrecoverableGenerationFault("no port discription not match with the wsdl file");
-
-            org.apache.geronimo.ews.jaxrpcmapping.descriptor.JavaWsdlMappingType.ServiceEndpointInterfaceMapping seimapping = objFactory.createJavaWsdlMappingTypeServiceEndpointInterfaceMapping();
-            
-//set java SEI name
-            FullyQualifiedClassType seijavaName = objFactory.createFullyQualifiedClassType();
-            seijavaName.setValue(emitter.getCls().getName());
-            seimapping.setServiceEndpointInterface(seijavaName);
-//set the wsdl finding name
-            XsdQNameType bindingQName = objFactory.createXsdQNameType();
-            bindingQName.setValue(binding.getQName());
-            seimapping.setWsdlBinding(bindingQName);
-//set the wsdl port type
-            XsdQNameType portTypeQName = objFactory.createXsdQNameType();
-            portTypeQName.setValue(binding.getPortType().getQName());
-            seimapping.setWsdlPortType(portTypeQName);
-            
-//add the operation mappings
-            Iterator ops = binding.getPortType().getOperations().iterator();
-
-            while (ops.hasNext()) {
-                ServiceEndpointMethodMappingType seimethodmapping = objFactory.createServiceEndpointMethodMappingType();
-                Operation op = (Operation) ops.next();
-            	
-                //set the java method name
-                org.apache.geronimo.ews.jaxrpcmapping.descriptor.String javamethodname = objFactory.createString();
-                javamethodname.setValue(op.getName());
-                seimethodmapping.setJavaMethodName(javamethodname);
-            
-                //TODO not sure what this WrappedElement do. FIXIT
-                //seimethodmapping.setWrappedElement();
-            	
-                //set wsdl method name 
-                org.apache.geronimo.ews.jaxrpcmapping.descriptor.String wsdlmethodname = objFactory.createString();
-                wsdlmethodname.setValue(op.getName());
-                seimethodmapping.setWsdlOperation(wsdlmethodname);
-            
-                //this work only when the method names are same
-                //im printing it so that it is easier for user to change 
-                //it am sure that no body will writing nor webservice.xml 
-                //or jaxrpcmapping.xml files if there is a short cut.
-				
-            	
-                //set return type
-                Method mtd = (Method) methods.get(op.getName());
-				Class ret = mtd.getReturnType();
-				if(ret!= null && !("void".equals(ret.toString()))){
-					//create return type  Map
-					WsdlReturnValueMappingType retvalmap = objFactory.createWsdlReturnValueMappingType();
-
-					FullyQualifiedClassType retValjavaName = objFactory.createFullyQualifiedClassType();
-					retValjavaName.setValue(ret.getName());
-					retvalmap.setMethodReturnValue(retValjavaName);
-					
-					//set return type info
-					Map parts = op.getOutput().getMessage().getParts();
-					if (parts != null) {
-						Iterator partIt = parts.values().iterator();
-						if (partIt.hasNext()) {
-							//set wsdl message type
-							WsdlMessageType messageType = objFactory.createWsdlMessageType();
-							messageType.setValue(op.getOutput().getMessage().getQName());
-							retvalmap.setWsdlMessage(messageType);
-            			
-							//set wsdl message part type
-							WsdlMessagePartNameType messagePartName = objFactory.createWsdlMessagePartNameType();
-							messagePartName.setValue(((Part) partIt.next()).getName());
-							retvalmap.setWsdlMessagePartName(messagePartName);
-						}
-
-					}
-
-					seimethodmapping.setWsdlReturnValueMapping(retvalmap);
-
-				}
-            
-            
-            	
-                //create method param parts mappings	
-                int position = 0;
-                Class[] params = ((Method) methods.get(op.getName())).getParameterTypes();
-
-                Iterator parmIt = null;
-                Map parameters = op.getInput().getMessage().getParts();
-                if (parameters != null) {
-                    parmIt = parameters.values().iterator();
-                }
-
-                while (parmIt != null && parmIt.hasNext()) {
-                    Part part = (Part) parmIt.next();
-                    //create parts mapping
-                    MethodParamPartsMappingType partsMapping = objFactory.createMethodParamPartsMappingType();
-                    //set parameter position
-                    XsdNonNegativeIntegerType pos = objFactory.createXsdNonNegativeIntegerType();
-                    pos.setValue(new BigInteger(Integer.toString(position)));
-                    partsMapping.setParamPosition(pos);
-            		
-                    //set parameter java typr
-                    JavaTypeType javaType = objFactory.createJavaTypeType();
-                    javaType.setValue(params[position].getName());
-                    partsMapping.setParamType(javaType);
-            		
-                    //set message mapping
-                    WsdlMessageMappingType msgmappingType = objFactory.createWsdlMessageMappingType();
-                    //set mode
-                    ParameterModeType mode = objFactory.createParameterModeType();
-                    mode.setValue("IN");
-                    msgmappingType.setParameterMode(mode);
-                    //TODO Im a not sure what to do with the header 
-                    //msgmappingType.setSoapHeader();
-                    //set wsdl message type
-                    WsdlMessageType messageType = objFactory.createWsdlMessageType();
-                    messageType.setValue(op.getInput().getMessage().getQName());
-                    msgmappingType.setWsdlMessage(messageType);
-                    //set wsdl message part type
-                    WsdlMessagePartNameType messagePartName = objFactory.createWsdlMessagePartNameType();
-                    messagePartName.setValue(part.getName());
-                    msgmappingType.setWsdlMessagePartName(messagePartName);
-
-                    partsMapping.setWsdlMessageMapping(msgmappingType);
-                    seimethodmapping.getMethodParamPartsMapping().add(partsMapping);
-                }
-
-                seimapping.getServiceEndpointMethodMapping().add(seimethodmapping);
-
-            }
-            jaxrpcmap.getServiceInterfaceMappingAndServiceEndpointInterfaceMapping().add(seimapping);
-                  
-//axis do not support XML type mapping or Exception
-//maping to be specifed so I do not brother tp print them out. 
-//jaxrpcmap.getExceptionMapping();
-//jaxrpcmap.getJavaXmlTypeMapping();
-            
-            Marshaller m = jc.createMarshaller();
-            m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-            m.marshal(jaxrpcmap, out);
-
-            Unmarshaller u = jc.createUnmarshaller();
-        } catch (Exception e) {
-        	e.printStackTrace();
-            throw GenerationFault.createGenerationFault(e);
-        }
+        JaxRpcMappingFileWriter w = new JaxRpcMappingFileWriter(out,emitter,j2eewscontext);
+        w.write();
+//
+//        try {
+//            JAXBContext jc = JAXBContext.newInstance("org.apache.geronimo.ews.jaxrpcmapping.descriptor");
+//            ObjectFactory objFactory = new ObjectFactory();
+//
+//            JavaWsdlMapping jaxrpcmap = objFactory.createJavaWsdlMapping();
+//            jaxrpcmap.setVersion(new BigDecimal("1.0"));
+//            
+////adding pckage mappings
+//            Map map = emitter.getNamespaceMap();
+//            if (map != null) {
+//                Iterator packages = map.keySet().iterator();
+//                while (packages.hasNext()) {
+//                    PackageMappingType pkgmap = objFactory.createPackageMappingType();
+//                    //set the package name
+//                    FullyQualifiedClassType packagename = objFactory.createFullyQualifiedClassType();
+//                    String pkg = (String) packages.next();
+//                    String jaxrpcsei = j2eewscontext.getMiscInfo().getJaxrpcSEI();
+//                    if(pkg == null){
+//                    	//TODO this is temporrary work around to make sure 
+//                    	//the mapping is defined.
+//                    	String pkgName = Utils.getPackageNameFromQuallifiedName(jaxrpcsei);
+//						String val = (String)map.get(pkgName);
+//						if(val == null){
+//							val = Utils.javapkgToURI(pkgName);
+//							packagename.setValue(pkgName);
+//							pkgmap.setPackageType(packagename);
+//							//set the namespace URI
+//							XsdAnyURIType nsuri = objFactory.createXsdAnyURIType();
+//							nsuri.setValue(val);
+//							pkgmap.setNamespaceURI(nsuri);
+//						}else{
+//							continue;
+//						}
+//                    }else if(pkg.equals(jaxrpcsei)){
+//                   		continue;
+//                    }else{
+//						packagename.setValue(pkg);
+//						pkgmap.setPackageType(packagename);
+//						//set the namespace URI
+//						XsdAnyURIType nsuri = objFactory.createXsdAnyURIType();
+//						nsuri.setValue((String) map.get(pkg));
+//						pkgmap.setNamespaceURI(nsuri);
+//
+//                    }
+//                    //done :) add the package type
+//                    jaxrpcmap.getPackageMapping().add(pkgmap);
+//                }
+//            }
+//            
+////adding Service mappings
+/////////////////////////////
+//            Service service = j2eewscontext.getWSDLContext().gettargetService().getService();
+//            org.apache.geronimo.ews.jaxrpcmapping.descriptor.JavaWsdlMappingType.ServiceInterfaceMapping servciemaping = objFactory.createJavaWsdlMappingTypeServiceInterfaceMapping();
+//			
+//            	
+//            //get the sevice QName	
+//            XsdQNameType serviceName = objFactory.createXsdQNameType();
+//            serviceName.setValue(service.getQName());
+//            servciemaping.setWsdlServiceName(serviceName);
+//        	
+//            //set the service java Name 
+//            FullyQualifiedClassType serviceJavaName = objFactory.createFullyQualifiedClassType();
+//
+//            String name = emitter.getCls().getName();
+//            int index = name.lastIndexOf('.');
+//            String packageName = "";
+//            if (index > 0)
+//                packageName = name.substring(0, index + 1);
+//
+//            serviceJavaName.setValue(packageName + emitter.getServiceElementName());
+//
+//            servciemaping.setServiceInterface(serviceJavaName);
+//            jaxrpcmap.getServiceInterfaceMappingAndServiceEndpointInterfaceMapping().add(servciemaping);
+//
+//
+//
+//            Port wsdlport = j2eewscontext.getWSDLContext().getTargetPort();
+//            Binding binding = wsdlport.getBinding();
+//         	
+//            //create a portmap
+//            PortMappingType portmap = objFactory.createPortMappingType();
+//            //java port name 
+//            org.apache.geronimo.ews.jaxrpcmapping.descriptor.String javaportname = objFactory.createString();
+//            javaportname.setValue(emitter.getServicePortName());
+//            portmap.setJavaPortName(javaportname);
+//            //wsdl port name 
+//            org.apache.geronimo.ews.jaxrpcmapping.descriptor.String wsdlportname = objFactory.createString();
+//            wsdlportname.setValue(wsdlport.getName());
+//            portmap.setPortName(wsdlportname);
+//
+//            servciemaping.getPortMapping().add(portmap);
+//
+//            if (binding == null)
+//                throw new UnrecoverableGenerationFault("no port discription not match with the wsdl file");
+//
+//            org.apache.geronimo.ews.jaxrpcmapping.descriptor.JavaWsdlMappingType.ServiceEndpointInterfaceMapping seimapping = objFactory.createJavaWsdlMappingTypeServiceEndpointInterfaceMapping();
+//            
+////set java SEI name
+//            FullyQualifiedClassType seijavaName = objFactory.createFullyQualifiedClassType();
+//            seijavaName.setValue(emitter.getCls().getName());
+//            seimapping.setServiceEndpointInterface(seijavaName);
+////set the wsdl finding name
+//            XsdQNameType bindingQName = objFactory.createXsdQNameType();
+//            bindingQName.setValue(binding.getQName());
+//            seimapping.setWsdlBinding(bindingQName);
+////set the wsdl port type
+//            XsdQNameType portTypeQName = objFactory.createXsdQNameType();
+//            portTypeQName.setValue(binding.getPortType().getQName());
+//            seimapping.setWsdlPortType(portTypeQName);
+//            
+////add the operation mappings
+//            Iterator ops = binding.getPortType().getOperations().iterator();
+//
+//            while (ops.hasNext()) {
+//                ServiceEndpointMethodMappingType seimethodmapping = objFactory.createServiceEndpointMethodMappingType();
+//                Operation op = (Operation) ops.next();
+//            	
+//                //set the java method name
+//                org.apache.geronimo.ews.jaxrpcmapping.descriptor.String javamethodname = objFactory.createString();
+//                javamethodname.setValue(op.getName());
+//                seimethodmapping.setJavaMethodName(javamethodname);
+//            
+//                //TODO not sure what this WrappedElement do. FIXIT
+//                //seimethodmapping.setWrappedElement();
+//            	
+//                //set wsdl method name 
+//                org.apache.geronimo.ews.jaxrpcmapping.descriptor.String wsdlmethodname = objFactory.createString();
+//                wsdlmethodname.setValue(op.getName());
+//                seimethodmapping.setWsdlOperation(wsdlmethodname);
+//            
+//                //this work only when the method names are same
+//                //im printing it so that it is easier for user to change 
+//                //it am sure that no body will writing nor webservice.xml 
+//                //or jaxrpcmapping.xml files if there is a short cut.
+//				
+//            	
+//                //set return type
+//                Method mtd = (Method) methods.get(op.getName());
+//				Class ret = mtd.getReturnType();
+//				if(ret!= null && !("void".equals(ret.toString()))){
+//					//create return type  Map
+//					WsdlReturnValueMappingType retvalmap = objFactory.createWsdlReturnValueMappingType();
+//
+//					FullyQualifiedClassType retValjavaName = objFactory.createFullyQualifiedClassType();
+//					retValjavaName.setValue(ret.getName());
+//					retvalmap.setMethodReturnValue(retValjavaName);
+//					
+//					//set return type info
+//					Map parts = op.getOutput().getMessage().getParts();
+//					if (parts != null) {
+//						Iterator partIt = parts.values().iterator();
+//						if (partIt.hasNext()) {
+//							//set wsdl message type
+//							WsdlMessageType messageType = objFactory.createWsdlMessageType();
+//							messageType.setValue(op.getOutput().getMessage().getQName());
+//							retvalmap.setWsdlMessage(messageType);
+//            			
+//							//set wsdl message part type
+//							WsdlMessagePartNameType messagePartName = objFactory.createWsdlMessagePartNameType();
+//							messagePartName.setValue(((Part) partIt.next()).getName());
+//							retvalmap.setWsdlMessagePartName(messagePartName);
+//						}
+//
+//					}
+//
+//					seimethodmapping.setWsdlReturnValueMapping(retvalmap);
+//
+//				}
+//            
+//            
+//            	
+//                //create method param parts mappings	
+//                int position = 0;
+//                Class[] params = ((Method) methods.get(op.getName())).getParameterTypes();
+//
+//                Iterator parmIt = null;
+//                Map parameters = op.getInput().getMessage().getParts();
+//                if (parameters != null) {
+//                    parmIt = parameters.values().iterator();
+//                }
+//
+//                while (parmIt != null && parmIt.hasNext()) {
+//                    Part part = (Part) parmIt.next();
+//                    //create parts mapping
+//                    MethodParamPartsMappingType partsMapping = objFactory.createMethodParamPartsMappingType();
+//                    //set parameter position
+//                    XsdNonNegativeIntegerType pos = objFactory.createXsdNonNegativeIntegerType();
+//                    pos.setValue(new BigInteger(Integer.toString(position)));
+//                    partsMapping.setParamPosition(pos);
+//            		
+//                    //set parameter java typr
+//                    JavaTypeType javaType = objFactory.createJavaTypeType();
+//                    javaType.setValue(params[position].getName());
+//                    partsMapping.setParamType(javaType);
+//            		
+//                    //set message mapping
+//                    WsdlMessageMappingType msgmappingType = objFactory.createWsdlMessageMappingType();
+//                    //set mode
+//                    ParameterModeType mode = objFactory.createParameterModeType();
+//                    mode.setValue("IN");
+//                    msgmappingType.setParameterMode(mode);
+//                    //TODO Im a not sure what to do with the header 
+//                    //msgmappingType.setSoapHeader();
+//                    //set wsdl message type
+//                    WsdlMessageType messageType = objFactory.createWsdlMessageType();
+//                    messageType.setValue(op.getInput().getMessage().getQName());
+//                    msgmappingType.setWsdlMessage(messageType);
+//                    //set wsdl message part type
+//                    WsdlMessagePartNameType messagePartName = objFactory.createWsdlMessagePartNameType();
+//                    messagePartName.setValue(part.getName());
+//                    msgmappingType.setWsdlMessagePartName(messagePartName);
+//
+//                    partsMapping.setWsdlMessageMapping(msgmappingType);
+//                    seimethodmapping.getMethodParamPartsMapping().add(partsMapping);
+//                }
+//
+//                seimapping.getServiceEndpointMethodMapping().add(seimethodmapping);
+//
+//            }
+//            jaxrpcmap.getServiceInterfaceMappingAndServiceEndpointInterfaceMapping().add(seimapping);
+//                  
+////axis do not support XML type mapping or Exception
+////maping to be specifed so I do not brother tp print them out. 
+////jaxrpcmap.getExceptionMapping();
+////jaxrpcmap.getJavaXmlTypeMapping();
+//            
+//            Marshaller m = jc.createMarshaller();
+//            m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+//            m.marshal(jaxrpcmap, out);
+//
+//            Unmarshaller u = jc.createUnmarshaller();
+//        } catch (Exception e) {
+//        	e.printStackTrace();
+//            throw GenerationFault.createGenerationFault(e);
+//        }
     }
     public String getPackageMappingClassName(int index) {
         throw new UnsupportedOperationException();
