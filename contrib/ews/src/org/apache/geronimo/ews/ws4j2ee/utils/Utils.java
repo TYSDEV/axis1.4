@@ -78,6 +78,7 @@ import javax.xml.parsers.SAXParserFactory;
 
 import org.apache.axis.Constants;
 import org.apache.axis.encoding.Base64;
+import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.geronimo.ews.ws4j2ee.context.J2EEWebServiceContext;
 import org.apache.geronimo.ews.ws4j2ee.toWs.GenerationFault;
@@ -819,18 +820,18 @@ public class Utils {
 		String primKey = null;
 		Class sei ;
 		try {
-			sei = Class.forName(className);
+			sei = Class.forName(className,true,ClassUtils.getDefaultClassLoader());
 	
 			java.lang.reflect.Method callMethod = null;
 			Method[] methods = sei.getMethods();
 		
 			for(int i=0;i<methods.length;i++){
-				if(methods[i].equals(methodName)){
+				if(methods[i].getName().equals(methodName)){
 					callMethod = methods[i];
 				}
 			}
 			if(callMethod == null)
-				throw new org.apache.geronimo.ews.ws4j2ee.toWs.UnrecoverableGenerationFault("error");
+				throw new org.apache.geronimo.ews.ws4j2ee.toWs.UnrecoverableGenerationFault("Method "+methodName+" not found in the class"+ className );
 				return callMethod;
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
