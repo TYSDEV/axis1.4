@@ -148,6 +148,8 @@ char* AxisConfig::GetAxisHomePath ()
     char* pWsddPath = objConfig->GetWsddFilePath();
     printf("pWsddPath:%s\n", pWsddPath);
     char* LogPath = objConfig->GetAxisLogPath();
+    //to build
+    //gcc AxisConfig.cpp -o temp -I$AXISCPP_HOME/include -L$AXISCPP_HOME/bin -lserver_engine -ldl
 
 }
 */
