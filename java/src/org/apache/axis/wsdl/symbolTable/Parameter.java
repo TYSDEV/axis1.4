@@ -80,13 +80,15 @@ public class Parameter {
     private byte mode = IN;
 
     private boolean inHeader = false;
+    private boolean outHeader = false;
 
     public String toString() {
         return "(" + type
                 + (mimeType == null ? "" : "(" + mimeType + ")")
                 + ", " + getName() + ", "
                 + (mode == IN ? "IN)" : mode == INOUT ? "INOUT)" : "OUT)"
-                + (inHeader ? "(soap:header)" : ""));
+                + (inHeader ? "(IN soap:header)" : "")
+                + (outHeader ? "(OUT soap:header)" : ""));
     } // toString
 
     public QName getQName() {
@@ -134,11 +136,19 @@ public class Parameter {
         this.mode = mode;
     }
 
-    public boolean inHeader() {
+    public boolean isInHeader() {
         return inHeader;
-    } // inHeader
+    } // isInHeader
 
     public void setInHeader(boolean inHeader) {
         this.inHeader = inHeader;
     } // setInHeader
+
+    public boolean isOutHeader() {
+        return outHeader;
+    } // isOutHeader
+
+    public void setOutHeader(boolean outHeader) {
+        this.outHeader = outHeader;
+    } // setOutHeader
 } // class Parameter

@@ -1332,8 +1332,12 @@ public class SymbolTable {
                 setMIMEType(param, bindingEntry == null ? null :
                         bindingEntry.getMIMEType(opName, partName));
                 if (bindingEntry != null &&
-                        bindingEntry.isHeaderParameter(opName, partName)) {
+                        bindingEntry.isInHeaderParameter(opName, partName)) {
                     param.setInHeader(true);
+                }
+                if (bindingEntry != null &&
+                        bindingEntry.isOutHeaderParameter(opName, partName)) {
+                    param.setOutHeader(true);
                 }
 
                 v.add(param);
@@ -1415,8 +1419,11 @@ public class SymbolTable {
                     p.setType(elem.getType());
                     setMIMEType(p, bindingEntry == null ? null :
                             bindingEntry.getMIMEType(opName, partName));
-                    if (bindingEntry.isHeaderParameter(opName, partName)) {
+                    if (bindingEntry.isInHeaderParameter(opName, partName)) {
                         p.setInHeader(true);
+                    }
+                    if (bindingEntry.isOutHeaderParameter(opName, partName)) {
+                        p.setOutHeader(true);
                     }
                     v.add(p);
                 }
@@ -1433,8 +1440,11 @@ public class SymbolTable {
                 }
                 setMIMEType(param, bindingEntry == null ? null :
                         bindingEntry.getMIMEType(opName, partName));
-                if (bindingEntry.isHeaderParameter(opName, partName)) {
+                if (bindingEntry.isInHeaderParameter(opName, partName)) {
                     param.setInHeader(true);
+                }
+                if (bindingEntry.isOutHeaderParameter(opName, partName)) {
+                    param.setOutHeader(true);
                 }
 
                 v.add(param);
@@ -1598,9 +1608,10 @@ public class SymbolTable {
                 // parts come from messages used in the portType's operation
                 // input/output clauses - it does not work for implicit
                 // headers - those whose parts come from messages not used in
-                // the portType-s operation's input/output clauses.
+                // the portType's operation's input/output clauses.  I don't
+                // know what we're supposed to emit for implicit headers.
                 bEntry.setHeaderParameter(operation.getName(), header.getPart(),
-                        true);
+                        input ? BindingEntry.IN_HEADER : BindingEntry.OUT_HEADER);
             }
             else if (obj instanceof MIMEMultipartRelated) {
                 bEntry.setBodyType(operation,

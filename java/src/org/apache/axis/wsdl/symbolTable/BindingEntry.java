@@ -213,20 +213,37 @@ The caller of this constructor should
     } // setMIMEType
 
     /**
-     * Get the mime mapping for the given parameter name.
-     * If there is none, this returns null.
+     * Is this parameter an input header parameter?.
      */
-    public boolean isHeaderParameter(String operationName,
+    public boolean isInHeaderParameter(String operationName,
             String parameterName) {
+        return (headerParameter(operationName, parameterName) & IN_HEADER) > 0;
+    } // isInHeaderParameter
+
+    /**
+     * Is this parameter an output header parameter?.
+     */
+    public boolean isOutHeaderParameter(String operationName,
+            String parameterName) {
+        return (headerParameter(operationName, parameterName) & OUT_HEADER) > 0;
+    } // isInHeaderParameter
+
+    /**
+     * Get the flag indicating what sort of header this parameter is.
+     */
+    public static final int NO_HEADER  = 0;
+    public static final int IN_HEADER  = 1;
+    public static final int OUT_HEADER = 2;
+    private int headerParameter(String operationName, String parameterName) {
         Map opMap = (Map) headerParameters.get(operationName);
         if (opMap == null) {
-            return false;
+            return NO_HEADER;
         }
         else {
-            Boolean bool = (Boolean) opMap.get(parameterName);
-            return bool == null ? false : bool.booleanValue();
+            Integer I = (Integer) opMap.get(parameterName);
+            return I == null ? NO_HEADER : I.intValue();
         }
-    } // isHeaderParameter
+    } // headerParameter
 
     /**
      * Get the header parameter map.
@@ -238,13 +255,15 @@ The caller of this constructor should
     /**
      * Set the header parameter mapping for the given parameter name.
      */
-    public void setHeaderParameter(String operationName, String parameterName, boolean isHeader) {
+    public void setHeaderParameter(String operationName, String parameterName, int headerFlags) {
         Map opMap = (Map) headerParameters.get(operationName);
         if (opMap == null) {
             opMap = new HashMap();
             headerParameters.put(operationName, opMap);
         }
-        opMap.put(parameterName, new Boolean(isHeader));
+        Integer I = (Integer) opMap.get(parameterName);
+        int i = I == null ? headerFlags : (I.intValue() | headerFlags);
+        opMap.put(parameterName, new Integer(i));
     } // setHeaderParameter
 
     /**
