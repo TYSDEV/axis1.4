@@ -57,77 +57,44 @@ package org.apache.axis.wsdl.symbolTable;
 import javax.xml.namespace.QName;
 
 /**
- * This class simply collects
- */
+  * This class simply collects
+  */
 public class Parameter {
 
     // constant values for the parameter mode.
-
-    /** Field IN */
     public static final byte IN = 1;
-
-    /** Field OUT */
     public static final byte OUT = 2;
-
-    /** Field INOUT */
     public static final byte INOUT = 3;
 
     // The QName of the element associated with this param.  Defaults to
     // null, which means it'll be new QName("", name)
-
-    /** Field qname */
     private QName qname;
-
+    
     // The part name of this parameter, just a string.
-
-    /** Field name */
     private String name;
 
     // The MIME type of this parameter, null if it isn't a MIME type.
-
-    /** Field mimeInfo */
     private MimeInfo mimeInfo = null;
-
-    /** Field type */
+    
     private TypeEntry type;
-
-    /** Field mode */
     private byte mode = IN;
 
     // Flags indicating whether the parameter goes into the soap message as
     // a header.
-
-    /** Field inHeader */
     private boolean inHeader = false;
-
-    /** Field outHeader */
     private boolean outHeader = false;
 
-    /**
-     * Method toString
-     * 
-     * @return 
-     */
     public String toString() {
-
-        return "(" + type + ((mimeInfo == null)
-                ? ""
-                : "(" + mimeInfo + ")") + ", " + getName() + ", "
-                + ((mode == IN)
-                ? "IN)"
-                : (mode == INOUT)
-                ? "INOUT)"
-                : "OUT)" + (inHeader
-                ? "(IN soap:header)"
-                : "") + (outHeader
-                ? "(OUT soap:header)"
-                : ""));
-    }    // toString
+        return "(" + type
+                + (mimeInfo == null ? "" : "(" + mimeInfo + ")")
+                + ", " + getName() + ", "
+                + (mode == IN ? "IN)" : mode == INOUT ? "INOUT)" : "OUT)"
+                + (inHeader ? "(IN soap:header)" : "")
+                + (outHeader ? "(OUT soap:header)" : ""));
+    } // toString
 
     /**
      * Get the fully qualified name of this parameter.
-     * 
-     * @return 
      */
     public QName getQName() {
         return qname;
@@ -136,37 +103,26 @@ public class Parameter {
     /**
      * Get the name of this parameter.  This call is equivalent to
      * getQName().getLocalPart().
-     * 
-     * @return 
      */
     public String getName() {
-
-        if ((name == null) && (qname != null)) {
+        if (name == null && qname != null) {
             return qname.getLocalPart();
         }
-
         return name;
     }
 
     /**
      * Set the name of the parameter.  This replaces both the
      * name and the QName (the namespaces becomes "").
-     * 
-     * @param name 
      */
     public void setName(String name) {
-
         this.name = name;
-
-        if (qname == null) {
+        if (qname == null)
             this.qname = new QName("", name);
-        }
     }
 
     /**
      * Set the QName of the parameter.
-     * 
-     * @param qname 
      */
     public void setQName(QName qname) {
         this.qname = qname;
@@ -174,65 +130,34 @@ public class Parameter {
 
     /**
      * Get the MIME type of the parameter.
-     * 
-     * @return 
      */
     public MimeInfo getMIMEInfo() {
         return mimeInfo;
-    }    // getMIMEType
+    } // getMIMEType
 
     /**
      * Set the MIME type of the parameter.
-     * 
-     * @param mimeInfo 
      */
     public void setMIMEInfo(MimeInfo mimeInfo) {
         this.mimeInfo = mimeInfo;
-    }    // setMIMEType
+    } // setMIMEType
 
     /**
      * Get the TypeEntry of the parameter.
-     * 
-     * @return 
      */
-    public SchemaType getType() {
-		if(type instanceof SchemaType)
-        	return (SchemaType)type;
-		else{
-			return ((SchemaElement)type).getType();
-		}        	
+    public TypeEntry getType() {
+        return type;
     }
 
-	/**
-	 * if the type is element return it or null
-	 * @return
-	 */
-	public SchemaElement getElement(){
-		if(type instanceof SchemaElement)
-			return (SchemaElement)type;
-		return null;	
-	}
-	
-	public String getJavaName(){
-		String ret = this.getType().getName();
-		if(getElement() != null && getElement().isArrayElement())
-			ret = ret + "[]";
-		return ret;		
-	}
-     	
     /**
      * Set the TypeEntry of the parameter.
-     * 
-     * @param type 
      */
     public void setType(TypeEntry type) {
-       	this.type = type;
+        this.type = type;
     }
 
     /**
      * Get the mode (IN, INOUT, OUT) of the parameter.
-     * 
-     * @return 
      */
     public byte getMode() {
         return mode;
@@ -242,11 +167,8 @@ public class Parameter {
      * Set the mode (IN, INOUT, OUT) of the parameter.  If the input
      * to this method is not one of IN, INOUT, OUT, then the value
      * remains unchanged.
-     * 
-     * @param mode 
      */
     public void setMode(byte mode) {
-
         if (mode <= INOUT & mode >= IN) {
             this.mode = mode;
         }
@@ -254,42 +176,29 @@ public class Parameter {
 
     /**
      * Is this parameter in the input message header?
-     * 
-     * @return 
      */
     public boolean isInHeader() {
         return inHeader;
-    }    // isInHeader
+    } // isInHeader
 
     /**
      * Set the inHeader flag for this parameter.
-     * 
-     * @param inHeader 
      */
     public void setInHeader(boolean inHeader) {
         this.inHeader = inHeader;
-    }    // setInHeader
+    } // setInHeader
 
     /**
      * Is this parameter in the output message header?
-     * 
-     * @return 
      */
     public boolean isOutHeader() {
         return outHeader;
-    }    // isOutHeader
+    } // isOutHeader
 
     /**
      * Set the outHeader flag for this parameter.
-     * 
-     * @param outHeader 
      */
     public void setOutHeader(boolean outHeader) {
         this.outHeader = outHeader;
-    }    // setOutHeader
-    
-	
-	public TypeEntry getTypeEntry(){
-		return type;
-	}
-}    // class Parameter
+    } // setOutHeader
+} // class Parameter

@@ -57,13 +57,14 @@ package org.apache.axis.wsdl.gen;
 import java.io.IOException;
 
 /**
- * This generator doesn't do anything.
- */
+* This generator doesn't do anything.
+*/
 public class NoopGenerator implements Generator {
 
     /**
      * Do a whole lot of nothing.
      */
     public void generate() throws IOException {
-    }    // generate
-}    // class NoopGenerator
+    } // generate
+
+} // class NoopGenerator

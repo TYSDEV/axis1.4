@@ -56,34 +56,12 @@ package org.apache.axis.wsdl.toJava;
 
 import java.io.IOException;
 
-/**
- * Class DuplicateFileException
- * 
- * @version %I%, %G%
- */
 public class DuplicateFileException extends IOException {
-
-    /** Field filename */
     private String filename = null;
-
-    /**
-     * Constructor DuplicateFileException
-     * 
-     * @param message  
-     * @param filename 
-     */
-    public DuplicateFileException(String message, String filename) {
-
-        super(message);
-
+    public DuplicateFileException(String message, String filename){
+        super(message);        
         this.filename = filename;
     }
-
-    /**
-     * Method getFileName
-     * 
-     * @return 
-     */
     public String getFileName() {
         return this.filename;
     }
