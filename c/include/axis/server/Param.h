@@ -84,7 +84,7 @@ class Param : public IParam
 {
 	friend class SoapDeSerializer;
 	friend class SoapSerializer;
-	friend class XMLStreamHandler;
+	friend class SoapParser;
 public:
 	Param(){ m_Type = USER_TYPE;}; //if there is no attribute that says the type
 
@@ -120,7 +120,7 @@ public: //Conversion functions
 	int SetValue(const AxisChar* sValue);
 	int SetValue(XSDTYPE nType, uParamValue Value);
 	XSDTYPE GetType() const;	
-	int serialize(IWrapperSoapSerializer& pSZ);
+	int serialize(SoapSerializer& pSZ);
 
 	//Following functions are used by wrapper class methods making sure of the valid type.
 	int GetInt();
