@@ -171,10 +171,12 @@ public class WSDDOperation extends WSDDElement
         }
         
         ArrayList faults = desc.getFaults();
-        for (Iterator i = faults.iterator(); i.hasNext();) {
-            FaultDesc faultDesc = (FaultDesc) i.next();
-            WSDDFault f = new WSDDFault(faultDesc);
-            f.writeToContext(context);
+        if (faults != null) {
+            for (Iterator i = faults.iterator(); i.hasNext();) {
+                FaultDesc faultDesc = (FaultDesc) i.next();
+                WSDDFault f = new WSDDFault(faultDesc);
+                f.writeToContext(context);
+            }
         }
 
         context.endElement();
