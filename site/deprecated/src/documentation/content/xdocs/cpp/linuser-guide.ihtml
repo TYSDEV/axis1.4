@@ -93,6 +93,10 @@
 <br>
 </dt>
 </dl>
+
+<p><b>Note:</b>The Expat XML Parser module is not currently maintained and also contains some bugs. So it is removed from the 1.5 release. 
+</p>
+
 <p>
 <a name="Introducti"></a>
 </p>
@@ -139,7 +143,7 @@
 <p>- Stability , Component oriented Deployment</p>
 <p>- Transport Framework</p>
 <p>- WSDL support</p>
-<p>AxisC++ 1.1 supports the Web Service Description Language, version 1.1, which allows you to easily build stubs to access remote services, and also to automatically export machine-readable descriptions of your deployed services from Axis. We hope you enjoy using Axis c++ 1.1. Please note that this is an open-source effort - if you feel the code could use some new features or fixes, please get involved and lend a hand! The Axis developer community welcomes your participation. Let us know what you think! Please send feedback about the package to <a href="mailto:axis-user@xml.apache.org">axis-user@xml.apache.org</a>
+<p>Axis C++ 1.1 supports the Web Service Description Language, version 1.1, which allows you to easily build stubs to access remote services, and also to automatically export machine-readable descriptions of your deployed services from Axis. We hope you enjoy using Axis c++ 1.1. Please note that this is an open-source effort - if you feel the code could use some new features or fixes, please get involved and lend a hand! The Axis developer community welcomes your participation. Let us know what you think! Please send feedback about the package to <a href="mailto:axis-user@xml.apache.org">axis-user@xml.apache.org</a>
 </p>
 <p>
 <a name="What1"></a>

@@ -37,8 +37,7 @@ href="wininstall-guide.html"><b>Windows Installation guide</b>
 </p>
 
 
-<p><b>Note:</b>The Expat XML Parser module is not currently maintained and also contains some bugs. So it is removed from the 1.4 release. Please ignore any references to the Expat parser 
-in the documentation. The documentation will be updated regarding this later.
+<p><b>Note:</b>The Expat XML Parser module is not currently maintained and also contains some bugs. So it is removed from the 1.5 release. 
 </p>
 <p>
 </a>
@@ -298,15 +297,9 @@ int main()
 
 <h2>Transport Library and Parser Library</h2>
 
-<p><b>Note:</b>The Expat XML Parser module is not currently maintained and also contains some bugs. For more information refer the Note at the top of the page.
-</p>
 <p>AxisTransport.dll (Which can be found at Axis_Extract/bin) should be placed in the path, and should be specified as the value to the key "Transport_http" in axiscpp.conf [Axis_Folder]/axiscpp.conf Or in the same place as the client.exe. </p> 
-<p>Rename either AxisXMLParser_Expat.dll or AxisXMLParser_Xerces.dll to AxisXMLParser.dll (depending on the parser you use), 
- and give the path of the AxisXMLParser.dll as the value of the key XMLParser in axiscpp.conf Or in the  same place as the client.exe. 
-<br>
-If you want to use Expat parser then libexpat.dll should be given in the path.
-<br>
-If you want to use the Xerces parser then xerces-c_2_2_0.dll should be given in the path.
+<p>Rename AxisXMLParser_Xerces.dll to AxisXMLParser.dll  and give the path of the AxisXMLParser.dll as the value of the key XMLParser in axiscpp.conf Or in the  same place as the client.exe. 
+<br> xerces-c_2_2_0.dll should be given in the path.
 <br>
 
 </p>
