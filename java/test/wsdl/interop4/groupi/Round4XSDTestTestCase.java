@@ -139,6 +139,7 @@ public class Round4XSDTestTestCase extends junit.framework.TestCase {
             input.setTimeZone(TimeZone.getTimeZone("GMT"));
             java.util.Calendar value = null;
             value = binding.echoDate(input);
+            value.setTimeZone(TimeZone.getTimeZone("GMT"));
             assertTrue(input.equals(value));
         }
         catch (java.rmi.RemoteException re) {
