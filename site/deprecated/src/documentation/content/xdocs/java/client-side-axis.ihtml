@@ -35,9 +35,9 @@ complex. Some of the concepts and features of the technology are
 worth covering.</P>
 <P>TCP/IP builds a reliable channel between two computers, <I>hosts</I>.
 Every computer running TCP can receive messages coming in on any
-<I>port</I><SPAN STYLE="font-style: normal">, from 1-65535. That is,
+<I>port</I>, from 1-65535. That is,
 if a program on that machine has created a <I>socket</I> and is
-listening on that port. If not, you will see the message </SPAN><I>connection
+listening on that port. If not, you will see the message <I>connection
 refused. </I>
 </P>
 <P STYLE="font-style: normal">Before a client connects to a host, it
@@ -99,9 +99,9 @@ Bandwidth is the measure of how much stuff you can send per second. A
 link with low latency (good) may still have low bandwidth (bad),
 while a high bandwidth connection might have a high latency, as the
 remote server is distant.</P>
-<P STYLE="font-style: normal"><SPAN STYLE="font-style: normal">Firewalls
+<P STYLE="font-style: normal">Firewalls
 are a critical feature of modern networks. A firewall blocks off
-ports to incoming calls. A </SPAN><I>stateful firewall</I><SPAN STYLE="font-style: normal">
+ports to incoming calls. A stateful firewall
 examines every packet and only allows packets of the current TCP
 conversation in, and is even better. Firewalls are essential for
 security reasons, so that you can expose more services behind a
@@ -112,7 +112,7 @@ use of an HTTP proxy server (see below), outbound connections to port
 143 (IMAP) blocked to stop people connecting to external mail
 servers. You need to assume that there will be firewalls in the
 network, between SOAP client and server, and so callbacks from server
-to client are not going to be possible. </SPAN>
+to client are not going to be possible.
 </P>
 <H2>Core HTTP Concepts 
 </H2>
