@@ -98,31 +98,33 @@ public abstract class SimpleRemoteInterfaceBasedWrapperClassWriter extends EJBBa
 	}
 	private void writeGetRemoteRef(String classname){
 	   out.write("\tpublic "+seiName+" getRemoteRef()throws org.apache.axis.AxisFault{\n");
-	   out.write("\t\ttry {\n");
-	   out.write("\t\tif(msgcontext == null){\n");
-	   out.write("\t\t		msgcontext = org.apache.axis.MessageContext.getCurrentContext();\n");
-	   out.write("\t\t}\n");
-	   out.write("\t\tif(msgcontext == null){\n");
-       out.write("\t\t		throw new RuntimeException(\"Message Context can not be null\");\n");
-	   out.write("\t\t}\n");
-	   
-	   out.write("\t\torg.apache.geronimo.ews.ws4j2ee.context.security.SecurityContext4J2EE seccontext =\n"); 
-	   out.write("\t\t			   (org.apache.geronimo.ews.ws4j2ee.context.security.SecurityContext4J2EE)msgcontext\n");
-	   out.write("\t\t.getProperty(org.apache.ws.axis.security.WSS4J2EEConstants.SEC_CONTEXT_4J2EE);\n");
-	   out.write("\t\tif(seccontext != null){\n");
-	   out.write("\t\t\t    javax.security.auth.callback.CallbackHandler handler\n");
-	   out.write("\t\t\t        = seccontext.getPWDCallbackHandler4J2EE();\n");
-	   out.write("\t\t\t    if(handler != null){\n");
-	   out.write("\t\t\t        javax.security.auth.login.LoginContext lc\n"); 
-	   out.write("\t\t\t            = new javax.security.auth.login.LoginContext(\"TestClient\", handler);\n");
-	   out.write("\t\t\t        lc.login();\n");
-	   out.write("\t\t\t    }\n");
-	   out.write("\t\t}\n");
-	   
-	   out.write("\t\t}catch (javax.security.auth.login.LoginException e) {\n");
-	   out.write("\t\t     e.printStackTrace();\n");
-	   out.write("\t\t     throw org.apache.axis.AxisFault.makeFault(e);\n");
-	   out.write("\t\t}\n");
+       
+       //TODO remove the security code for the time been
+//	   out.write("\t\ttry {\n");
+//	   out.write("\t\tif(msgcontext == null){\n");
+//	   out.write("\t\t		msgcontext = org.apache.axis.MessageContext.getCurrentContext();\n");
+//	   out.write("\t\t}\n");
+//	   out.write("\t\tif(msgcontext == null){\n");
+//       out.write("\t\t		throw new RuntimeException(\"Message Context can not be null\");\n");
+//	   out.write("\t\t}\n");
+//	   
+//	   out.write("\t\torg.apache.geronimo.ews.ws4j2ee.context.security.SecurityContext4J2EE seccontext =\n"); 
+//	   out.write("\t\t			   (org.apache.geronimo.ews.ws4j2ee.context.security.SecurityContext4J2EE)msgcontext\n");
+//	   out.write("\t\t.getProperty(org.apache.ws.axis.security.WSS4J2EEConstants.SEC_CONTEXT_4J2EE);\n");
+//	   out.write("\t\tif(seccontext != null){\n");
+//	   out.write("\t\t\t    javax.security.auth.callback.CallbackHandler handler\n");
+//	   out.write("\t\t\t        = seccontext.getPWDCallbackHandler4J2EE();\n");
+//	   out.write("\t\t\t    if(handler != null){\n");
+//	   out.write("\t\t\t        javax.security.auth.login.LoginContext lc\n"); 
+//	   out.write("\t\t\t            = new javax.security.auth.login.LoginContext(\"TestClient\", handler);\n");
+//	   out.write("\t\t\t        lc.login();\n");
+//	   out.write("\t\t\t    }\n");
+//	   out.write("\t\t}\n");
+//	   
+//	   out.write("\t\t}catch (javax.security.auth.login.LoginException e) {\n");
+//	   out.write("\t\t     e.printStackTrace();\n");
+//	   out.write("\t\t     throw org.apache.axis.AxisFault.makeFault(e);\n");
+//	   out.write("\t\t}\n");
    	
 	   out.write("\t\ttry{\n");
 //	   use the properties set
