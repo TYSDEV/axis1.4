@@ -1,0 +1,1 @@
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"><soap:Body><m:data xmlns:m="http://www.example.org/stuff"><m:name m:contentType="text/plain">rO0ABXQAE1Byb2dyYW1taW5nIFByb2plY3Q=</m:name></m:data></soap:Body></soap:Envelope>
