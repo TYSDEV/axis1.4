@@ -76,6 +76,7 @@ import javax.xml.namespace.QName;
 import java.io.StringWriter;
 import java.util.Enumeration;
 import java.util.Vector;
+import java.util.HashSet;
 
 /** The Deserializer base class.
  * 
@@ -85,7 +86,7 @@ import java.util.Vector;
  */
 
 public class DeserializerImpl extends SOAPHandler
-        implements javax.xml.rpc.encoding.Deserializer, Deserializer
+        implements javax.xml.rpc.encoding.Deserializer, Deserializer, Callback
 {
     protected static Log log =
             LogFactory.getLog(DeserializerImpl.class.getName());
@@ -99,7 +100,15 @@ public class DeserializerImpl extends SOAPHandler
 
     protected QName defaultType = null;
     protected boolean componentsReady = true;
+    
+    /**
+     * A set of sub-deserializers whose values must complete before our
+     * value is complete.
+     */ 
+    private HashSet activeDeserializers = new HashSet();
 
+    public DeserializerImpl() {
+    }
 
     /** 
      * JAX-RPC compliant method which returns mechanism type.
@@ -142,8 +151,23 @@ public class DeserializerImpl extends SOAPHandler
      * The default implementation does nothing.
      * @param hint Object representing deserialized value or null
      */
-    public void setValue(Object value, Object hint) throws SAXException
+    public void setChildValue(Object value, Object hint) throws SAXException
     {
+    }
+
+    public void setValue(Object value, Object hint) throws SAXException {
+        if (hint instanceof Deserializer) {
+            // This one's done
+            activeDeserializers.remove(hint);
+            
+            // If we're past the end of our XML, and this is the last one,
+            // our value has been assembled completely.
+            if (isEnded && activeDeserializers.isEmpty()) {
+                // Got everything we need, call valueComplete()
+                componentsReady = true;
+                valueComplete();
+            }
+        }        
     }
 
     /**
@@ -266,6 +290,17 @@ public class DeserializerImpl extends SOAPHandler
                 removeValueTargets();
             }
         }
+    }
+    
+    public void addChildDeserializer(Deserializer dSer) {
+        // Keep track of our active deserializers.  This enables us to figure
+        // out whether or not we're really done in the case where we get to
+        // our end tag, but still have open hrefs for members.
+        activeDeserializers.add(dSer);
+        
+        // In concert with the above, we make sure each field deserializer
+        // lets us know when it's done so we can take it off our list.
+        dSer.registerValueTarget(new CallbackTarget(this, dSer));
     }
     
     protected boolean isHref = false;

@@ -179,7 +179,7 @@ public class SOAPFault extends SOAPBodyElement implements javax.xml.soap.SOAPFau
      *     tree.
      */
     public void setFaultCode(String faultCode) throws SOAPException {
-        fault.setFaultCode(faultCode);
+        fault.setFaultCodeAsString(faultCode);
     }
     
     /**

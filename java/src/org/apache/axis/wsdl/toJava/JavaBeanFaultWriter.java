@@ -98,7 +98,7 @@ public class JavaBeanFaultWriter extends JavaBeanWriter {
         enableFullConstructor = true;
 
         // JSR 101 v1.0 does not support write access methods
-        enableSetters = false;
+        enableSetters = true;
     } // ctor
     
     /**
@@ -136,9 +136,7 @@ public class JavaBeanFaultWriter extends JavaBeanWriter {
         pw.println("     * Writes the exception data to the faultDetails");
         pw.println("     */");
         pw.println("    public void writeDetails(javax.xml.namespace.QName qname, org.apache.axis.encoding.SerializationContext context) throws java.io.IOException {");
-/*        pw.println("        javax.xml.namespace.QName qname = new QName();");
         pw.println("        context.serialize(qname, null, this);");
-*/
         pw.println("    }");
         
         super.writeFileFooter(pw);
