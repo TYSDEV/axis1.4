@@ -84,11 +84,15 @@ import javax.xml.rpc.namespace.QName;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.io.Serializable;
+import java.io.ObjectOutputStream;
+import java.io.ObjectInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Vector;
 import java.util.Iterator;
 
-public class MessageElement implements SOAPElement
+public class MessageElement implements SOAPElement, Serializable
 {
     protected static Log log =
         LogFactory.getLog(MessageElement.class.getName());
@@ -100,21 +104,21 @@ public class MessageElement implements SOAPElement
     protected String    name ;
     protected String    prefix ;
     protected String    namespaceURI ;
-    protected AttributesImpl attributes;
+    protected transient AttributesImpl attributes;
     protected String    id;
     protected String    href;
     protected boolean   _isRoot = true;
     protected SOAPEnvelope message = null;
     protected boolean   _isDirty = false;
 
-    protected DeserializationContext context;
+    protected transient DeserializationContext context;
 
-    protected QName typeQName = null;
+    protected transient QName typeQName = null;
 
     protected Vector qNameAttrs = null;
 
     // Some message representations - as recorded SAX events...
-    protected SAX2EventRecorder recorder = null;
+    protected transient SAX2EventRecorder recorder = null;
     protected int startEventIndex = 0;
     protected int startContentsIndex = 0;
     protected int endEventIndex = -1;
@@ -696,6 +700,59 @@ public class MessageElement implements SOAPElement
     public void addMapping(Mapping map) {
         if (namespaces == null) namespaces = new ArrayList();
         namespaces.add(map);
+    }
+
+    /*
+     * Handle transient fields.
+     * NB. order of writes in writeObject must match order of reads in
+     * readObject.
+     */
+
+    private void writeObject(ObjectOutputStream out) throws IOException {
+        if (typeQName == null) {
+            out.writeBoolean(false);
+        } else {
+            out.writeBoolean(true);
+            out.writeObject(typeQName.getNamespaceURI());
+            out.writeObject(typeQName.getLocalPart());
+        }
+
+        if (attributes == null) {
+            attributes = new AttributesImpl();
+        }
+        int n = attributes.getLength();
+        out.writeInt(n);
+        for (int i = 0; i < n; i++) {
+            out.writeObject(attributes.getLocalName(i));
+            out.writeObject(attributes.getQName(i));
+            out.writeObject(attributes.getURI(i));
+            out.writeObject(attributes.getType(i));
+            out.writeObject(attributes.getValue(i));
+        }
+        out.defaultWriteObject();
+    }
+
+    private void readObject(ObjectInputStream in)
+        throws IOException, ClassNotFoundException {
+
+        if (in.readBoolean()) {
+            typeQName = new QName((String)in.readObject(),
+                                  (String)in.readObject());
+        } else {
+            typeQName = null;
+        }
+
+        attributes = new AttributesImpl();
+        int n = in.readInt();
+        for (int i = 0; i < n; i++) {
+            String localName = (String)in.readObject();
+            String qName = (String)in.readObject();
+            String uri = (String)in.readObject();
+            String type = (String)in.readObject();
+            String value = (String)in.readObject();
+            attributes.addAttribute(uri, localName, qName, type, value);
+        }
+        in.defaultReadObject();
     }
 
     // JAXM Node methods...

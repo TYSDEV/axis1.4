@@ -60,6 +60,11 @@ import org.apache.axis.utils.JavaUtils;
 import javax.xml.rpc.namespace.QName;
 import java.util.Vector;
 
+import java.io.IOException;
+import java.io.Serializable;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+
 /**
  * A Parameter descriptor, collecting the interesting info about an
  * operation parameter.
@@ -68,7 +73,7 @@ import java.util.Vector;
  *
  * @author Glen Daniels (gdaniels@apache.org)
  */
-public class ParameterDesc {
+public class ParameterDesc implements Serializable {
 
     // constant values for the parameter mode.
     public static final byte IN = 1;
@@ -76,13 +81,13 @@ public class ParameterDesc {
     public static final byte INOUT = 3;
 
     /** The Parameter's XML QName */
-    private QName name;
+    private transient QName name;
     /** A TypeEntry corresponding to this parameter */
     public TypeEntry typeEntry;
     /** The Parameter mode (in, out, inout) */
     public byte mode = IN;
     /** The XML type of this parameter */
-    private QName typeQName;
+    private transient QName typeQName;
     /** The Java type of this parameter */
     private Class javaType;
     /** The order of this parameter (-1 indicates unordered) */
@@ -187,4 +192,40 @@ public class ParameterDesc {
     public void setOrder(int order) {
         this.order = order;
     }
-} // class Parameter
+
+    private void writeObject(ObjectOutputStream out)
+        throws IOException {
+        if (name == null) {
+            out.writeBoolean(false);
+        } else {
+            out.writeBoolean(true);
+            out.writeObject(name.getNamespaceURI());
+            out.writeObject(name.getLocalPart());
+        }
+        if (typeQName == null) {
+            out.writeBoolean(false);
+        } else {
+            out.writeBoolean(true);
+            out.writeObject(typeQName.getNamespaceURI());
+            out.writeObject(typeQName.getLocalPart());
+        }
+        out.defaultWriteObject();
+    }
+
+    private void readObject(ObjectInputStream in)
+        throws IOException, ClassNotFoundException {
+        if (in.readBoolean()) {
+            name = new QName((String)in.readObject(),
+                             (String)in.readObject());
+        } else {
+            name = null;
+        }
+        if (in.readBoolean()) {
+            typeQName = new QName((String)in.readObject(),
+                                  (String)in.readObject());
+        } else {
+            typeQName = null;
+        }
+        in.defaultReadObject();
+    }
+} // class ParameterDesc

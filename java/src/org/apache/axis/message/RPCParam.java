@@ -63,6 +63,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.xml.rpc.namespace.QName;
+import java.io.Serializable;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Field;
 
@@ -70,7 +73,7 @@ import java.lang.reflect.Field;
  *
  * @author Glen Daniels (gdaniels@macromedia.com)
  */
-public class RPCParam
+public class RPCParam implements Serializable
 {
     protected static Log log =
         LogFactory.getLog(RPCParam.class.getName());
@@ -78,7 +81,7 @@ public class RPCParam
     // Who's your daddy?
     RPCElement myCall;
     
-    private QName qname;
+    private transient QName qname;
     public Object value;
 
     private ParameterDesc paramDesc;
@@ -172,5 +175,28 @@ public class RPCParam
                           value,  // value
                           javaType, xmlType, // java/xml type
                           true, true); 
+    }
+
+    private void writeObject(ObjectOutputStream out)
+        throws IOException {
+        if (qname == null) {
+            out.writeBoolean(false);
+        } else {
+            out.writeBoolean(true);
+            out.writeObject(qname.getNamespaceURI());
+            out.writeObject(qname.getLocalPart());
+        }
+        out.defaultWriteObject();
+    }
+
+    private void readObject(ObjectInputStream in) 
+        throws IOException, ClassNotFoundException {
+        if (in.readBoolean()) {
+            qname = new QName((String)in.readObject(),
+                              (String)in.readObject());
+        } else {
+            qname = null;
+        }
+        in.defaultReadObject();
     }
 }
