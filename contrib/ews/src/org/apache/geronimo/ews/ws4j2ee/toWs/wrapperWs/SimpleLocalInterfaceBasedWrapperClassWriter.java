@@ -90,20 +90,20 @@ public class SimpleLocalInterfaceBasedWrapperClassWriter extends EJBBasedWrapper
 
 	}
 	private void writeGetRemoteRef(String classname){
-	   out.write("\tpublic "+seiName+" getRemoteRef()throws org.apache.axis.AxisFault{\n");
-	   out.write("\t\ttry {\n");
-	   out.write("\t\t    javax.security.auth.callback.CallbackHandler handler\n");
-	   out.write("\t\t        = org.apache.geronimo.ews.ws4j2ee.wsutils.security.jaasmodules.\n");
-	   out.write("\t\t            AutenticationCallbackHandlerFactory.createCallbackHandler(msgcontext);\n");
-	   out.write("\t\t    if(handler != null){\n");
-	   out.write("\t\t        javax.security.auth.login.LoginContext lc\n"); 
-	   out.write("\t\t            = new javax.security.auth.login.LoginContext(\"TestClient\", handler);\n");
-	   out.write("\t\t        lc.login();\n");
-	   out.write("\t\t    }\n");
-	   out.write("\t\t}catch (javax.security.auth.login.LoginException e) {\n");
-	   out.write("\t\t     e.printStackTrace();\n");
-	   out.write("\t\t     throw org.apache.axis.AxisFault.makeFault(e);\n");
-	   out.write("\t\t}\n");
+//	   out.write("\tpublic "+seiName+" getRemoteRef()throws org.apache.axis.AxisFault{\n");
+//	   out.write("\t\ttry {\n");
+//	   out.write("\t\t    javax.security.auth.callback.CallbackHandler handler\n");
+//	   out.write("\t\t        = org.apache.geronimo.ews.ws4j2ee.wsutils.security.jaasmodules.\n");
+//	   out.write("\t\t            AutenticationCallbackHandlerFactory.createCallbackHandler(msgcontext);\n");
+//	   out.write("\t\t    if(handler != null){\n");
+//	   out.write("\t\t        javax.security.auth.login.LoginContext lc\n"); 
+//	   out.write("\t\t            = new javax.security.auth.login.LoginContext(\"TestClient\", handler);\n");
+//	   out.write("\t\t        lc.login();\n");
+//	   out.write("\t\t    }\n");
+//	   out.write("\t\t}catch (javax.security.auth.login.LoginException e) {\n");
+//	   out.write("\t\t     e.printStackTrace();\n");
+//	   out.write("\t\t     throw org.apache.axis.AxisFault.makeFault(e);\n");
+//	   out.write("\t\t}\n");
    	
 	   out.write("\t\ttry{\n");
 	   String ejbname = j2eewscontext.getWSDLContext().getTargetPortType().getName().toLowerCase();

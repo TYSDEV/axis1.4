@@ -164,6 +164,14 @@
     			 <exclude>org/apache/geronimo/ews/jaxrpcmapping/JAXBJaxRpcMapper.java</exclude>
           </excludes>
 		</sourceModification>
+		<sourceModification> 
+    	  <className>org.apache.ws.axis.security.WSDoAllConstants</className>
+    	  <excludes>
+    			 <exclude>org/apache/ws/axis/security/**.java</exclude>
+    			 <exclude>org/apache/ws/security/**.java</exclude>
+          </excludes>
+		</sourceModification>
+		
 	 </sourceModifications>
 
     <unitTestSourceDirectory>test</unitTestSourceDirectory>
@@ -265,7 +273,7 @@
             </properties>
         </dependency>
         -->
-
+		<!--
         <dependency>
             <groupId>sec</groupId>
             <artifactId>wss4j</artifactId>
@@ -291,7 +299,7 @@
                 <module>true</module>
             </properties>
         </dependency>
-
+		-->
         <dependency>
             <groupId>geronimo-spec</groupId>
             <artifactId>geronimo-spec-j2ee</artifactId>
