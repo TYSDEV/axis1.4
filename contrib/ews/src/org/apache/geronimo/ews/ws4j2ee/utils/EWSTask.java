@@ -58,8 +58,6 @@ public class EWSTask extends Task{
                                 true);
             Thread.currentThread().setContextClassLoader(cl);
 
-            if(null == cl.getResourceAsStream("org/apache/geronimo/ews/ws4j2ee/context/webservices/server/jaxb/jaxb.properties"))
-                throw new Exception("error loding properties");
             AntDeployContext deployContext 
                 = new AntDeployContext(moduleFile.getAbsolutePath(),
                                 outDirFile.getAbsolutePath(),cl,implStyle,j2eeContainer);
