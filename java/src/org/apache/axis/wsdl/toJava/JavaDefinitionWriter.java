@@ -68,6 +68,9 @@ import javax.wsdl.Fault;
 import javax.wsdl.Import;
 import javax.wsdl.Operation;
 import javax.wsdl.PortType;
+import javax.wsdl.BindingFault;
+import javax.wsdl.Binding;
+import javax.wsdl.BindingOperation;
 import javax.xml.namespace.QName;
 
 import org.apache.axis.wsdl.gen.Generator;
@@ -75,17 +78,14 @@ import org.apache.axis.wsdl.gen.Generator;
 import org.apache.axis.wsdl.symbolTable.SymbolTable;
 import org.apache.axis.wsdl.symbolTable.MessageEntry;
 import org.apache.axis.utils.Messages;
+import org.apache.axis.Message;
 
 /**
  * This is Wsdl2java's Definition Writer.  
  * It currently writes the following files:
- *   deploy.xml, undeploy.xml and Faults as needed.
+ * Faults as needed.
  */
 public class JavaDefinitionWriter implements Generator {
-/*
-    protected Writer deployWriter = null;
-    protected Writer undeployWriter = null;
-*/
     protected Emitter emitter;
     protected Definition definition;
     protected SymbolTable symbolTable;
@@ -95,10 +95,6 @@ public class JavaDefinitionWriter implements Generator {
      */
     public JavaDefinitionWriter(Emitter emitter, Definition definition,
             SymbolTable symbolTable) {
-/*
-        deployWriter = new JavaDeployWriter(emitter, definition, symbolTable);
-        undeployWriter = new JavaUndeployWriter(emitter, definition, symbolTable);
-*/
         this.emitter = emitter;
         this.definition = definition;
         this.symbolTable = symbolTable;
@@ -108,18 +104,12 @@ public class JavaDefinitionWriter implements Generator {
      * Write other items from the definition as needed.
      */
     public void generate() throws IOException {
-/*
-        if (emitter.generateServerSide()) {
-            deployWriter.write();
-            undeployWriter.write();
-        }
-*/
         writeFaults();
     } // generate
 
     /**
-     * Write all the faults.
-     * 
+     * Write all the simple type faults.
+     * The complexType Faults are automatically handled by JavaTypeWriter.
      * The fault name is derived from the fault message name per JAX-RPC
      */
     private void writeFaults() throws IOException {
@@ -130,7 +120,8 @@ public class JavaDefinitionWriter implements Generator {
         Iterator fi = faults.entrySet().iterator();
         while (fi.hasNext()) {
             Map.Entry entry = (Map.Entry) fi.next();
-            Fault fault = (Fault) entry.getKey();
+            FaultInfo faultInfo = (FaultInfo) entry.getValue();
+            Fault fault = faultInfo.fault;
 
             // Generate the 'Simple' Faults.
             // The complexType Faults are automatically handled
@@ -148,10 +139,14 @@ public class JavaDefinitionWriter implements Generator {
                 }
             }
             if (emitSimpleFault) {
-                QName faultQName = (QName) entry.getValue();
                 try {
-                    new JavaFaultWriter(emitter, faultQName, fault,
-                                        symbolTable).generate();
+                    JavaFaultWriter writer = 
+                            new JavaFaultWriter(emitter, 
+                                                symbolTable, 
+                                                faultInfo.fault, 
+                                                faultInfo.bindingFault); 
+                    // Go write the file
+                    writer.generate();
                 } catch (DuplicateFileException dfe) {
                     System.err.println(
                             Messages.getMessage("fileExistError00", dfe.getFileName()));
@@ -160,6 +155,13 @@ public class JavaDefinitionWriter implements Generator {
         }
     } // writeFaults
 
+    /**
+     * Holder structure for fault information
+     */ 
+    public class FaultInfo {
+        public Fault fault;
+        public BindingFault bindingFault;
+    }
     /**
      * Collect all of the faults used in this definition.
      */
@@ -203,12 +205,46 @@ public class JavaDefinitionWriter implements Generator {
                         // prevent duplicates
                         if (! faultList.contains(name) ) {
                             faultList.add(name);
-                            faults.put(f, f.getMessage().getQName());
+                            FaultInfo faultInfo = new FaultInfo();
+                            faultInfo.fault = f;
+                            faults.put(f.getName(), faultInfo);
                         }
                     }
                 }
             }
         }
+        
+        // We now have a map of FullExceptionName -> FaultInfo
+        // Now we traverse the bindings to fill in more info
+        Map bindings = def.getBindings();
+        Iterator bindi = bindings.values().iterator();
+        while (bindi.hasNext()) {
+            Binding binding = (Binding) bindi.next();
+            
+            if (symbolTable.getBindingEntry(binding.getQName()).isReferenced()) {
+                List operations = binding.getBindingOperations();
+                for (int i = 0; i < operations.size(); ++i) {
+                    BindingOperation operation = (BindingOperation) operations.get(i);
+                    Map bindFaults = operation.getBindingFaults();
+                    Iterator fi = bindFaults.values().iterator();
+                    while (fi.hasNext()) {
+                        BindingFault bFault = (BindingFault) fi.next();
+                        FaultInfo faultInfo = (FaultInfo) faults.get(bFault.getName());
+                        if (faultInfo == null) {
+                            // This should NOT happen!
+                            throw new IOException(
+                                    Messages.getMessage("noBindingFault",
+                                      new String[] {bFault.getName(), 
+                                              operation.getName(), 
+                                              binding.getQName().toString()}));
+                        }
+                        faultInfo.bindingFault = bFault;
+                        // put the updated entry back in the map
+                        faults.put(bFault.getName(), faultInfo);
+                    } // while
+                } // for
+            } // if binding referenced
+        } // iterate bindings
     } // collectFaults
-
+    
 } // class JavaDefinitionWriter

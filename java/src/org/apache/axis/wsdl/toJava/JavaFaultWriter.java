@@ -58,28 +58,42 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 import java.util.Vector;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Iterator;
+import java.util.Collection;
 
 import javax.wsdl.Fault;
+import javax.wsdl.BindingFault;
+import javax.wsdl.PortType;
+import javax.wsdl.extensions.soap.SOAPFault;
 import javax.xml.namespace.QName;
 
 import org.apache.axis.wsdl.symbolTable.Parameter;
 import org.apache.axis.wsdl.symbolTable.SymbolTable;
 
 /**
-* This is Wsdl2java's Fault Writer.  It writes the <faultName>.java file.
-* NOTE:  this must be rewritten.  It doesn't follow JAX-RPC.
-*/
+ * This is Wsdl2java's Fault Writer.  It writes the <faultName>.java file.
+ *
+ * NOTE: This only writes simple type faults, the JavaTypeWriter emits
+ * faults that are complex types. 
+ */
 public class JavaFaultWriter extends JavaClassWriter {
     private Fault fault;
     private SymbolTable symbolTable;
+    private BindingFault bindingFault;
 
     /**
      * Constructor.
      */
-    protected JavaFaultWriter(Emitter emitter, QName qname, Fault fault, SymbolTable symbolTable) {
+    protected JavaFaultWriter(Emitter emitter, 
+                              SymbolTable symbolTable, 
+                              Fault fault, 
+                              BindingFault bindingFault) {
         super(emitter, Utils.getFullExceptionName(fault, symbolTable), "fault");
         this.fault = fault;
         this.symbolTable = symbolTable;
+        this.bindingFault = bindingFault;
     } // ctor
 
     /**
@@ -138,14 +152,27 @@ public class JavaFaultWriter extends JavaClassWriter {
             }
             pw.println("    }");
         }
-        
-        // Hack alert!
-        // We need a QName for the exception part that we are going to
-        // serialize, but <part name=""> isn't NOT a QName - go figure
-        // So we will use the namespace of the Message, and the name of the part
-        // NOTE: we do the same thing when creating the fault map in JavaStubWriter
-        String namespace = fault.getMessage().getQName().getNamespaceURI();
-        
+
+        // PROBLEM: we need to have the Exception class serialize itself
+        // with the correct namespace, which can change depending on which
+        // operation the exception is thrown from.  This event seems unlikely
+        // so for the time being we will use the namespace from the first
+        // binding operation we find, which is passed in as construction time
+        // Note that bindingFault can be null if this fault is never referenced
+        // in a binding (WSDL2Java --all switch).
+
+        // We do the same thing in JavaStubWriter.java
+        String namespace = "";
+        if (bindingFault != null) {
+            List extList = bindingFault.getExtensibilityElements();
+            for (Iterator iterator = extList.iterator(); iterator.hasNext();) {
+                Object o = (Object) iterator.next();
+                if (o instanceof SOAPFault) {
+                    SOAPFault sf = (SOAPFault) o;
+                    namespace = sf.getNamespaceURI();
+                }
+            }
+        }
         // method that serializes exception data (writeDetail)
         pw.println();
         pw.println("    /**");
@@ -158,8 +185,8 @@ public class JavaFaultWriter extends JavaClassWriter {
             QName qname = new QName(namespace, param.getQName().getLocalPart());
             pw.println("        javax.xml.namespace.QName qname = " + Utils.getNewQName(qname) + ";");
             pw.println("        context.serialize(qname, null, " + Utils.wrapPrimitiveType(param.getType(), variable) + ");");
-            pw.println("    }");
         }
+        pw.println("    }");
     } // writeFileBody
 
 } // class JavaFaultWriter
