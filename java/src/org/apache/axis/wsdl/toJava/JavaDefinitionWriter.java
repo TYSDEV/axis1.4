@@ -73,6 +73,7 @@ import javax.wsdl.BindingFault;
 import javax.wsdl.Binding;
 import javax.wsdl.BindingOperation;
 import javax.wsdl.extensions.soap.SOAPFault;
+import javax.xml.namespace.QName;
 
 import org.apache.axis.wsdl.gen.Generator;
 
@@ -166,13 +167,15 @@ public class JavaDefinitionWriter implements Generator {
      * Holder structure for fault information
      */ 
     public static class FaultInfo {
-        public FaultInfo(Fault fault, SOAPFault soapFault) {
+        public FaultInfo(Fault fault, SOAPFault soapFault, QName xmlType) {
             this.fault = fault;
             this.soapFault = soapFault;
+            this.xmlType = xmlType;
         }
 
         public Fault fault;
         public SOAPFault soapFault;
+        public QName xmlType;
     }
 
     /**

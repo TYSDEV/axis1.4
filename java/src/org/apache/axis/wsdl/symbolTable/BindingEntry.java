@@ -263,6 +263,10 @@ public class BindingEntry extends SymTabEntry {
         return faults;
     }
 
+    public void setFaults(HashMap faults) {
+        this.faults = faults;
+    }
+
     /**
      * Contains attributes for Operations
      *  - Body type: encoded or literal

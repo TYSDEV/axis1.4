@@ -468,6 +468,9 @@ public class JavaDeployWriter extends JavaWriter {
                     pw.print(" qname=\"" +
                              Utils.genQNameAttributeString(faultQName, "fns") + "\"");
                     pw.print(" class=\"" + className+ "\"");
+                    pw.print(" type=\"" +
+                             Utils.genQNameAttributeString(faultInfo.xmlType,
+                                                           "tns") + "\"");
                     pw.println("/>");
                 }
             }

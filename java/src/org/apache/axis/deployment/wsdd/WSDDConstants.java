@@ -178,4 +178,5 @@ public class WSDDConstants
     public static final String ATTR_ENCSTYLE = "encodingStyle";
     public static final String ATTR_SOAPACTORNAME = "soapActorName";
     public static final String ATTR_CLASSNAME = "classname";
+    public static final String ATTR_CLASS = "class";
 }
