@@ -175,6 +175,12 @@ public class Type {
  */
 	public void setTypeNameForElementName(ElementInfo element) {
 		String attribName = TypeMap.resoleveWSDL2LanguageNameClashes(element.getName().getLocalPart(),this.language);
+		if (attribName.lastIndexOf('>') > 1 )
+		{
+			 attribName=attribName.substring(attribName.lastIndexOf('>')+1,attribName.length());
+		         System.out.println(attribName+"   attribute Name ");
+		}
+		
 		if (hasOrder)
 			this.attribOrder.add(attribName);
 		this.elements.put(attribName, element);
