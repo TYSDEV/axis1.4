@@ -24,6 +24,9 @@
  <service name="JWSProcessor" provider="Handler">
   <parameter name="handlerClass" value="org.apache.axis.handlers.JWSProcessor"/>
  </service>
+ <service name="EchoService" provider="Handler">
+  <parameter name="handlerClass" value="org.apache.axis.handlers.EchoHandler"/>
+ </service>
 
  <transport name="http">
   <requestFlow>

@@ -93,7 +93,6 @@ public class XMLType implements javax.xml.rpc.encoding.XMLType {
     public static final XMLType SOAP_ARRAY = new XMLType(new QName(Constants.URI_SOAP_ENC, "Array"));
 
     public static final XMLType TYPE_MAP = new XMLType(new QName("http://xml.apache.org/xml-soap", "Map"));
-    public static final XMLType TYPE_ELEMENT = new XMLType(new QName("http://xml.apache.org/xml-soap", "Element"));
 
     public static       XMLType XSD_DATE;
     

@@ -173,11 +173,6 @@ public class RPCHandler extends SOAPHandler
         if (category.isDebugEnabled()) {
             category.debug(JavaUtils.getMessage("typeFromAttr00", "" + type));
         }
-
-        String isNil = attributes.getValue(Constants.URI_2001_SCHEMA_XSI,"nil");
-
-        if ( isNil != null && isNil.equals("true") )
-          return( new Deserializer() );
         
         // xsi:type always overrides everything else
         if (type == null) {
@@ -230,15 +225,18 @@ public class RPCHandler extends SOAPHandler
         } else {
             dser = new Deserializer();
         }
-
+        
         if (dser == null) {
             throw new SAXException(JavaUtils.getMessage(
                     "noDeser01", localName,"" + type));
         }
         
-        dser.registerValueTarget(
-             new Deserializer.FieldTarget(currentParam, 
-                 RPCParam.getValueField()));
+        String isNil = attributes.getValue(Constants.URI_2001_SCHEMA_XSI, "nil");
+        if (isNil == null || !isNil.equals("true")) {
+            dser.registerValueTarget(
+               new Deserializer.FieldTarget(currentParam, 
+                   RPCParam.getValueField()));
+        }
         
         if (category.isDebugEnabled()) {
             category.debug(JavaUtils.getMessage("exit00", "RPCHandler.onStartChild()"));

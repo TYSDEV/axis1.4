@@ -63,22 +63,20 @@ import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.axis.utils.AxisClassLoader;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.XMLUtils;
-import org.apache.axis.utils.compiler.Compiler;
-import org.apache.axis.utils.compiler.CompilerError;
-import org.apache.axis.utils.compiler.CompilerFactory;
 import org.apache.log4j.Category;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import sun.tools.javac.Main;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.List;
 import java.util.StringTokenizer;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
@@ -98,6 +96,7 @@ import java.util.jar.Manifest;
  */
 public class JWSProcessor extends BasicHandler
 {
+    static String errFile = "jws.err" ;
     static Category category =
             Category.getInstance(JWSProcessor.class.getName());
 
@@ -170,7 +169,8 @@ public class JWSProcessor extends BasicHandler
                 category.debug("javac " + jFile );
                 // Process proc = rt.exec( "javac " + jFile );
                 // proc.waitFor();
-                Compiler          compiler = CompilerFactory.getCompiler();
+                FileOutputStream  out      = new FileOutputStream( errFile );
+                Main              compiler = new Main( out, "javac" );
                 String            outdir   = null ;
                 String[]          args     = null ;
 
@@ -178,12 +178,13 @@ public class JWSProcessor extends BasicHandler
                 if ( outdir == null ) outdir = f1.getParent();
                 if ( outdir == null ) outdir = "." ;
 
-                compiler.setClasspath(getDefaultClasspath(msgContext));
-                compiler.setDestination(outdir);
-                compiler.setFile(jFile);
+                args = new String[] { "-d", outdir,
+                          "-classpath",
+                          getDefaultClasspath(msgContext),
+                          jFile };
 
-                boolean result   = compiler.compile();
-                
+                boolean           result   = compiler.compile( args );
+
                 /* Delete the temporary *.java file and check return code */
                 /**********************************************************/
                 (new File(jFile)).delete();
@@ -198,27 +199,22 @@ public class JWSProcessor extends BasicHandler
                     Document doc = XMLUtils.newDocument();
 
                     Element         root = doc.createElementNS("", "Errors");
-                    StringBuffer message = new StringBuffer("Error compiling ");
-                    message.append(jFile);
-                    message.append(":\n");
+                    StringBuffer    sbuf = new StringBuffer();
+                    FileReader      inp  = new FileReader( errFile );
 
-                    List errors = compiler.getErrors();
-                    int count = errors.size();
-                    for (int i = 0; i < count; i++) {
-                      CompilerError error = (CompilerError) errors.get(i);
-                      if (i > 0) message.append("\n");
-                      message.append("Line ");
-                      message.append(error.getStartLine());
-                      message.append(", column ");
-                      message.append(error.getStartColumn());
-                      message.append(": ");
-                      message.append(error.getMessage());
-                    }
-                    root.appendChild( doc.createTextNode( message.toString() ) );
+                    buf = new char[4096];
+
+                    while ( (rc = inp.read(buf, 0, 4096)) > 0 )
+                        sbuf.append( buf, 0, rc );
+                    inp.close();
+                    root.appendChild( doc.createTextNode( sbuf.toString() ) );
+                    (new File(errFile)).delete();
                     throw new AxisFault( "Server.compileError",
                          JavaUtils.getMessage("badCompile00", jFile),
                         null, new Element[] { root } );
                 }
+                (new File(errFile)).delete();
+
                 AxisClassLoader.removeClassLoader( clsName );
             }
             AxisClassLoader cl = msgContext.getClassLoader();
@@ -280,12 +276,9 @@ public class JWSProcessor extends BasicHandler
 
                 for(int i=0; (urls != null) && i < urls.length; i++)
                 {
-                    String path = urls[i].getPath();
-                    //If it is a drive letter, adjust accordingly.
-                    if(path.charAt(0)=='/'&&path.charAt(2)==':')
-                        path = path.substring(1);
-                    classpath.append(path);
+                    classpath.append(urls[i].getPath());
                     classpath.append(File.pathSeparatorChar);
+
 
                     // if its a jar extract Class-Path entries from manifest
                     File file = new File(urls[i].getFile());
@@ -368,8 +361,10 @@ public class JWSProcessor extends BasicHandler
             }
         }
 
+
         // boot classpath isn't found in above search
-        if(System.getProperty("sun.boot.class.path") != null) {
+        if(System.getProperty("sun.boot.class.path") != null)
+        {
             classpath.append(System.getProperty("sun.boot.class.path"));
         }
 

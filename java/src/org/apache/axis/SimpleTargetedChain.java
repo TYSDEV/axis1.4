@@ -104,7 +104,7 @@ public class SimpleTargetedChain extends BasicHandler implements TargetedChain
             if ( pivotHandler != null ) pivotHandler.invoke( msgContext );
         }
         catch( Exception e ) {
-            category.error( "SimpleTargetedChain caught exception", e );
+            category.error( e );
             if ( requestHandler != null )
                 requestHandler.undo( msgContext );
             throw AxisFault.makeFault(e);

@@ -75,7 +75,6 @@ public class EJBProvider extends RPCProvider
 {
     private static final String beanNameOption = "beanJndiName";
     private static final String allowedMethodsOption = "allowedMethods";
-    private static final String homeInterfaceNameOption = "homeInterfaceName";
     public static final String jndiContextClass = "jndiContextClass";
     public static final String jndiURL = "jndiURL";
     public static final String jndiUsername = "jndiUser";
@@ -151,27 +150,24 @@ public class EJBProvider extends RPCProvider
             }
 
             if (context == null)
-                throw new AxisFault( JavaUtils.getMessage("cannotCreateInitialContext00"));
+            {
+                throw new AxisFault("EJBProvider can't get Context");
+            }
 
             home = context.lookup(clsName);
             if (home == null)
-                throw new AxisFault( JavaUtils.getMessage("cannotFindJNDIHome00",clsName));
+            {
+                throw new AxisFault("EJBProvider can't get Bean Home");
+            }
         }
-        // Should probably catch javax.naming.NameNotFoundException here 
         catch (Exception exception)
         {
             throw AxisFault.makeFault(exception);
         }
 
-        String homeName = (String) getStrOption(homeInterfaceNameOption, 
-                                                                            serviceHandler);
-        if (homeName == null) 
-            throw new AxisFault(JavaUtils.getMessage("noOption00", homeInterfaceNameOption, msgContext.getTargetService()));
-
-        Class homeClass = msgContext.getClassLoader().loadClass(homeName);
-        Object ehome = javax.rmi.PortableRemoteObject.narrow(home, homeClass);
+        Class homeClass = home.getClass();
         Method createMethod = homeClass.getMethod("create", empty_class_array);
-        Object result = createMethod.invoke(ehome, empty_object_array);
+        Object result = createMethod.invoke(home, empty_object_array);
 
         return result;
     }

@@ -124,18 +124,13 @@ public class HTTPSender extends BasicHandler {
             if ( (port = tmpURL.getPort()) == -1 ) port = 80;
 
             Socket             sock = null ;
-            StringBuffer  otherHeaders = new StringBuffer();
 
             if (tmpURL.getProtocol().equalsIgnoreCase("https")) {
                 if ( (port = tmpURL.getPort()) == -1 ) port = 443;
-
-                // Use http.proxyXXX settings if https.proxyXXX is not set 
                 String tunnelHost = System.getProperty("https.proxyHost");
                 String tunnelPortStr = System.getProperty("https.proxyPort");
-                
-                if (tunnelHost==null) tunnelHost = System.getProperty("http.proxyHost");
-                if (tunnelPortStr==null) tunnelPortStr = System.getProperty("http.proxyPort");
-
+                String tunnelUsername = System.getProperty("https.proxyUsername");
+                String tunnelPassword = System.getProperty("https.proxyPassword");
                 try {
                     Class SSLSocketFactoryClass =
                                                  Class.forName("javax.net.ssl.SSLSocketFactory");
@@ -158,52 +153,25 @@ public class HTTPSender extends BasicHandler {
                         Method createSocketMethod2 =
                                                     SSLSocketFactoryClass.getMethod("createSocket",
                                                                                     new Class[] {Socket.class, String.class, Integer.TYPE, Boolean.TYPE});
-
-                        // Default proxy port is 80, even for https
-                        int tunnelPort = (tunnelPortStr != null? (Integer.parseInt(tunnelPortStr) < 0? 80: Integer.parseInt(tunnelPortStr)): 80);
-
-                        // Create the regular socket connection to the proxy
-                        Socket tunnel = new Socket(tunnelHost, tunnelPort);
-
+                        int tunnelPort = (tunnelPortStr != null? (Integer.parseInt(tunnelPortStr) < 0? 443: Integer.parseInt(tunnelPortStr)): 443);
+                        Object tunnel = createSocketMethod .invoke(factory,
+                                                                   new Object[] {tunnelHost, new Integer(tunnelPort)});
                         // The tunnel handshake method (condensed and made reflexive)
                         OutputStream tunnelOutputStream = (OutputStream)SSLSocketClass.getMethod("getOutputStream", new Class[] {}).invoke(tunnel, new Object[] {});
-
                         PrintWriter out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(tunnelOutputStream)));
-                        out.print("CONNECT " + host + ":" + port + " HTTP/1.0\n"
-                                  + "User-Agent: AxisClient"
-                                  + "\r\n\r\n");
+                        out.print("CONNECT " + host + ":" + port + " HTTP/1.0\n\r\n\r");
                         out.flush();
-                        
                         InputStream tunnelInputStream = (InputStream)SSLSocketClass.getMethod("getInputStream", new Class[] {}).invoke(tunnel, new Object[] {});
+                        //BufferedReader in = new BufferedReader(new InputStreamReader(tunnelInputStream));
+                        //DataInputStream in = new DataInputStream(tunnelInputStream);
                         if (category.isDebugEnabled()) {
                             category.debug(JavaUtils.getMessage("isNull00", 
                               "tunnelInputStream", 
                               "" + (tunnelInputStream == null)));
                         }
 
-                        String replyStr = ""; 
-
-                        // Make sure to read all the response from the proxy to prevent SSL negotiation failure
-                        // Response message terminated by two sequential newlines
-                        int		newlinesSeen = 0;
-                        boolean		headerDone = false;	/* Done on first newline */
-
-                        while (newlinesSeen < 2) {
-                            int i = tunnelInputStream.read();
-                            if (i < 0) {
-                                throw new IOException("Unexpected EOF from proxy");
-                            }
-                            if (i == '\n') {
-                                headerDone = true;
-                                ++newlinesSeen;
-                            } else if (i != '\r') {
-                                newlinesSeen = 0;
-                                if (!headerDone) {
-                                    replyStr += String.valueOf((char)i);
-                                }
-                            }
-                        }
-
+                        String replyStr = ""; int i;
+                        while ((i = tunnelInputStream.read()) != '\n' && i != '\r' && i != -1) { replyStr += String.valueOf((char)i); }
                         if (!replyStr.startsWith("HTTP/1.0 200") && !replyStr.startsWith("HTTP/1.1 200")) {
                             throw new IOException(JavaUtils.getMessage("cantTunnel00",
                                     new String[] {tunnelHost, "" + tunnelPort, replyStr}));
@@ -243,19 +211,6 @@ public class HTTPSender extends BasicHandler {
                 String proxyPort = System.getProperty("http.proxyPort");
                 String nonProxyHosts = System.getProperty("http.nonProxyHosts");
                 boolean hostInNonProxyList = isHostInNonProxyList(host, nonProxyHosts);
-                String proxyUsername = System.getProperty("http.proxyUser");
-                String proxyPassword = System.getProperty("http.proxyPassword");
-
-                if ( proxyUsername != null ) {
-                    StringBuffer tmpBuf = new StringBuffer();
-                    tmpBuf.append( proxyUsername )
-                   .append( ":" )
-                   .append( (proxyPassword == null) ? "" : proxyPassword) ;
-                    otherHeaders.append( HTTPConstants.HEADER_PROXY_AUTHORIZATION )
-                         .append( ": Basic " )
-                         .append( Base64.encode( tmpBuf.toString().getBytes() ) )
-                         .append("\n" );
-                }            
 
                 if ((port = tmpURL.getPort()) == -1 ) port = 80;
 
@@ -286,24 +241,12 @@ public class HTTPSender extends BasicHandler {
 
 
             OutputStream  out  = new BufferedOutputStream(sock.getOutputStream(), 8*1024);
+            StringBuffer  otherHeaders = new StringBuffer();
             String        userID = null ;
             String        passwd = null ;
 
             userID = msgContext.getStrProp( MessageContext.USERID );
             passwd = msgContext.getStrProp( MessageContext.PASSWORD );
-
-            // if UserID is not part of the context, but is in the URL, use
-            // the one in the URL.
-            if ( userID == null && tmpURL.getUserInfo() != null) {
-                String info = tmpURL.getUserInfo();
-                int sep = info.indexOf(':');
-                if ( (sep>=0) && (sep+1<info.length()) ) {
-                    userID = info.substring(0,sep);
-                    passwd = info.substring(sep+1);
-                } else {
-                    userID = info;
-                }
-            }
 
             if ( userID != null ) {
                 StringBuffer tmpBuf = new StringBuffer();
@@ -372,7 +315,7 @@ public class HTTPSender extends BasicHandler {
 
             header.append("\r\n");
 
-            out.write( header.toString().getBytes(HTTPConstants.HEADER_DEFAULT_CHAR_ENCODING) );
+            out.write( header.toString().getBytes() );
             reqMessage.writeContentToStream(out);
             out.flush();
 
@@ -423,15 +366,15 @@ public class HTTPSender extends BasicHandler {
                         buf.close();
                         byte[]hdata= buf.toByteArray();
                         buf.reset();
-                        name = new String( hdata, 0, colonIndex, HTTPConstants.HEADER_DEFAULT_CHAR_ENCODING );
-                        value = new String( hdata, colonIndex+1, len-1-colonIndex, HTTPConstants.HEADER_DEFAULT_CHAR_ENCODING );
+                        name = new String( hdata, 0, colonIndex );
+                        value = new String( hdata, colonIndex+1, len-1-colonIndex );
                         colonIndex = -1 ;
                     }
                     else {
                         buf.close();
                         byte[]hdata= buf.toByteArray();
                         buf.reset();
-                        name = new String( hdata, 0, len, HTTPConstants.HEADER_DEFAULT_CHAR_ENCODING );
+                        name = new String( hdata, 0, len );
                         value = "" ;
                     }
 

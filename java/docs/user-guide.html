@@ -27,12 +27,9 @@ h1 {  margin-left: -30px}
   <A href="#PublishingServices">Publishing Web Services with Axis</a><br>
   <A href="#DataMapping">XML &lt;-&gt; Java Data Mapping in Axis<br>
   </a> <A href="#WSDL">Using WSDL with Axis</a><br>
-  <A href="#AttachmentsReference">SOAP Messages with Attachments</a><br>
-  <A href="#DeploymentReference">Deployment Reference</a><br>
   <br>
+  <A href="#DeploymentReference">Deployment Reference</a><br>
   <A href="#Glossary">Glossary</a></p>
-<!--                             -->
-<!--                             -->
 <h2><a name="Introduction"></a>Introduction</h2>
 <p>Welcome to Axis, the third generation of Apache SOAP! This is the <b>alpha 
   3 </b> version. Please note that Axis is a work in progress, and although the 
@@ -40,7 +37,7 @@ h1 {  margin-left: -30px}
   rough edges. That said, we're very psyched about the package so far and would 
   love to get your take on how we can make it better. </p>
 <h3>What is SOAP?</h3>
-<p>SOAP is an XML<i>-</i>based communication protocol and encoding format for 
+<p>SOAP is an XML<i>-</i>based communitcation protocol and encoding format for 
   inter-application communication. Originally conceived by Microsoft and Userland 
   software, it has evolved through several generations and the current spec, <a href="http://w3.org/TR/soap">SOAP 
   1.1</a>, is fast growing in popularity and usage. The W3C's XML Protocol working 
@@ -61,7 +58,7 @@ h1 {  margin-left: -30px}
   result of months of continued discussion and coding effort in this direction. 
   Some of the key Axis features include the following:</p>
 <ul>
-  <li> <b>Speed.</b> Axis uses SAX (event-based) parsing to achieve significantly 
+  <li> <b>Speed.</b> Axis uses SAX (event-based) parsing to acheive significantly 
     greater speed than earlier versions of Apache SOAP. 
   <li><b>Flexibility.</b> The Axis architecture gives the developer complete freedom 
     to insert extensions into the engine for custom header processing, system 
@@ -79,7 +76,7 @@ h1 {  margin-left: -30px}
   and lend a hand! The Axis developer community welcomes your participation.</p>
 <h4><b>Let us know what you think!</b></h4>
 <p>Please send feedback about the package to "<A href="mailto:axis-user@xml.apache.org">axis-user@xml.apache.org</a>". 
-  Also, Axis is regisitered in <a href="http://nagoya.apache.org/bugzilla">bugzilla</a>, 
+  Also, Axis is regsitered in <a href="http://nagoya.apache.org/bugzilla">bugzilla</a>, 
   the Apache bug tracking and feature-request database.</p>
 <h3>What's in this release?</h3>
 <p>This release includes the following features:</p>
@@ -103,20 +100,17 @@ h1 {  margin-left: -30px}
 </ul>
 <h3>What's missing?</h3>
 <ul>
-  <li>Support for multi-dimensional arrays 
+  <li>Support for the SOAP with Attachments specification 
+  <li>Supprt for multi-dimensional arrays 
   <li>Support for the SOAP actor attribute 
   <li>Support for generating complex type definitions in WSDL 
 </ul>
 <p>All of these items are on the list for the final release.</p>
-<!--                             -->
-<!--                             -->
 <h2><a name="Installation"></a>Installing Axis and Using this Guide</h2>
 <p>See the <a href="install.html">Axis Installation Guide</a> for instructions 
   on installing Axis as a web application on your J2EE server. </p>
 <p>Before running the examples in this guide, you'll need to make sure that axis.jar 
   is in your classpath. You should find it in the build/lib directory of the distribution.</p>
-<!--                             -->
-<!--                             -->
 <h2><a name="Architecture"></a>Axis Architecture - a Brief Primer</h2>
 <p>(Skip this section if you want to dive right in - in many cases using the basic 
   features of Axis requires zero knowledge of these topics.)</p>
@@ -126,7 +120,7 @@ h1 {  margin-left: -30px}
 <h3>Handlers and the Message Path in Axis</h3>
 <p>Put simply, Axis is all about processing Messages. When the central Axis processing 
   logic runs, a series of <b>Handlers</b> are each invoked in order. The particular 
-  order is determined by two factors - deployment configuration and whether the 
+  oder is determined by two factors - deployment configuration and whether the 
   engine is a client or a server. The object which is passed to each Handler invocation 
   is a <b>MessageContext</b>. A MessageContext is a structure which contains several 
   important parts: 1) a &quot;request&quot; message, 2) a &quot;response&quot; 
@@ -197,8 +191,6 @@ h1 {  margin-left: -30px}
   message. The response (if any) is placed into the responseMessage field of the 
   MessageContext, and the MessageContext then propagates back up through the response 
   flows - first the transport, then the global, and finally the service.</p>
-<!--                             -->
-<!--                             -->
 <h2><a name="ConsumingServices"></a>Consuming Web Services with Axis</h2>
 <h3>Basics - Getting Started</h3>
 <p>Let's take a look at an example Web Service client that will call the <b>echoString</b> 
@@ -350,8 +342,6 @@ Now when you run the program you'll get a message that looks like this:
   client - samples/echo/TestClient.java.)</p>
 <p>OK - so now you know the basics of accessing SOAP services as a client. But 
   how do you publish your own services?</p>
-<!--                             -->
-<!--                             -->
 <h2><a name="PublishingServices"></a>Publishing Web Services with Axis</h2>
 <p>Let's say we have a simple class like the following:</p>
 <pre class="example">public class Calculator {
@@ -497,8 +487,6 @@ components in the server:</P><PRE>% java org.apache.axis.client.AdminClient list
 <p><b>WARNING: enabling remote administration may give unauthorized parties access 
   to your machine. If you do this, please make sure to add security to your configuration!</b><br>
   <i><font color="#ff0000"></font></i> </p>
-<!--                             -->
-<!--                             -->
 <i><font color="#ff0000"></font></i><h2><a name="DataMapping"></a>XML &lt;-&gt; Java Data Mapping in Axis</h2>
 <h3>Encoding Your Beans - the BeanSerializer</h3>
 <p>Axis includes the ability to serialize/deserialize, without writing any code, 
@@ -564,8 +552,6 @@ If this had been a real order processing system, we'd probably have charged you 
   tag with serializer=&quot;org.apache.axis.encoding.BeanSerializer&quot; and 
   deserializer=&quot;org.apache.axis.encoding.BeanSerializer$BeanSerFactory&quot;, 
   but clearly it can save a lot of typing!)</p>
-<!--                             -->
-<!--                             -->
 <h2><a name="WSDL"></a>Using WSDL with Axis</h2>
 <p>The <a href="http://www.w3.org/TR/wsdl">Web Service Description Language</a> 
   is a specification authored by IBM and Microsoft, and supported by many other 
@@ -574,21 +560,13 @@ If this had been a real order processing system, we'd probably have charged you 
   to the service, the data types it uses, and where the service is located. Please 
   see the spec (follow the link in the first sentence) for details about WSDL's 
   format and options.</p>
-<p>Axis supports WSDL in the following ways:
-  <ul>
-   <li>
-    When you deploy a service in Axis, users 
+<p>Axis supports WSDL in two ways: first, when you deploy a service in Axis, users 
   may then access your service's URL with a standard web browser and by appending 
   &quot;?WSDL&quot; to the end of the URL, they will obtain an automatically-generated 
-  WSDL document which describes your service. </li>
-  <li>The &quot;<B>Java2wsdl</b>&quot; 
-  tool which can do a similar generation of WSDL from Java as the previously mentioned URL mechanisms,
-  but allows the generation of WSDL prior to deployment and provides much more control over the WSDL that is generated.</li> 
-  <li>The &quot;<B>Wsdl2java</b>&quot; 
-  tool which will build Java proxies and skeletons for services with WSDL descriptions.</li> 
-  </ul>
-  These techniques are explained in more detail below.</p>
-<h3>WSDL generation for deployed services></h3>
+  WSDL document which describes your service. Second, we provide a &quot;Wsdl2java&quot; 
+  tool which will build Java proxies and skeletons for services with WSDL descriptions. 
+  Both of these techniques are explained in more detail below.</p>
+<h3>WSDL generation for deployed services</h3>
 <p>When you make a service available using Axis, there is typically a unique URL 
   associated with that service. For JWS files, that URL is simply the path to 
   the JWS file itself. For non-JWS services, this is usually the URL &quot;http://&lt;host&gt;/axis/services/&lt;service-name&gt;&quot;.</p>
@@ -601,14 +579,7 @@ If this had been a real order processing system, we'd probably have charged you 
   the WSDL-generation URL to your online partners, and they'll be able to use 
   it to access your service with toolkits like .NET, SOAP::Lite, or any other 
   software which supports using WSDL.</p>
-<h3><a name="Java2WSDLReference">Generating WSDL with <b>java2wsdl</b></a></h3>
-  The basic invocation form looks like this:</p>
-<div class="example">
-  <pre>% org.apache.axis.wsdlgen.Java2Wsdl<i>(Java Class)</i>
-</pre>
-</div>
-
-<h3><a name="WSDL2JavaReference">Building stubs and skeletons with Wsdl2java</a></h3>
+<h3>Building stubs and skeletons with Wsdl2java</h3>
 <p>You'll find the Axis WSDL -&gt; Java tool in &quot;org.apache.axis.wsdl.Wsdl2java&quot;. 
   The basic invocation form looks like this:</p>
 <div class="example">
@@ -800,9 +771,6 @@ Generate a client-side JUnit test case.
 Only generate code for the WSDL document that appears on the command line.&nbsp;
 The default behaviour is to generate files for all WSDL documents, the
 immediate one and all imported ones.
-<h3> </h3>
-<!--                             -->
-<!--                             -->
 <h2><a name="DeploymentReference"></a>Deployment Reference</h2>
 Note : all the elements referred to in this section are in the WSDD namespace, 
 namely &quot;http://wsdd&quot;. 
@@ -890,8 +858,6 @@ namely &quot;http://wsdd&quot;.
     follow the JavaBean standard pattern of get/set accessors.</dd>
 </dl>
 <p> </p>
-<!--                             -->
-<!--                             -->
 <h2>Pre-Configured Axis Components Reference</h2>
 <h3>On the server:</h3>
 <dl> 
@@ -923,7 +889,7 @@ namely &quot;http://wsdd&quot;.
   <dt><b>RPCDispatcher</b> 
   <dd>The RPCDispatcher is the pivot point for all RPC services. It accepts the 
     following options: <br>
-    <b><i>className</i></b> = the class of the back end object to invoke<br>
+    <b><i>className</i></b> = the class of the backend object to invoke<br>
     <b><i>methodName</i></b> = a space-separated list of methods which are exported 
     as web services. The special value &quot;*&quot; matches all public methods 
     in the class. 
@@ -931,7 +897,7 @@ namely &quot;http://wsdd&quot;.
   <dt><b>MsgDispatcher</b> 
   <dd>The MsgDispatcher is the pivot point for all messaging services. It accepts 
     the following options: <br>
-  <dd><b><i>className</i></b> = the class of the back end object to invoke<br>
+  <dd><b><i>className</i></b> = the class of the backend object to invoke<br>
     <b><i>methodName</i></b> = a space-separated list of methods which are exported 
     as web services. The special value &quot;*&quot; matches all public methods 
     in the class. 
@@ -958,65 +924,10 @@ namely &quot;http://wsdd&quot;.
     <pre>% java org.apache.axis.client.AdminClient -llocal:// list</pre>
   <dt></dt>
 </dl>
-<!--                             -->
-<!--                             -->
-<h2><a name="AttachmentsReference">SOAP Messages with Attachments</a></h2>
-As mentioned earlier, SOAP is a communication protocol based on XML that governs the exchange
-of information between two end points.  After XML type messaging standards had been out for a while
-it became
-apparent that XML may not always be best format for the exchange of some types of data.
-Instead of inventing
-a new standard, an existing standard:
-<a href="http://www.ietf.org/rfc/rfc2387.txt">MIME Multipart/Related Content-type</a>  was incorporated
-into the SOAP standard as <a href="http://www.w3.org/TR/SOAP-attachments">SOAP Messages with Attachments</a> 
-In short, this allows a SOAP message to be embedded as a part in a multi-part message where each part may
-specify the type of content it contains.  This can make the transferring of many types of data more
-efficient than if the data had to be contained in SOAP message it self.  Also specified is how elements
-within the SOAP part may reference data contained in other parts of the message. 
-The <a href="http://www.w3.org/TR/SOAP-attachments">SOAP Messages with Attachments</a> specification 
-can be referenced for more details in understanding how attachments with SOAP work.
-</P>
-<P>
-There are no clear cut guidelines when to transfer data within XML or to send as an attachment. 
-Attachments offer two primary advantages: The content does not have to be made XML safe; or in other words no
-processing needs to be done to change data content to that which is allowed by XML when sending
-and converting 
-that data back when receiving. And the other being the data does not have to be contained in memory 
-in its entirety to be sent or when its received. 
-</P>
-<P>Axis's implementation of attachments uses
-<a href="http://java.sun.com/products/javabeans/glasgow/jaf.html">JavaBeans Activation Framework (JAF)</a>
-as recommended by <a href="http://java.sun.com/xml/jaxrpc/">Java API for XML-Based RPC (JAX-RPC)</a>
-specification.  Essentially, an attachment may be created as a JAF 
-<a href="http://java.sun.com/products/javabeans/glasgow/javadocs/javax/activation/DataHandler.html">DataHandler</a>
-object.  The DataHandler object may then be treated as any other complex type object being sent.  In order for
-the content that the DataHandler references to be sent as an attachment the only thing that needs to be done is
-to register the Axis
-provided serializer  <a href="apiDocs/org/apache/axis/encoding/JAFDataHandlerSerializer.html">org.apache.axis.encoding.JAFDataHandlerSerializer</a>.  Similarly, to receive an attachment
-the <a href="apiDocs/org/apache/axis/encoding/JAFDataHandlerDeserializer.Factory.html">org.apache.axis.encoding.JAFDataHandlerDeserializer.Factory</a> needs to be registered. 
-</p>
-<P>An example of using attachments is provided in the <A href="../samples/attachments">samples/attachments</a>
-directory.  The sample allows you to specify a single file to send as an attachment or a directory which will send all the files in
-that directory as attachments in a single message. In both cases the attachments are sent to the service, returned, and compared to 
-the source to make sure their content is the same.
-</P>
-<P>
-</P>
-<P>The support for attachments is still preliminary with the following known limitations:
-<ul>
- <li>Transfer-Encoding Types base64, and quoted printable are not supported.
- <li>Better control over managing attachment resources.
- <li>Code referencing attachments by Content-Location has not been tested or debugged. 
- <li>Serialization and DeSerialization types as referenced by JAX-RPC.
-</ul>
-</P>
-<!--                             -->
-<!--                             -->
 <a name="tcpmon"></a><h2>Using the Axis TCP Monitor (tcpmon) </h2>
 <p>The included &quot;tcpmon&quot; utility can be found in the org.apache.axis.utils 
   package. To run it from the command line:</p>
-<p
-re>% java org.apache.axis.utils.tcpmon [listenPort targetHost targetPort]</pre>
+<pre>% java org.apache.axis.utils.tcpmon [listenPort targetHost targetPort]</pre>
 <p>Without any of the optional arguments, you will get a gui which looks like this:</p>
 <p align="center"><img src="tcpmon1.jpg" width="599" height="599"></p>
 <p align="left">To use the program, you should select a local port which tcpmon 
@@ -1039,8 +950,6 @@ re>% java org.apache.axis.utils.tcpmon [listenPort targetHost targetPort]</pre>
 <dl>
   <dt> </dt>
 </dl>
-<!--                             -->
-<!--                             -->
 <a name="Glossary"></a><h2>Glossary</h2>
 <dl> 
   <dt><i>Handler</i>

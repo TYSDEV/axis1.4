@@ -1,4 +1,4 @@
-package org.apache.axis.server;
+package org.apache.axis.client;
 
 import org.apache.axis.ConfigurationProvider;
 import org.apache.axis.AxisFault;
@@ -7,11 +7,9 @@ import org.apache.axis.configuration.FileProvider;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-import javax.servlet.ServletContext;
-import java.util.Map;
 
 /**
- * Helper class for obtaining AxisServers, which hides the complexity
+ * Helper class for obtaining AxisClients, which hides the complexity
  * of JNDI accesses, etc.
  *
  * !!! QUESTION : Does this class need to play any ClassLoader tricks?
@@ -19,27 +17,26 @@ import java.util.Map;
  * @author Glen Daniels (gdaniels@macromedia.com)
  */ 
 
-public class JNDIAxisServerFactory implements AxisServerFactory {
+public class AxisClientFactory {
     private static FileProvider defaultConfigProvider =
-                           new FileProvider(Constants.SERVER_CONFIG_FILE);
+                           new FileProvider(Constants.CLIENT_CONFIG_FILE);
 
     /**
-     * Obtain an AxisServer reference, using JNDI if possible, otherwise
+     * Obtain an AxisClient reference, using JNDI if possible, otherwise
      * creating one using the standard Axis configuration pattern.  If we
      * end up creating one and do have JNDI access, bind it to the passed
      * name so we find it next time.
-     * 
-     * NOTE : REQUIRES SERVLET 2.3 FOR THE GetServletContextName() CALL!
      *
      * @param name the JNDI name we're interested in
      * @param configProvider a ConfigurationProvider which should be used
      *                       to configure any engine we end up creating, or
      *                       null to use the default configuration pattern.
      */
-    public AxisServer getServer(Map environment)
+    static public AxisClient getClient(String name,
+                                       ConfigurationProvider configProvider)
         throws AxisFault
     {
-        AxisServer server = null;
+        AxisClient client = null;
         InitialContext context = null;
 
         // First check to see if JNDI works
@@ -49,65 +46,39 @@ public class JNDIAxisServerFactory implements AxisServerFactory {
         } catch (NamingException e) {
         }
         
-        ConfigurationProvider provider = null;
-        try {
-            provider = (ConfigurationProvider)environment.get("provider");
-        } catch (ClassCastException e) {
-            // Just in case, fall through here.
-        }
-        
         if (context != null) {
-            // Figure out the name by looking in the servlet context (for
-            // now)
-            ServletContext servletContext = 
-                    (ServletContext)environment.get("servletContext");
-            if (servletContext != null) {
-                
-                /**
-                 * !!! WARNING - THIS CLASS NEEDS TO FIGURE OUT THE CORRECT
-                 * NAMING SCHEME FOR GETTING/PUTTING SERVERS FROM/TO JNDI!
-                 * 
-                 */
-                
-                // For servlet 2.3....?
-                // String name = servletContext.getServletContextName();
-                
-                // THIS IS NOT ACCEPTABLE JNDI NAMING...
-                String name = servletContext.getRealPath("/WEB-INF/Server");
-                
-                // We've got JNDI, so try to find an AxisServer at the
-                // specified name.
+            // We've got JNDI, so try to find an AxisClient at the
+            // specified name.
+            try {
+                client = (AxisClient)context.lookup(name);
+            } catch (NamingException e) {
+                // Didn't find it.
+                client = createNewClient(configProvider);
                 try {
-                    server = (AxisServer)context.lookup(name);
-                } catch (NamingException e) {
-                    // Didn't find it.
-                    server = createNewServer(provider);
-                    try {
-                        context.bind(name, server);
-                    } catch (NamingException e1) {
-                        // !!! Couldn't do it, what should we do here?
-                    }
+                    context.bind(name, client);
+                } catch (NamingException e1) {
+                    // !!! Couldn't do it, what should we do here?
                 }
-            } else {
-                server = createNewServer(provider);
             }
+        } else {
+            client = createNewClient(configProvider);
         }
 
-        return server;
+        return client;
     }
 
     /**
-     * Do the actual work of creating a new AxisServer, using the passed
+     * Do the actual work of creating a new AxisClient, using the passed
      * configuration provider, or going through the default configuration
      * steps if null is passed.
      *
-     * @return a shiny new AxisServer, ready for use.
+     * @return a shiny new AxisClient, ready for use.
      */
-    static private AxisServer createNewServer(ConfigurationProvider provider)
+    static private AxisClient createNewClient(ConfigurationProvider provider)
     {
         // Just use the passed provider if there is one.
         if (provider != null) {
-            return new AxisServer(provider);
+            return new AxisClient(provider);
         }
 
         // Default configuration steps...
@@ -138,7 +109,7 @@ public class JNDIAxisServerFactory implements AxisServerFactory {
             provider = defaultConfigProvider;
         }
 
-        // 3. Create an AxisServer using the appropriate provider
-        return new AxisServer(provider);
+        // 3. Create an AxisClient using the appropriate provider
+        return new AxisClient(provider);
     }
 }

@@ -70,7 +70,6 @@ import javax.wsdl.Definition;
 import javax.wsdl.Port;
 import javax.wsdl.PortType;
 import javax.wsdl.factory.WSDLFactory;
-import javax.wsdl.xml.WSDLReader;
 import javax.xml.rpc.JAXRPCException;
 import javax.xml.rpc.encoding.TypeMappingRegistry;
 import javax.xml.rpc.namespace.QName;
@@ -103,8 +102,7 @@ public class Service implements javax.xml.rpc.Service {
     private Definition          wsdlDefinition = null ;
     private javax.wsdl.Service  wsdlService    = null ;
 
-    private ConfigurationProvider configProvider =
-            new FileProvider(Constants.CLIENT_CONFIG_FILE);
+    private ConfigurationProvider configProvider = null;
 
     Definition getWSDLDefinition() {
         return( wsdlDefinition );
@@ -116,7 +114,12 @@ public class Service implements javax.xml.rpc.Service {
 
     protected AxisClient getAxisClient() throws JAXRPCException
     {
-        return new AxisClient(configProvider);
+        String name = "some name";
+        try {
+            return AxisClientFactory.getClient(name, configProvider);
+        } catch (AxisFault fault) {
+            throw new JAXRPCException(fault.getMessage());
+        }
     }
 
     /**
@@ -209,10 +212,7 @@ public class Service implements javax.xml.rpc.Service {
             throws JAXRPCException {
         try {
             // Start by reading in the WSDL using WSDL4J
-            WSDLReader           reader = WSDLFactory.newInstance()
-                                                     .newWSDLReader();
-            reader.setVerbose( false );
-            Definition           def    = reader.readWSDL( null, doc );
+            Definition           def    = WSDLFactory.newInstance().newWSDLReader().readWSDL( null, doc );
 
             this.wsdlLocation   = null ;
             this.wsdlDefinition = def ;
@@ -423,19 +423,5 @@ public class Service implements javax.xml.rpc.Service {
      */
     public AxisEngine getEngine() {
         return( engine );
-    }
-
-    /**
-     * Set this Service's configuration provider.
-     *
-     * Note that since all of the constructors create the AxisClient right
-     * now, this is basically a no-op.  Putting it in now so that we can make
-     * lazy engine instantiation work, and not have to duplicate every single
-     * Service constructor with a ConfigurationProvider argument.
-     *
-     * @param configProvider the ConfigurationProvider we want to use.
-     */
-    public void setConfigProvider(ConfigurationProvider configProvider) {
-        this.configProvider = configProvider;
     }
 }

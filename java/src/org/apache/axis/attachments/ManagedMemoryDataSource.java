@@ -74,10 +74,6 @@ public class ManagedMemoryDataSource implements  javax.activation.DataSource {
     protected int maxCached = 16  * 1024;  //max in memory cached. Default.
                                         //If set the file the disk is cached to.
     protected java.io.File diskCacheFile = null; 
-
-   //A list of open input Streams.
-    protected java.util.WeakHashMap readers = new java.util.WeakHashMap();
-    protected boolean deleted = false; //The resources behind this have been deleted.
     
                              //Memory is allocated in these size chunks.
     public static final int READ_CHUNK_SZ = 32 * 1024 ;
@@ -156,11 +152,10 @@ public class ManagedMemoryDataSource implements  javax.activation.DataSource {
      */
     public synchronized java.io.InputStream getInputStream()
         throws java.io.IOException {
-        /*
         if (memorybuflist == null) {
             return  new java.io.FileInputStream(diskCacheFile);
         }
-        else */
+        else
             return new Instream(); //Return the memory held stream.
     }
 
@@ -336,50 +331,10 @@ public class ManagedMemoryDataSource implements  javax.activation.DataSource {
         }
     }
 
-    public synchronized boolean delete(){
-        boolean ret= false;
-        deleted = true;
-        if(diskCacheFile != null){
-            if(cachediskstream != null){
-                try{
-                cachediskstream.close();
-                }catch(Exception e){
-                }
-                cachediskstream= null;
-            }    
-            for(java.util.Iterator i= readers.keySet().iterator(); i.hasNext();){
-                Instream stream= (Instream ) i.next();
-                if( null != stream){
-                try{
-                    stream.close();
-                    }catch(Exception e){
-                }
-                }
-            }
-            readers.clear();
-            try{
-                diskCacheFile.delete();
-                ret= true;
-            }catch (Exception e){
-              // Give it our best shot.
-                diskCacheFile.deleteOnExit();
-              try{
-              }catch(Exception e2){
-                // Gave it our best shot.
-              }
-
-            }
-        }
-        memorybuflist = null;
-        return ret;
-    }
-
     /** Inner class to handle getting an input stream to this data source
      *  Handles creating an input stream to the source.
      */
     private class Instream extends java.io.InputStream {
-     Category category =
-            Category.getInstance(Instream.class.getName());
         protected int bread = 0; //bytes read
         java.io.FileInputStream fin = null;  //The real stream.
         int currentIndex = 0;  //The position in the list were we are reading from.
@@ -387,15 +342,8 @@ public class ManagedMemoryDataSource implements  javax.activation.DataSource {
         int currentBufPos = 0; //The current position in there.
         boolean readClosed= false; //The read stream has been closed.
 
-
-        protected Instream() throws java.io.IOException{
-             if(deleted) throw new java.io.IOException("Resource has been deleted.");
-            readers.put( this, null);
-        }
-
         public int available() throws java.io.IOException {
 
-            if(deleted) throw new java.io.IOException("Resource has been deleted.");
             if(readClosed) throw new java.io.IOException("Stream is closed.");
 
             int ret= totalsz - bread;
@@ -450,7 +398,6 @@ public class ManagedMemoryDataSource implements  javax.activation.DataSource {
 
             if(debugEnabled) category.debug("skip(" +skipped+ ").");
 
-            if(deleted) throw new java.io.IOException("Resource has been deleted.");
             if(readClosed) throw new java.io.IOException("Stream is closed.");
 
             if ( skipped < 1) return 0; //nothing to skip.
@@ -497,8 +444,7 @@ public class ManagedMemoryDataSource implements  javax.activation.DataSource {
          */
 
         public int read(byte[] b, int off, int len) throws java.io.IOException {
-            if(debugEnabled) category.debug(hashCode() + "read(" + off + ", " + len +")");
-            if(deleted) throw new java.io.IOException("Resource has been deleted.");
+            if(debugEnabled) category.debug("read(" + off + ", " + len +")");
             if(readClosed) throw new java.io.IOException("Stream is closed.");
             if (b == null) throw new NullPointerException(
                  "input buffer is null");
@@ -512,10 +458,9 @@ public class ManagedMemoryDataSource implements  javax.activation.DataSource {
             int bwritten = 0;
 
             synchronized(ManagedMemoryDataSource.this){
-                if ( bread == totalsz) return -1;
+                if (closed && bread == totalsz) return -1;
+                len = Math.min(len, totalsz - bread); //Only return the number of bytes in the data store that is left.
                 java.util.List ml = memorybuflist;
-                 len = Math.min(len, totalsz - bread); //Only return the number of bytes in the data store that is left.
-                 if(debugEnabled) category.debug("len= " + len);                 
 
 
                 if ( ml != null) {
@@ -541,31 +486,22 @@ public class ManagedMemoryDataSource implements  javax.activation.DataSource {
                     while ( bwritten < len);
                 }
 
-                    if (bwritten == 0 && null != diskCacheFile) {
-                    if(debugEnabled) category.debug("reading from disk" + len);                 
-                    if (null == fin ) { //we are now reading from disk.
-                    if(debugEnabled) category.debug("open bread=" + diskCacheFile.getCanonicalPath());                 
-                    if(debugEnabled) category.debug("open bread=" + bread);                 
+                if (bwritten == 0 && null != diskCacheFile) {
+                    if (null != fin ) { //we are no reading from disk.
                         fin = new java.io.FileInputStream( diskCacheFile);
-                        if(bread >0) fin.skip(bread); //Skip what we've read so far.
+                        fin.skip(bread); //Skip what we've read so far.
                     }
 
                     if(cachediskstream  != null){
-                        if(debugEnabled) category.debug("flushing");                 
-                        cachediskstream.flush();  
+                     cachediskstream.flush();  
                     }
 
-                   if(debugEnabled){ category.debug("flushing");                 
-                       category.debug("len=" + len);                 
-                       category.debug("off=" + off);                 
-                       category.debug("b.length=" + b.length);                 
-                    }
-                    bwritten = fin.read(b, off, len);
+                    bwritten = fin.read(b, len, off);
                 }
                 if ( bwritten > 0) bread += bwritten;
             }
 
-            if(debugEnabled) category.debug( hashCode() +"read " + bwritten);
+            if(debugEnabled) category.debug("read " + bwritten);
             return bwritten;
         }
 
@@ -576,13 +512,11 @@ public class ManagedMemoryDataSource implements  javax.activation.DataSource {
         public synchronized void close() throws java.io.IOException {
             if(debugEnabled) category.debug("close()");
             if(!readClosed){
-                readers.remove(this);
                 readClosed= true;
                 if( fin != null) fin.close(); 
                 fin= null;
             }
         }
-
 
         protected void finalize() throws Throwable{
             close();

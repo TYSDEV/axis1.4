@@ -61,19 +61,15 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.w3c.dom.Element;
 
-import org.apache.axis.message.MessageElement ;
-import org.apache.axis.message.SOAPHandler ;
-
 import javax.xml.rpc.namespace.QName;
 import java.io.IOException;
-import java.util.ArrayList;
 
 /**
  * Serializer for DOM elements
  *
  * @author Glen Daniels (gdaniels@macromedia.com)
  */
-public class ElementSerializer extends Deserializer implements Serializer {
+public class ElementSerializer implements Serializer {
     /** 
      * Serialize a DOM Element
      */
@@ -83,38 +79,7 @@ public class ElementSerializer extends Deserializer implements Serializer {
     {
         if (!(value instanceof Element))
             throw new IOException(JavaUtils.getMessage("cantSerialize01"));
-
-        context.startElement(name, attributes);
+        
         context.writeDOMElement((Element)value);
-        context.endElement();
-    }
-
-    // Our static deserializer factory
-    public static class Factory implements DeserializerFactory {
-        public Deserializer getDeserializer(Class cls) {
-            return new ElementSerializer();
-        }
-    }
-    public static DeserializerFactory factory = new Factory();
-
-    public final void onEndElement(String namespace, String localName,
-                           DeserializationContext context)
-                               throws SAXException
-    {
-        try {
-            MessageElement msgElem = context.getCurElement();
-            if ( msgElem != null ) {
-                ArrayList children = msgElem.getChildren();
-                if ( children != null ) {
-                    msgElem = (MessageElement) children.get(0);
-                    if ( msgElem != null )
-                        value = msgElem.getAsDOM();
-                }
-            }
-        }
-        catch( Exception exp ) {
-            exp.printStackTrace();
-            throw new SAXException( exp );
-        }
     }
 }
