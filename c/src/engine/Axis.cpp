@@ -243,6 +243,7 @@ extern "C" int process_request(Ax_soapstream *str)
 
 extern "C" int initialize_module(int bServer)
 {
+    int status = 0;
 	//order of these initialization method invocation should not be changed
 //	AXISTRACE1("inside initialize_module\n");
 	XMLPlatformUtils::Initialize();
@@ -261,7 +262,7 @@ extern "C" int initialize_module(int bServer)
         {
             char* pWsddPath = g_pConfig->GetWsddFilePath();
             if (AXIS_SUCCESS != g_pWSDDDeployment->LoadWSDD(pWsddPath)) return AXIS_FAIL;
-            int status = g_pAT->openFile();
+            status = g_pAT->openFile();
             if(status == AXIS_FAIL)
             {
                 return AXIS_FAIL;
@@ -278,6 +279,14 @@ extern "C" int initialize_module(int bServer)
             return AXIS_FAIL;
         }
 	}
+    else if(bServer == 0)//client side module initialization
+    {
+        status = g_pAT->openFileByClient();
+        if(status == AXIS_FAIL)
+        {
+            return AXIS_FAIL;
+        }
+    }
 	return AXIS_SUCCESS;
 }
 

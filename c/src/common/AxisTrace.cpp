@@ -107,6 +107,16 @@ int AxisTrace::openFile()
     return AXIS_SUCCESS;
 }
 
+int AxisTrace::openFileByClient()
+{
+    char* sFileName =  "./ClientAxisLog";
+    
+    if((fileTrace = fopen(sFileName, "ab")) == NULL)
+        return AXIS_FAIL;
+
+    return AXIS_SUCCESS;
+}
+
 /** 
 *   Logs messages according to their severity level.
 *   @param sLog log message
@@ -116,10 +126,6 @@ int AxisTrace::openFile()
 */
 int AxisTrace::logaxis(const char* sLog, int level, char* arg2, int arg3)
 {
-    if(!fileTrace)
-        return AXIS_FAIL;
-    
-    
     time_t ltime;
     time(&ltime);
 
@@ -149,8 +155,7 @@ int AxisTrace::logaxis(const char* sLog, int level, char* arg2, int arg3)
     fputs("\n", fileTrace);
     fputs("-------------------------------------------------", fileTrace);
     fputs("\n", fileTrace);
-        
-    //fclose(fileTrace);    
+            
     /*
         *fout << "time:" << ctime(&ltime)
         << " :file:"<< arg2 << " :line:" << arg3 << ":" << endl
@@ -170,10 +175,7 @@ int AxisTrace::logaxis(const char* sLog, int level, char* arg2, int arg3)
 *   @param arg3 line number
 */
 int AxisTrace::logaxis(const char* sLog1, const char* sLog2, int level, char* arg3, int arg4)
-{
-    if(!fileTrace)
-        return AXIS_FAIL; 
-  
+{ 
     time_t ltime;
     time(&ltime);
 
@@ -203,7 +205,7 @@ int AxisTrace::logaxis(const char* sLog1, const char* sLog2, int level, char* ar
     fputs("\n", fileTrace);
     fputs("-------------------------------------------------", fileTrace);
     fputs("\n", fileTrace);
-    //fclose(fileTrace);
+    
         
     /**fout << "time:" << ctime(&ltime)
     << " :file:"<< arg3 << " :line:" << arg4 << endl
