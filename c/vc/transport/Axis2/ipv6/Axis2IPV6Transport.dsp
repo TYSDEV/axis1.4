@@ -104,10 +104,6 @@ SOURCE=..\..\..\..\src\transport\axis2\Channel.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\..\src\transport\axis2\ChannelFactory.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\..\..\src\transport\axis2\ipv6\IPV6Channel.cpp
 # End Source File
 # Begin Source File
@@ -121,6 +117,10 @@ SOURCE=..\..\..\..\src\transport\axis2\ipv6\IPV6TransportInstantiator.cpp
 # Begin Source File
 
 SOURCE=..\..\..\..\src\transport\axis2\SecureChannel.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\..\src\transport\axis2\SSLChannelFactory.cpp
 # End Source File
 # Begin Source File
 
