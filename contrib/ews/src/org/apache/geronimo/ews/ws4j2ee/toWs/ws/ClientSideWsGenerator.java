@@ -108,9 +108,11 @@ public class ClientSideWsGenerator implements Generator {
             String wsdlfile =
                 j2eewscontext.getMiscInfo().getWsdlFile().fileName();
 
-			J2eeEmitter j2ee = new J2eeEmitter(true,
-				!j2eewscontext.getMiscInfo().isSEIExists(),
-				j2eewscontext);
+//			J2eeEmitter j2ee = new J2eeEmitter(true,
+//				!j2eewscontext.getMiscInfo().isSEIExists(),
+//				j2eewscontext);
+            J2eeEmitter j2ee = new J2eeEmitter(j2eewscontext,new J2eeGeneratorFactory());
+
 
             if (j2eewscontext.getMiscInfo().isVerbose()) {
                 log.info("wsdl file = " + wsdlfile);

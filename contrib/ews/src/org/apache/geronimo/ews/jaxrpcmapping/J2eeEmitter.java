@@ -102,22 +102,32 @@ public class J2eeEmitter extends Emitter {
     private QName serviceQName;
     private JaxRpcMapper jaxRpcMapper;
     private SymbolTable symbolTable;
-    private boolean usedbyws4j2ee = false;
-    private boolean seiNeeded = true;
+//    private boolean usedbyws4j2ee = false;
+//    private boolean seiNeeded = true;
 	protected J2EEWebServiceContext wscontext;
 
 	public J2eeEmitter() {
 	   J2eeGeneratorFactory factory = new J2eeGeneratorFactory(this);
 	   setFactory(factory);
 	} // ctor
-    public J2eeEmitter(boolean usedByws4j2ee,boolean needSei,J2EEWebServiceContext wscontext) {
-    	this.usedbyws4j2ee = usedByws4j2ee;
-    	this.seiNeeded = needSei;
-		this.wscontext = wscontext;
-        J2eeGeneratorFactory factory = new J2eeGeneratorFactory(this);
-        setFactory(factory);
+//    public J2eeEmitter(boolean usedByws4j2ee,boolean needSei,J2EEWebServiceContext wscontext) {
+//    	this.usedbyws4j2ee = usedByws4j2ee;
+//    	this.seiNeeded = needSei;
+//		this.wscontext = wscontext;
+//        J2eeGeneratorFactory factory = new J2eeGeneratorFactory(this);
+//        setFactory(factory);
+//
+//    } // ctor
 
-    } // ctor
+  public J2eeEmitter(J2EEWebServiceContext wscontext,J2eeGeneratorFactory factory) {
+      this.wscontext = wscontext;
+      if(factory == null)
+            factory = new J2eeGeneratorFactory(this);
+            
+      setFactory(factory);
+      factory.setEmitter(this);
+
+  } // ctor
 
     public void setMappingFilePath(String mappingFilePath) {
         this.mappingFilePath = mappingFilePath;
@@ -552,33 +562,33 @@ public class J2eeEmitter extends Emitter {
         this.jaxRpcMapper = jaxRpcMapper;
     }
 
-    /**
-     * @return
-     */
-    public boolean isSeiNeeded() {
-        return seiNeeded;
-    }
-
-    /**
-     * @return
-     */
-    public boolean isUsedbyws4j2ee() {
-        return usedbyws4j2ee;
-    }
-
-    /**
-     * @param b
-     */
-    public void setSeiNeeded(boolean b) {
-        seiNeeded = b;
-    }
-
-    /**
-     * @param b
-     */
-    public void setUsedbyws4j2ee(boolean b) {
-        usedbyws4j2ee = b;
-    }
+//    /**
+//     * @return
+//     */
+//    public boolean isSeiNeeded() {
+//        return seiNeeded;
+//    }
+//
+//    /**
+//     * @return
+//     */
+//    public boolean isUsedbyws4j2ee() {
+//        return usedbyws4j2ee;
+//    }
+//
+//    /**
+//     * @param b
+//     */
+//    public void setSeiNeeded(boolean b) {
+//        seiNeeded = b;
+//    }
+//
+//    /**
+//     * @param b
+//     */
+//    public void setUsedbyws4j2ee(boolean b) {
+//        usedbyws4j2ee = b;
+//    }
 
     /**
      * @return

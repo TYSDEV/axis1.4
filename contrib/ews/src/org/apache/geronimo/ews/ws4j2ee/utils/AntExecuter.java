@@ -18,7 +18,6 @@ package org.apache.geronimo.ews.ws4j2ee.utils;
 
 import java.io.File;
 
-import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Ant;
 
