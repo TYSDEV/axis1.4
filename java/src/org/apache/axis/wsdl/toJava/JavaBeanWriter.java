@@ -66,6 +66,8 @@ import javax.xml.namespace.QName;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Vector;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * This is Wsdl2java's Complex Type Writer.  It writes the <typeName>.java file.
@@ -77,7 +79,7 @@ public class JavaBeanWriter extends JavaClassWriter {
     private TypeEntry extendType;
     protected JavaBeanHelperWriter helper;
     protected Vector names = new Vector(); // even indices: types, odd: vars
-    protected String simpleValueType = null;  // name of type of simple value
+    protected ArrayList simpleValueTypes = new ArrayList();  // name of type of simple value
     protected PrintWriter pw;
 
     // The following fields can be set by extended classes
@@ -90,6 +92,8 @@ public class JavaBeanWriter extends JavaClassWriter {
     protected boolean enableGetters = true;
     protected boolean enableEquals = true;
     protected boolean enableHashCode = true;
+
+    protected boolean isAny = false;
 
     /**
      * Constructor.
@@ -128,8 +132,9 @@ public class JavaBeanWriter extends JavaClassWriter {
 
         // Populate Names Vector with the names and types of the members.
         // The write methods use the names vector whenever they need to get
-        // a member name or type.
-        preprocess();
+        // a member name or type. Moved to implements callback in order 
+        // to set any interface
+        // preprocess();
 
         // Write Member Fields
         writeMemberFields();
@@ -193,6 +198,7 @@ public class JavaBeanWriter extends JavaClassWriter {
                 if (elem.getAnyElement()) {
                     typeName = "org.apache.axis.message.MessageElement []";
                     variableName = Constants.ANYCONTENT;
+                    isAny = true;
                 } else {
                     String elemName = elem.getName().getLocalPart();
                     variableName = Utils.xmlNameToJava(elemName);
@@ -200,8 +206,8 @@ public class JavaBeanWriter extends JavaClassWriter {
                 names.add(typeName);
                 names.add(variableName);
                 if (type.isSimpleType() &&
-                    variableName.equals("value")) {
-                    simpleValueType = typeName;
+                    (variableName.endsWith("Value") || variableName.equals("value"))) {
+                    simpleValueTypes.add(typeName);
                 }
             }
         }
@@ -215,8 +221,8 @@ public class JavaBeanWriter extends JavaClassWriter {
                 names.add(typeName);
                 names.add(variableName);
                 if (type.isSimpleType() &&
-                    variableName.equals("value")) {
-                    simpleValueType = typeName;
+                    (variableName.endsWith("Value") || variableName.equals("value"))) {
+                    simpleValueTypes.add(typeName);
                 }
             }
         }
@@ -259,6 +265,13 @@ public class JavaBeanWriter extends JavaClassWriter {
         if (type.isSimpleType()) {
             implementsText += ", org.apache.axis.encoding.SimpleType";
         }
+        
+        // need to call this to find out whether the type contains any elements
+        preprocess();
+        
+        if (isAny) {
+            implementsText += ", org.apache.axis.encoding.AnyContentType";
+        };
         implementsText += " ";
         return implementsText;
     }
@@ -268,6 +281,9 @@ public class JavaBeanWriter extends JavaClassWriter {
      */
     protected void writeMemberFields() {
         // Define the member element of the bean
+	if (simpleValueTypes.size() > 1) {
+            pw.println("    private java.lang.String value;");
+	}
         for (int i = 0; i < names.size(); i += 2) {
             String typeName = (String) names.get(i);
             String variable = (String) names.get(i + 1);
@@ -302,6 +318,9 @@ public class JavaBeanWriter extends JavaClassWriter {
      * constructor.
      */
     protected void writeFullConstructor() {
+	if (type.isSimpleType()) {
+            return;
+	}
         // The constructor needs to consider all extended types
         Vector extendList = new Vector();
         extendList.add(type);
@@ -397,62 +416,78 @@ public class JavaBeanWriter extends JavaClassWriter {
     protected void writeSimpleConstructors() {
         // If this is a simple type,need to emit a string
         // constructor and a value construtor.
-        if (type.isSimpleType() && simpleValueType != null) {
-            if (!simpleValueType.equals("java.lang.String")) {
-                pw.println("    public " + className + "(" +
-                           simpleValueType + " value) {");
-                pw.println("        this.value = value;");
-                pw.println("    }");
+        if (simpleValueTypes.size() == 0) {
+	    return;
+	}
+        pw.println("    // " + Messages.getMessage("needStringCtor"));
+        if (simpleValueTypes.size() > 1 || simpleValueTypes.get(0).equals("java.lang.String")) {
+            pw.println("    public " + className + "(java.lang.String value) {");
+            pw.println("        this.value = value;");
+	    pw.println("    }");
+            for (Iterator iterator = simpleValueTypes.iterator();
+                 iterator.hasNext();) {
+                String typeName = (String) iterator.next();
+                if (typeName.equals("java.lang.String")) {
+                    continue;
+                }
+                pw.println("    public " + className + "(" + typeName + " value) {");
+                pw.println("        setValue(value);");
+	        pw.println("    }");
                 pw.println();
             }
-
-            pw.println("    // " + Messages.getMessage("needStringCtor"));
+	} else if (simpleValueTypes.size() == 1) {
+            pw.println("    public " + className + "(" + simpleValueTypes.get(0) + " value) {");
+            pw.println("        this.value = value;");
+	    pw.println("    }");
             pw.println("    public " + className + "(java.lang.String value) {");
+	    writeSimpleTypeGetter((String)simpleValueTypes.get(0), null, "this.value =");
+	    pw.println("    }");
+            pw.println();
+	}
+    }
+    protected void writeSimpleTypeGetter(String simpleValueType, String name, String returnString) {
             // Make sure we wrap base types with its Object type
+            if (name != null) {
+                pw.println("        if (this." + name + " != null) {");
+                pw.println("            " + returnString + " this." + name + ";");
+                pw.println("        }");
+            }
             String wrapper = JavaUtils.getWrapper(simpleValueType);
 
             if (wrapper != null) {
-                pw.println("        this.value = new " + wrapper +
+                pw.println("        " + returnString + " new " + wrapper +
                            "(value)." + simpleValueType + "Value();");
             } else {
                 if (simpleValueType.equals("byte[]")) {
-                    pw.println("        this.value = org.apache.axis.types.HexBinary.decode(value);");
+                    pw.println("        " + returnString + " org.apache.axis.types.HexBinary.decode(value);");
                 }
                 else if (simpleValueType.equals("org.apache.axis.types.URI")) {
                     pw.println("        try {");
-                    pw.println("            this.value = new org.apache.axis.types.URI(value);");
+                    pw.println("            " + returnString + " new org.apache.axis.types.URI(value);");
                     pw.println("        }");
                     pw.println("        catch (org.apache.axis.types.URI.MalformedURIException mue) {");
-                    pw.println("            this.value = new org.apache.axis.types.URI();");
+                    pw.println("            " + returnString + " new org.apache.axis.types.URI();");
                     pw.println("       }");
                 } 
                 else if (simpleValueType.equals("java.util.Date")) {
                   pw.println("        try {");
-                  pw.println("            this.value = (java.text.DateFormat.getDateTimeInstance()).parse(value);");
+                  pw.println("            " + returnString + " (java.text.DateFormat.getDateTimeInstance()).parse(value);");
                   pw.println("        }");
                   pw.println("        catch (java.text.ParseException e){");
                   pw.println("            throw new java.lang.RuntimeException(e.toString());");
                   pw.println("        }");
                 }
                 else if (simpleValueType.equals("java.util.Calendar")) {
-                  pw.println("        java.util.Calendar cal = java.util.Calendar.getInstance();"); 
-                  pw.println("        try {");
-                  pw.println("          java.util.Date dt = (java.text.DateFormat.getDateTimeInstance()).parse(value);");
-                  pw.println("          cal.setTime(dt);");
-                  pw.println("          this.value = cal;");
-                  pw.println("        }");
-                  pw.println("        catch (java.text.ParseException e){");
-                  pw.println("            throw new java.lang.RuntimeException(e.toString());");
-                  pw.println("        }");
+                  pw.println("        java.util.Calendar cal =");
+                  pw.println("            (java.util.Calendar) new org.apache.axis.encoding.ser.CalendarDeserializer(");
+		  pw.println("                java.lang.String.class, org.apache.axis.Constants.XSD_STRING).makeValue(value);");
+                  pw.println("        " + returnString + " cal;");
                 }                
                 else {
-                    pw.println("        this.value = new " +
+                    pw.println("        " + returnString + " new " +
                                simpleValueType + "(value);");
                 }
             }
-            pw.println("    }");
-            pw.println();
-        }
     }
 
     /**
@@ -462,21 +497,41 @@ public class JavaBeanWriter extends JavaClassWriter {
      */
     protected void writeToStringMethod() {
         // If this is a simple type, emit a toString
-        if (type.isSimpleType() && simpleValueType != null) {
-            pw.println("    // " + Messages.getMessage("needToString"));
-            String wrapper = JavaUtils.getWrapper(simpleValueType);
-            pw.println("    public java.lang.String toString() {");
+        if (simpleValueTypes.size() == 0) {
+	    return;
+	}
+        pw.println("    // " + Messages.getMessage("needToString"));
+        pw.println("    public java.lang.String toString() {");
+        if (simpleValueTypes.size() > 1 || simpleValueTypes.get(0).equals("java.lang.String")) {
+            pw.println("        return value;");
+	} else {
+            String wrapper = JavaUtils.getWrapper((String)simpleValueTypes.get(0));
             if (wrapper != null) {
                 pw.println("        return new " + wrapper + "(value).toString();");
             } else {
-                if(simpleValueType.equals("byte[]")) {
+                if(simpleValueTypes.get(0).equals("byte[]")) {
                     pw.println("        return value == null ? null : org.apache.axis.types.HexBinary.encode(value);" );
                 } else {              
                     pw.println("        return value == null ? null : value.toString();");
                 }
             }
-            pw.println("    }");
-            pw.println();
+	}
+        pw.println("    }");
+        pw.println();
+    }
+
+    protected void writeSimpleTypeSetter(String simpleValueType) {
+        String wrapper = JavaUtils.getWrapper(simpleValueType);
+        if (wrapper != null) {
+            pw.println("        this.value = new " + wrapper + "(value).toString();");
+        } else {
+            if(simpleValueType.equals("byte[]")) {
+                pw.println("        this.value = value == null ? null : org.apache.axis.types.HexBinary.encode(value);" );
+	    } else if(simpleValueType.equals("java.util.Calendar")) {
+                pw.println("        this.value = value == null ? null : new org.apache.axis.encoding.ser.CalendarSerializer().getValueAsString(value, null);");
+            } else {              
+                pw.println("        this.value = value == null ? null : value.toString();");
+            }
         }
     }
 
@@ -498,14 +553,25 @@ public class JavaBeanWriter extends JavaClassWriter {
             if (enableGetters) {
                 pw.println("    public " + typeName + " " +
                            get + capName + "() {");
-                pw.println("        return " + name + ";");
+                if (simpleValueTypes.size() > 1) {
+			writeSimpleTypeGetter(typeName, name, "return");
+		} else {
+		    pw.println("        return " + name + ";");
+		}
                 pw.println("    }");
                 pw.println();
             }
             if (enableSetters) {
-                pw.println("    public void set" + capName + "(" +
+                if (simpleValueTypes.size() > 1) {
+                    pw.println("    public void setValue(" +
+                           typeName + " value) {");
+		    writeSimpleTypeSetter(typeName);
+                    pw.println("        this." + name + " = value;");
+		} else {
+                    pw.println("    public void set" + capName + "(" +
                            typeName + " " + name + ") {");
-                pw.println("        this." + name + " = " + name + ";");
+                    pw.println("        this." + name + " = " + name + ";");
+		}
                 pw.println("    }");
                 pw.println();
             }

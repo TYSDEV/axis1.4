@@ -333,8 +333,8 @@ public class BeanDeserializer extends DeserializerImpl implements Serializable
     public BeanPropertyDescriptor getAnyPropertyDesc() {
         if (typeDesc == null)
             return null;
-
-        return typeDesc.getAnyDesc();
+        
+       return typeDesc.getAnyDesc();
     }
 
     /**
@@ -436,8 +436,8 @@ public class BeanDeserializer extends DeserializerImpl implements Serializable
                                            String href,
                                            DeserializationContext context) {
         if (javaType.isArray()) {
-            context.setDestinationClass(javaType.getComponentType());
-        }
+            context.setDestinationClass(javaType);
+        } 
         // See if we have a cached deserializer
         if (cacheStringDSer != null) {
             if (String.class.equals(javaType) &&
@@ -468,6 +468,7 @@ public class BeanDeserializer extends DeserializerImpl implements Serializable
                 dSer = context.getDeserializer(javaType, defaultXMLType);
             } else {
                 dSer = new DeserializerImpl();
+                context.setDestinationClass(javaType);
                 dSer.setDefaultType(defaultXMLType);
             }
         }

@@ -301,7 +301,6 @@ public class ArrayDeserializer extends DeserializerImpl
         }
         if (arrayClass == null) {
             arrayClass = context.getDestinationClass();
-            context.setDestinationClass(arrayClass.getComponentType());
         }
 
         if (arrayClass == null) {
