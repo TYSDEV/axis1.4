@@ -54,42 +54,37 @@
  */
 package org.apache.axis.transport.http;
 
-import javax.xml.rpc.server.ServletEndpointContext;
-import javax.xml.rpc.handler.MessageContext;
-import javax.servlet.http.HttpSession;
-import javax.servlet.ServletContext;
 import java.security.Principal;
+
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import javax.xml.rpc.handler.MessageContext;
+import javax.xml.rpc.server.ServletEndpointContext;
 
 public class ServletEndpointContextImpl implements ServletEndpointContext {
     
-    private AxisHttpSession httpSession;
-    private MessageContext msgContext ;
-    private ServletContext servletContext;
-    private Principal principal;
-    
     public HttpSession getHttpSession() {
-        return httpSession.getRep();
+        HttpServletRequest srvreq = (HttpServletRequest) 
+                getMessageContext().getProperty(HTTPConstants.MC_HTTP_SERVLETREQUEST);
+        return (srvreq == null)  ? null : srvreq.getSession();
     }
 
     public MessageContext getMessageContext() {
-        return msgContext;
+        return org.apache.axis.MessageContext.getCurrentContext();
     }
 
     public ServletContext getServletContext() {
-        return servletContext;
+        HttpServlet srv = (HttpServlet)
+                getMessageContext().getProperty(HTTPConstants.MC_HTTP_SERVLET);
+        return (srv == null) ? null : srv.getServletContext();
     }
 
     public Principal getUserPrincipal() {
-        return principal;
-    }
+        HttpServletRequest srvreq = (HttpServletRequest)
+                getMessageContext().getProperty(HTTPConstants.MC_HTTP_SERVLETREQUEST);
 
-    /**
-     * Full constructor
-     */ 
-    public ServletEndpointContextImpl(AxisHttpSession httpSession, MessageContext msgContext, Principal principal, ServletContext servletContext) {
-        this.httpSession = httpSession;
-        this.msgContext = msgContext;
-        this.principal = principal;
-        this.servletContext = servletContext;
+        return (srvreq == null) ? null : srvreq.getUserPrincipal();
     }
 }

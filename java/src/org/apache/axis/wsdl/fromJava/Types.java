@@ -115,6 +115,7 @@ public class Types {
     HashMap schemaTypes = null;
     HashMap schemaElementNames = null;
     HashMap schemaUniqueElementNames = null;
+    HashMap wrapperMap = new HashMap();
     List stopClasses = null;
     List beanCompatErrs = new ArrayList();
 
@@ -143,6 +144,13 @@ public class Types {
         schemaElementNames = new HashMap();
         schemaUniqueElementNames = new HashMap();
         schemaTypes = new HashMap();
+    }
+
+    /**
+     * Return the namespaces object for the current context
+     */ 
+    public Namespaces getNamespaces() {
+        return namespaces;
     }
 
     /**
@@ -209,26 +217,25 @@ public class Types {
             if (te instanceof org.apache.axis.wsdl.symbolTable.Element) { 
                 addToElementsList(te.getQName());
             } else if (te instanceof Type) {
-                addToTypesList(te.getQName(), 
-                               te.getQName().getLocalPart());
+                addToTypesList(te.getQName()); 
             }
         }
 
     
     }
 
+
     /**
-     * Serialize the Class as XML schema to the document.
-     * Create a types node for the WSDL if one doesn't exist
-     * Create a schema node for the Class namespace, if one doesn't exist
-     *
-     * In case of a primitive type, no need to stream out anything, just return
-     * the QName of the primitive type
+     * Write out a type referenced by a part type attribute.
      *
      * @param type <code>Class</code> to generate the XML Schema info for
-     * @return the QName of the generated Schema type, null if void
+     * @param qname <code>QName</code> of the type.  If null, qname is
+     *             defaulted from the class.
+     * @return the QName of the generated Schema type, null if void,
+     *         if the Class type cannot be converted to a schema type
+     *         then xsd:anytype is returned.
      */
-    public QName writePartType(Class type, QName qname) throws AxisFault {
+    public QName writeTypeForPart(Class type, QName qname) throws AxisFault {
         //patch by costin to fix an NPE; commented out till we find out what the problem is
         //if you get NullPointerExceptions in this class, turn it on and submit some
         //replicable test data to the Axis team via bugzilla
@@ -245,41 +252,141 @@ public class Types {
             type = JavaUtils.getHolderValueType(type);
         }
 
-        if (qname == null) {
+        // Get the qname 
+        if (qname == null || 
+            (Constants.isSOAP_ENC(qname.getNamespaceURI()) &&
+             "Array".equals(qname.getLocalPart()))) {
             qname = getTypeQName(type);
             if (qname == null) {
-                throw new AxisFault("Type was " + type.getName()); // FIXME!
+                throw new AxisFault("Class:" + type.getName()); 
             }
         }
 
-        /**
-         * No need to do anything if this is a simple type (i.e. in the
-         * xsd or soap-enc schemas already)
-         */
-        String nsURI = qname.getNamespaceURI();
-        if (Constants.isSchemaXSD(nsURI) ||
-                (Constants.isSOAP_ENC(nsURI) &&
-                  !"Array".equals(qname.getLocalPart()))) {
-            return qname;
-        }
-
+        // Make sure a types section is present
         if (wsdlTypesElem == null) {
             writeWsdlTypesElement();
         }
-        // If writeTypeAsElement returns null, then
-        // then no element was written due to problems.
-        // return an anytype in such situations.
-        qname = writeTypeAsElement(type, qname);
-        if (qname == null) {
+
+        // Write the type, if problems occur use ANYTYPE
+        if (writeType(type, qname) == null) {
             qname = Constants.XSD_ANYTYPE;
         }
         return qname;
     }
 
     /**
+     * Write out an element referenced by a part element attribute.
+     *
+     * @param type <code>Class</code> to generate the XML Schema info for
+     * @param qname <code>QName</code> of the element.  If null, qname is
+     *             defaulted from the class.
+     * @return the QName of the generated Schema type, null if no element
+     */
+    public QName writeElementForPart(Class type, QName qname) throws AxisFault {
+        //patch by costin to fix an NPE; commented out till we find out what the problem is
+        //if you get NullPointerExceptions in this class, turn it on and submit some
+        //replicable test data to the Axis team via bugzilla
+        /*
+        if( type==null ) {
+            return null;
+        }
+        */
+        if (type.getName().equals("void")) {
+          return null;
+        }
+
+        if (Holder.class.isAssignableFrom(type)) {
+            type = JavaUtils.getHolderValueType(type);
+        }
+
+        // Get the qname 
+        if (qname == null || 
+            (Constants.isSOAP_ENC(qname.getNamespaceURI()) &&
+             "Array".equals(qname.getLocalPart()))) {
+            qname = getTypeQName(type);
+            if (qname == null) {
+                throw new AxisFault("Class:" +type.getName()); 
+            }
+        }
+
+        // Return null it a simple type (not an element)
+        String nsURI = qname.getNamespaceURI();
+        if (Constants.isSchemaXSD(nsURI) ||
+                (Constants.isSOAP_ENC(nsURI) &&
+                  !"Array".equals(qname.getLocalPart()))) {
+            return null;
+        }
+
+        // Make sure a types section is present
+        if (wsdlTypesElem == null) {
+            writeWsdlTypesElement();
+        }
+
+        // Write Element, if problems occur return null.
+        if (writeTypeAsElement(type, qname) == null) {
+            qname = null;
+        }
+        return qname;
+    }
+
+    /**
+     * Write wrapper for part.
+     *
+     * @param wrapper <code>QName</code> of the wrapper element
+     * @param name is the name of an element to add to the wrapper element.
+     * @param type is the QName of the type of the element.
+     * @return true if the wrapperQName was created, false if it already exists.
+     */
+    public boolean writeWrapperForPart(QName wrapper, String name, QName type)
+        throws AxisFault {
+
+        // Make sure a types section is present
+        if (wsdlTypesElem == null) {
+            writeWsdlTypesElement();
+        }
+
+        // Write the namespace definition for the wrapper
+        writeTypeNamespace(wrapper);
+
+        // See if the wrapper already exists.
+        Element sequence = (Element) wrapperMap.get(wrapper);
+        boolean isNew = (sequence == null);
+
+        // Create a type if this is a new wrapper
+        if (isNew) {
+            // Create an <element> for the wrapper
+            Element wrapperElement = 
+                docHolder.createElement("element");
+            writeSchemaElement(wrapper, wrapperElement);
+            wrapperElement.setAttribute("name", 
+                                         wrapper.getLocalPart());
+
+            // Create an anonymous <complexType> for the wrapper
+            Element complexType = docHolder.createElement("complexType");
+            wrapperElement.appendChild(complexType);
+
+            // Create a <sequence> under the complexType and save it.
+            sequence = docHolder.createElement("sequence");
+            complexType.appendChild(sequence);
+            wrapperMap.put(wrapper, sequence);
+            
+        }
+        
+        // Create the child <element> and add it to the wrapper <sequence>
+        Element childElem = docHolder.createElement("element");
+        childElem.setAttribute("name", name);
+        String prefix = namespaces.getCreatePrefix(type.getNamespaceURI());
+        String prefixedName = prefix+":"+type.getLocalPart();
+        childElem.setAttribute("type", prefixedName);
+        sequence.appendChild(childElem);
+        
+        return isNew;
+    }
+
+    /**
      * Create a schema element for the given type
      * @param type the class type
-     * @return the QName of the generated Element or null if no element written
+     * @return the QName of the generated Element or problems occur
      */
     private QName writeTypeAsElement(Class type, QName qName) throws AxisFault {
         if (qName == null ||
@@ -309,11 +416,23 @@ public class Types {
         if (qName == null) {
             qName = getTypeQName(type);
         }
-        String pref = def.getPrefix(qName.getNamespaceURI());
-        if (pref == null)
-          def.addNamespace(namespaces.getCreatePrefix(qName.getNamespaceURI()),
-                           qName.getNamespaceURI());
+        writeTypeNamespace(qName);
         return qName;
+    }
+
+    /**
+     * write out the namespace declaration.
+     *
+     * @param qName qname of the type
+     */
+    private void writeTypeNamespace(QName qName) {
+        if (qName != null) {
+            String pref = def.getPrefix(qName.getNamespaceURI());
+            if (pref == null)
+                def.addNamespace(namespaces.getCreatePrefix(qName.getNamespaceURI()),
+                                 qName.getNamespaceURI());
+
+        }
     }
 
     /**
@@ -485,7 +604,7 @@ public class Types {
      *
      * @param type Class for which to generate schema
      * @param qName of the type to write
-     * @return a prefixed string for the schema type
+     * @return a prefixed string for the schema type or null if problems occur
      */
     public String writeType(Class type, QName qName) throws AxisFault {
         // Get a corresponding QName if one is not provided
@@ -519,7 +638,7 @@ public class Types {
             if (isBeanCompatible(type, true)) {
                 factory = new BeanSerializerFactory(type, qName);
             } else {
-                return null; // Don't return an element name
+                return null;  // Don't return an element name
             }
         }
 
@@ -551,19 +670,17 @@ public class Types {
             componentTypeName = writeType(componentType, null) + dimString;
         }
 
-        String soapTypeName = qName.getLocalPart();
         String prefix = namespaces.getCreatePrefix(qName.getNamespaceURI());
-        String prefixedName = prefix+":"+soapTypeName;
+        String prefixedName = prefix+":"+qName.getLocalPart();
 
         // If processed before, or this is a known namespace, return
-        if (!addToTypesList(qName, soapTypeName))
+        if (!addToTypesList(qName))
           return prefixedName;
-
         if (type.isArray()) {
             // ComplexType representation of array
             Element complexType = docHolder.createElement("complexType");
             writeSchemaElement(qName, complexType);
-            complexType.setAttribute("name", soapTypeName);
+            complexType.setAttribute("name", qName.getLocalPart());
 
             Element complexContent = docHolder.createElement("complexContent");
             complexType.appendChild(complexContent);
@@ -811,22 +928,22 @@ public class Types {
      * If the type already exists, just return false to indicate that the type is already
      * generated in a previous iteration
      *
-     * @param qName the name space of the type
-     * @param typeName the name of the type
-     * @return if the type is added returns true, else if the type is already present returns false
+     * @param qName of the type.
+     * @return if the type is added returns true,
+     * else if the type is already present returns false
      */
-    private boolean addToTypesList (QName qName, String typeName) {
+    private boolean addToTypesList (QName qName) {
         boolean added = false;
         ArrayList types = (ArrayList)schemaTypes.get(qName.getNamespaceURI());
         if (types == null) {
             types = new ArrayList();
-            types.add(typeName);
+            types.add(qName.getLocalPart());
             schemaTypes.put(qName.getNamespaceURI(), types);
             added = true;
         }
         else {
-            if (!types.contains(typeName)) {
-               types.add(typeName);
+            if (!types.contains(qName.getLocalPart())) {
+               types.add(qName.getLocalPart());
                added = true;
             }
         }
