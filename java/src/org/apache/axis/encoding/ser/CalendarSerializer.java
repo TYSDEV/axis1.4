@@ -96,11 +96,11 @@ public class CalendarSerializer implements SimpleValueSerializer {
         throws IOException
     {
         context.startElement(name, attributes);
-        context.writeString(getValueAsString(value));
+        context.writeString(getValueAsString(value, context));
         context.endElement();
     }
 
-    public String getValueAsString(Object value) {
+    public String getValueAsString(Object value, SerializationContext context) {
         Date date = value instanceof Date ? (Date) value :
                 ((Calendar) value).getTime();
 
