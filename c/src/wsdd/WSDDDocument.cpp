@@ -423,15 +423,6 @@ void WSDDDocument::AddAllowedMethodsToService(const AxisXMLCh* value)
 
 		} while (true);
 
-			list<string>::iterator iter;
-			list<string> xxx = m_pService->getAllowedMethods();
-			printf("comes here");
-			for(iter=xxx.begin();iter!=xxx.end();iter++)
-			{
-				printf("xxxxxxxxxxxxxx%sYYYYYYY\n",(*iter).c_str());
-			}
-
-
 	}
 }
 
