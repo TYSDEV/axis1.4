@@ -73,6 +73,8 @@
 #include <axis/common/GDefine.h>
 #include <axis/common/Packet.h>
 
+#include <axis/soap/SoapInputSource.h>
+
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
@@ -97,6 +99,7 @@ SoapDeSerializer::~SoapDeSerializer()
 int SoapDeSerializer::SetInputStream(const Ax_soapstream* pInputStream)
 {
 	m_pInputStream = pInputStream;
+/*
 	//---------------------start--------------------------
 	//Deserialize
 	//---------START XERCES SAX2 SPCIFIC CODE---------//
@@ -111,7 +114,9 @@ int SoapDeSerializer::SetInputStream(const Ax_soapstream* pInputStream)
 	if (nChars <= 0) return AXIS_FAIL;
 	MemBufInputSource Input((const unsigned char*)m_hugebuffer, nChars , "bufferid");
 	//Input.setEncoding("UTF-16");
-	m_pParser->parse(Input);
+*/
+	SoapInputSource is(m_pInputStream->transport.pGetFunct, m_pInputStream->str.ip_stream);
+	m_pParser->parse(is);
 	return m_pHandler->Success();
 }
 

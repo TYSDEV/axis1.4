@@ -107,6 +107,10 @@ SOURCE=..\..\src\soap\HeaderBlock.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\soap\SoapBinInputStream.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\soap\SoapBody.cpp
 # End Source File
 # Begin Source File
@@ -124,6 +128,10 @@ SOURCE=..\..\src\soap\SoapFault.cpp
 # Begin Source File
 
 SOURCE=..\..\src\soap\SoapHeader.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\soap\SoapInputSource.cpp
 # End Source File
 # Begin Source File
 
@@ -171,6 +179,10 @@ SOURCE=..\..\include\axis\soap\HeaderBlock.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\include\axis\soap\SoapBinInputStream.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\include\axis\soap\SoapBody.h
 # End Source File
 # Begin Source File
@@ -196,6 +208,10 @@ SOURCE=..\..\include\axis\soap\SoapFaults.h
 # Begin Source File
 
 SOURCE=..\..\include\axis\soap\SoapHeader.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\include\axis\soap\SoapInputSource.h
 # End Source File
 # Begin Source File
 
