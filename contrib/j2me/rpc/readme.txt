@@ -14,12 +14,6 @@ src/tool has WsdlToJ2me and its necessary classes. In order to build it, make yo
 
 How to use WsdlToJ2me is basically the same as WSDL2Java in Axis. Please refer to the user guide of Axis.
 
-Note: some emulation environments and real devices prohibit you from deploying java.rmi package for security. Please consult with their providers on the issue, or you can use a less-constrained development kit such as XVM from http://www.developerzone.co.kr/ENGLISH/ . 
+Note: some emulation environments and real devices prohibit you from deploying java.rmi package for security. Please consult with their providers on the issue, or you can use a less-constrained development kit such as XVM from http://www.developerzone.co.kr/ENGLISH/ .
 
-Axis J2ME RPC is tested on XVM 1.3.1 (emulator, CLDC 1.0) and Zaurus SL760 (device, CDC 1.0).
-
-More documentation will be post for building and testing.
-
-Looking forward to your help,
-
-Ias
+Ias 
