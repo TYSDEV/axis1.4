@@ -72,6 +72,7 @@
 #include <axis/soap/SoapDeSerializer.h>
 #include <axis/common/GDefine.h>
 #include <axis/common/Packet.h>
+#include <axis/common/AxisTrace.h>
 
 #include <axis/soap/SoapInputSource.h>
 
@@ -94,6 +95,7 @@ SoapDeSerializer::~SoapDeSerializer()
 {
 	delete m_pHandler;
 	delete m_pParser;
+    delete m_hugebuffer;
 }
 
 int SoapDeSerializer::SetInputStream(const Ax_soapstream* pInputStream)
@@ -108,8 +110,17 @@ int SoapDeSerializer::SetInputStream(const Ax_soapstream* pInputStream)
 	int nChars = 0;
 	//request a huge number of bytes to get the whole soap request
 	//when pull parsing is used this should change
+    int intBuffLen = HUGE_BUFFER_SIZE;
+    const char* strBuffLen = get_header(pInputStream, "Content-Length");
+    if(strBuffLen != NULL && strcmp(strBuffLen, "") != 0)
+    {
+        intBuffLen = atoi(strBuffLen);
+    }
+    
 	if (NULL != m_pInputStream->transport.pGetFunct)
-		m_pInputStream->transport.pGetFunct(m_hugebuffer, HUGE_BUFFER_SIZE, &nChars, m_pInputStream->str.ip_stream);
+        m_hugebuffer = (char*) malloc(intBuffLen + 10);
+		m_pInputStream->transport.pGetFunct(m_hugebuffer, intBuffLen, &nChars, m_pInputStream->str.ip_stream);
+    AXISTRACE2("buffer length is: ",strBuffLen, 4);        
 	//if no soap then quit
 	if (nChars <= 0) return AXIS_FAIL;
 	MemBufInputSource Input((const unsigned char*)m_hugebuffer, nChars , "bufferid");
@@ -197,7 +208,6 @@ IParam* SoapDeSerializer::GetParam()
 
 int SoapDeSerializer::Init()
 {
-	m_hugebuffer[0] = '\0';
 	m_pLastArrayParam = NULL;
 	m_pHandler->Init();
 	m_Status = AXIS_SUCCESS;

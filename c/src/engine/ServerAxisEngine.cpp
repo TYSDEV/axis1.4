@@ -30,6 +30,9 @@ ServerAxisEngine::~ServerAxisEngine()
 int ServerAxisEngine::Process(Ax_soapstream* soap) 
 {
 	int Status = 0;
+    int intContentLength = 0;
+    char strContentLength[8];
+    
 //	AXIS_TRY
 		const WSDDService* pService = NULL;
 		string sSessionId = soap->sessionid;        
@@ -160,10 +163,26 @@ int ServerAxisEngine::Process(Ax_soapstream* soap)
 			Status = Invoke(m_pMsgData); //we generate response in the same way even if this has failed
 		}
 		while(0);
-		//send any transoport information like http headers first
-		soap->transport.pSendTrtFunct(soap);
-		//Serialize
-		m_pSZ->SetOutputStream(soap);
+        //Serialize
+        if((Status = m_pSZ->SetOutputStream(soap)) == AXIS_SUCCESS)
+        {
+            intContentLength = m_pSZ->GetContentLength();
+            
+            sprintf(strContentLength,"%d", intContentLength);
+            AXISTRACE2("content length:", strContentLength, 4);
+            set_header(soap, "Content-Length", strContentLength);
+            AXISTRACE2("content length:", strContentLength, 4);
+            //send any transoport information like http headers first
+            soap->transport.pSendTrtFunct(soap);
+            m_pSZ->flushSerializedBuffer();
+        }
+        else
+        {
+            //send any transoport information like http headers first
+            soap->transport.pSendTrtFunct(soap);
+            return Status;
+        }
+		
 
 		//Pool back the Service specific handlers
 		if (m_pSReqFChain) g_pHandlerPool->PoolHandlerChain(m_pSReqFChain, sSessionId);

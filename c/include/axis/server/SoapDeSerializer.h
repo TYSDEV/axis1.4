@@ -67,7 +67,8 @@
 #include "../common/IHandlerSoapDeSerializer.h"
 #include "XMLStreamHandler.h"
 
-#define HUGE_BUFFER_SIZE 8192
+#define HUGE_BUFFER_SIZE 32768
+//#define HUGE_BUFFER_SIZE 8192
 
 class SoapEnvelope;
 class SoapHeader;
@@ -89,7 +90,7 @@ private:
 	XMLStreamHandler* m_pHandler;
 	SAX2XMLReader* m_pParser;
 	const Ax_soapstream* m_pInputStream;
-	char m_hugebuffer[HUGE_BUFFER_SIZE];
+	char* m_hugebuffer;;
 	Param* m_pLastArrayParam;
 	int m_Status;
 public:
@@ -103,7 +104,7 @@ public:
 	SoapBody* GetBody();
 	ISoapHeader* GetHeader();
 	SoapEnvelope* GetEnvelope();
-	int SetInputStream(const Ax_soapstream* pInputStream);
+	int SetInputStream(const Ax_soapstream* pInputStream);    
 	SoapDeSerializer();
 	virtual ~SoapDeSerializer();
 	/** Method used by wrappers to get a deserialized Array of complex types */

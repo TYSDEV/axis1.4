@@ -94,7 +94,7 @@ int WSDDDocument::GetDeployment(const AxisChar* sWSDD, WSDDDeployment* pDeployme
 
 int WSDDDocument::ParseDocument(const AxisChar* sWSDD)
 {
-//	AXISTRACE1("inside ParseDocument\n");
+	AXISTRACE1("inside ParseDocument\n", 2);
 	try
 	{
 		SAX2XMLReader* parser = XMLReaderFactory::createXMLReader();

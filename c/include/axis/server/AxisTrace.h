@@ -74,7 +74,7 @@
 #if !defined(__AXISTRACE__)
   #define AXISTRACE1(X,Y) "";
   #define AXISTRACE2(X,Y,Z) "";
-  #define AXISTRACE3(X,Y) "";
+  #define AXISTRACE3(X) "";
 #endif
 
 //extern unsigned char chEBuf[1024];

@@ -63,21 +63,34 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <axis/common/AxisTrace.h>
 
 
 int set_header(Ax_soapstream* soap, char * pchkey, char * pchvalue)
 {
-	int count = soap->so.http.ip_headercount;
+    AXISTRACE1("came here1", 4);
+	int count = soap->so.http.op_headercount;
+    char tempMy[8];
+    sprintf(tempMy, "%d", count);
+    AXISTRACE2("count is:", tempMy, 4);    
 	Ax_header * temp = soap->so.http.ip_headers;
-	soap->so.http.ip_headers = (Ax_header*)realloc(temp, 
+    AXISTRACE1("came here2", 4);
+    if(soap->so.http.op_headers)
+        soap->so.http.op_headers = (Ax_header*)realloc(temp, 
 										(sizeof(Ax_header)*(count+1)));
-	soap->so.http.ip_headers[count].headername = pchkey;
-	soap->so.http.ip_headers[count].headervalue = pchvalue;
-	soap->so.http.ip_headercount = count+1;
+    else
+        soap->so.http.op_headers = (Ax_header*)malloc((sizeof(Ax_header)*(count+1)));
+        
+    AXISTRACE1("came here3", 4);                                        
+	soap->so.http.op_headers[count].headername = pchkey;
+    AXISTRACE1("came here4", 4); 
+	soap->so.http.op_headers[count].headervalue = pchvalue;
+    AXISTRACE1("came here5", 4); 
+	soap->so.http.op_headercount = count+1;
+    
 
 	return 0;
 }
-
 
 const char* get_header(const Ax_soapstream* soap,const char* pchkey)
 {

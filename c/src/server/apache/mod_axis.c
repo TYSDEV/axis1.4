@@ -88,6 +88,8 @@ static int axis_handler(request_rec *req_rec)
 	sstr->transport.pSendTrtFunct = send_transport_information;
 	sstr->transport.pGetTrtFunct = send_transport_information; /*isn't there a get transport information function for apache module ?*/
 	sstr->trtype = APTHTTP;
+    sstr->so.http.op_headercount = 0;
+    sstr->so.http.op_headers = NULL;
 	/*req_rec is used as both input and output streams*/
 	sstr->str.ip_stream = req_rec;
 	sstr->str.op_stream = req_rec;

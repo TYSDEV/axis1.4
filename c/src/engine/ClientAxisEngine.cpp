@@ -5,6 +5,7 @@
 #include <axis/engine/ClientAxisEngine.h>
 #include <axis/wsdd/WSDDDeployment.h>
 #include <axis/engine/HandlerPool.h>
+#include <axis/common/AxisTrace.h>
 
 extern WSDDDeployment* g_pWSDDDeployment;
 extern HandlerPool* g_pHandlerPool;
@@ -126,8 +127,21 @@ int ClientAxisEngine::Invoke(MessageData* pMsg)
 	
 	do 
 	{
-		if (AXIS_SUCCESS != (Status = m_pSoap->transport.pSendTrtFunct(m_pSoap))) break;
-		if (AXIS_SUCCESS != (Status = m_pSZ->SetOutputStream(m_pSoap))) break;
+        if((Status = m_pSZ->SetOutputStream(m_pSoap)) == AXIS_SUCCESS)
+        {
+            AXISTRACE1("clientinvoke", 4);
+            if (AXIS_SUCCESS != (Status = m_pSoap->transport.pSendTrtFunct(m_pSoap))) break;
+            m_pSZ->flushSerializedBuffer();
+        }
+        else
+        {
+            if (AXIS_SUCCESS != (Status = m_pSoap->transport.pSendTrtFunct(m_pSoap)));
+            break;
+        }
+
+        
+		
+		//if (AXIS_SUCCESS != (Status = m_pSZ->SetOutputStream(m_pSoap))) break;
 		pMsg->setPastPivotState(true);
 		if (AXIS_SUCCESS != (Status = m_pSoap->transport.pGetTrtFunct(m_pSoap))) break;
 		if (AXIS_SUCCESS != (Status = m_pDZ->SetInputStream(m_pSoap))) break;

@@ -70,8 +70,7 @@
 #include "../common/Packet.h"
 #include "SoapEnvVersions.h"
 
-
-#define SERIALIZE_BUFFER_SIZE 8192
+#define INITIAL_SERIALIZE_BUFFER_SIZE 16384
 
 class SoapEnvelope;
 class SoapHeader;
@@ -97,8 +96,10 @@ private:
 	AxisChar cCounter[64];
 	SoapEnvelope* m_pSoapEnvelope;	
 	int m_iSoapVersion;
-	char m_cSerializedBuffer[SERIALIZE_BUFFER_SIZE];
+	//char m_cSerializedBuffer[SERIALIZE_BUFFER_SIZE];
+    char* m_cSerializedBuffer;    
 	int m_iCurrentSerBufferSize;
+    int m_iBufferSize; 
 public:
 	int createSoapMethod(const AxisChar* sLocalName, const AxisChar* sPrefix, const AxisChar* sURI);	
 //	IWrapperSoapSerializer& operator<<(const char* cSerialized);
@@ -136,10 +137,11 @@ public:
 	int AddOutputParam(const AxisChar* pchName, void* pObject, void* pDZFunct, void* pDelFunct);
 	int SerializeArray(const Axis_Array* pArray, void* pSZFunct, void* pDelFunct, void* pSizeFunct, const AxisChar* pchTypeName, const AxisChar* pchURI, const AxisChar* pchArrayName);
 	int SerializeArray(const Axis_Array* pArray, XSDTYPE nType, const AxisChar* pchArrayName);
+    int flushSerializedBuffer();
+    int GetContentLength();
 
 private:
-	int AddOutputParamHelper(const AxisChar* pchName, XSDTYPE nType, uParamValue Value);
-	int flushSerializedBuffer();
+	int AddOutputParamHelper(const AxisChar* pchName, XSDTYPE nType, uParamValue Value);	
 	IArrayBean* makeArrayBean(XSDTYPE nType, void* pArray);
 	IArrayBean* makeArrayBean(void* pObject, void* pSZFunct, void* pDelFunct, void* pSizeFunct);
 

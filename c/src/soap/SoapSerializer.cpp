@@ -77,6 +77,7 @@
 #include <axis/common/BasicTypeSerializer.h>
 #include <axis/soap/SoapKeywordMapping.h>
 #include <stdio.h>
+#include <axis/common/AxisTrace.h>
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -87,11 +88,15 @@ SoapSerializer::SoapSerializer()
 	m_pSoapEnvelope = NULL;
 	m_iSoapVersion = SOAP_VER_1_1;
 	m_pOutputStream = NULL;
+    m_cSerializedBuffer = malloc(INITIAL_SERIALIZE_BUFFER_SIZE);
+	m_iCurrentSerBufferSize = 0;
+    m_iBufferSize = INITIAL_SERIALIZE_BUFFER_SIZE;
 }
 
 SoapSerializer::~SoapSerializer()
 {
 	if (m_pSoapEnvelope) delete m_pSoapEnvelope;
+    if (m_cSerializedBuffer) delete m_cSerializedBuffer;
 }
 
 int SoapSerializer::setSoapEnvelope(SoapEnvelope *pSoapEnvelope)
@@ -314,10 +319,14 @@ int SoapSerializer::SetOutputStream(const Ax_soapstream* pStream)
 
 	if(m_pSoapEnvelope) {
 		*this << "<?xml version='1.0' encoding='utf-8' ?>";
-		iStatus= m_pSoapEnvelope->serialize(*this, (SOAP_VERSION)m_iSoapVersion);
-		flushSerializedBuffer();
+		iStatus= m_pSoapEnvelope->serialize(*this, (SOAP_VERSION)m_iSoapVersion);		
 	}
 	return iStatus;
+}
+
+int SoapSerializer::GetContentLength()
+{
+    return m_iCurrentSerBufferSize;
 }
 
 int SoapSerializer::Init()
@@ -336,8 +345,9 @@ int SoapSerializer::Init()
 	m_pSoapEnvelope->setSoapBody(new SoapBody());
 
 	iCounter=0;
-	m_iCurrentSerBufferSize=0;
-	m_cSerializedBuffer[0]='\0'; //make buffer to empty content (as a char*)
+	m_iCurrentSerBufferSize = 0;
+    if(m_cSerializedBuffer)
+        m_cSerializedBuffer[0]='\0'; //make buffer to empty content (as a char*)
 	return AXIS_SUCCESS;
 }
 
@@ -361,10 +371,11 @@ const AxisChar* SoapSerializer::getNewNamespacePrefix()
 IWrapperSoapSerializer& SoapSerializer::operator <<(const AxisChar* cSerialized)
 {
 	int iTmpSerBufferSize = strlen(cSerialized);
-	if((m_iCurrentSerBufferSize + iTmpSerBufferSize)>= SERIALIZE_BUFFER_SIZE) 
+	if((m_iCurrentSerBufferSize + iTmpSerBufferSize)>= m_iBufferSize) 
 	{
-		flushSerializedBuffer();		
-	}
+        m_iBufferSize *= 2;
+        m_cSerializedBuffer = realloc(m_cSerializedBuffer, m_iBufferSize);
+	}    
 	strcat(m_cSerializedBuffer, cSerialized);
 	m_iCurrentSerBufferSize += iTmpSerBufferSize;
 	return *this;
@@ -386,10 +397,16 @@ IWrapperSoapSerializer& SoapSerializer::operator<<(const AxisChar* cSerialized)
 int SoapSerializer::flushSerializedBuffer()
 {
 	//sendSoapResponse(m_cSerializedBuffer);
+    AXISTRACE1("flushSerializedBuffer1", 4);
 	if (NULL != m_pOutputStream->transport.pSendFunct)
+    {
+        AXISTRACE1("flushSerializedBuffer2", 4);    
 		m_pOutputStream->transport.pSendFunct(m_cSerializedBuffer, m_pOutputStream->str.op_stream);
+    }
+    
 	m_cSerializedBuffer[0]= '\0';
 	m_iCurrentSerBufferSize=0;
+    
 	return AXIS_SUCCESS;
 }
 
