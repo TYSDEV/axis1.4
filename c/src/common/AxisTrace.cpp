@@ -65,18 +65,17 @@
 #include <axis/common/AxisUtils.h>
 #include <axis/common/GDefine.h>
 #include <axis/common/AxisConfig.h>
+#include <fcntl.h>
+#include <unistd.h>
 
 
 extern AxisConfig* g_pConfig;
-
-unsigned char res[1024];
 
 
 using namespace std;
 
 AxisTrace::AxisTrace()
 {
-    //fileTrace = NULL;
 }
 
 AxisTrace::~AxisTrace()
@@ -84,6 +83,9 @@ AxisTrace::~AxisTrace()
     fclose(fileTrace);
 }
 
+/**
+    open log file for writing at server side.
+*/
 int AxisTrace::openFile()
 {
     char* sFileName =  g_pConfig->GetAxisLogPath();
@@ -107,6 +109,9 @@ int AxisTrace::openFile()
     return AXIS_SUCCESS;
 }
 
+/**
+    open log file for writing at client side.
+*/
 int AxisTrace::openFileByClient()
 {
     char* sFileName =  "./ClientAxisLog";
@@ -155,13 +160,9 @@ int AxisTrace::logaxis(const char* sLog, int level, char* arg2, int arg3)
     fputs("\n", fileTrace);
     fputs("-------------------------------------------------", fileTrace);
     fputs("\n", fileTrace);
+
+    fflush(fileTrace);
             
-    /*
-        *fout << "time:" << ctime(&ltime)
-        << " :file:"<< arg2 << " :line:" << arg3 << ":" << endl
-        << sLog.c_str() << endl
-        << "-------------------------------------------------" << endl;
-    */
     return AXIS_SUCCESS;
    
 }
@@ -175,7 +176,7 @@ int AxisTrace::logaxis(const char* sLog, int level, char* arg2, int arg3)
 *   @param arg3 line number
 */
 int AxisTrace::logaxis(const char* sLog1, const char* sLog2, int level, char* arg3, int arg4)
-{ 
+{
     time_t ltime;
     time(&ltime);
 
@@ -205,14 +206,9 @@ int AxisTrace::logaxis(const char* sLog1, const char* sLog2, int level, char* ar
     fputs("\n", fileTrace);
     fputs("-------------------------------------------------", fileTrace);
     fputs("\n", fileTrace);
-    
-        
-    /**fout << "time:" << ctime(&ltime)
-    << " :file:"<< arg3 << " :line:" << arg4 << endl
-    << sLog1.c_str() << " " << sLog2.c_str() << endl
-    << "-------------------------------------------------" << endl;
-    */
 
+    fflush(fileTrace);
+    
     return AXIS_SUCCESS;
     
 }
@@ -227,7 +223,7 @@ int AxisTrace::trace(const char *pchLog)
 /*
 int main(int argc, char* argv[])
 {
-  tracer.trace("damitha");
+  tracer.trace("test");
   return 0;
 }
 */
