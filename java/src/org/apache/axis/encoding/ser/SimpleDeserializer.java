@@ -278,7 +278,12 @@ public class SimpleDeserializer extends DeserializerImpl {
             }
         }    
         if (constructor == null) {
-            return null;
+	    try {
+                constructor = 
+                    javaType.getDeclaredConstructor(new Class [] {String.class});
+	    } catch (Exception e) {
+                return null;
+	    }
         }
         return constructor.newInstance(new Object [] { source });
     }

@@ -480,6 +480,15 @@ public class DeserializationContextImpl extends DefaultHandler implements Lexica
         if (cls == null) {
             return null;
         }
+        if (cls.isArray()) {
+            cls = cls.getComponentType();
+        }
+        if (javax.xml.rpc.holders.Holder.class.isAssignableFrom(cls)) {
+            try {
+                cls = cls.getField("value").getType();
+            } catch (Exception e) {
+            }
+        }
         Deserializer dser = null;
         try {
             Method method = cls.getMethod(DESERIALIZER_METHOD, DESERIALIZER_CLASSES);
