@@ -283,6 +283,14 @@ public class OperationDesc {
         this.method = method;
     }
 
+    public boolean isReturnHeader() {
+        return returnDesc.isOutHeader();
+    }
+
+    public void setReturnHeader(boolean value) {
+        returnDesc.setOutHeader(value);
+    }
+
     public ParameterDesc getParamByQName(QName qname)
     {
         for (Iterator i = parameters.iterator(); i.hasNext();) {

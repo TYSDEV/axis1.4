@@ -196,6 +196,9 @@ public class Call implements javax.xml.rpc.Call {
     // The desired return Java type, so we can do conversions if needed
     private Class              returnJavaType  = null;
 
+    // If a parameter is sent as a header, this flag will be set to true;
+    private boolean            headerParameters = false;
+
     public static final String SEND_TYPE_ATTR    = "send_type_attr" ;
     public static final String TRANSPORT_NAME    = "transport_name" ;
     public static final String TRANSPORT_PROPERTY= "java.protocol.handler.pkgs";
@@ -815,6 +818,36 @@ public class Call implements javax.xml.rpc.Call {
                              Class javaType, ParameterMode parameterMode) {
         addParameter(new QName("", paramName), xmlType, javaType, parameterMode);
     }
+
+    /**
+     * Adds a parameter type as a soap:header.  Note that we do not
+     * currently support an INOUT parameter split between header and
+     * body of the soap message.  It's either header both ways or
+     * body both ways.
+     */
+    public void addParameterAsHeader(QName paramName, QName xmlType,
+            Class javaType, ParameterMode parameterMode) {
+        ParameterDesc param = new ParameterDesc();
+        param.setQName(paramName);
+        param.setTypeQName(xmlType);
+        param.setJavaType(javaType);
+        if (parameterMode == ParameterMode.IN) {
+            param.setMode(ParameterDesc.IN);
+            param.setInHeader(true);
+        }
+        else if (parameterMode == ParameterMode.INOUT) {
+            param.setMode(ParameterDesc.INOUT);
+            param.setInHeader(true);
+            param.setOutHeader(true);
+        }
+        else if (parameterMode == ParameterMode.OUT) {
+            param.setMode(ParameterDesc.OUT);
+            param.setOutHeader(true);
+        }
+        operation.addParameter(param);
+        parmAndRetReq = true;
+        headerParameters = true;
+    } // addParameterAsHeader
 
     /**
      * Return the QName of the type of the parameters with the given name.
@@ -1484,7 +1517,6 @@ public class Call implements javax.xml.rpc.Call {
      */
     private Object[] getParamList(Object[] params) {
         int  numParams = 0 ;
-        int  i ;
 
         // If we never set-up any names... then just return what was passed in
         //////////////////////////////////////////////////////////////////////
@@ -1510,28 +1542,38 @@ public class Call implements javax.xml.rpc.Call {
         int    j = 0 ;
         ArrayList parameters = operation.getParameters();
 
-        for ( i = 0 ; i < parameters.size() ; i++ ) {
+        for (int i = 0; i < parameters.size(); i++) {
             ParameterDesc param = (ParameterDesc)parameters.get(i);
-            if (param.getMode() == ParameterDesc.OUT)
-                continue ;
+            if (param.getMode() != ParameterDesc.OUT) {
+                QName paramQName = param.getQName();
+                if (param.isInHeader()) {
 
-            QName paramQName = param.getQName();
-            RPCParam rpcParam = null;
-            Object p = params[j++];
-            if(p instanceof RPCParam) {
-                rpcParam = (RPCParam)p;
-            } else {
-                rpcParam = new RPCParam(paramQName.getNamespaceURI(),
-                                      paramQName.getLocalPart(),
-                                      p );
+                    // Add this parameter as a header.
+                    SOAPHeaderElement header = new SOAPHeaderElement(
+                            paramQName.getNamespaceURI(),
+                            paramQName.getLocalPart(),
+                            params[j++]);
+                    addHeader(header);
+                }
+                else {
+                    // Since this parameter isn't a header, keep it in the args list.
+                    RPCParam rpcParam = null;
+                    Object p = params[j++];
+                    if(p instanceof RPCParam) {
+                        rpcParam = (RPCParam)p;
+                    } else {
+                        rpcParam = new RPCParam(paramQName.getNamespaceURI(),
+                                                paramQName.getLocalPart(),
+                                                p);
+                    }
+                    // Attach the ParameterDescription to the RPCParam
+                    // so that the serializer can use the (javaType, xmlType)
+                    // information.
+                    rpcParam.setParamDesc(param);
+                    result.add(rpcParam);
+                }
             }
-            // Attach the ParameterDescription to the RPCParam
-            // so that the serializer can use the (javaType, xmlType)
-            // information.
-            rpcParam.setParamDesc(param);
-            result.add( rpcParam );
         }
-
         return( result.toArray() );
     }
 
