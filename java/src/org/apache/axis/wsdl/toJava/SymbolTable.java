@@ -142,6 +142,8 @@ public class SymbolTable {
     // should we attempt to treat document/literal WSDL as "rpc-style"
     private boolean wrapped = false;
     
+    public static final String ANON_TOKEN = ">";
+
     /**
      * Construct a symbol table with the given Namespaces.
      */
@@ -1369,6 +1371,16 @@ public class SymbolTable {
                         setTypeReferences(referent, doc, literal);
                     }
                 }
+                // If the Defined Element has an anonymous type, 
+                // process it with the current literal flag setting.
+                QName anonQName = SchemaUtils.getElementAnonQName(entry.getNode());
+                if (anonQName != null) {
+                    TypeEntry anonType = getType(anonQName);
+                    if (anonType != null) {
+                        setTypeReferences(anonType, doc, literal);
+                        return;
+                    }
+                }
             }
         }
 
@@ -1579,12 +1591,6 @@ public class SymbolTable {
         QName name = entry.getQName();
         if (get(name, entry.getClass()) == null) {
             // An entry of the given qname of the given type doesn't exist yet.
-
-            if (debug) {
-                System.out.println("Symbol Table add " + name + " as " + 
-                      entry.getClass().getName().substring(
-                            entry.getClass().getName().lastIndexOf(".") + 1));
-            }
             if (entry instanceof Type && 
                 get(name, UndefinedType.class) != null) {
 
