@@ -57,6 +57,8 @@ package org.apache.axis.wsdl.symbolTable;
 
 import java.util.HashMap;
 import java.util.Map;
+import org.apache.axis.enum.Style;
+import org.apache.axis.enum.Use;
 
 import javax.wsdl.Binding;
 import javax.wsdl.Operation;
@@ -67,9 +69,6 @@ import javax.wsdl.Operation;
 * from the WSDL4J Binding object:  binding type, binding style, input/output/fault body types.
 */
 public class BindingEntry extends SymTabEntry {
-    // Binding styles
-    public static final int STYLE_RPC = 0;
-    public static final int STYLE_DOCUMENT = 1;
 
     // Binding types
     public static final int TYPE_SOAP = 0;
@@ -83,7 +82,7 @@ public class BindingEntry extends SymTabEntry {
 
     private Binding binding;
     private int     bindingType;
-    private int     bindingStyle;
+    private Style   bindingStyle;
     private boolean hasLiteral;
     private HashMap attributes;
     private HashMap parameters = new HashMap();
@@ -93,18 +92,18 @@ public class BindingEntry extends SymTabEntry {
     private Map     mimeTypes; 
 
     // This is a map of a map.  It's a map keyed on operation name whose values
-    // are maps keyed on parameter name.  The ultimate values are simple
+    // are maps keyed on part name.  The ultimate values are simple
     // Booleans.
-    private Map     headerParameters;
+    private Map     headerParts;
 
     /**
      * Construct a BindingEntry from a WSDL4J Binding object and the additional binding info:
      * binding type, binding style, whether there is any literal binding, and the attributes which
      * contain the input/output/fault body type information.
      */
-    public BindingEntry(Binding binding, int bindingType, int bindingStyle,
+    public BindingEntry(Binding binding, int bindingType, Style bindingStyle,
             boolean hasLiteral, HashMap attributes, Map mimeTypes,
-            Map headerParameters) {
+            Map headerParts) {
         super(binding.getQName());
         this.binding = binding;
         this.bindingType = bindingType;
@@ -122,11 +121,11 @@ public class BindingEntry extends SymTabEntry {
         else {
             this.mimeTypes = mimeTypes;
         }
-        if (headerParameters == null) {
-            this.headerParameters = new HashMap();
+        if (headerParts == null) {
+            this.headerParts = new HashMap();
         }
         else {
-            this.headerParameters = headerParameters;
+            this.headerParts = headerParts;
         }
     } // ctor
 
@@ -135,7 +134,7 @@ public class BindingEntry extends SymTabEntry {
      * defaults.  If the defaults aren't desired, then the appropriate
      * setter method should be called.  The defaults are:
      * bindingType = TYPE_UNKNOWN
-     * bindingStyle = STYLE_DOCUMENT
+     * bindingStyle = DOCUMENT
      * hasLiteral = false
      * operation inputBodyTypes = USE_ENCODED
      * operation outputBodyTypes = USE_ENCODED
@@ -151,11 +150,11 @@ The caller of this constructor should
         super(binding.getQName());
         this.binding          = binding;
         this.bindingType      = TYPE_UNKNOWN;
-        this.bindingStyle     = STYLE_DOCUMENT;
+        this.bindingStyle     = Style.DOCUMENT;
         this.hasLiteral       = false;
         this.attributes       = new HashMap();
         this.mimeTypes        = new HashMap();
-        this.headerParameters = new HashMap();
+        this.headerParts = new HashMap();
     } // ctor
 
     /**
@@ -213,58 +212,66 @@ The caller of this constructor should
     } // setMIMEType
 
     /**
-     * Is this parameter an input header parameter?.
+     * Is this part an input header part?.
      */
-    public boolean isInHeaderParameter(String operationName,
-            String parameterName) {
-        return (headerParameter(operationName, parameterName) & IN_HEADER) > 0;
-    } // isInHeaderParameter
+    public boolean isInHeaderPart(String operationName,
+            String partName) {
+        return (headerPart(operationName, partName) & IN_HEADER) > 0;
+    } // isInHeaderPart
 
     /**
-     * Is this parameter an output header parameter?.
+     * Is this part an output header part?.
      */
-    public boolean isOutHeaderParameter(String operationName,
-            String parameterName) {
-        return (headerParameter(operationName, parameterName) & OUT_HEADER) > 0;
-    } // isInHeaderParameter
+    public boolean isOutHeaderPart(String operationName,
+            String partName) {
+        return (headerPart(operationName, partName) & OUT_HEADER) > 0;
+    } // isInHeaderPart
 
     /**
-     * Get the flag indicating what sort of header this parameter is.
+     * Get the flag indicating what sort of header this part is.
      */
     public static final int NO_HEADER  = 0;
     public static final int IN_HEADER  = 1;
     public static final int OUT_HEADER = 2;
-    private int headerParameter(String operationName, String parameterName) {
-        Map opMap = (Map) headerParameters.get(operationName);
+    /**
+     * Get the mime mapping for the given part name.
+     * If there is none, this returns null.
+     * @param operationName 
+     * @param partName
+     * @return flag indicating kind of header
+     */
+    private int headerPart(String operationName,
+            String partName) {
+        Map opMap = (Map) headerParts.get(operationName);
         if (opMap == null) {
             return NO_HEADER;
         }
         else {
-            Integer I = (Integer) opMap.get(parameterName);
+            Integer I = (Integer) opMap.get(partName);
             return I == null ? NO_HEADER : I.intValue();
         }
-    } // headerParameter
+    } // headerPart
 
     /**
      * Get the header parameter map.
      */
-    public Map getHeaderParameters() {
-        return headerParameters;
-    } // getHeaderParameters
+    public Map getHeaderParts() {
+        return headerParts;
+    } // getHeaderParts
 
     /**
-     * Set the header parameter mapping for the given parameter name.
+     * Set the header part mapping for the given part name.
      */
-    public void setHeaderParameter(String operationName, String parameterName, int headerFlags) {
-        Map opMap = (Map) headerParameters.get(operationName);
+    public void setHeaderPart(String operationName, String partName, int headerFlags) {
+        Map opMap = (Map) headerParts.get(operationName);
         if (opMap == null) {
             opMap = new HashMap();
-            headerParameters.put(operationName, opMap);
+            headerParts.put(operationName, opMap);
         }
-        Integer I = (Integer) opMap.get(parameterName);
+        Integer I = (Integer) opMap.get(partName);
         int i = I == null ? headerFlags : (I.intValue() | headerFlags);
-        opMap.put(parameterName, new Integer(i));
-    } // setHeaderParameter
+        opMap.put(partName, new Integer(i));
+    } // setHeaderPart
 
     /**
      * Get this entry's WSDL4J Binding object.
@@ -291,19 +298,17 @@ The caller of this constructor should
     } // setBindingType
 
     /**
-     * Get this entry's binding style.  One of BindingEntry.STYLE_RPC, BindingEntry.STYLE_DOCUMENT.
+     * Get this entry's binding style.
      */
-    public int getBindingStyle() {
+    public Style getBindingStyle() {
         return bindingStyle;
     } // getBindingStyle
 
     /**
      * Set this entry's binding style.
      */
-    protected void setBindingStyle(int bindingStyle) {
-        if (bindingStyle == STYLE_RPC || bindingStyle == STYLE_DOCUMENT) {
-            this.bindingStyle = bindingStyle;
-        }
+    protected void setBindingStyle(Style bindingStyle) {
+        this.bindingStyle = bindingStyle;
     } // setBindingStyle
 
     /**
@@ -321,13 +326,12 @@ The caller of this constructor should
     } // setHashLiteral
 
     /**
-     * Get the input body type for the given operation.  One of BindingEntry.USE_ENCODED,
-     * BindingEntry.USE_LITERAL.
+     * Get the input body type for the given operation.
      */
-    public int getInputBodyType(Operation operation) {
+    public Use getInputBodyType(Operation operation) {
         OperationAttr attr = (OperationAttr) attributes.get(operation);
         if (attr == null) {
-            return USE_ENCODED; // should really create an exception for this.
+            return Use.ENCODED; // should really create an exception for this.
         }
         else {
             return attr.getInputBodyType();
@@ -337,26 +341,25 @@ The caller of this constructor should
     /**
      * Set the input body type for the given operation.
      */
-     protected void setInputBodyType(Operation operation, int inputBodyType) {
+     protected void setInputBodyType(Operation operation, Use inputBodyType) {
          OperationAttr attr = (OperationAttr) attributes.get(operation);
          if (attr == null) {
              attr = new OperationAttr();
              attributes.put(operation, attr);
          }
          attr.setInputBodyType(inputBodyType);
-         if (inputBodyType == USE_LITERAL) {
+         if (inputBodyType == Use.LITERAL) {
              setHasLiteral(true);
          }
      } // setInputBodyType
 
     /**
-     * Get the output body type for the given operation.  One of BindingEntry.USE_ENCODED,
-     * BindingEntry.USE_LITERAL.
+     * Get the output body type for the given operation.
      */
-    public int getOutputBodyType(Operation operation) {
+    public Use getOutputBodyType(Operation operation) {
         OperationAttr attr = (OperationAttr) attributes.get(operation);
         if (attr == null) {
-            return USE_ENCODED; // should really create an exception for this.
+            return Use.ENCODED; // should really create an exception for this.
         }
         else {
             return attr.getOutputBodyType();
@@ -366,14 +369,14 @@ The caller of this constructor should
     /**
      * Set the output body type for the given operation.
      */
-     protected void setOutputBodyType(Operation operation, int outputBodyType) {
+     protected void setOutputBodyType(Operation operation, Use outputBodyType) {
          OperationAttr attr = (OperationAttr) attributes.get(operation);
          if (attr == null) {
              attr = new OperationAttr();
              attributes.put(operation, attr);
          }
          attr.setOutputBodyType(outputBodyType);
-         if (outputBodyType == USE_LITERAL) {
+         if (outputBodyType == Use.LITERAL) {
              setHasLiteral(true);
          }
      } // setOutputBodyType
@@ -383,7 +386,7 @@ The caller of this constructor should
       * then this is the inputBodyType, otherwise it's the outputBodyType.
       * (NOTE:  this method exists to enable reusing some SymbolTable code.
       */
-     protected void setBodyType(Operation operation, int bodyType, boolean input) {
+     protected void setBodyType(Operation operation, Use bodyType, boolean input) {
          if (input) {
              setInputBodyType(operation, bodyType);
          }
@@ -393,23 +396,23 @@ The caller of this constructor should
      } // setBodyType
 
     /**
-     * Get the fault body type for the given fault of the given operation.  One of
-     * BindingEntry.USE_ENCODED, BindingEntry.USE_LITERAL.
+     * Get the fault body type for the given fault of the given operation. 
+     * @return Use.ENCODED or  Use.LITERAL
      */
-    public int getFaultBodyType(Operation operation, String faultName) {
+    public Use getFaultBodyType(Operation operation, String faultName) {
         OperationAttr attr = (OperationAttr) attributes.get(operation);
         if (attr == null) {
-            return 0; // should really create an exception for this.
+            return Use.ENCODED; // should really create an exception for this.
         }
         else {
             HashMap m = attr.getFaultBodyTypeMap();
 
             // Default to encoded if we didn't have a soap:body for the fault
             if ( ! m.containsKey(faultName) ) {
-                return USE_ENCODED;
+                return Use.ENCODED;
             }
 
-            return ((Integer) m.get(faultName)).intValue();
+            return ((Use) m.get(faultName));
         }
     }
 
@@ -430,35 +433,35 @@ The caller of this constructor should
      *  - Body type: encoded or literal
      */
     protected static class OperationAttr {
-        private int inputBodyType;
-        private int outputBodyType;
+        private Use inputBodyType;
+        private Use outputBodyType;
         private HashMap faultBodyTypeMap;
 
-        public OperationAttr(int inputBodyType, int outputBodyType, HashMap faultBodyTypeMap) {
+        public OperationAttr(Use inputBodyType, Use outputBodyType, HashMap faultBodyTypeMap) {
             this.inputBodyType = inputBodyType;
             this.outputBodyType = outputBodyType;
             this.faultBodyTypeMap = faultBodyTypeMap;
         }
 
         public OperationAttr() {
-            this.inputBodyType = USE_ENCODED;
-            this.outputBodyType = USE_ENCODED;
+            this.inputBodyType = Use.ENCODED;
+            this.outputBodyType = Use.ENCODED;
             this.faultBodyTypeMap = null;
         }
 
-        public int getInputBodyType() {
+        public Use getInputBodyType() {
             return inputBodyType;
         }
 
-        protected void setInputBodyType(int inputBodyType) {
+        protected void setInputBodyType(Use inputBodyType) {
             this.inputBodyType = inputBodyType;
         }
 
-        public int getOutputBodyType() {
+        public Use getOutputBodyType() {
             return outputBodyType;
         }
 
-        protected void setOutputBodyType(int outputBodyType) {
+        protected void setOutputBodyType(Use outputBodyType) {
             this.outputBodyType = outputBodyType;
         }
 

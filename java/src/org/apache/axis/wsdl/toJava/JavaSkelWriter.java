@@ -226,7 +226,8 @@ public class JavaSkelWriter extends JavaClassWriter {
                 // If we need to know the QName (if we have a namespace or
                 // the actual method name doesn't match the XML we expect),
                 // record it in the OperationDesc
-                QName elementQName = Utils.getOperationQName(bindingOper);
+                QName elementQName = 
+                    Utils.getOperationQName(bindingOper, bEntry, symbolTable);
                 if (elementQName != null) {
                     pw.println("        _oper.setElementQName(" +
                             Utils.getNewQName(elementQName) + ");");

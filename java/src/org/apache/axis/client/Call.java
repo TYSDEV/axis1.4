@@ -66,6 +66,7 @@ import org.apache.axis.soap.SOAPConstants;
 import org.apache.axis.description.OperationDesc;
 import org.apache.axis.description.ParameterDesc;
 import org.apache.axis.enum.Style;
+import org.apache.axis.enum.Use;
 import org.apache.axis.encoding.DeserializerFactory;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.encoding.SerializationContextImpl;
@@ -170,7 +171,8 @@ public class Call implements javax.xml.rpc.Call {
     private String             username        = null;
     private String             password        = null;
     private boolean            maintainSession = false;
-    private Style              operationStyle  = Style.DEFAULT;
+    private Style              operationStyle  = Style.RPC;
+    private Use                operationUse    = Use.ENCODED;
     private boolean            useSOAPAction   = false;
     private String             SOAPActionURI   = null;
     private Integer            timeout         = null;
@@ -332,6 +334,12 @@ public class Call implements javax.xml.rpc.Call {
                         name, "java.lang.String", value.getClass().getName()}));
             }
             setOperationStyle((String) value);
+            if (getOperationStyle() == Style.DOCUMENT ||
+                getOperationStyle() == Style.WRAPPED) {
+                setOperationUse(Use.LITERAL_STR);
+            } else if (getOperationStyle() == Style.RPC) {
+                setOperationUse(Use.ENCODED_STR);
+            }
         }
         else if (name.equals(SOAPACTION_USE_PROPERTY)) {
             if (!(value instanceof Boolean)) {
@@ -527,27 +535,35 @@ public class Call implements javax.xml.rpc.Call {
     }
 
     /**
-     * Set the operation style.  IllegalArgumentException is thrown if operationStyle
-     * is not "rpc" or "document".
-     *
-     * @exception IllegalArgumentException if operationStyle is not "rpc" or "document".
+     * Set the operation style: "document", "rpc"
+     * @param operationStyle string designating style
      */
     public void setOperationStyle(String operationStyle) {
-        this.operationStyle = Style.getStyle(operationStyle, Style.DEFAULT);
-
-/*  Not being used for now... --GD
-        throw new IllegalArgumentException(Messages.getMessage(
-                "badProp01",
-                new String[] {OPERATION_STYLE_PROPERTY,
-                              "\"rpc\", \"document\"", operationStyle}));
-*/
+        this.operationStyle = 
+            Style.getStyle(operationStyle, Style.DEFAULT);
     } // setOperationStyle
-
+ 
     /**
      * Get the operation style.
      */
     public Style getOperationStyle() {
         return operationStyle;
+    } // getOperationStyle
+
+    /**
+     * Set the operation use: "literal", "encoded"
+     * @param operationUse string designating use
+     */
+    public void setOperationUse(String operationUse) {
+        this.operationUse = 
+            Use.getUse(operationUse, Use.DEFAULT);
+    } // setOperationUse
+ 
+    /**
+     * Get the operation use.
+     */
+    public Use getOperationUse() {
+        return operationUse;
     } // getOperationStyle
 
     /**
@@ -2057,7 +2073,9 @@ public class Call implements javax.xml.rpc.Call {
         msgContext.setOperation(operation);
 
         operation.setStyle(getOperationStyle());
+        operation.setUse(getOperationUse());
         msgContext.setOperationStyle(getOperationStyle());
+        msgContext.setOperationUse(getOperationUse());
 
         if (useSOAPAction) {
             msgContext.setUseSOAPAction(true);

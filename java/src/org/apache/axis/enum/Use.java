@@ -53,34 +53,92 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.axis.message;
+package org.apache.axis.enum;
 
-import org.apache.axis.MessageContext;
-import org.apache.axis.encoding.SerializationContext;
+import javax.xml.namespace.QName;
 
-public class RPCHeaderParam extends SOAPHeaderElement
-{
+import org.apache.axis.Constants;
+import org.apache.axis.deployment.wsdd.WSDDConstants;
+
+
+/**
+ * Use enum description
+ * @author Richard Scheuerle
+ */
+public class Use extends Enum {
+
     /**
-     * Create a SOAPHeaderElement that is represented by an RPCParam
+     * See Style.java for a description of the combination
+     * of style and use.
      */
-    public RPCHeaderParam(RPCParam rpcParam) {
-        super(rpcParam.getQName().getNamespaceURI(),
-              rpcParam.getQName().getLocalPart(),
-              rpcParam);
+
+    private static final Type type = new Type();
+    
+    public static final String ENCODED_STR = "encoded";
+    public static final String LITERAL_STR = "literal";
+ 
+    public static final Use ENCODED = type.getUse(ENCODED_STR);
+    public static final Use LITERAL = type.getUse(LITERAL_STR);
+
+    public static final Use DEFAULT = ENCODED;
+    
+    static { type.setDefault(DEFAULT); }
+    private String encoding;
+
+    public static Use getDefault() { return (Use)type.getDefault(); }
+    
+    public final String getEncoding() { return encoding; }
+
+    public static final Use getUse(int style) {
+        return type.getUse(style);
     }
 
-    /**
-     * outputImpl serializes the RPCParam 
-     */
-    protected void outputImpl(SerializationContext context) throws Exception
-    {
-        MessageContext msgContext = context.getMessageContext();
-
-        // Get the RPCParam and serialize it
-        RPCParam rpcParam = (RPCParam) getObjectValue();
-        if (encodingStyle != null && encodingStyle.equals("")) {
-            context.registerPrefixForURI("", rpcParam.getQName().getNamespaceURI());
+    public static final Use getUse(String style) {
+        return type.getUse(style);
+    }
+    
+    public static final Use getUse(String style, Use dephault) {
+        return type.getUse(style, dephault);
+    }
+    
+    public static final boolean isValid(String style) {
+        return type.isValid(style);
+    }
+    
+    public static final int size() {
+        return type.size();
+    }
+    
+    public static final String[] getUses() {
+        return type.getEnumNames();
+    }
+    
+    public static class Type extends Enum.Type {
+        private Type() {
+            super("style", new Enum[] {
+            new Use(0, ENCODED_STR,
+                  Constants.URI_DEFAULT_SOAP_ENC),
+            new Use(1, LITERAL_STR,
+                  Constants.URI_LITERAL_ENC),
+            });
         }
-        rpcParam.serialize(context);
+
+        public final Use getUse(int style) {
+            return (Use)this.getEnum(style);
+        }
+
+        public final Use getUse(String style) {
+            return (Use)this.getEnum(style);
+        }
+
+        public final Use getUse(String style, Use dephault) {
+            return (Use)this.getEnum(style, dephault);
+        }
+
     }
-}
+
+    private Use(int value, String name, String encoding) {
+        super(type, value, name);
+        this.encoding = encoding;
+    }
+};

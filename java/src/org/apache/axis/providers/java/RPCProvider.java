@@ -162,7 +162,7 @@ public class RPCProvider extends JavaProvider
        // arguments (which is a strange thing to have, but whatever)
         if (body == null) {
             // throw an error if this isn't a document style service
-            if (!serviceDesc.getStyle().equals(Style.DOCUMENT)) {
+            if (!(serviceDesc.getStyle().equals(Style.DOCUMENT))) {
                 throw new Exception(Messages.getMessage("noBody00"));
             }
 

@@ -170,6 +170,7 @@ public class WSDDConstants
     public static final String ATTR_OUTHEADER = "outHeader";
     public static final String ATTR_RETHEADER = "returnHeader";
     public static final String ATTR_STYLE = "style";
+    public static final String ATTR_USE = "use";
     public static final String ATTR_STREAMING = "streaming";
     public static final String ATTR_ATTACHMENT_FORMAT = "attachment";
     public static final String ATTR_PROVIDER = "provider";
