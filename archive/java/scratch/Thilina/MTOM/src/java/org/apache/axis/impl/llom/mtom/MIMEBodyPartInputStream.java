@@ -26,58 +26,58 @@ import java.io.InputStream;
 
 public class MIMEBodyPartInputStream extends InputStream {
 
-    MIMEInputStream inStream;
+	MIMEInputStream inStream;
 
-    String boundry;
+	String boundry;
 
-    boolean done = false;
+	boolean done = false;
 
-    boolean began = false;
+	boolean began = false;
 
-    public MIMEBodyPartInputStream(MIMEInputStream inStream, String boundry) {
-        super();
-        this.inStream = inStream;
-        this.boundry = boundry;
+	public MIMEBodyPartInputStream(MIMEInputStream inStream, String boundry) {
+		super();
+		this.inStream = inStream;
+		this.boundry = boundry;
 
-    }
+	}
 
-    public int read() throws IOException {
+	public int read() throws IOException {
 
-        if (done) {
-            return -1;
-        } else {
-            int value = 0;
-            String line = "";
+		if (done) {
+			return -1;
+		} else {
+			int value = 0;
+			String line = "";
 
-            value = inStream.read();
+			value = inStream.read();
 
-            while (value == 13 & !began) {
-                value = inStream.read();
-                value = inStream.read();
-            }
-            began = true;
+			while (value == 13 & !began) {
+				value = inStream.read();
+				value = inStream.read();
+			}
+			began = true;
 
-            char readChar = (char) value;
-            if (readChar == '-') {
-                inStream.mark();
-                char readNextChar = ' ';
+			char readChar = (char) value;
+			if (readChar == '-') {
+				inStream.mark();
+				char readNextChar = ' ';
 
-                readNextChar = (char) inStream.read();
+				readNextChar = (char) inStream.read();
 
-                if (readNextChar == '-') {
-                    line = inStream.read(boundry.length());
-                    if (line.equals(boundry)) {
-                        done = true;
-                        return -1;
+				if (readNextChar == '-') {
+					line = inStream.read(boundry.length());
+					if (line.equals(boundry)) {
+						done = true;
+						return -1;
 
-                    } else {
-                        inStream.reset();
-                    }
-                } else {
-                    inStream.reset();
-                }
-            }
-            return value;
-        }
-    }
+					} else {
+						inStream.reset();
+					}
+				} else {
+					inStream.reset();
+				}
+			}
+			return value;
+		}
+	}
 }

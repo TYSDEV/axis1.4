@@ -1,10 +1,11 @@
 package org.apache.axis.impl.llom.serialize;
 
+import java.util.Vector;
+
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
-import java.util.Vector;
 
 
 /**

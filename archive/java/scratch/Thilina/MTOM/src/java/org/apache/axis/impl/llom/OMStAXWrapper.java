@@ -1,7 +1,7 @@
 package org.apache.axis.impl.llom;
 
-import org.apache.axis.impl.llom.exception.OMStreamingException;
-import org.apache.axis.om.*;
+import java.util.Iterator;
+import java.util.Stack;
 
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.namespace.QName;
@@ -9,8 +9,15 @@ import javax.xml.stream.Location;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-import java.util.Iterator;
-import java.util.Stack;
+
+import org.apache.axis.impl.llom.exception.OMStreamingException;
+import org.apache.axis.om.OMAttribute;
+import org.apache.axis.om.OMElement;
+import org.apache.axis.om.OMNamedNode;
+import org.apache.axis.om.OMNamespace;
+import org.apache.axis.om.OMNode;
+import org.apache.axis.om.OMText;
+import org.apache.axis.om.OMXMLParserWrapper;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.

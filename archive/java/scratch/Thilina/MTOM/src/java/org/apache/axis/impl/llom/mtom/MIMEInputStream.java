@@ -27,95 +27,95 @@ import java.util.LinkedList;
 
 public class MIMEInputStream extends InputStream {
 
-    InputStream inStream;
+	InputStream inStream;
 
-    LinkedList buffer;
+	LinkedList buffer;
 
-    boolean mark = false;
+	boolean mark = false;
 
-    boolean reset = false;
+	boolean reset = false;
 
-    int point = 0;
+	int point = 0;
 
-    public MIMEInputStream(InputStream inStream) {
-        super();
-        this.inStream = inStream;
-        buffer = new LinkedList();
-    }
+	public MIMEInputStream(InputStream inStream) {
+		super();
+		this.inStream = inStream;
+		buffer = new LinkedList();
+	}
 
-    public int read() throws IOException {
-        int temp = readMain();
-        return temp;
-    }
+	public int read() throws IOException {
+		int temp = readMain();
+		return temp;
+	}
 
-    public String readLine() throws IOException {
-        String line = "";
-        char character = ' ';
-        do {
-            try {
-                character = (char) readMain();
-                line += character;
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        } while (character != '\n');
+	public String readLine() throws IOException {
+		String line = "";
+		char character = ' ';
+		do {
+			try {
+				character = (char) readMain();
+				line += character;
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		} while (character != '\n');
 
-        return line;
-    }
+		return line;
+	}
 
-    public String read(int length) throws IOException {
-        String line = "";
-        char character = ' ';
-        for (int i = 0; i < length; i++) {
-            character = (char) readMain();
-            line += character;
-        }
-        return line;
-    }
+	public String read(int length) throws IOException {
+		String line = "";
+		char character = ' ';
+		for (int i = 0; i < length; i++) {
+			character = (char) readMain();
+			line += character;
+		}
+		return line;
+	}
 
-    public int readMain() throws IOException {
-        int temp;
-        if (mark & reset) {
-            Integer byteOb = (Integer) buffer.get(point);
-            temp = byteOb.intValue();
-            if (buffer.get(point).equals(buffer.getLast())) {
-                reset = false;
-                point = 0;
-            } else {
-                point++;
-            }
-        } else if (mark) {
-            temp = inStream.read();
-            buffer.add(new Integer(temp));
-        } else if (reset) {
-            if (buffer.isEmpty()) {
-                reset = false;
-                temp = inStream.read();
-            } else {
-                Integer byteOb = (Integer) buffer.getFirst();
-                temp = byteOb.intValue();
-                buffer.removeFirst();
-            }
-        } else {
-            temp = inStream.read();
-        }
-        return temp;
-    }
+	public int readMain() throws IOException {
+		int temp;
+		if (mark & reset) {
+			Integer byteOb = (Integer) buffer.get(point);
+			temp = byteOb.intValue();
+			if (buffer.get(point).equals(buffer.getLast())) {
+				reset = false;
+				point = 0;
+			} else {
+				point++;
+			}
+		} else if (mark) {
+			temp = inStream.read();
+			buffer.add(new Integer(temp));
+		} else if (reset) {
+			if (buffer.isEmpty()) {
+				reset = false;
+				temp = inStream.read();
+			} else {
+				Integer byteOb = (Integer) buffer.getFirst();
+				temp = byteOb.intValue();
+				buffer.removeFirst();
+			}
+		} else {
+			temp = inStream.read();
+		}
+		return temp;
+	}
 
-    public void mark() {
-        if (!reset) {
-            buffer.clear();
-        }
-        mark = true;
-    }
+	public void mark() {
+		if (!reset) {
+			buffer.clear();
+		}
+		mark = true;
+	}
 
-    public void reset() throws IOException {
-        if (mark) {
-            reset = true;
-            mark = false;
-            point = 0;
-        } else {
-            throw new IOException("not marked");
-        }
-    }
+	public void reset() throws IOException {
+		if (mark) {
+			reset = true;
+			mark = false;
+			point = 0;
+		} else {
+			throw new IOException("not marked");
+		}
+	}
 }

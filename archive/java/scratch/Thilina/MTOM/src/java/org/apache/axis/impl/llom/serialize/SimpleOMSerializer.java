@@ -1,17 +1,22 @@
 package org.apache.axis.impl.llom.serialize;
 
+import java.io.ByteArrayOutputStream;
+import java.util.Iterator;
+import java.util.Vector;
+
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
+
 import org.apache.axis.encoding.Base64;
 import org.apache.axis.impl.llom.OMAttributeImpl;
 import org.apache.axis.impl.llom.OMNamespaceImpl;
 import org.apache.axis.impl.llom.mtom.MTOMXMLStreamWriter;
 import org.apache.axis.impl.llom.mtom.OMBlob;
-import org.apache.axis.om.*;
-
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
-import java.io.ByteArrayOutputStream;
-import java.util.Iterator;
-import java.util.Vector;
+import org.apache.axis.om.OMAttribute;
+import org.apache.axis.om.OMElement;
+import org.apache.axis.om.OMNamespace;
+import org.apache.axis.om.OMNode;
+import org.apache.axis.om.OMText;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -124,7 +129,7 @@ public class SimpleOMSerializer {
     protected void serializeBlob(OMBlob blob, XMLStreamWriter xmlWriter)
             throws XMLStreamException {
 
-        if (xmlWriter instanceof MTOMXMLStreamWriter & blob.isMTOMable()) {
+        if (xmlWriter instanceof MTOMXMLStreamWriter) {
             MTOMXMLStreamWriter writer = (MTOMXMLStreamWriter) xmlWriter;
             OMNamespace ns = new OMNamespaceImpl("http://www.w3.org/2004/08/xop/Include", "xop");
             String prefix = null;

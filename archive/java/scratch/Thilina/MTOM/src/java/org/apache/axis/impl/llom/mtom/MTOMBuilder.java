@@ -1,12 +1,13 @@
 package org.apache.axis.impl.llom.mtom;
 
+import java.io.InputStream;
+import java.util.LinkedList;
+import java.util.ListIterator;
+
 import javax.activation.DataHandler;
 import javax.mail.internet.MimeBodyPart;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
-import java.io.InputStream;
-import java.util.LinkedList;
-import java.util.ListIterator;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -29,86 +30,88 @@ import java.util.ListIterator;
  * @author Thilina Gunarathne thil747@yahoo.com
  */
 public class MTOMBuilder {
-    LinkedList parts;
+	LinkedList parts;
 
-    InputStream inStream;
+	InputStream inStream;
 
-    MIMEParser parser;
+	MIMEParser parser;
 
-    public MTOMBuilder(InputStream inStream) {
-        this.inStream = inStream;
-        this.parser = new MIMEParser(inStream);
-        parts = new LinkedList();
-    }
+	public MTOMBuilder(InputStream inStream) {
+		this.inStream = inStream;
+		this.parser = new MIMEParser(inStream);
+		parts = new LinkedList();
+	}
 
-    public/* Serializable */DataHandler getDataHandler(String cid)
-            throws Exception {
-        /*
-         * First checks whether the part is already parsed by checking the parts
-         * linked list. If it is not parsed yet then call the getnextPart() till
-         * we find the required part.
-         */
-        MimeBodyPart part;
+	public DataHandler getDataHandler(String cid) throws Exception {
+		/*
+		 * First checks whether the part is already parsed by checking the parts
+		 * linked list. If it is not parsed yet then call the getnextPart() till
+		 * we find the required part.
+		 */
+		MimeBodyPart part;
 
-        boolean found = false;
-        ListIterator partsIterator = parts.listIterator();
-        while (partsIterator.hasNext()) {
-            part = (MimeBodyPart) partsIterator.next();
-            if (cid.equals(part.getContentID())) {
-                found = true;
-                DataHandler dh = part.getDataHandler();
-                return dh;
-            }
-        }
-        while (!found) {
-            part = this.getNextPart();
+		boolean found = false;
+		ListIterator partsIterator = parts.listIterator();
+		while (partsIterator.hasNext()) {
+			part = (MimeBodyPart) partsIterator.next();
+			if (cid.equals(part.getContentID())) {
+				found = true;
+				DataHandler dh = part.getDataHandler();
+				return dh;
+			}
+		}
+		while (!found) {
+			part = this.getNextPart();
 
-            if (part == null) {
-                break;
-            }
-            String partCid = part.getContentID();
-            String cida = "<" + cid + ">";
-            if (cida.equals(partCid)) {
-                found = true;
-                DataHandler dh = part.getDataHandler();
-                return dh;
-            }
-        }
-        return null;
-    }
+			if (part == null) {
+				break;
+			}
+			String partCid = part.getContentID();
+			String cida = "<" + cid + ">";
+			if (cida.equals(partCid)) {
+				found = true;
+				DataHandler dh = part.getDataHandler();
+				return dh;
+			}
+		}
+		return null;
+	}
 
-    public XMLStreamReader getParser() throws Exception {
+	public XMLStreamReader getParser() throws Exception {
 
-        if (parser.mimeMessage()) {
-            MimeBodyPart root = getRoot();
-            return XMLInputFactory.newInstance().createXMLStreamReader(root.getInputStream());
-        } else {
-            return XMLInputFactory.newInstance()
-                    .createXMLStreamReader(inStream);
-        }
-    }
+		if (parser.mimeMessage()) {
+			MimeBodyPart root = getRoot();
+			return XMLInputFactory.newInstance().createXMLStreamReader(
+					root.getInputStream());
+		} else {
+			return XMLInputFactory.newInstance()
+					.createXMLStreamReader(inStream);
+		}
+	}
 
-    public MimeBodyPart getRoot() throws Exception {
-        MimeBodyPart root;
-        if (parts.isEmpty()) {
-            root = parser.getPart();
-            parts.add(root);
-        } else {
-            root = (MimeBodyPart) parts.getFirst();
-        }
-        System.out.println("MIME root parsed. NO of parts parsed :" + parts.size());
-        return root;
-    }
+	public MimeBodyPart getRoot() throws Exception {
+		MimeBodyPart root;
+		if (parts.isEmpty()) {
+			root = parser.getPart();
+			parts.add(root);
+		} else {
+			root = (MimeBodyPart) parts.getFirst();
+		}
+		System.out.println("MIME root parsed. NO of parts parsed :"
+				+ parts.size());
+		return root;
+	}
 
-    public MimeBodyPart getNextPart() throws Exception {
-        MimeBodyPart nextPart;
-        nextPart = parser.getPart();
-        if (nextPart != null) {
-            parts.add(nextPart);
-            System.out.println("Next part parsed. NO of parts parsed :" + parts.size());
-            return nextPart;
-        } else
-            return null;
-    }
+	public MimeBodyPart getNextPart() throws Exception {
+		MimeBodyPart nextPart;
+		nextPart = parser.getPart();
+		if (nextPart != null) {
+			parts.add(nextPart);
+			System.out.println("Next part parsed. NO of parts parsed :"
+					+ parts.size());
+			return nextPart;
+		} else
+			return null;
+	}
 
 }

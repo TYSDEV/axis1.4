@@ -1,9 +1,9 @@
 package org.apache.axis.impl.llom.serialize;
 
+import javax.xml.stream.XMLStreamReader;
+
 import org.apache.axis.om.OMElement;
 import org.apache.axis.om.StreamingWrapper;
-
-import javax.xml.stream.XMLStreamReader;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
