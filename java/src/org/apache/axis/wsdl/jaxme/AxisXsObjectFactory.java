@@ -52,28 +52,20 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-package org.apache.axis.wsdl.gen;
 
-import java.io.IOException;
+package org.apache.axis.wsdl.jaxme;
+import org.apache.ws.jaxme.xs.xml.XsObject;
+import org.apache.ws.jaxme.xs.xml.XsTAttribute;
+import org.apache.ws.jaxme.xs.xml.impl.XsObjectFactoryImpl;
 
 /**
- * This is the interface for all writers.  All writers, very simply, must
- * support a write method.
- * <p/>
- * Writer and WriterFactory are part of the Writer framework.  Folks who want
- * to use the emitter to generate stuff from WSDL should do 3 things:
- * 1.  Write implementations of the Writer interface, one each for PortType,
- * Binding, Service, and Type.  These implementations generate the stuff
- * for each of these WSDL types.
- * 2.  Write an implementation of the WriterFactory interface that returns
- * instantiations of these Writer implementations as appropriate.
- * 3.  Implement a class with a main method (like Wsdl2java) that instantiates
- * an emitter and passes it the WriterFactory implementation
+ * These classes are to extend the JAXME XSParser
+ * @author Srinath Perera(hemapani@opensource.lk)
  */
-public interface Generator {
+	public class AxisXsObjectFactory extends XsObjectFactoryImpl {
+    public XsTAttribute newXsTAttribute(XsObject arg0) {
+        // TODO Auto-generated method stub
+        return new AxisXsTAttribute(arg0,getContext());
+    }
 
-    /**
-     * Generate something.
-     */
-    public void generate() throws IOException;
 }

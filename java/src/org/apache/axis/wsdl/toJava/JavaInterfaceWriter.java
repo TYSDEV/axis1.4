@@ -54,17 +54,17 @@
  */
 package org.apache.axis.wsdl.toJava;
 
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Iterator;
+
+import javax.wsdl.Operation;
+import javax.wsdl.PortType;
+
 import org.apache.axis.wsdl.symbolTable.BindingEntry;
 import org.apache.axis.wsdl.symbolTable.Parameters;
 import org.apache.axis.wsdl.symbolTable.PortTypeEntry;
 import org.apache.axis.wsdl.symbolTable.SymbolTable;
-import org.xml.sax.SAXException;
-
-import javax.wsdl.Operation;
-import javax.wsdl.PortType;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.Iterator;
 
 /**
  * This is Wsdl2java's PortType Writer.  It writes the <portTypeName>.java file
@@ -98,22 +98,18 @@ public class JavaInterfaceWriter extends JavaClassWriter {
         this.bEntry = bEntry;
     }    // ctor
 
-    /**
-     * Override generate method to prevent duplicate interfaces because
-     * of two bindings referencing the same portType
-     * 
-     * @throws IOException  
-     * @throws SAXException 
-     */
-    public void generate() throws IOException, SAXException {
+	/**
+	 * Override generate method to prevent duplicate interfaces because
+	 * of two bindings referencing the same portType
+	 */
+	public void generate() throws IOException{
+		String fqClass = getPackage() + "." + getClassName();
 
-        String fqClass = getPackage() + "." + getClassName();
-
-        // Do not emit the same portType/interface twice
-        if (!emitter.getGeneratedFileInfo().getClassNames().contains(fqClass)) {
-            super.generate();
-        }
-    }    // generate
+		// Do not emit the same portType/interface twice
+		if (!emitter.getGeneratedFileInfo().getClassNames().contains(fqClass)) {
+			 super.generate();
+		}
+	} // generate
 
     /**
      * Returns "interface ".

@@ -285,13 +285,19 @@ public class FaultInfo {
             if (part.getTypeName() != null) {
                 return part.getTypeName();
             }
-
+///JAXME_REFACTOR//////////////////////////////////////////////////            
+//            // Literal, so get the element's type
+//            TypeEntry entry = st.getElement(part.getElementName());
+//            if (entry != null && entry.getRefType() != null) {
+//                return entry.getRefType().getQName();
+//            }
+//NEWCODE///////////////////////////////////////////////////////////////
             // Literal, so get the element's type
-            TypeEntry entry = st.getElement(part.getElementName());
-
-            if ((entry != null) && (entry.getRefType() != null)) {
-                return entry.getRefType().getQName();
+			SchemaElement entry = st.getElement(part.getElementName());
+			if (entry != null && entry.getType() != null) {
+				return entry.getType().getQName();
             }
+////////////////////////////////////////////////////////////////
         }
 
         return null;

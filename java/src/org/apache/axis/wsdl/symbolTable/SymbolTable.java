@@ -52,33 +52,22 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
+
 package org.apache.axis.wsdl.symbolTable;
 
-import org.apache.axis.Constants;
-import org.apache.axis.enum.Style;
-import org.apache.axis.enum.Use;
-import org.apache.axis.utils.Messages;
-import org.apache.axis.utils.URLHashSet;
-import org.apache.axis.utils.XMLUtils;
-import org.apache.ws.jaxme.util.DOMSerializer;
-import org.apache.ws.jaxme.xs.XSAttributable;
-import org.apache.ws.jaxme.xs.XSAttribute;
-import org.apache.ws.jaxme.xs.XSComplexType;
-import org.apache.ws.jaxme.xs.XSContentHandler;
-import org.apache.ws.jaxme.xs.XSElement;
-import org.apache.ws.jaxme.xs.XSParser;
-import org.apache.ws.jaxme.xs.XSParticle;
-import org.apache.ws.jaxme.xs.XSSchema;
-import org.apache.ws.jaxme.xs.XSType;
-import org.apache.ws.jaxme.xs.xml.XsQName;
-import org.apache.xml.serialize.OutputFormat;
-import org.apache.xml.serialize.XMLSerializer;
-import org.w3c.dom.Document;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
+import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Vector;
 
 import javax.wsdl.Binding;
 import javax.wsdl.BindingFault;
@@ -112,44 +101,48 @@ import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLReader;
 import javax.xml.namespace.QName;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.rpc.holders.BooleanHolder;
-import javax.xml.rpc.holders.IntHolder;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.io.Writer;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Vector;
+
+import org.apache.axis.Constants;
+import org.apache.axis.enum.Style;
+import org.apache.axis.enum.Use;
+import org.apache.axis.utils.Messages;
+import org.apache.axis.utils.URLHashSet;
+import org.apache.axis.utils.XMLUtils;
+import org.apache.axis.wsdl.jaxme.AxisAttributeImpl;
+import org.apache.axis.wsdl.jaxme.AxisXSParser;
+import org.apache.axis.wsdl.jaxme.JAXMEInternalException;
+import org.apache.ws.jaxme.xs.XSAnnotation;
+import org.apache.ws.jaxme.xs.XSAppinfo;
+import org.apache.ws.jaxme.xs.XSAttributable;
+import org.apache.ws.jaxme.xs.XSAttribute;
+import org.apache.ws.jaxme.xs.XSComplexType;
+import org.apache.ws.jaxme.xs.XSElement;
+import org.apache.ws.jaxme.xs.XSParser;
+import org.apache.ws.jaxme.xs.XSParticle;
+import org.apache.ws.jaxme.xs.XSSchema;
+import org.apache.ws.jaxme.xs.XSType;
+import org.apache.ws.jaxme.xs.xml.XsQName;
+import org.w3c.dom.Attr;
+import org.w3c.dom.Document;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+
 
 /**
- * This class represents a table of all of the top-level symbols from a set of WSDL Definitions and
- * DOM Documents:  XML types; WSDL messages, portTypes, bindings, and services.
- * <p/>
- * This symbolTable contains entries of the form <key, value> where key is of type QName and value is
- * of type Vector.  The Vector's elements are all of the objects that have the given QName.  This is
- * necessary since names aren't unique among the WSDL types.  message, portType, binding, service,
- * could all have the same QName and are differentiated merely by type.  SymbolTable contains
- * type-specific getters to bypass the Vector layer:
- * public PortTypeEntry getPortTypeEntry(QName name), etc.
- */
+* This class represents a table of all of the top-level symbols from a set of WSDL Definitions and
+* DOM Documents:  XML types; WSDL messages, portTypes, bindings, and services.
+*
+* This symbolTable contains entries of the form <key, value> where key is of type QName and value is
+* of type Vector.  The Vector's elements are all of the objects that have the given QName.  This is
+* necessary since names aren't unique among the WSDL types.  message, portType, binding, service,
+* could all have the same QName and are differentiated merely by type.  SymbolTable contains
+* type-specific getters to bypass the Vector layer:
+*   public PortTypeEntry getPortTypeEntry(QName name), etc.
+*/
 public class SymbolTable {
-
     // Should the contents of imported files be added to the symbol table?
-
-    /** Field addImports */
     private boolean addImports;
 
     // The actual symbol table.  This symbolTable contains entries of the form
@@ -161,226 +154,164 @@ public class SymbolTable {
     // getters to bypass the Vector layer:
     // public PortTypeEntry getPortTypeEntry(QName name), etc.
 
-    /** Field symbolTable */
     private HashMap symbolTable = new HashMap();
 
     // a map of qnames -> Elements in the symbol table
-
-    /** Field elementTypeEntries */
     private final Map elementTypeEntries = new HashMap();
-
     // an unmodifiable wrapper so that we can share the index with others, safely
-
-    /** Field elementIndex */
     private final Map elementIndex =
-            Collections.unmodifiableMap(elementTypeEntries);
-
+        Collections.unmodifiableMap(elementTypeEntries);
     // a map of qnames -> Types in the symbol table
-
-    /** Field typeTypeEntries */
     private final Map typeTypeEntries = new HashMap();
-
     // an unmodifiable wrapper so that we can share the index with others, safely
-
-    /** Field typeIndex */
     private final Map typeIndex = Collections.unmodifiableMap(typeTypeEntries);
 
-    /**
-     * cache of nodes -> base types for complexTypes.  The cache is
+    /** cache of nodes -> base types for complexTypes.  The cache is
      * built on nodes because multiple TypeEntry objects may use the
      * same node.
      */
     protected final Map node2ExtensionBase = new HashMap();
-
     // allow friendly access
 
-    /** Field verbose */
     private boolean verbose;
 
-    /** Field btm */
     private BaseTypeMapping btm = null;
 
     // should we attempt to treat document/literal WSDL as "rpc-style"
-
-    /** Field nowrap */
     private boolean nowrap;
-
     // Did we encounter wraped mode WSDL
-
-    /** Field wrapped */
     private boolean wrapped = false;
 
-    /** Field ANON_TOKEN */
     public static final String ANON_TOKEN = ">";
 
-    /** Field def */
     private Definition def = null;
-
-    /** Field wsdlURI */
     private String wsdlURI = null;
 
     /**
      * Construct a symbol table with the given Namespaces.
-     * 
-     * @param btm        
-     * @param addImports 
-     * @param verbose    
-     * @param nowrap     
      */
-    public SymbolTable(BaseTypeMapping btm, boolean addImports,
-                       boolean verbose, boolean nowrap) {
-
+    public SymbolTable(
+        BaseTypeMapping btm,
+        boolean addImports,
+        boolean verbose,
+        boolean nowrap) {
         this.btm = btm;
         this.addImports = addImports;
         this.verbose = verbose;
         this.nowrap = nowrap;
-    }    // ctor
+    } // ctor
 
     /**
      * Get the raw symbol table HashMap.
-     * 
-     * @return 
      */
+    private static HashMap tempsymbolTable; 
+    
     public HashMap getHashMap() {
-        return symbolTable;
-    }    // getHashMap
+        return tempsymbolTable;
+    } // getHashMap
 
-    /**
-     * Get the list of entries with the given QName.  Since symbols can share QNames, this list is
-     * necessary.  This list will not contain any more than one element of any given SymTabEntry.
-     * 
-     * @param qname 
-     * @return 
-     */
-    public Vector getSymbols(QName qname) {
-        return (Vector) symbolTable.get(qname);
-    }    // get
+//    /**
+//     * Get the list of entries with the given QName.  Since symbols can share QNames, this list is
+//     * necessary.  This list will not contain any more than one element of any given SymTabEntry.
+//     */
+//    public Vector getSymbols(QName qname) {
+//        return (Vector) symbolTable.get(qname);
+//    } // get
 
     /**
      * Get the entry with the given QName of the given class.  If it does not exist, return null.
-     * 
-     * @param qname 
-     * @param cls   
-     * @return 
      */
     public SymTabEntry get(QName qname, Class cls) {
-
         Vector v = (Vector) symbolTable.get(qname);
-
         if (v == null) {
             return null;
         } else {
             for (int i = 0; i < v.size(); ++i) {
                 SymTabEntry entry = (SymTabEntry) v.elementAt(i);
-
                 if (cls.isInstance(entry)) {
                     return entry;
                 }
             }
-
             return null;
         }
-    }    // get
+    } // get
 
     /**
      * Get the type entry for the given qname.
-     * 
-     * @param qname           
+     * @param qname
      * @param wantElementType boolean that indicates type or element (for type= or ref=)
-     * @return 
      */
-    public TypeEntry getTypeEntry(QName qname, boolean wantElementType) {
-
-        if (wantElementType) {
-            return getElement(qname);
-        } else {
-            return getType(qname);
-        }
-    }    // getTypeEntry
+//    public TypeEntry getTypeEntry(QName qname, boolean wantElementType) {
+//        if (wantElementType) {
+//            return getElement(qname);
+//        } else
+//            return getType(qname);
+//    } // getTypeEntry
 
     /**
      * Get the Type TypeEntry with the given QName.  If it doesn't
      * exist, return null.
-     * 
-     * @param qname 
-     * @return 
      */
-    public Type getType(QName qname) {
-        return (Type) typeTypeEntries.get(qname);
-    }    // getType
+    public SchemaType getType(QName qname) {
+       // return (Type) typeTypeEntries.get(qname);
+       return getSchemaType(qname);
+    } // getType
 
     /**
      * Get the Element TypeEntry with the given QName.  If it doesn't
      * exist, return null.
-     * 
-     * @param qname 
-     * @return 
      */
-    public Element getElement(QName qname) {
-        return (Element) elementTypeEntries.get(qname);
-    }    // getElement
+    public SchemaElement getElement(QName qname) {
+        //return (Element) elementTypeEntries.get(qname);
+		return getToplevelElement(qname);
+    } // getElement
 
     /**
      * Get the MessageEntry with the given QName.  If it doesn't exist, return null.
-     * 
-     * @param qname 
-     * @return 
      */
     public MessageEntry getMessageEntry(QName qname) {
         return (MessageEntry) get(qname, MessageEntry.class);
-    }    // getMessageEntry
+    } // getMessageEntry
 
     /**
      * Get the PortTypeEntry with the given QName.  If it doesn't exist, return null.
-     * 
-     * @param qname 
-     * @return 
      */
     public PortTypeEntry getPortTypeEntry(QName qname) {
         return (PortTypeEntry) get(qname, PortTypeEntry.class);
-    }    // getPortTypeEntry
+    } // getPortTypeEntry
 
     /**
      * Get the BindingEntry with the given QName.  If it doesn't exist, return null.
-     * 
-     * @param qname 
-     * @return 
      */
     public BindingEntry getBindingEntry(QName qname) {
         return (BindingEntry) get(qname, BindingEntry.class);
-    }    // getBindingEntry
+    } // getBindingEntry
 
     /**
      * Get the ServiceEntry with the given QName.  If it doesn't exist, return null.
-     * 
-     * @param qname 
-     * @return 
      */
     public ServiceEntry getServiceEntry(QName qname) {
         return (ServiceEntry) get(qname, ServiceEntry.class);
-    }    // getServiceEntry
+    } // getServiceEntry
 
     /**
      * Get the list of all the XML schema types in the symbol table.  In other words, all entries
      * that are instances of TypeEntry.
-     * 
-     * @return 
+     *
      * @deprecated use specialized get{Element,Type}Index() methods instead
      */
-    public Vector getTypes() {
-
-        Vector v = new Vector();
-
-        v.addAll(elementTypeEntries.values());
-        v.addAll(typeTypeEntries.values());
-
-        return v;
-    }    // getTypes
+    public Collection getTypes() {
+//        Vector v = new Vector();
+//        v.addAll(elementTypeEntries.values());
+//        v.addAll(typeTypeEntries.values());
+//        return v;
+		return this.schemaTypes.values();
+    } // getTypes
 
     /**
      * Return an unmodifiable map of qnames -> Elements in the symbol
      * table.
-     * 
+     *
      * @return an unmodifiable <code>Map</code> value
      */
     public Map getElementIndex() {
@@ -390,16 +321,17 @@ public class SymbolTable {
     /**
      * Return an unmodifiable map of qnames -> Elements in the symbol
      * table.
-     * 
+     *
      * @return an unmodifiable <code>Map</code> value
      */
     public Map getTypeIndex() {
-        return typeIndex;
+        //TODO JAXME REFACTOR
+        return schemaTypes;
     }
 
     /**
      * Return the count of TypeEntries in the symbol table.
-     * 
+     *
      * @return an <code>int</code> value
      */
     public int getTypeEntryCount() {
@@ -409,27 +341,22 @@ public class SymbolTable {
     /**
      * Get the Definition.  The definition is null until
      * populate is called.
-     * 
-     * @return 
      */
     public Definition getDefinition() {
         return def;
-    }    // getDefinition
+    } // getDefinition
 
     /**
      * Get the WSDL URI.  The WSDL URI is null until populate
      * is called, and ONLY if a WSDL URI is provided.
-     * 
-     * @return 
+     *
      */
     public String getWSDLURI() {
         return wsdlURI;
-    }    // getWSDLURI
+    } // getWSDLURI
 
     /**
      * Are we wrapping literal soap body elements.
-     * 
-     * @return 
      */
     public boolean isWrapped() {
         return wrapped;
@@ -437,8 +364,6 @@ public class SymbolTable {
 
     /**
      * Turn on/off element wrapping for literal soap body's.
-     * 
-     * @param wrapped 
      */
     public void setWrapped(boolean wrapped) {
         this.wrapped = wrapped;
@@ -446,257 +371,218 @@ public class SymbolTable {
 
     /**
      * Dump the contents of the symbol table.  For debugging purposes only.
-     * 
-     * @param out 
      */
     public void dump(java.io.PrintStream out) {
-
         out.println();
         out.println(Messages.getMessage("symbolTable00"));
         out.println("-----------------------");
-
         Iterator it = symbolTable.values().iterator();
-
         while (it.hasNext()) {
             Vector v = (Vector) it.next();
-
             for (int i = 0; i < v.size(); ++i) {
                 out.println(v.elementAt(i).getClass().getName());
                 out.println(v.elementAt(i));
             }
         }
-
         out.println("-----------------------");
-    }    // dump
+    } // dump
 
     /**
      * Call this method if you have a uri for the WSDL document
-     * 
      * @param uri wsdlURI the location of the WSDL file.
-     * @throws IOException                  
-     * @throws WSDLException                
-     * @throws SAXException                 
-     * @throws ParserConfigurationException 
      */
+
     public void populate(String uri)
-            throws IOException, WSDLException, SAXException,
+        throws
+            IOException,
+            WSDLException,
+            SAXException,
             ParserConfigurationException {
         populate(uri, null, null);
-    }    // populate
+    } // populate
 
-    /**
-     * Method populate
-     * 
-     * @param uri      
-     * @param username 
-     * @param password 
-     * @throws IOException                  
-     * @throws WSDLException                
-     * @throws SAXException                 
-     * @throws ParserConfigurationException 
-     */
     public void populate(String uri, String username, String password)
-            throws IOException, WSDLException, SAXException,
+        throws
+            IOException,
+            WSDLException,
+            SAXException,
             ParserConfigurationException {
-
-        if (verbose) {
+        if (verbose)
             System.out.println(Messages.getMessage("parsing00", uri));
-        }
 
         Document doc = XMLUtils.newDocument(uri, username, password);
-
         this.wsdlURI = uri;
-
         try {
             File f = new File(uri);
-
             if (f.exists()) {
                 uri = f.toURL().toString();
             }
         } catch (Exception e) {
         }
-
         populate(uri, doc);
-    }    // populate
+    } // populate
 
     /**
      * Call this method if your WSDL document has already been parsed as an XML DOM document.
-     * 
      * @param context context This is directory context for the Document.  If the Document were from file "/x/y/z.wsdl" then the context could be "/x/y" (even "/x/y/z.wsdl" would work).  If context is null, then the context becomes the current directory.
-     * @param doc     doc This is the XML Document containing the WSDL.
-     * @throws IOException                  
-     * @throws SAXException                 
-     * @throws WSDLException                
-     * @throws ParserConfigurationException 
+     * @param doc doc This is the XML Document containing the WSDL.
      */
     public void populate(String context, Document doc)
-            throws IOException, SAXException, WSDLException,
+        throws
+            IOException,
+            SAXException,
+            WSDLException,
             ParserConfigurationException {
-
         WSDLReader reader = WSDLFactory.newInstance().newWSDLReader();
-
         reader.setFeature("javax.wsdl.verbose", verbose);
-
         this.def = reader.readWSDL(context, doc);
-
         add(context, def, doc);
-    }    // populate
+    } // populate
 
     /**
      * Add the given Definition and Document information to the symbol table (including imported
      * symbols), populating it with SymTabEntries for each of the top-level symbols.  When the
      * symbol table has been populated, iterate through it, setting the isReferenced flag
      * appropriately for each entry.
-     * 
-     * @param context 
-     * @param def     
-     * @param doc     
-     * @throws IOException                  
-     * @throws SAXException                 
-     * @throws WSDLException                
-     * @throws ParserConfigurationException 
      */
     protected void add(String context, Definition def, Document doc)
-            throws IOException, SAXException, WSDLException,
+        throws
+            IOException,
+            SAXException,
+            WSDLException,
             ParserConfigurationException {
-
-        URL contextURL = (context == null)
-                ? null
-                : getURL(null, context);
-
+        URL contextURL = context == null ? null : getURL(null, context);
         populate(contextURL, def, doc, null);
-        checkForUndefined();
+        //this will take care of the jaxme
+        //checkForUndefined();
         populateParameters();
-        setReferences(def, doc);    // uses wrapped flag set in populateParameters
-    }    // add
+
+		buildTheSchemaTypes();
+
+		changeTheHashMaps();
+		
+		////////////////////////
+        setReferences(def, doc); // uses wrapped flag set in populateParameters
+    } // add
 
     /**
      * Scan the Definition for undefined objects and throw an error.
-     * 
-     * @param def      
-     * @param filename 
-     * @throws IOException 
      */
     private void checkForUndefined(Definition def, String filename)
-            throws IOException {
-
+        throws IOException {
         if (def != null) {
-
             // Bindings
             Iterator ib = def.getBindings().values().iterator();
-
             while (ib.hasNext()) {
                 Binding binding = (Binding) ib.next();
-
                 if (binding.isUndefined()) {
                     if (filename == null) {
                         throw new IOException(
-                                Messages.getMessage(
-                                        "emitFailtUndefinedBinding01",
-                                        binding.getQName().getLocalPart()));
+                            Messages.getMessage(
+                                "emitFailtUndefinedBinding01",
+                                binding.getQName().getLocalPart()));
                     } else {
                         throw new IOException(
-                                Messages.getMessage(
-                                        "emitFailtUndefinedBinding02",
-                                        binding.getQName().getLocalPart(), filename));
+                            Messages.getMessage(
+                                "emitFailtUndefinedBinding02",
+                                binding.getQName().getLocalPart(),
+                                filename));
                     }
                 }
             }
 
             // portTypes
             Iterator ip = def.getPortTypes().values().iterator();
-
             while (ip.hasNext()) {
                 PortType portType = (PortType) ip.next();
-
                 if (portType.isUndefined()) {
                     if (filename == null) {
                         throw new IOException(
-                                Messages.getMessage(
-                                        "emitFailtUndefinedPort01",
-                                        portType.getQName().getLocalPart()));
+                            Messages.getMessage(
+                                "emitFailtUndefinedPort01",
+                                portType.getQName().getLocalPart()));
                     } else {
                         throw new IOException(
-                                Messages.getMessage(
-                                        "emitFailtUndefinedPort02",
-                                        portType.getQName().getLocalPart(), filename));
+                            Messages.getMessage(
+                                "emitFailtUndefinedPort02",
+                                portType.getQName().getLocalPart(),
+                                filename));
                     }
                 }
             }
 
-            /*
-             * tomj: This is a bad idea, faults seem to be undefined
-             * // RJB reply:  this MUST be done for those systems that do something with
-             * // messages.  Perhaps we have to do an extra step for faults?  I'll leave
-             * // this commented for now, until someone uses this generator for something
-             * // other than WSDL2Java.
-             *           // Messages
-             *           Iterator i = def.getMessages().values().iterator();
-             *           while (i.hasNext()) {
-             *               Message message = (Message) i.next();
-             *               if (message.isUndefined()) {
-             *                   throw new IOException(
-             *                           Messages.getMessage("emitFailtUndefinedMessage01",
-             *                                   message.getQName().getLocalPart()));
-             *               }
-             *           }
-             */
+            /* tomj: This is a bad idea, faults seem to be undefined
+            // RJB reply:  this MUST be done for those systems that do something with
+            // messages.  Perhaps we have to do an extra step for faults?  I'll leave
+            // this commented for now, until someone uses this generator for something
+            // other than WSDL2Java.
+                        // Messages
+                        Iterator i = def.getMessages().values().iterator();
+                        while (i.hasNext()) {
+                            Message message = (Message) i.next();
+                            if (message.isUndefined()) {
+                                throw new IOException(
+                                        Messages.getMessage("emitFailtUndefinedMessage01",
+                                                message.getQName().getLocalPart()));
+                            }
+                        }
+            */
         }
     }
 
-    /**
-     * Scan the symbol table for undefined types and throw an exception.
-     * 
-     * @throws IOException 
-     */
-    private void checkForUndefined() throws IOException {
-
-        Iterator it = symbolTable.values().iterator();
-
-        while (it.hasNext()) {
-            Vector v = (Vector) it.next();
-
-            for (int i = 0; i < v.size(); ++i) {
-                SymTabEntry entry = (SymTabEntry) v.get(i);
-
-                // Report undefined types
-                if (entry instanceof UndefinedType) {
-                    QName qn = entry.getQName();
-
-                    // Special case dateTime/timeInstant that changed
-                    // from version to version.
-                    if ((qn.getLocalPart().equals(
-                            "dateTime") && !qn.getNamespaceURI().equals(
-                                    Constants.URI_2001_SCHEMA_XSD)) || (qn.getLocalPart().equals(
-                                            "timeInstant") && qn.getNamespaceURI().equals(
-                                                    Constants.URI_2001_SCHEMA_XSD))) {
-                        throw new IOException(
-                                Messages.getMessage(
-                                        "wrongNamespace00", qn.getLocalPart(),
-                                        qn.getNamespaceURI()));
-                    }
-
-                    // Check for a undefined XSD Schema Type and throw
-                    // an unsupported message instead of undefined
-                    if (SchemaUtils.isSimpleSchemaType(entry.getQName())) {
-                        throw new IOException(
-                                Messages.getMessage(
-                                        "unsupportedSchemaType00", qn.getLocalPart()));
-                    }
-
-                    // last case, its some other undefined thing
-                    throw new IOException(
-                            Messages.getMessage(
-                                    "undefined00", entry.getQName().toString()));
-                }    // if undefined
-                else if (entry instanceof UndefinedElement) {
-                    throw new IOException(
-                            Messages.getMessage(
-                                    "undefinedElem00", entry.getQName().toString()));
-                }
-            }
-        }
-    }                // checkForUndefined
+//    /**
+//     * Scan the symbol table for undefined types and throw an exception.
+//     */
+//    private void checkForUndefined() throws IOException {
+//        Iterator it = symbolTable.values().iterator();
+//        while (it.hasNext()) {
+//            Vector v = (Vector) it.next();
+//            for (int i = 0; i < v.size(); ++i) {
+//                SymTabEntry entry = (SymTabEntry) v.get(i);
+//
+//                // Report undefined types
+//                if (entry instanceof UndefinedType) {
+//                    QName qn = entry.getQName();
+//
+//                    // Special case dateTime/timeInstant that changed
+//                    // from version to version.
+//                    if ((qn.getLocalPart().equals("dateTime")
+//                        && !qn.getNamespaceURI().equals(
+//                            Constants.URI_2001_SCHEMA_XSD))
+//                        || (qn.getLocalPart().equals("timeInstant")
+//                            && qn.getNamespaceURI().equals(
+//                                Constants.URI_2001_SCHEMA_XSD))) {
+//                        throw new IOException(
+//                            Messages.getMessage(
+//                                "wrongNamespace00",
+//                                qn.getLocalPart(),
+//                                qn.getNamespaceURI()));
+//                    }
+//
+//                    // Check for a undefined XSD Schema Type and throw
+//                    // an unsupported message instead of undefined
+//                    if (SchemaUtils.isSimpleSchemaType(entry.getQName())) {
+//                        throw new IOException(
+//                            Messages.getMessage(
+//                                "unsupportedSchemaType00",
+//                                qn.getLocalPart()));
+//                    }
+//
+//                    // last case, its some other undefined thing
+//                    throw new IOException(
+//                        Messages.getMessage(
+//                            "undefined00",
+//                            entry.getQName().toString()));
+//                } // if undefined
+//                else if (entry instanceof UndefinedElement) {
+//                    throw new IOException(
+//                        Messages.getMessage(
+//                            "undefinedElem00",
+//                            entry.getQName().toString()));
+//                }
+//            }
+//        }
+//    } // checkForUndefined
 
     /**
      * Add the given Definition and Document information to the symbol table (including imported
@@ -706,80 +592,58 @@ public class SymbolTable {
      * filename will be null.  But we know the names of all imported files.
      */
     private URLHashSet importedFiles = new URLHashSet();
-
-    /**
-     * Method populate
-     * 
-     * @param context  
-     * @param def      
-     * @param doc      
-     * @param filename 
-     * @throws IOException                  
-     * @throws ParserConfigurationException 
-     * @throws SAXException                 
-     * @throws WSDLException                
-     */
     private void populate(
-            URL context, Definition def, Document doc, String filename)
-            throws IOException, ParserConfigurationException, SAXException,
+        URL context,
+        Definition def,
+        Document doc,
+        String filename)
+        throws
+            IOException,
+            ParserConfigurationException,
+            SAXException,
             WSDLException {
-
         if (doc != null) {
             populateTypes(context, doc);
 
             if (addImports) {
-
                 // Add the symbols from any xsd:import'ed documents.
                 lookForImports(context, doc);
             }
         }
-
         if (def != null) {
             checkForUndefined(def, filename);
-
             if (addImports) {
-
                 // Add the symbols from the wsdl:import'ed WSDL documents
                 Map imports = def.getImports();
                 Object[] importKeys = imports.keySet().toArray();
-
                 for (int i = 0; i < importKeys.length; ++i) {
                     Vector v = (Vector) imports.get(importKeys[i]);
-
                     for (int j = 0; j < v.size(); ++j) {
                         Import imp = (Import) v.get(j);
-
                         if (!importedFiles.contains(imp.getLocationURI())) {
                             importedFiles.add(imp.getLocationURI());
-
                             URL url = getURL(context, imp.getLocationURI());
-
-                            populate(url, imp.getDefinition(),
-                                    XMLUtils.newDocument(url.toString()),
-                                    url.toString());
+                            populate(
+                                url,
+                                imp.getDefinition(),
+                                XMLUtils.newDocument(url.toString()),
+                                url.toString());
                         }
                     }
                 }
             }
-
             populateMessages(def);
             populatePortTypes(def);
             populateBindings(def);
             populateServices(def);
         }
-    }    // populate
+    } // populate
 
     /**
      * This is essentially a call to "new URL(contextURL, spec)" with extra handling in case spec is
      * a file.
-     * 
-     * @param contextURL 
-     * @param spec       
-     * @return 
-     * @throws IOException 
      */
     private static URL getURL(URL contextURL, String spec) throws IOException {
-
         // First, fix the slashes as windows filenames may have backslashes
         // in them, but the URL class wont do the right thing when we later
         // process this URL as the contextURL.
@@ -787,20 +651,18 @@ public class SymbolTable {
 
         // See if we have a good URL.
         URL url = null;
-
         try {
-
             // first, try to treat spec as a full URL
             url = new URL(contextURL, path);
 
             // if we are deail with files in both cases, create a url
             // by using the directory of the context URL.
-            if ((contextURL != null) && url.getProtocol().equals("file")
-                    && contextURL.getProtocol().equals("file")) {
+            if (contextURL != null
+                && url.getProtocol().equals("file")
+                && contextURL.getProtocol().equals("file")) {
                 url = getFileURL(contextURL, path);
             }
         } catch (MalformedURLException me) {
-
             // try treating is as a file pathname
             url = getFileURL(contextURL, path);
         }
@@ -809,595 +671,484 @@ public class SymbolTable {
         // above may not exist.  This will be caught later when the URL is
         // accessed.
         return url;
-    }    // getURL
+    } // getURL
 
-    /**
-     * Method getFileURL
-     * 
-     * @param contextURL 
-     * @param path       
-     * @return 
-     * @throws IOException 
-     */
     private static URL getFileURL(URL contextURL, String path)
-            throws IOException {
-
+        throws IOException {
         if (contextURL != null) {
-
             // get the parent directory of the contextURL, and append
             // the spec string to the end.
             String contextFileName = contextURL.getFile();
-            URL parent =
-                    new File(contextFileName).getParentFile().toURL();
-
+            URL parent = new File(contextFileName).getParentFile().toURL();
             if (parent != null) {
                 return new URL(parent, path);
             }
         }
-
         return new URL("file", "", path);
-    }    // getFileURL
+    } // getFileURL
 
     /**
      * Recursively find all xsd:import'ed objects and call populate for each one.
-     * 
-     * @param context 
-     * @param node    
-     * @throws IOException                  
-     * @throws ParserConfigurationException 
-     * @throws SAXException                 
-     * @throws WSDLException                
      */
     private void lookForImports(URL context, Node node)
-            throws IOException, ParserConfigurationException, SAXException,
+        throws
+            IOException,
+            ParserConfigurationException,
+            SAXException,
             WSDLException {
-
         NodeList children = node.getChildNodes();
-
         for (int i = 0; i < children.getLength(); i++) {
             Node child = children.item(i);
-
             if ("import".equals(child.getLocalName())) {
                 NamedNodeMap attributes = child.getAttributes();
                 Node namespace = attributes.getNamedItem("namespace");
-
                 // skip XSD import of soap encoding
-                if ((namespace != null)
-                        && isKnownNamespace(namespace.getNodeValue())) {
+                if (namespace != null
+                    && isKnownNamespace(namespace.getNodeValue())) {
                     continue;
                 }
-
                 Node importFile = attributes.getNamedItem("schemaLocation");
-
                 if (importFile != null) {
                     URL url = getURL(context, importFile.getNodeValue());
-
                     if (!importedFiles.contains(url)) {
                         importedFiles.add(url);
-
                         String filename = url.toString();
-
-                        populate(url, null, XMLUtils.newDocument(filename),
-                                filename);
+                        populate(
+                            url,
+                            null,
+                            XMLUtils.newDocument(filename),
+                            filename);
                     }
                 }
             }
-
             lookForImports(context, child);
         }
-    }    // lookForImports
+    } // lookForImports
 
     /**
      * Check if this is a known namespace (soap-enc or schema xsd or schema xsi or xml)
-     * 
-     * @param namespace 
+     * @param namespace
      * @return true if this is a know namespace.
      */
     public boolean isKnownNamespace(String namespace) {
-
-        if (Constants.isSOAP_ENC(namespace)) {
+        if (Constants.isSOAP_ENC(namespace))
             return true;
-        }
-
-        if (Constants.isSchemaXSD(namespace)) {
+        if (Constants.isSchemaXSD(namespace))
             return true;
-        }
-
-        if (Constants.isSchemaXSI(namespace)) {
+        if (Constants.isSchemaXSI(namespace))
             return true;
-        }
-
-        if (namespace.equals(Constants.NS_URI_XML)) {
+        if (namespace.equals(Constants.NS_URI_XML))
             return true;
-        }
-
         return false;
     }
 
-    // /**
-    // * Populate the symbol table with all of the Types from the Document.
-    // */
-    // public void populateTypes(URL context, Document doc)
-    // throws IOException, SAXException, WSDLException,
-    // ParserConfigurationException {
-    // addTypes(context, doc, ABOVE_SCHEMA_LEVEL);
-    // } // populateTypes
+    //    /**
+    //     * Populate the symbol table with all of the Types from the Document.
+    //     */
+    //    public void populateTypes(URL context, Document doc)
+    //        throws IOException, SAXException, WSDLException, 
+    //               ParserConfigurationException {
+    //        addTypes(context, doc, ABOVE_SCHEMA_LEVEL);
+    //    } // populateTypes
 
     /**
      * Utility method which walks the Document and creates Type objects for
      * each complexType, simpleType, or element referenced or defined.
-     * <p/>
-     * What goes into the symbol table?  In general, only the top-level types
+     *
+     * What goes into the symbol table?  In general, only the top-level types 
      * (ie., those just below
-     * the schema tag).  But base types and references can
+     * the schema tag).  But base types and references can 
      * appear below the top level.  So anything
-     * at the top level is added to the symbol table,
+     * at the top level is added to the symbol table, 
      * plus non-Element types (ie, base and refd)
      * that appear deep within other types.
      */
     private static final int ABOVE_SCHEMA_LEVEL = -1;
-
-    /** Field SCHEMA_LEVEL */
     private static final int SCHEMA_LEVEL = 0;
-
-    /**
-     * Method addTypes
-     * 
-     * @param context 
-     * @param node    
-     * @param level   
-     * @throws IOException                  
-     * @throws ParserConfigurationException 
-     * @throws WSDLException                
-     * @throws SAXException                 
-     */
-    private void addTypes(URL context, Node node, int level)
-            throws IOException, ParserConfigurationException, WSDLException,
-            SAXException {
-
-        if (node == null) {
-            return;
-        }
-
-        // Get the kind of node (complexType, wsdl:part, etc.)
-        QName nodeKind = Utils.getNodeQName(node);
-
-        if (nodeKind != null) {
-            String localPart = nodeKind.getLocalPart();
-            boolean isXSD =
-                    Constants.isSchemaXSD(nodeKind.getNamespaceURI());
-
-            if (((isXSD && localPart.equals("complexType"))
-                    || localPart.equals("simpleType"))) {
-
-                // If an extension or restriction is present,
-                // create a type for the reference
-                Node re = SchemaUtils.getRestrictionOrExtensionNode(node);
-
-                if ((re != null) && (Utils.getAttribute(re, "base") != null)) {
-                    createTypeFromRef(re);
-                }
-
-                // This is a definition of a complex type.
-                // Create a Type.
-                createTypeFromDef(node, false, false);
-            } else if (isXSD && localPart.equals("element")) {
-
-                // Create a type entry for the referenced type
-                createTypeFromRef(node);
-
-                // If an extension or restriction is present,
-                // create a type for the reference
-                Node re = SchemaUtils.getRestrictionOrExtensionNode(node);
-
-                if ((re != null) && (Utils.getAttribute(re, "base") != null)) {
-                    createTypeFromRef(re);
-                }
-
-                // Create a type representing an element.  (This may
-                // seem like overkill, but is necessary to support ref=
-                // and element=.
-                createTypeFromDef(node, true, level > SCHEMA_LEVEL);
-            } else if (isXSD && localPart.equals("attribute")) {
-
-                // Create a type entry for the referenced type
-                BooleanHolder forElement = new BooleanHolder();
-                QName refQName = Utils.getTypeQName(node, forElement,
-                        false);
-
-                if ((refQName != null) && !forElement.value) {
-                    createTypeFromRef(node);
-
-                    // Get the symbol table entry and make sure it is a simple
-                    // type
-                    if (refQName != null) {
-                        TypeEntry refType = getTypeEntry(refQName, false);
-
-                        if ((refType != null)
-                                && (refType instanceof Undefined)) {
-
-                            // Don't know what the type is.
-                            // It better be simple so set it as simple
-                            refType.setSimpleType(true);
-                        } else if ((refType == null)
-                                || (!(refType instanceof BaseType)
-                                && !refType.isSimpleType())) {
-
-                            // Problem if not simple
-                            throw new IOException(
-                                    Messages.getMessage(
-                                            "AttrNotSimpleType01",
-                                            refQName.toString()));
-                        }
-                    }
-                }
-            } else if (isXSD && localPart.equals("any")) {
-
-                // Map xsd:any element to special xsd:any "type"
-                if (getType(Constants.XSD_ANY) == null) {
-                    Type type = new BaseType(Constants.XSD_ANY);
-
-                    symbolTablePut(type);
-                }
-            } else if (localPart.equals("part")
-                    && Constants.isWSDL(nodeKind.getNamespaceURI())) {
-
-                // This is a wsdl part.  Create an TypeEntry representing the reference
-                createTypeFromRef(node);
-            } else if (isXSD && localPart.equals("include")) {
-                String includeName = Utils.getAttribute(node, "schemaLocation");
-
-                if (includeName != null) {
-                    URL url = getURL(context, includeName);
-                    Document includeDoc = XMLUtils.newDocument(url.toString());
-
-                    // Vidyanand : Fix for Bug #15124
-                    org.w3c.dom.Element schemaEl =
-                            includeDoc.getDocumentElement();
-
-                    if (!schemaEl.hasAttribute("targetNamespace")) {
-                        org.w3c.dom.Element parentSchemaEl =
-                                (org.w3c.dom.Element) node.getParentNode();
-
-                        if (parentSchemaEl.hasAttribute("targetNamespace")) {
-
-                            // we need to set two things in here
-                            // 1. targetNamespace
-                            // 2. setup the xmlns=<targetNamespace> attribute
-                            String tns =
-                                    parentSchemaEl.getAttribute("targetNamespace");
-
-                            schemaEl.setAttribute("targetNamespace", tns);
-                            schemaEl.setAttribute("xmlns", tns);
-                        }
-                    }
-
-                    populate(url, null, includeDoc, url.toString());
-                }
-            }
-        }
-
-        if (level == ABOVE_SCHEMA_LEVEL) {
-            if ((nodeKind != null)
-                    && nodeKind.getLocalPart().equals("schema")) {
-                level = SCHEMA_LEVEL;
-            }
-        } else {
-            ++level;
-        }
-
-        // Recurse through children nodes
-        NodeList children = node.getChildNodes();
-
-        for (int i = 0; i < children.getLength(); i++) {
-            addTypes(context, children.item(i), level);
-        }
-    }    // addTypes
-
-    /**
-     * Create a TypeEntry from the indicated node, which defines a type
-     * that represents a complexType, simpleType or element (for ref=).
-     * 
-     * @param node             
-     * @param isElement        
-     * @param belowSchemaLevel 
-     * @throws IOException 
-     */
-    private void createTypeFromDef(
-            Node node, boolean isElement, boolean belowSchemaLevel)
-            throws IOException {
-
-        // Get the QName of the node's name attribute value
-        QName qName = Utils.getNodeNameQName(node);
-
-        if (qName != null) {
-
-            // If the qname is already registered as a base type,
-            // don't create a defining type/element.
-            if (!isElement && (btm.getBaseName(qName) != null)) {
-                return;
-            }
-
-            // If the node has a type or ref attribute, get the
-            // qname representing the type
-            BooleanHolder forElement = new BooleanHolder();
-            QName refQName = Utils.getTypeQName(node, forElement,
-                    false);
-
-            if (refQName != null) {
-
-                // Error check - bug 12362
-                if (qName.getLocalPart().length() == 0) {
-                    String name = Utils.getAttribute(node, "name");
-
-                    if (name == null) {
-                        name = "unknown";
-                    }
-
-                    throw new IOException(Messages.getMessage("emptyref00",
-                            name));
-                }
-
-                // Now get the TypeEntry
-                TypeEntry refType = getTypeEntry(refQName, forElement.value);
-
-                if (!belowSchemaLevel) {
-                    if (refType == null) {
-                        throw new IOException(
-                                Messages.getMessage(
-                                        "absentRef00", refQName.toString(),
-                                        qName.toString()));
-                    }
-
-                    symbolTablePut(new DefinedElement(qName, refType, node,
-                            ""));
-                }
-            } else {
-
-                // Flow to here indicates no type= or ref= attribute.
-                // See if this is an array or simple type definition.
-                IntHolder numDims = new IntHolder();
-
-                numDims.value = 0;
-
-                QName arrayEQName = SchemaUtils.getArrayComponentQName(node,
-                        numDims);
-
-                if (arrayEQName != null) {
-
-                    // Get the TypeEntry for the array element type
-                    refQName = arrayEQName;
-
-                    TypeEntry refType = getTypeEntry(refQName, false);
-
-                    if (refType == null) {
-
-                        // Not defined yet, add one
-                        String baseName = btm.getBaseName(refQName);
-
-                        if (baseName != null) {
-                            refType = new BaseType(refQName);
-                        } else {
-                            refType = new UndefinedType(refQName);
-                        }
-
-                        symbolTablePut(refType);
-                    }
-
-                    // Create a defined type or element that references refType
-                    String dims = "";
-
-                    while (numDims.value > 0) {
-                        dims += "[]";
-
-                        numDims.value--;
-                    }
-
-                    TypeEntry defType = null;
-
-                    if (isElement) {
-                        if (!belowSchemaLevel) {
-                            defType = new DefinedElement(qName, refType, node,
-                                    dims);
-                        }
-                    } else {
-                        defType = new DefinedType(qName, refType, node, dims);
-                    }
-
-                    if (defType != null) {
-                        symbolTablePut(defType);
-                    }
-                } else {
-
-                    // Create a TypeEntry representing this  type/element
-                    String baseName = btm.getBaseName(qName);
-
-                    if (baseName != null) {
-                        symbolTablePut(new BaseType(qName));
-                    } else {
-
-                        // Create a type entry, set whether it should
-                        // be mapped as a simple type, and put it in the
-                        // symbol table.
-                        TypeEntry te = null;
-
-                        if (!isElement) {
-                            te = new DefinedType(qName, node);
-
-                            // check if we are an anonymous type underneath
-                            // an element.  If so, we point the refType of the
-                            // element to us (the real type).
-                            if (qName.getLocalPart().indexOf(ANON_TOKEN) >= 0) {
-                                Node parent = node.getParentNode();
-                                QName parentQName =
-                                        Utils.getNodeNameQName(parent);
-                                TypeEntry parentType = getElement(parentQName);
-
-                                if (parentType != null) {
-                                    parentType.setRefType(te);
-                                }
-                            }
-                        } else {
-                            if (!belowSchemaLevel) {
-                                te = new DefinedElement(qName, node);
-                            }
-                        }
-
-                        if (te != null) {
-                            if (SchemaUtils.isSimpleTypeOrSimpleContent(node)) {
-                                te.setSimpleType(true);
-                            }
-
-                            symbolTablePut(te);
-                        }
-                    }
-                }
-            }
-        }
-    }    // createTypeFromDef
-
-    /**
-     * Node may contain a reference (via type=, ref=, or element= attributes) to
-     * another type.  Create a Type object representing this referenced type.
-     * 
-     * @param node 
-     * @throws IOException 
-     */
-    private void createTypeFromRef(Node node) throws IOException {
-
-        // Get the QName of the node's type attribute value
-        BooleanHolder forElement = new BooleanHolder();
-        QName qName = Utils.getTypeQName(node, forElement, false);
-
-        if (qName != null) {
-
-            // Error check - bug 12362
-            if (qName.getLocalPart().length() == 0) {
-                String name = Utils.getAttribute(node, "name");
-
-                if (name == null) {
-                    name = "unknown";
-                }
-
-                throw new IOException(Messages.getMessage("emptyref00", name));
-            }
-
-            // Get Type or Element depending on whether type attr was used.
-            TypeEntry type = getTypeEntry(qName, forElement.value);
-
-            // A symbol table entry is created if the TypeEntry is not found
-            if (type == null) {
-
-                // See if this is a special QName for collections
-                if (qName.getLocalPart().indexOf("[") > 0) {
-                    QName containedQName = Utils.getTypeQName(node,
-                            forElement, true);
-                    TypeEntry containedTE = getTypeEntry(containedQName,
-                            forElement.value);
-
-                    if (!forElement.value) {
-
-                        // Case of type and maxOccurs
-                        if (containedTE == null) {
-
-                            // Collection Element Type not defined yet, add one.
-                            String baseName = btm.getBaseName(containedQName);
-
-                            if (baseName != null) {
-                                containedTE = new BaseType(containedQName);
-                            } else {
-                                containedTE = new UndefinedType(containedQName);
-                            }
-
-                            symbolTablePut(containedTE);
-                        }
-
-                        symbolTablePut(new CollectionType(qName, containedTE,
-                                node, "[]"));
-                    } else {
-
-                        // Case of ref and maxOccurs
-                        if (containedTE == null) {
-                            containedTE = new UndefinedElement(containedQName);
-
-                            symbolTablePut(containedTE);
-                        }
-
-                        symbolTablePut(new CollectionElement(qName,
-                                containedTE, node,
-                                "[]"));
-                    }
-                } else {
-
-                    // Add a BaseType or Undefined Type/Element
-                    String baseName = btm.getBaseName(qName);
-
-                    if (baseName != null) {
-                        symbolTablePut(new BaseType(qName));
-                    } else if (forElement.value == false) {
-                        symbolTablePut(new UndefinedType(qName));
-                    } else {
-                        symbolTablePut(new UndefinedElement(qName));
-                    }
-                }
-            }
-        }
-    }    // createTypeFromRef
+//    private void addTypes(URL context, Node node, int level)
+//        throws
+//            IOException,
+//            ParserConfigurationException,
+//            WSDLException,
+//            SAXException {
+//        if (node == null) {
+//            return;
+//        }
+//        // Get the kind of node (complexType, wsdl:part, etc.)
+//        QName nodeKind = Utils.getNodeQName(node);
+//
+//        if (nodeKind != null) {
+//            String localPart = nodeKind.getLocalPart();
+//            boolean isXSD = Constants.isSchemaXSD(nodeKind.getNamespaceURI());
+//            if ((isXSD
+//                && localPart.equals("complexType")
+//                || localPart.equals("simpleType"))) {
+//
+//                // If an extension or restriction is present,
+//                // create a type for the reference
+//                Node re = SchemaUtils.getRestrictionOrExtensionNode(node);
+//                if (re != null && Utils.getAttribute(re, "base") != null) {
+//                    createTypeFromRef(re);
+//                }
+//
+//                // This is a definition of a complex type.
+//                // Create a Type.
+//                createTypeFromDef(node, false, false);
+//            } else if (isXSD && localPart.equals("element")) {
+//                // Create a type entry for the referenced type
+//                createTypeFromRef(node);
+//
+//                // If an extension or restriction is present,
+//                // create a type for the reference
+//                Node re = SchemaUtils.getRestrictionOrExtensionNode(node);
+//                if (re != null && Utils.getAttribute(re, "base") != null) {
+//                    createTypeFromRef(re);
+//                }
+//
+//                // Create a type representing an element.  (This may
+//                // seem like overkill, but is necessary to support ref=
+//                // and element=.
+//                createTypeFromDef(node, true, level > SCHEMA_LEVEL);
+//            } else if (isXSD && localPart.equals("attribute")) {
+//                // Create a type entry for the referenced type
+//                BooleanHolder forElement = new BooleanHolder();
+//                QName refQName = Utils.getTypeQName(node, forElement, false);
+//
+//                if (refQName != null && !forElement.value) {
+//                    createTypeFromRef(node);
+//
+//                    // Get the symbol table entry and make sure it is a simple
+//                    // type
+//                    if (refQName != null) {
+//                        TypeEntry refType = getTypeEntry(refQName, false);
+//                        if (refType != null && refType instanceof Undefined) {
+//                            // Don't know what the type is.
+//                            // It better be simple so set it as simple
+//                            refType.setSimpleType(true);
+//                        } else if                    
+//                            (refType == null
+//                                || (!(refType instanceof BaseType)
+//  
+//                                    && !refType.isSimpleType())) {
+////						TODO this should remove
+////                            // Problem if not simple
+////                            throw new IOException(
+////                                Messages.getMessage(
+////                                    "AttrNotSimpleType01",
+////                                    refQName.toString()));
+//                        }
+//                    }
+//                }
+//            } else if (isXSD && localPart.equals("any")) {
+//                // Map xsd:any element to special xsd:any "type"
+//                if (getType(Constants.XSD_ANY) == null) {
+//                    Type type = new BaseType(Constants.XSD_ANY);
+//                    symbolTablePut(type);
+//                }
+//            } else if (
+//                localPart.equals("part")
+//                    && Constants.isWSDL(nodeKind.getNamespaceURI())) {
+//
+//                // This is a wsdl part.  Create an TypeEntry representing the reference
+//                createTypeFromRef(node);
+//            } else if (isXSD && localPart.equals("include")) {
+//                String includeName = Utils.getAttribute(node, "schemaLocation");
+//                if (includeName != null) {
+//                    URL url = getURL(context, includeName);
+//                    Document includeDoc = XMLUtils.newDocument(url.toString());
+//                    // Vidyanand : Fix for Bug #15124
+//                    org.w3c.dom.Element schemaEl =
+//                        includeDoc.getDocumentElement();
+//                    if (!schemaEl.hasAttribute("targetNamespace")) {
+//                        org.w3c.dom.Element parentSchemaEl =
+//                            (org.w3c.dom.Element) node.getParentNode();
+//                        if (parentSchemaEl.hasAttribute("targetNamespace")) {
+//                            // we need to set two things in here
+//                            // 1. targetNamespace
+//                            // 2. setup the xmlns=<targetNamespace> attribute
+//                            String tns =
+//                                parentSchemaEl.getAttribute("targetNamespace");
+//                            schemaEl.setAttribute("targetNamespace", tns);
+//                            schemaEl.setAttribute("xmlns", tns);
+//                        }
+//                    }
+//                    populate(url, null, includeDoc, url.toString());
+//                }
+//            }
+//        }
+//
+//        if (level == ABOVE_SCHEMA_LEVEL) {
+//            if (nodeKind != null && nodeKind.getLocalPart().equals("schema")) {
+//                level = SCHEMA_LEVEL;
+//            }
+//        } else {
+//            ++level;
+//        }
+//
+//        // Recurse through children nodes
+//        NodeList children = node.getChildNodes();
+//        for (int i = 0; i < children.getLength(); i++) {
+//            addTypes(context, children.item(i), level);
+//        }
+//    } // addTypes
+//
+//    /**
+//     * Create a TypeEntry from the indicated node, which defines a type
+//     * that represents a complexType, simpleType or element (for ref=).
+//     */
+//    private void createTypeFromDef(
+//        Node node,
+//        boolean isElement,
+//        boolean belowSchemaLevel)
+//        throws IOException {
+//        // Get the QName of the node's name attribute value
+//        QName qName = Utils.getNodeNameQName(node);
+//        if (qName != null) {
+//
+//            // If the qname is already registered as a base type,
+//            // don't create a defining type/element.
+//            if (!isElement && btm.getBaseName(qName) != null) {
+//                return;
+//            }
+//
+//            // If the node has a type or ref attribute, get the
+//            // qname representing the type
+//            BooleanHolder forElement = new BooleanHolder();
+//            QName refQName = Utils.getTypeQName(node, forElement, false);
+//
+//            if (refQName != null) {
+//                // Error check - bug 12362
+//                if (qName.getLocalPart().length() == 0) {
+//                    String name = Utils.getAttribute(node, "name");
+//                    if (name == null) {
+//                        name = "unknown";
+//                    }
+//                    throw new IOException(
+//                        Messages.getMessage("emptyref00", name));
+//                }
+//
+//                // Now get the TypeEntry
+//                TypeEntry refType = getTypeEntry(refQName, forElement.value);
+//                if (!belowSchemaLevel) {
+//                    if (refType == null) {
+//                        throw new IOException(
+//                            Messages.getMessage(
+//                                "absentRef00",
+//                                refQName.toString(),
+//                                qName.toString()));
+//                    }
+//                    symbolTablePut(
+//                        new DefinedElement(qName, refType, node, ""));
+//                }
+//            } else {
+//                // Flow to here indicates no type= or ref= attribute.
+//
+//                // See if this is an array or simple type definition.
+//                IntHolder numDims = new IntHolder();
+//                numDims.value = 0;
+//                QName arrayEQName =
+//                    SchemaUtils.getArrayComponentQName(node, numDims);
+//
+//                if (arrayEQName != null) {
+//                    // Get the TypeEntry for the array element type
+//                    refQName = arrayEQName;
+//                    TypeEntry refType = getTypeEntry(refQName, false);
+//                    if (refType == null) {
+//                        // Not defined yet, add one
+//                        String baseName = btm.getBaseName(refQName);
+//                        if (baseName != null)
+//                            refType = new BaseType(refQName);
+//                        else
+//                            refType = new UndefinedType(refQName);
+//                        symbolTablePut(refType);
+//                    }
+//
+//                    // Create a defined type or element that references refType
+//                    String dims = "";
+//                    while (numDims.value > 0) {
+//                        dims += "[]";
+//                        numDims.value--;
+//                    }
+//
+//                    TypeEntry defType = null;
+//                    if (isElement) {
+//                        if (!belowSchemaLevel) {
+//                            defType =
+//                                new DefinedElement(qName, refType, node, dims);
+//                        }
+//                    } else {
+//                        defType = new DefinedType(qName, refType, node, dims);
+//                    }
+//                    if (defType != null) {
+//                        symbolTablePut(defType);
+//                    }
+//                } else {
+//
+//                    // Create a TypeEntry representing this  type/element
+//                    String baseName = btm.getBaseName(qName);
+//                    if (baseName != null) {
+//                        symbolTablePut(new BaseType(qName));
+//                    } else {
+//
+//                        // Create a type entry, set whether it should
+//                        // be mapped as a simple type, and put it in the
+//                        // symbol table.
+//                        TypeEntry te = null;
+//                        if (!isElement) {
+//                            te = new DefinedType(qName, node);
+//
+//                            // check if we are an anonymous type underneath
+//                            // an element.  If so, we point the refType of the
+//                            // element to us (the real type).
+//                            if (qName.getLocalPart().indexOf(ANON_TOKEN)
+//                                >= 0) {
+//                                Node parent = node.getParentNode();
+//                                QName parentQName =
+//                                    Utils.getNodeNameQName(parent);
+//                                TypeEntry parentType = getElement(parentQName);
+//                                if (parentType != null) {
+//                                    parentType.setRefType(te);
+//                                }
+//                            }
+//
+//                        } else {
+//                            if (!belowSchemaLevel) {
+//                                te = new DefinedElement(qName, node);
+//                            }
+//                        }
+//                        if (te != null) {
+//                            if (SchemaUtils
+//                                .isSimpleTypeOrSimpleContent(node)) {
+//                                te.setSimpleType(true);
+//                            }
+//                            symbolTablePut(te);
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//    } // createTypeFromDef
+
+//    /**
+//     * Node may contain a reference (via type=, ref=, or element= attributes) to
+//     * another type.  Create a Type object representing this referenced type.
+//     */
+//    private void createTypeFromRef(Node node) throws IOException {
+//        // Get the QName of the node's type attribute value
+//        BooleanHolder forElement = new BooleanHolder();
+//        QName qName = Utils.getTypeQName(node, forElement, false);
+//        if (qName != null) {
+//            // Error check - bug 12362
+//            if (qName.getLocalPart().length() == 0) {
+//                String name = Utils.getAttribute(node, "name");
+//                if (name == null) {
+//                    name = "unknown";
+//                }
+//                throw new IOException(Messages.getMessage("emptyref00", name));
+//            }
+//
+//            // Get Type or Element depending on whether type attr was used.
+//            TypeEntry type = getTypeEntry(qName, forElement.value);
+//
+//            // A symbol table entry is created if the TypeEntry is not found
+//            if (type == null) {
+//                // See if this is a special QName for collections
+//                if (qName.getLocalPart().indexOf("[") > 0) {
+//                    QName containedQName =
+//                        Utils.getTypeQName(node, forElement, true);
+//                    TypeEntry containedTE =
+//                        getTypeEntry(containedQName, forElement.value);
+//                    if (!forElement.value) {
+//                        // Case of type and maxOccurs
+//                        if (containedTE == null) {
+//                            // Collection Element Type not defined yet, add one.
+//                            String baseName = btm.getBaseName(containedQName);
+//                            if (baseName != null) {
+//                                containedTE = new BaseType(containedQName);
+//                            } else {
+//                                containedTE = new UndefinedType(containedQName);
+//                            }
+//                            symbolTablePut(containedTE);
+//                        }
+//                        symbolTablePut(
+//                            new CollectionType(qName, containedTE, node, "[]"));
+//                    } else {
+//                        // Case of ref and maxOccurs
+//                        if (containedTE == null) {
+//                            containedTE = new UndefinedElement(containedQName);
+//                            symbolTablePut(containedTE);
+//                        }
+//                        symbolTablePut(
+//                            new CollectionElement(
+//                                qName,
+//                                containedTE,
+//                                node,
+//                                "[]"));
+//                    }
+//                } else {
+//                    // Add a BaseType or Undefined Type/Element
+//                    String baseName = btm.getBaseName(qName);
+//                    if (baseName != null)
+//                        symbolTablePut(new BaseType(qName));
+//                    else if (forElement.value == false)
+//                        symbolTablePut(new UndefinedType(qName));
+//                    else
+//                        symbolTablePut(new UndefinedElement(qName));
+//                }
+//            }
+//        }
+//    } // createTypeFromRef
 
     /**
      * Populate the symbol table with all of the MessageEntry's from the Definition.
-     * 
-     * @param def 
-     * @throws IOException 
      */
     private void populateMessages(Definition def) throws IOException {
-
         Iterator i = def.getMessages().values().iterator();
-
         while (i.hasNext()) {
             Message message = (Message) i.next();
             MessageEntry mEntry = new MessageEntry(message);
-
             symbolTablePut(mEntry);
         }
-    }    // populateMessages
+    } // populateMessages
 
     /**
-     * ensures that a message in a <code>&lt;input&gt;</code>, <code>&lt;output&gt;</code>,
+     * ensures that a message in a <code>&lt;input&gt;</code>, <code>&lt;output&gt;</code>, 
      * or <code>&lt;fault&gt;</fault> element in an <code>&lt;operation&gt;</code>
-     * element is valid. In particular, ensures that
+     * element is valid. In particular, ensures that 
      * <ol>
-     * <li>an attribute <code>message</code> is present (according to the
-     * XML Schema for WSDL 1.1 <code>message</code> is <strong>required</strong>
-     * <p/>
-     * <li>the value of attribute <code>message</code> (a QName) refers to
-     * an already defined message
-     * </ol>
-     * <p/>
-     * <strong>Note</strong>: this method should throw a <code>javax.wsdl.WSDLException</code> rather than
-     * a <code>java.io.IOException</code>
+     *   <li>an attribute <code>message</code> is present (according to the
+     *      XML Schema for WSDL 1.1 <code>message</code> is <strong>required</strong>
      * 
-     * @param message the message object
-     * @throws IOException thrown, if the message is not valid
+     *   <li>the value of attribute <code>message</code> (a QName) refers to
+     *      an already defined message 
+     * </ol>
+     * 
+     * <strong>Note</strong>: this method should throw a <code>javax.wsdl.WSDLException</code> rather than
+     *   a <code>java.io.IOException</code>
+     * 
+     * @param message  the message object
+     * 
+     * @exception IOException thrown, if the message is not valid 
+     * 
      */
     protected void ensureOperationMessageValid(Message message)
-            throws IOException {
+        throws IOException {
 
         // make sure the message is not null (i.e. there is an
         // attribute 'message ')
-        // 
+        //
         if (message == null) {
-            throw new IOException(
-                    "<input>,<output>, or <fault> in <operation ..> without attribute 'message' found. Attribute 'message' is required.");
+            throw new IOException("<input>,<output>, or <fault> in <operation ..> without attribute 'message' found. Attribute 'message' is required.");
         }
 
-        // make sure the value of the attribute refers to an
-        // already defined message
-        // 
+        // make sure the value of the attribute refers to an 
+        // already defined message 
+        //      
         if (message.isUndefined()) {
             throw new IOException(
-                    "<input ..>, <output ..> or <fault ..> in <portType> with undefined message found. message name is '"
-                    + message.getQName().toString() + "'");
+                "<input ..>, <output ..> or <fault ..> in <portType> with undefined message found. message name is '"
+                    + message.getQName().toString()
+                    + "'");
         }
     }
 
@@ -1405,39 +1156,35 @@ public class SymbolTable {
      * ensures that an an element <code>&lt;operation&gt;</code> within
      * an element <code>&lt;portType&gt;<code> is valid. Throws an exception
      * if the operation is not valid.
-     * <p/>
-     * <strong>Note</strong>: this method should throw a <code>javax.wsdl.WSDLException</code>
-     * rather than a <code>java.io.IOException</code>
      * 
-     * @param operation the operation element
-     * @throws IOException              thrown, if the element is not valid.
-     * @throws IllegalArgumentException thrown, if operation is null
+     * <strong>Note</strong>: this method should throw a <code>javax.wsdl.WSDLException</code>
+     *  rather than a <code>java.io.IOException</code>
+     * 
+     * @param operation  the operation element
+     * 
+     * @exception IOException  thrown, if the element is not valid. 
+     * @exception IllegalArgumentException  thrown, if operation is null
      */
     protected void ensureOperationValid(Operation operation)
-            throws IOException {
+        throws IOException {
 
         if (operation == null) {
-            throw new IllegalArgumentException(
-                    "parameter 'operation' must not be null");
+            throw new IllegalArgumentException("parameter 'operation' must not be null");
         }
 
         Input input = operation.getInput();
-
         if (input != null) {
             ensureOperationMessageValid(input.getMessage());
         }
 
         Output output = operation.getOutput();
-
         if (output != null) {
             ensureOperationMessageValid(output.getMessage());
         }
 
         Map faults = operation.getFaults();
-
         if (faults != null) {
             Iterator it = faults.values().iterator();
-
             while (it.hasNext()) {
                 ensureOperationMessageValid(((Fault) it.next()).getMessage());
             }
@@ -1447,51 +1194,42 @@ public class SymbolTable {
     /**
      * ensures that an an element <code>&lt;portType&gt;</code>
      * is valid. Throws an exception if the portType is not valid.
-     * <p/>
-     * <strong>Note</strong>: this method should throw a <code>javax.wsdl.WSDLException</code>
-     * rather than a <code>java.io.IOException</code>
      * 
-     * @param portType the portType element
-     * @throws IOException              thrown, if the element is not valid.
-     * @throws IllegalArgumentException thrown, if operation is null
+     * <strong>Note</strong>: this method should throw a <code>javax.wsdl.WSDLException</code>
+     *  rather than a <code>java.io.IOException</code>
+     * 
+     * @param portType  the portType element 
+     * 
+     * @exception IOException  thrown, if the element is not valid. 
+     * @exception IllegalArgumentException  thrown, if operation is null
      */
-    protected void ensureOperationsOfPortTypeValid(PortType portType)
-            throws IOException {
 
-        if (portType == null) {
-            throw new IllegalArgumentException(
-                    "parameter 'portType' must not be null");
-        }
+    protected void ensureOperationsOfPortTypeValid(PortType portType)
+        throws IOException {
+        if (portType == null)
+            throw new IllegalArgumentException("parameter 'portType' must not be null");
 
         List operations = portType.getOperations();
 
         // no operations defined ? -> valid according to the WSDL 1.1 schema
-        // 
-        if ((operations == null) || (operations.size() == 0)) {
+        //
+        if (operations == null || operations.size() == 0)
             return;
-        }
 
         // check operations defined in this portType
-        // 
+        //       
         Iterator it = operations.iterator();
-
         while (it.hasNext()) {
             Operation operation = (Operation) it.next();
-
             ensureOperationValid(operation);
         }
     }
 
     /**
      * Populate the symbol table with all of the PortTypeEntry's from the Definition.
-     * 
-     * @param def 
-     * @throws IOException 
      */
     private void populatePortTypes(Definition def) throws IOException {
-
         Iterator i = def.getPortTypes().values().iterator();
-
         while (i.hasNext()) {
             PortType portType = (PortType) i.next();
 
@@ -1500,41 +1238,32 @@ public class SymbolTable {
             // to a non-existent port type.  Don't bother with it.
             if (!portType.isUndefined()) {
                 ensureOperationsOfPortTypeValid(portType);
-
                 PortTypeEntry ptEntry = new PortTypeEntry(portType);
-
                 symbolTablePut(ptEntry);
             }
         }
-    }    // populatePortTypes
+    } // populatePortTypes
 
     /**
      * Create the parameters and store them in the bindingEntry.
-     * 
-     * @throws IOException 
      */
     private void populateParameters() throws IOException {
-
         Iterator it = symbolTable.values().iterator();
-
         while (it.hasNext()) {
             Vector v = (Vector) it.next();
-
             for (int i = 0; i < v.size(); ++i) {
                 if (v.get(i) instanceof BindingEntry) {
                     BindingEntry bEntry = (BindingEntry) v.get(i);
-
                     // Skip non-soap bindings
-                    if (bEntry.getBindingType() != BindingEntry.TYPE_SOAP) {
+                    if (bEntry.getBindingType() != BindingEntry.TYPE_SOAP)
                         continue;
-                    }
 
                     Binding binding = bEntry.getBinding();
                     Collection bindOperations = bEntry.getOperations();
                     PortType portType = binding.getPortType();
+
                     HashMap parameters = new HashMap();
-                    Iterator operations =
-                            portType.getOperations().iterator();
+                    Iterator operations = portType.getOperations().iterator();
 
                     // get parameters
                     while (operations.hasNext()) {
@@ -1544,103 +1273,98 @@ public class SymbolTable {
                         // Binding operation and report an error if it doesn't.
                         if (!bindOperations.contains(operation)) {
                             throw new IOException(
-                                    Messages.getMessage(
-                                            "emitFailNoMatchingBindOperation01",
-                                            operation.getName(),
-                                            portType.getQName().getLocalPart()));
+                                Messages.getMessage(
+                                    "emitFailNoMatchingBindOperation01",
+                                    operation.getName(),
+                                    portType.getQName().getLocalPart()));
                         }
 
                         String namespace =
-                                portType.getQName().getNamespaceURI();
-                        Parameters parms = getOperationParameters(operation,
-                                namespace, bEntry);
-
+                            portType.getQName().getNamespaceURI();
+                        Parameters parms =
+                            getOperationParameters(
+                                operation,
+                                namespace,
+                                bEntry);
                         parameters.put(operation, parms);
                     }
-
                     bEntry.setParameters(parameters);
                 }
             }
         }
-    }    // populateParameters
+    } // populateParameters
 
     /**
      * For the given operation, this method returns the parameter info conveniently collated.
      * There is a bit of processing that is needed to write the interface, stub, and skeleton.
      * Rather than do that processing 3 times, it is done once, here, and stored in the
      * Parameters object.
-     * 
-     * @param operation    
-     * @param namespace    
-     * @param bindingEntry 
-     * @return 
-     * @throws IOException 
      */
     public Parameters getOperationParameters(
-            Operation operation, String namespace, BindingEntry bindingEntry)
-            throws IOException {
-
+        Operation operation,
+        String namespace,
+        BindingEntry bindingEntry)
+        throws IOException {
         Parameters parameters = new Parameters();
 
         // The input and output Vectors of Parameters
         Vector inputs = new Vector();
         Vector outputs = new Vector();
+
         List parameterOrder = operation.getParameterOrdering();
 
         // Handle parameterOrder="", which is techinically illegal
-        if ((parameterOrder != null) && parameterOrder.isEmpty()) {
+        if (parameterOrder != null && parameterOrder.isEmpty()) {
             parameterOrder = null;
         }
 
         // All input parts MUST be in the parameterOrder list.  It is an error otherwise.
         if (parameterOrder != null) {
             Input input = operation.getInput();
-
             if (input != null) {
                 Message inputMsg = input.getMessage();
                 Map allInputs = inputMsg.getParts();
                 Collection orderedInputs =
-                        inputMsg.getOrderedParts(parameterOrder);
-
+                    inputMsg.getOrderedParts(parameterOrder);
                 if (allInputs.size() != orderedInputs.size()) {
                     throw new IOException(
-                            Messages.getMessage("emitFail00", operation.getName()));
+                        Messages.getMessage("emitFail00", operation.getName()));
                 }
             }
         }
 
         boolean literalInput = false;
         boolean literalOutput = false;
-
         if (bindingEntry != null) {
-            literalInput = (bindingEntry.getInputBodyType(operation)
-                    == Use.LITERAL);
-            literalOutput = (bindingEntry.getOutputBodyType(operation)
-                    == Use.LITERAL);
+            literalInput =
+                (bindingEntry.getInputBodyType(operation) == Use.LITERAL);
+            literalOutput =
+                (bindingEntry.getOutputBodyType(operation) == Use.LITERAL);
         }
 
         // Collect all the input parameters
         Input input = operation.getInput();
-
-        if ((input != null) && (input.getMessage() != null)) {
-            getParametersFromParts(inputs,
-                    input.getMessage().getOrderedParts(null),
-                    literalInput, operation.getName(),
-                    bindingEntry);
+        if (input != null && input.getMessage() != null) {
+            getParametersFromParts(
+                inputs,
+                input.getMessage().getOrderedParts(null),
+                literalInput,
+                operation.getName(),
+                bindingEntry);
         }
 
         // Collect all the output parameters
         Output output = operation.getOutput();
-
-        if ((output != null) && (output.getMessage() != null)) {
-            getParametersFromParts(outputs,
-                    output.getMessage().getOrderedParts(null),
-                    literalOutput, operation.getName(),
-                    bindingEntry);
+        if (output != null && output.getMessage() != null) {
+            getParametersFromParts(
+                outputs,
+                output.getMessage().getOrderedParts(null),
+                literalOutput,
+                operation.getName(),
+                bindingEntry);
         }
 
         if (parameterOrder != null) {
-
             // Construct a list of the parameters in the parameterOrder list, determining the
             // mode of each parameter and preserving the parameterOrder list.
             for (int i = 0; i < parameterOrder.size(); ++i) {
@@ -1653,10 +1377,14 @@ public class SymbolTable {
                 int outdex = getPartIndex(name, outputs);
 
                 if (index >= 0) {
-
                     // The mode of this parameter is either in or inout
-                    addInishParm(inputs, outputs, index, outdex, parameters,
-                            true);
+                    addInishParm(
+                        inputs,
+                        outputs,
+                        index,
+                        outdex,
+                        parameters,
+                        true);
                 } else if (outdex >= 0) {
                     addOutParm(outputs, outdex, parameters, true);
                 } else {
@@ -1668,16 +1396,16 @@ public class SymbolTable {
         // Some special case logic for JAX-RPC, but also to make things
         // nicer for the user.
         // If we have a single input and output with the same name
-        // instead of: void echo(StringHolder inout)
-        // Do this:  string echo(string in)
-        if (wrapped && (inputs.size() == 1) && (outputs.size() == 1)
-                && ((Parameter) inputs.get(0)).getName().equals(
-                        ((Parameter) outputs.get(0)).getName())) {
-
+        //   instead of: void echo(StringHolder inout)
+        //   Do this:  string echo(string in)
+        if (wrapped
+            && inputs.size() == 1
+            && outputs.size() == 1
+            && ((Parameter) inputs.get(0)).getName().equals(
+                ((Parameter) outputs.get(0)).getName())) {
             // add the input and make sure its a IN not an INOUT
             addInishParm(inputs, null, 0, -1, parameters, false);
         } else {
-
             // Get the mode info about those parts that aren't in the
             // parameterOrder list. Since they're not in the parameterOrder list,
             // the order is, first all in (and inout) parameters, then all out
@@ -1685,7 +1413,6 @@ public class SymbolTable {
             for (int i = 0; i < inputs.size(); i++) {
                 Parameter p = (Parameter) inputs.get(i);
                 int outdex = getPartIndex(p.getName(), outputs);
-
                 addInishParm(inputs, outputs, i, outdex, parameters, false);
             }
         }
@@ -1696,91 +1423,75 @@ public class SymbolTable {
         // out parameters.
         if (outputs.size() == 1) {
             parameters.returnParam = (Parameter) outputs.get(0);
-
             parameters.returnParam.setMode(Parameter.OUT);
+//            if (parameters.returnParam.getType() instanceof DefinedElement) {
+//                parameters.returnParam.setQName(
+//                    parameters.returnParam.getType().getQName());
+//            }
+			if (parameters.returnParam.getType() instanceof SchemaElement) {
+				parameters.returnParam.setQName(
+					parameters.returnParam.getType().getQName());
+			}
 
-            if (parameters.returnParam.getType() instanceof DefinedElement) {
-                parameters.returnParam.setQName(
-                        parameters.returnParam.getType().getQName());
-            }
-
-            ++parameters.outputs;
+           ++parameters.outputs;
         } else {
             for (int i = 0; i < outputs.size(); i++) {
                 addOutParm(outputs, i, parameters, false);
             }
         }
-
         parameters.faults = operation.getFaults();
 
-        // before we return the paramters,
+        // before we return the paramters, 
         // make sure we dont have a duplicate name
         Vector used = new Vector(parameters.list.size());
         Iterator i = parameters.list.iterator();
-
         while (i.hasNext()) {
             Parameter parameter = (Parameter) i.next();
             int count = 2;
-
             while (used.contains(parameter.getName())) {
-
                 // duplicate, add a suffix and try again
-                parameter.setName(parameter.getName()
-                        + Integer.toString(count++));
+                parameter.setName(
+                    parameter.getName() + Integer.toString(count++));
             }
-
             used.add(parameter.getName());
         }
 
         return parameters;
-    }    // parameters
+    } // parameters
 
     /**
      * Return the index of the given name in the given Vector, -1 if it doesn't exist.
-     * 
-     * @param name 
-     * @param v    
-     * @return 
      */
     private int getPartIndex(String name, Vector v) {
-
         for (int i = 0; i < v.size(); i++) {
             if (name.equals(((Parameter) v.get(i)).getName())) {
                 return i;
             }
         }
-
         return -1;
-    }    // getPartIndex
+    } // getPartIndex
 
     /**
      * Add an in or inout parameter to the parameters object.
-     * 
-     * @param inputs     
-     * @param outputs    
-     * @param index      
-     * @param outdex     
-     * @param parameters 
-     * @param trimInput  
      */
-    private void addInishParm(Vector inputs, Vector outputs, int index,
-                              int outdex, Parameters parameters,
-                              boolean trimInput) {
-
+    private void addInishParm(
+        Vector inputs,
+        Vector outputs,
+        int index,
+        int outdex,
+        Parameters parameters,
+        boolean trimInput) {
         Parameter p = (Parameter) inputs.get(index);
-
         // If this is an element, we want the XML to reflect the element name
         // not the part name.  Same check is made in addOutParam below.
-        if (p.getType() instanceof DefinedElement) {
-            DefinedElement de = (DefinedElement) p.getType();
-
+        if (p.getType() instanceof SchemaElement) {
+			SchemaElement de = (SchemaElement) p.getType();
             p.setQName(de.getQName());
         }
-
         // If this is a collection we want the XML to reflect the type in
-        // the collection, not foo[unbounded].
+        // the collection, not foo[unbounded].  
         // Same check is made in addOutParam below.
-        if (p.getType() instanceof CollectionElement) {
+        if (p.getType()instanceof SchemaType && ((SchemaType)p.getType()).isArray()) {
             p.setQName(p.getType().getRefType().getQName());
         }
 
@@ -1791,33 +1502,31 @@ public class SymbolTable {
 
         // At this point we know the name and type of the parameter, and that it's at least an
         // in parameter.  Now check to see whether it's also in the outputs Vector.  If it is,
-        // then it's an inout parameter.
+        // then it's an inout parameter.        
         if (outdex >= 0) {
             Parameter outParam = (Parameter) outputs.get(outdex);
-
             if (p.getType().equals(outParam.getType())) {
                 outputs.remove(outdex);
                 p.setMode(Parameter.INOUT);
-
                 ++parameters.inouts;
             } else {
-
                 // If we're here, we have both an input and an output
                 // part with the same name but different types.... guess
                 // it's not really an inout....
-                // 
-                // throw new IOException(Messages.getMessage("differentTypes00",
-                // new String[] { p.getName(),
-                // p.getType().getQName().toString(),
-                // outParam.getType().getQName().toString()
-                // }
-                // ));
+                //
+                //throw new IOException(Messages.getMessage("differentTypes00",
+                //     new String[] { p.getName(),
+                //                    p.getType().getQName().toString(),
+                //                   outParam.getType().getQName().toString()
+                //                  }
+                //));
+
                 // There is some controversy about this, and the specs are
                 // a bit vague about what should happen if the types don't
                 // agree.  Throwing an error is not correct with document/lit
                 // operations, as part names get resused (i.e. "body").
                 // See WSDL 1.1 section 2.4.6,
-                // WSDL 1.2 working draft 9 July 2002 section 2.3.1
+                //     WSDL 1.2 working draft 9 July 2002 section 2.3.1
                 ++parameters.inputs;
             }
         } else {
@@ -1825,33 +1534,28 @@ public class SymbolTable {
         }
 
         parameters.list.add(p);
-    }    // addInishParm
+    } // addInishParm
 
     /**
      * Add an output parameter to the parameters object.
-     * 
-     * @param outputs    
-     * @param outdex     
-     * @param parameters 
-     * @param trim       
      */
-    private void addOutParm(Vector outputs, int outdex, Parameters parameters,
-                            boolean trim) {
-
+    private void addOutParm(
+        Vector outputs,
+        int outdex,
+        Parameters parameters,
+        boolean trim) {
         Parameter p = (Parameter) outputs.get(outdex);
 
         // If this is an element, we want the XML to reflect the element name
         // not the part name.  Same check is made in addInishParam above.
-        if (p.getType() instanceof DefinedElement) {
-            DefinedElement de = (DefinedElement) p.getType();
-
+        if (p.getType() instanceof SchemaElement) {
+			SchemaElement de = (SchemaElement) p.getType();
             p.setQName(de.getQName());
         }
-
         // If this is a collection we want the XML to reflect the type in
-        // the collection, not foo[unbounded].
+        // the collection, not foo[unbounded].  
         // Same check is made in addInishParam above.
-        if (p.getType() instanceof CollectionElement) {
+        if (p.getType() instanceof SchemaType && ((SchemaType)p.getType()).isArray()) {
             p.setQName(p.getType().getRefType().getQName());
         }
 
@@ -1860,30 +1564,27 @@ public class SymbolTable {
         }
 
         p.setMode(Parameter.OUT);
-
         ++parameters.outputs;
 
         parameters.list.add(p);
-    }    // addOutParm
+    } // addOutParm
 
     /**
      * This method returns a vector containing Parameters which represent
      * each Part (shouldn't we call these "Parts" or something?)
-     * 
-     * @param v            
-     * @param parts        
-     * @param literal      
-     * @param opName       
-     * @param bindingEntry 
-     * @throws IOException 
      */
     public void getParametersFromParts(
-            Vector v, Collection parts, boolean literal, String opName, BindingEntry bindingEntry)
-            throws IOException {
+        Vector v,
+        Collection parts,
+        boolean literal,
+        String opName,
+        BindingEntry bindingEntry)
+        throws IOException {
 
         // HACK ALERT!  This whole method is waaaay too complex.
         // It needs rewriting (for instance, we sometimes new up
         // a Parameter, then ignore it in favor of another we new up.)
+
         // Determine if there's only one element.  For wrapped
         // style, we normally only have 1 part which is an
         // element.  But with MIME we could have any number of
@@ -1893,13 +1594,10 @@ public class SymbolTable {
         int numberOfElements = 0;
         boolean possiblyWrapped = false;
         Iterator i = parts.iterator();
-
         while (i.hasNext()) {
             Part part = (Part) i.next();
-
             if (part.getElementName() != null) {
                 ++numberOfElements;
-
                 if (part.getElementName().getLocalPart().equals(opName)) {
                     possiblyWrapped = true;
                 }
@@ -1909,16 +1607,15 @@ public class SymbolTable {
         // Hack alert - Try to sense "wrapped" document literal mode
         // if we haven't been told not to.
         // Criteria:
-        // - If there is a single element part,
-        // - That part is an element
-        // - That element has the same name as the operation
-        // - That element has no attributes (check done below)
-        if (!nowrap && literal && (numberOfElements == 1) && possiblyWrapped) {
+        //  - If there is a single element part,
+        //  - That part is an element
+        //  - That element has the same name as the operation
+        //  - That element has no attributes (check done below)
+        if (!nowrap && literal && numberOfElements == 1 && possiblyWrapped) {
             wrapped = true;
         }
 
         i = parts.iterator();
-
         while (i.hasNext()) {
             Parameter param = new Parameter();
             Part part = (Part) i.next();
@@ -1929,200 +1626,214 @@ public class SymbolTable {
             // We're either:
             // 1. encoded
             // 2. literal & not wrapped.
-            if (!literal || !wrapped || (elementName == null)) {
+            if (!literal || !wrapped || elementName == null) {
+
                 param.setName(partName);
 
                 // Add this type or element name
                 if (typeName != null) {
                     param.setType(getType(typeName));
                 } else if (elementName != null) {
-
                     // Just an FYI: The WSDL spec says that for use=encoded
                     // that parts reference an abstract type using the type attr
                     // but we kinda do the right thing here, so let it go.
                     // if (!literal)
-                    // error...
-                    param.setType(getElement(elementName));
+                    //   error...
+                    param.setType(getElement(elementName).getType());
                 } else {
-
                     // no type or element
                     throw new IOException(
-                            Messages.getMessage(
-                                    "noTypeOrElement00", new String[]{partName,
-                                                                      opName}));
+                        Messages.getMessage(
+                            "noTypeOrElement00",
+                            new String[] { partName, opName }));
                 }
-
                 fillParamInfo(param, bindingEntry, opName, partName);
                 v.add(param);
-
-                continue;    // next part
+                continue; // next part
             }
 
             // flow to here means wrapped literal !
+
             // See if we can map all the XML types to java(?) types
             // if we can, we use these as the types
-            Node node = null;
-
-            if ((typeName != null)
-                    && (bindingEntry.getMIMETypes().size() == 0)) {
-
+//            Node node = null;
+            if (typeName != null && bindingEntry.getMIMETypes().size() == 0) {
                 // Since we can't (yet?) make the Axis engine generate the right
                 // XML for literal parts that specify the type attribute,
                 // (unless they're MIME types) abort processing with an
                 // error if we encounter this case
-                // 
+                //
                 // node = getTypeEntry(typeName, false).getNode();
-                String bindingName = (bindingEntry == null)
+                String bindingName =
+                    bindingEntry == null
                         ? "unknown"
                         : bindingEntry.getBinding().getQName().toString();
-
-                throw new IOException(Messages.getMessage("literalTypePart00",
-                        new String[]{
-                            partName,
-                            opName,
-                            bindingName}));
+                throw new IOException(
+                    Messages.getMessage(
+                        "literalTypePart00",
+                        new String[] { partName, opName, bindingName }));
             }
+//JAXME_REFACTOR///////////////////////////////////////////////////////////////////////////            
+//            // Get the node which corresponds to the type entry for this
+//            // element.  i.e.:
+//            //  <part name="part" element="foo:bar"/>
+//            //  ...
+//            //  <schema targetNamespace="foo">
+//            //    <element name="bar"...>  <--- This one
+//            node = getTypeEntry(elementName, true).getNode();
+//
+//            // Check if this element is of the form:
+//            //    <element name="foo" type="tns:foo_type"/>
+//            BooleanHolder forElement = new BooleanHolder();
+//            QName type = Utils.getTypeQName(node, forElement, false);
+//            if (type != null && !forElement.value) {
+//                // If in fact we have such a type, go get the node that
+//                // corresponds to THAT definition.
+//                node = getTypeEntry(type, false).getNode();
+//            }
+//
+//
+//            Vector vTypes = null;
+//            // If we have nothing at this point, we're in trouble.
+//            if (node == null) {
+//                if (bindingEntry.isInHeaderPart(opName, partName)) {
+//                    wrapped = false;
+//                } else {
+//                    /*
+//                    throw new IOException(
+//                        Messages.getMessage("badTypeNode",
+//                                             new String[] {
+//                                                 partName,
+//                                                 opName,
+//                                                 elementName.toString()}));
+//                    */
+//                }
+//            } else {
+//                // check for attributes
+//                Vector vAttrs =
+//                    SchemaUtils.getContainedAttributeTypes(node, this);
+//                if (vAttrs != null) {
+//                    // can't do wrapped mode
+//                    wrapped = false;
+//                }
+//
+//                // Get the nested type entries.
+//                // TODO - If we are unable to represent any of the types in the
+//                // element, we need to use SOAPElement/SOAPBodyElement.
+//                // I don't believe getContainedElementDecl does the right thing yet.
+//                vTypes =
+//                    SchemaUtils.getContainedElementDeclarations(node, this);
+//            }
+//            // IF we got the type entries and we didn't find attributes
+//            // THEN use the things in this element as the parameters
+//            if (vTypes != null && wrapped) {
+//                // add the elements in this list
+//                for (int j = 0; j < vTypes.size(); j++) {
+//                    ElementDecl elem = (ElementDecl) vTypes.elementAt(j);
+//                    Parameter p = new Parameter();
+//                    p.setQName(elem.getName());
+//                    p.setType(elem.getType());
+//                    fillParamInfo(p, bindingEntry, opName, partName);
+//                    v.add(p);
+//                }
+//            } else {
+//                // - we were unable to get the types OR
+//                // - we found attributes 
+//                // so we can't use wrapped mode.
+//                param.setName(partName);
+//
+//                if (typeName != null) {
+//                    param.setType(getType(typeName));
+//                } else if (elementName != null) {
+//                    param.setType(getElement(elementName));
+//                }
+//                fillParamInfo(param, bindingEntry, opName, partName);
+//                v.add(param);
+//            }
+///NEWCODE///////////////////////////////////////////////////////////////////  
+			System.out.println(elementName);          
+			SchemaType schemaType = this.getElement(elementName).getType();
+			Iterator attr = schemaType.getAttributeNames();  
+			Iterator ele = schemaType.getElementNames(); 
+			
+			if(attr.hasNext()){
+				wrapped = false;
+			}
+			// IF we got the type entries and we didn't find attributes
+			// THEN use the things in this element as the parameters
+			if (ele != null && wrapped) {
+				// add the elements in this list
+				for (;ele.hasNext();) {
+					ElementInfo elem = schemaType.getElementTypeByName((QName)ele.next());
+					Parameter p = new Parameter();
+					p.setQName(elem.getName());
+					p.setType(elem.getType());
+					fillParamInfo(p, bindingEntry, opName, partName);
+					v.add(p);
+				}
+			} else {
+				// - we were unable to get the types OR
+				// - we found attributes 
+				// so we can't use wrapped mode.
+				param.setName(partName);
 
-            // Get the node which corresponds to the type entry for this
-            // element.  i.e.:
-            // <part name="part" element="foo:bar"/>
-            // ...
-            // <schema targetNamespace="foo">
-            // <element name="bar"...>  <--- This one
-            node = getTypeEntry(elementName, true).getNode();
+				if (typeName != null) {
+					param.setType(getType(typeName));
+				} else if (elementName != null) {
+					param.setType(getElement(elementName));
+				}
+				fillParamInfo(param, bindingEntry, opName, partName);
+				v.add(param);
+			}
+			          
+///////////////////////////////////////////////////////////////////////            
+            
+        } // while
 
-            // Check if this element is of the form:
-            // <element name="foo" type="tns:foo_type"/>
-            BooleanHolder forElement = new BooleanHolder();
-            QName type = Utils.getTypeQName(node, forElement,
-                    false);
+    } // getParametersFromParts
 
-            if ((type != null) && !forElement.value) {
-
-                // If in fact we have such a type, go get the node that
-                // corresponds to THAT definition.
-                node = getTypeEntry(type, false).getNode();
-            }
-
-            Vector vTypes = null;
-
-            // If we have nothing at this point, we're in trouble.
-            if (node == null) {
-                if (bindingEntry.isInHeaderPart(opName, partName)) {
-                    wrapped = false;
-                } else {
-
-                    /*
-                     * throw new IOException(
-                     *   Messages.getMessage("badTypeNode",
-                     *                        new String[] {
-                     *                            partName,
-                     *                            opName,
-                     *                            elementName.toString()}));
-                     */
-                }
-            } else {
-
-                // check for attributes
-                Vector vAttrs = SchemaUtils.getContainedAttributeTypes(node,
-                        this);
-
-                if (vAttrs != null) {
-
-                    // can't do wrapped mode
-                    wrapped = false;
-                }
-
-                // Get the nested type entries.
-                // TODO - If we are unable to represent any of the types in the
-                // element, we need to use SOAPElement/SOAPBodyElement.
-                // I don't believe getContainedElementDecl does the right thing yet.
-                vTypes = SchemaUtils.getContainedElementDeclarations(node,
-                        this);
-            }
-
-            // IF we got the type entries and we didn't find attributes
-            // THEN use the things in this element as the parameters
-            if ((vTypes != null) && wrapped) {
-
-                // add the elements in this list
-                for (int j = 0; j < vTypes.size(); j++) {
-                    ElementDecl elem = (ElementDecl) vTypes.elementAt(j);
-                    Parameter p = new Parameter();
-
-                    p.setQName(elem.getName());
-                    p.setType(elem.getType());
-                    fillParamInfo(p, bindingEntry, opName, partName);
-                    v.add(p);
-                }
-            } else {
-
-                // - we were unable to get the types OR
-                // - we found attributes
-                // so we can't use wrapped mode.
-                param.setName(partName);
-
-                if (typeName != null) {
-                    param.setType(getType(typeName));
-                } else if (elementName != null) {
-                    param.setType(getElement(elementName));
-                }
-
-                fillParamInfo(param, bindingEntry, opName, partName);
-                v.add(param);
-            }
-        }                    // while
-    }                        // getParametersFromParts
-
-    /**
-     * Method fillParamInfo
-     * 
-     * @param param        
-     * @param bindingEntry 
-     * @param opName       
-     * @param partName     
-     */
-    private void fillParamInfo(Parameter param, BindingEntry bindingEntry,
-                               String opName, String partName) {
-
-        setMIMEInfo(param, (bindingEntry == null)
+    private void fillParamInfo(
+        Parameter param,
+        BindingEntry bindingEntry,
+        String opName,
+        String partName) {
+        setMIMEInfo(
+            param,
+            bindingEntry == null
                 ? null
                 : bindingEntry.getMIMEInfo(opName, partName));
-
         boolean isHeader = false;
-
-        if ((bindingEntry != null)
-                && bindingEntry.isInHeaderPart(opName, partName)) {
+        if (bindingEntry != null
+            && bindingEntry.isInHeaderPart(opName, partName)) {
             isHeader = true;
-
             param.setInHeader(true);
         }
-
-        if ((bindingEntry != null)
-                && bindingEntry.isOutHeaderPart(opName, partName)) {
+        if (bindingEntry != null
+            && bindingEntry.isOutHeaderPart(opName, partName)) {
             isHeader = true;
-
             param.setOutHeader(true);
         }
 
-        if (isHeader && (bindingEntry.getBinding() != null)) {
+        if (isHeader && bindingEntry.getBinding() != null) {
             List list = bindingEntry.getBinding().getBindingOperations();
-
-            for (int i = 0; (list != null) && (i < list.size()); i++) {
+            for (int i = 0; list != null && i < list.size(); i++) {
                 BindingOperation operation = (BindingOperation) list.get(i);
-
                 if (operation.getName().equals(opName)) {
                     if (param.isInHeader()) {
-                        QName qName = getBindedParameterName(
-                                operation.getBindingInput().getExtensibilityElements(),
+                        QName qName =
+                            getBindedParameterName(
+                                operation
+                                    .getBindingInput()
+                                    .getExtensibilityElements(),
                                 param);
-
                         param.setQName(qName);
                     } else if (param.isOutHeader()) {
-                        QName qName = getBindedParameterName(
-                                operation.getBindingOutput().getExtensibilityElements(),
+                        QName qName =
+                            getBindedParameterName(
+                                operation
+                                    .getBindingOutput()
+                                    .getExtensibilityElements(),
                                 param);
-
                         param.setQName(qName);
                     }
                 }
@@ -2130,15 +1841,7 @@ public class SymbolTable {
         }
     }
 
-    /**
-     * Method getBindedParameterName
-     * 
-     * @param elements 
-     * @param p        
-     * @return 
-     */
     private QName getBindedParameterName(List elements, Parameter p) {
-
         // If the parameter can either be in the message header or in the
         // message body.
         // When it is in the header, there may be a SOAPHeader (soap:header)
@@ -2147,52 +1850,45 @@ public class SymbolTable {
         // the namespace used is the one of this soap:body.
         // 
         // If the parameter is in the body and there is a soap:body with no parts,
-        // its namespace is used for the parameter.
+        // its namespace is used for the parameter.  
+
         QName paramName = null;
         String defaultNamespace = null;
         String parameterPartName = p.getName();
-
         for (Iterator k = elements.iterator(); k.hasNext();) {
             ExtensibilityElement element = (ExtensibilityElement) k.next();
-
             if (element instanceof SOAPBody) {
                 SOAPBody bodyElement = (SOAPBody) element;
                 List parts = bodyElement.getParts();
-
                 if ((parts == null) || (parts.size() == 0)) {
                     defaultNamespace = bodyElement.getNamespaceURI();
                 } else {
                     boolean found = false;
-
                     for (Iterator l = parts.iterator(); l.hasNext();) {
                         Object o = l.next();
-
                         if (o instanceof Part) {
                             Part part = (Part) o;
-
                             if (parameterPartName.equals(part.getName())) {
                                 paramName =
-                                        new QName(bodyElement.getNamespaceURI(),
-                                                parameterPartName);
+                                    new QName(
+                                        bodyElement.getNamespaceURI(),
+                                        parameterPartName);
                                 found = true;
-
                                 break;
                             }
                         }
                     }
-
-                    if (found) {
+                    if (found)
                         break;
-                    }
                 }
             } else if (element instanceof SOAPHeader) {
                 SOAPHeader headerElement = (SOAPHeader) element;
                 String part = headerElement.getPart();
-
                 if (parameterPartName.equals(part)) {
-                    paramName = new QName(headerElement.getNamespaceURI(),
+                    paramName =
+                        new QName(
+                            headerElement.getNamespaceURI(),
                             parameterPartName);
-
                     break;
                 }
             }
@@ -2205,7 +1901,6 @@ public class SymbolTable {
                 paramName = p.getQName();
             }
         }
-
         return paramName;
     }
 
@@ -2213,17 +1908,12 @@ public class SymbolTable {
      * Set the MIME type.  This can be determine in one of two ways:
      * 1.  From WSDL 1.1 MIME constructs on the binding (passed in);
      * 2.  From AXIS-specific xml MIME types.
-     * 
-     * @param p        
-     * @param mimeInfo 
      */
     private void setMIMEInfo(Parameter p, MimeInfo mimeInfo) {
-
         // If there is no binding MIME construct (ie., the mimeType parameter is
         // null), then get the MIME type from the AXIS-specific xml MIME type.
         if (mimeInfo == null) {
             QName mimeQName = p.getType().getQName();
-
             if (mimeQName.getNamespaceURI().equals(Constants.NS_URI_XMLSOAP)) {
                 if (Constants.MIME_IMAGE.equals(mimeQName)) {
                     mimeInfo = new MimeInfo("image/jpeg", "");
@@ -2238,64 +1928,50 @@ public class SymbolTable {
                 }
             }
         }
-
         p.setMIMEInfo(mimeInfo);
-    }    // setMIMEType
+    } // setMIMEType
 
     /**
      * Populate the symbol table with all of the BindingEntry's from the Definition.
-     * 
-     * @param def 
-     * @throws IOException 
      */
     private void populateBindings(Definition def) throws IOException {
-
         Iterator i = def.getBindings().values().iterator();
-
         while (i.hasNext()) {
             Binding binding = (Binding) i.next();
-            BindingEntry bEntry = new BindingEntry(binding);
 
+            BindingEntry bEntry = new BindingEntry(binding);
             symbolTablePut(bEntry);
 
             Iterator extensibilityElementsIterator =
-                    binding.getExtensibilityElements().iterator();
-
+                binding.getExtensibilityElements().iterator();
             while (extensibilityElementsIterator.hasNext()) {
                 Object obj = extensibilityElementsIterator.next();
-
                 if (obj instanceof SOAPBinding) {
                     bEntry.setBindingType(BindingEntry.TYPE_SOAP);
-
                     SOAPBinding sb = (SOAPBinding) obj;
                     String style = sb.getStyle();
-
                     if ("rpc".equalsIgnoreCase(style)) {
                         bEntry.setBindingStyle(Style.RPC);
                     }
                 } else if (obj instanceof HTTPBinding) {
                     HTTPBinding hb = (HTTPBinding) obj;
-
                     if (hb.getVerb().equalsIgnoreCase("post")) {
                         bEntry.setBindingType(BindingEntry.TYPE_HTTP_POST);
                     } else {
                         bEntry.setBindingType(BindingEntry.TYPE_HTTP_GET);
                     }
                 } else if (obj instanceof UnknownExtensibilityElement) {
-
-                    // TODO: After WSDL4J supports soap12, change this code
+                    //TODO: After WSDL4J supports soap12, change this code
                     UnknownExtensibilityElement unkElement =
-                            (UnknownExtensibilityElement) obj;
-                    QName name =
-                            unkElement.getElementType();
-
-                    if (name.getNamespaceURI().equals(Constants.URI_WSDL12_SOAP)
-                            && name.getLocalPart().equals("binding")) {
+                        (UnknownExtensibilityElement) obj;
+                    QName name = unkElement.getElementType();
+                    if (name
+                        .getNamespaceURI()
+                        .equals(Constants.URI_WSDL12_SOAP)
+                        && name.getLocalPart().equals("binding")) {
                         bEntry.setBindingType(BindingEntry.TYPE_SOAP);
-
                         String style =
-                                unkElement.getElement().getAttribute("style");
-
+                            unkElement.getElement().getAttribute("style");
                         if ("rpc".equalsIgnoreCase(style)) {
                             bEntry.setBindingStyle(Style.RPC);
                         }
@@ -2310,32 +1986,29 @@ public class SymbolTable {
             // - headers
             HashMap attributes = new HashMap();
             List bindList = binding.getBindingOperations();
-            HashMap faultMap = new HashMap();    // name to SOAPFault from WSDL4J
-
+            HashMap faultMap = new HashMap(); // name to SOAPFault from WSDL4J
             for (Iterator opIterator = bindList.iterator();
-                 opIterator.hasNext();) {
-                BindingOperation bindOp =
-                        (BindingOperation) opIterator.next();
+                opIterator.hasNext();
+                ) {
+                BindingOperation bindOp = (BindingOperation) opIterator.next();
                 Operation operation = bindOp.getOperation();
                 BindingInput bindingInput = bindOp.getBindingInput();
                 BindingOutput bindingOutput = bindOp.getBindingOutput();
                 String opName = bindOp.getName();
 
                 // First, make sure the binding operation matches a portType operation
-                String inputName = (bindingInput == null)
-                        ? null
-                        : bindingInput.getName();
-                String outputName = (bindingOutput == null)
-                        ? null
-                        : bindingOutput.getName();
-
-                if (binding.getPortType().getOperation(
-                        opName, inputName, outputName) == null) {
-                    throw new IOException(Messages.getMessage("unmatchedOp",
-                            new String[]{
-                                opName,
-                                inputName,
-                                outputName}));
+                String inputName =
+                    bindingInput == null ? null : bindingInput.getName();
+                String outputName =
+                    bindingOutput == null ? null : bindingOutput.getName();
+                if (binding
+                    .getPortType()
+                    .getOperation(opName, inputName, outputName)
+                    == null) {
+                    throw new IOException(
+                        Messages.getMessage(
+                            "unmatchedOp",
+                            new String[] { opName, inputName, outputName }));
                 }
 
                 ArrayList faults = new ArrayList();
@@ -2344,10 +2017,13 @@ public class SymbolTable {
                 if (bindingInput != null) {
                     if (bindingInput.getExtensibilityElements() != null) {
                         Iterator inIter =
-                                bindingInput.getExtensibilityElements().iterator();
-
-                        fillInBindingInfo(bEntry, operation, inIter, faults,
-                                true);
+                            bindingInput.getExtensibilityElements().iterator();
+                        fillInBindingInfo(
+                            bEntry,
+                            operation,
+                            inIter,
+                            faults,
+                            true);
                     }
                 }
 
@@ -2355,10 +2031,13 @@ public class SymbolTable {
                 if (bindingOutput != null) {
                     if (bindingOutput.getExtensibilityElements() != null) {
                         Iterator outIter =
-                                bindingOutput.getExtensibilityElements().iterator();
-
-                        fillInBindingInfo(bEntry, operation, outIter, faults,
-                                false);
+                            bindingOutput.getExtensibilityElements().iterator();
+                        fillInBindingInfo(
+                            bEntry,
+                            operation,
+                            outIter,
+                            faults,
+                            false);
                     }
                 }
 
@@ -2373,47 +2052,46 @@ public class SymbolTable {
 
                 // Associate the portType operation that goes with this binding
                 // with the body types.
-                attributes.put(bindOp.getOperation(),
-                        new BindingEntry.OperationAttr(inputBodyType,
-                                outputBodyType, faultMap));
+                attributes.put(
+                    bindOp.getOperation(),
+                    new BindingEntry.OperationAttr(
+                        inputBodyType,
+                        outputBodyType,
+                        faultMap));
 
                 // If the input or output body uses literal, flag the binding as using literal.
                 // NOTE:  should I include faultBodyType in this check?
-                if ((inputBodyType == Use.LITERAL)
-                        || (outputBodyType == Use.LITERAL)) {
+                if (inputBodyType == Use.LITERAL
+                    || outputBodyType == Use.LITERAL) {
                     bEntry.setHasLiteral(true);
                 }
-
                 bEntry.setFaultBodyTypeMap(operation, faultMap);
-            }    // binding operations
+            } // binding operations
 
             bEntry.setFaults(faultMap);
         }
-    }            // populateBindings
+    } // populateBindings
 
     /**
      * Fill in some binding information:  bodyType, mimeType, header info.
-     * 
-     * @param bEntry    
-     * @param operation 
-     * @param it        
-     * @param faults    
-     * @param input     
-     * @throws IOException 
      */
     private void fillInBindingInfo(
-            BindingEntry bEntry, Operation operation, Iterator it, ArrayList faults, boolean input)
-            throws IOException {
-
+        BindingEntry bEntry,
+        Operation operation,
+        Iterator it,
+        ArrayList faults,
+        boolean input)
+        throws IOException {
         for (; it.hasNext();) {
             Object obj = it.next();
-
             if (obj instanceof SOAPBody) {
-                setBodyType(((SOAPBody) obj).getUse(), bEntry, operation,
-                        input);
+                setBodyType(
+                    ((SOAPBody) obj).getUse(),
+                    bEntry,
+                    operation,
+                    input);
             } else if (obj instanceof SOAPHeader) {
                 SOAPHeader header = (SOAPHeader) obj;
-
                 setBodyType(header.getUse(), bEntry, operation, input);
 
                 // Note, this only works for explicit headers - those whose
@@ -2422,48 +2100,48 @@ public class SymbolTable {
                 // headers - those whose parts come from messages not used in
                 // the portType's operation's input/output clauses.  I don't
                 // know what we're supposed to emit for implicit headers.
-                bEntry.setHeaderPart(operation.getName(), header.getPart(),
-                        input
-                        ? BindingEntry.IN_HEADER
-                        : BindingEntry.OUT_HEADER);
+                bEntry.setHeaderPart(
+                    operation.getName(),
+                    header.getPart(),
+                    input ? BindingEntry.IN_HEADER : BindingEntry.OUT_HEADER);
 
                 // Add any soap:headerFault info to the faults array
                 Iterator headerFaults = header.getSOAPHeaderFaults().iterator();
-
                 while (headerFaults.hasNext()) {
                     SOAPHeaderFault headerFault =
-                            (SOAPHeaderFault) headerFaults.next();
-
+                        (SOAPHeaderFault) headerFaults.next();
                     faults.add(new FaultInfo(headerFault, this));
                 }
             } else if (obj instanceof MIMEMultipartRelated) {
                 bEntry.setBodyType(
-                        operation,
-                        addMIMETypes(
-                                bEntry, (MIMEMultipartRelated) obj, operation), input);
+                    operation,
+                    addMIMETypes(bEntry, (MIMEMultipartRelated) obj, operation),
+                    input);
             } else if (obj instanceof UnknownExtensibilityElement) {
                 UnknownExtensibilityElement unkElement =
-                        (UnknownExtensibilityElement) obj;
-                QName name =
-                        unkElement.getElementType();
-
+                    (UnknownExtensibilityElement) obj;
+                QName name = unkElement.getElementType();
                 if (name.getNamespaceURI().equals(Constants.URI_DIME_WSDL)
-                        && name.getLocalPart().equals("message")) {
+                    && name.getLocalPart().equals("message")) {
                     fillInDIMEInformation(unkElement, input, operation, bEntry);
                 }
-
-                // TODO: After WSDL4J supports soap12, change this code
+                //TODO: After WSDL4J supports soap12, change this code
                 if (name.getNamespaceURI().equals(Constants.URI_WSDL12_SOAP)
-                        && name.getLocalPart().equals("body")) {
-                    setBodyType(unkElement.getElement().getAttribute("use"),
-                            bEntry, operation, input);
+                    && name.getLocalPart().equals("body")) {
+                    setBodyType(
+                        unkElement.getElement().getAttribute("use"),
+                        bEntry,
+                        operation,
+                        input);
                 }
-
-                // TODO: After WSDL4J supports soap12, change this code
+                //TODO: After WSDL4J supports soap12, change this code
                 if (name.getNamespaceURI().equals(Constants.URI_WSDL12_SOAP)
-                        && name.getLocalPart().equals("header")) {
-                    setBodyType(unkElement.getElement().getAttribute("use"),
-                            bEntry, operation, input);
+                    && name.getLocalPart().equals("header")) {
+                    setBodyType(
+                        unkElement.getElement().getAttribute("use"),
+                        bEntry,
+                        operation,
+                        input);
 
                     // Note, this only works for explicit headers - those whose
                     // parts come from messages used in the portType's operation
@@ -2472,149 +2150,198 @@ public class SymbolTable {
                     // the portType's operation's input/output clauses.  I don't
                     // know what we're supposed to emit for implicit headers.
                     bEntry.setHeaderPart(
-                            operation.getName(),
-                            unkElement.getElement().getAttribute("part"), input
+                        operation.getName(),
+                        unkElement.getElement().getAttribute("part"),
+                        input
                             ? BindingEntry.IN_HEADER
                             : BindingEntry.OUT_HEADER);
 
                     // Add any soap12:headerFault info to the faults array
                     NodeList headerFaults =
-                            unkElement.getElement().getChildNodes();
-
+                        unkElement.getElement().getChildNodes();
                     for (int i = 0; i < headerFaults.getLength(); i++) {
                         String faultMessage =
-                                unkElement.getElement().getAttribute("message");
+                            unkElement.getElement().getAttribute("message");
                         String faultPart =
-                                unkElement.getElement().getAttribute("part");
+                            unkElement.getElement().getAttribute("part");
                         String faultUse =
-                                unkElement.getElement().getAttribute("use");
+                            unkElement.getElement().getAttribute("use");
                         String faultNamespaceURI =
-                                unkElement.getElement().getAttribute("namespace");
+                            unkElement.getElement().getAttribute("namespace");
                         QName faultMessageQName = null;
                         int sep = faultMessage.indexOf(':');
-
                         if (sep == -1) {
                             faultMessageQName = new QName(faultMessage);
                         } else {
                             faultMessageQName =
-                                    new QName(faultMessage.substring(0, sep),
-                                            faultMessage.substring(sep + 1));
+                                new QName(
+                                    faultMessage.substring(0, sep),
+                                    faultMessage.substring(sep + 1));
                         }
-
-                        faults.add(new FaultInfo(faultMessageQName, faultPart,
-                                faultUse, faultNamespaceURI,
+                        faults.add(
+                            new FaultInfo(
+                                faultMessageQName,
+                                faultPart,
+                                faultUse,
+                                faultNamespaceURI,
                                 this));
                     }
                 }
             }
         }
-    }    // fillInBindingInfo
+    } // fillInBindingInfo
 
-    /**
-     * Fill in DIME information
-     * 
-     * @param unkElement 
-     * @param input      
-     * @param operation  
-     * @param bEntry     
-     */
-    private void fillInDIMEInformation(UnknownExtensibilityElement unkElement,
-                                       boolean input, Operation operation,
-                                       BindingEntry bEntry) {
+//	/////////////////////////////////////////////////////////////////////////////    
+//	  private void fillInDIMEInformation(
+//		  UnknownExtensibilityElement unkElement,
+//		  boolean input,
+//		  Operation operation,
+//		  BindingEntry bEntry) {
+//		  String layout = unkElement.getElement().getAttribute("layout");
+//		  // TODO: what to do with layout info?              
+//		  if (layout.equals(Constants.URI_DIME_CLOSED_LAYOUT)) {
+//		  } else if (layout.equals(Constants.URI_DIME_OPEN_LAYOUT)) {
+//		  }
+//		  Map parts = null;
+//		  if (input) {
+//			  parts = operation.getInput().getMessage().getParts();
+//		  } else {
+//			  parts = operation.getOutput().getMessage().getParts();
+//		  }
+//		  if (parts != null) {
+//			  Iterator iterator = parts.values().iterator();
+//			  while (iterator.hasNext()) {
+//				  Part part = (Part) iterator.next();
+//				  if (part != null) {
+//					  String dims = "";
+//					  org.w3c.dom.Element element = null;
+//					  if (part.getTypeName() != null) {
+//						  TypeEntry partType = getType(part.getTypeName());
+//						  if (partType.getDimensions().length() > 0) {
+//							  dims = partType.getDimensions();
+//							  partType = partType.getRefType();
+//						  }
+//						  element = (org.w3c.dom.Element) partType.getNode();
+//					  } else if (part.getElementName() != null) {
+//						  TypeEntry partElement =
+//							  getElement(part.getElementName()).getRefType();
+//						  element = (org.w3c.dom.Element) partElement.getNode();
+//						  QName name = getInnerCollectionComponentQName(element);
+//						  if (name != null) {
+//							  dims += "[]";
+//							  partElement = getType(name);
+//							  element =
+//								  (org.w3c.dom.Element) partElement.getNode();
+//						  } else {
+//							  name = getInnerTypeQName(element);
+//							  if (name != null) {
+//								  partElement = getType(name);
+//								  element =
+//									  (org.w3c.dom.Element) partElement.getNode();
+//							  }
+//						  }
+//					  }
+//					  if (element != null) {
+//						  org.w3c.dom.Element e =
+//							  (org.w3c.dom.Element) XMLUtils.findNode(
+//								  element,
+//								  new QName(
+//									  Constants.URI_DIME_CONTENT,
+//									  "mediaType"));
+//						  if (e != null) {
+//							  String value = e.getAttribute("value");
+//							  bEntry.setOperationDIME(operation.getName());
+//							  bEntry.setMIMEInfo(
+//								  operation.getName(),
+//								  part.getName(),
+//								  value,
+//								  dims);
+//						  }
+//					  }
+//				  }
+//			  }
+//		  }
+//	  }
+//	  /NEW_CODE////////////////////////////////////////////////////////////////////////////
+		private void fillInDIMEInformation(
+			UnknownExtensibilityElement unkElement,
+			boolean input,
+			Operation operation,
+			BindingEntry bEntry) {
+			
+				String layout = unkElement.getElement().getAttribute("layout");
+				// TODO: what to do with layout info?              
+				if (layout.equals(Constants.URI_DIME_CLOSED_LAYOUT)) {
+        
+				} else if (layout.equals(Constants.URI_DIME_OPEN_LAYOUT)) {
+        	
+				}
+        	
+				Map parts = null;
+				if (input) {
+					parts = operation.getInput().getMessage().getParts();
+				} else {
+					parts = operation.getOutput().getMessage().getParts();
+				}
+        	
+				if (parts != null) {
+					Iterator iterator = parts.values().iterator();
+					while (iterator.hasNext()) {
+						Part part = (Part) iterator.next();
+						if (part != null) {
+							String dims = "";
 
-        String layout = unkElement.getElement().getAttribute("layout");
-
-        // TODO: what to do with layout info?
-        if (layout.equals(Constants.URI_DIME_CLOSED_LAYOUT)) {
-        } else if (layout.equals(Constants.URI_DIME_OPEN_LAYOUT)) {
-        }
-
-        Map parts = null;
-
-        if (input) {
-            parts = operation.getInput().getMessage().getParts();
-        } else {
-            parts = operation.getOutput().getMessage().getParts();
-        }
-
-        if (parts != null) {
-            Iterator iterator = parts.values().iterator();
-
-            while (iterator.hasNext()) {
-                Part part = (Part) iterator.next();
-
-                if (part != null) {
-                    String dims = "";
-                    org.w3c.dom.Element element = null;
-
-                    if (part.getTypeName() != null) {
-                        TypeEntry partType = getType(part.getTypeName());
-
-                        if (partType.getDimensions().length() > 0) {
-                            dims = partType.getDimensions();
-                            partType = partType.getRefType();
-                        }
-
-                        element = (org.w3c.dom.Element) partType.getNode();
-                    } else if (part.getElementName() != null) {
-                        TypeEntry partElement =
-                                getElement(part.getElementName()).getRefType();
-
-                        element = (org.w3c.dom.Element) partElement.getNode();
-
-                        QName name = getInnerCollectionComponentQName(element);
-
-                        if (name != null) {
-                            dims += "[]";
-                            partElement = getType(name);
-                            element =
-                                    (org.w3c.dom.Element) partElement.getNode();
-                        } else {
-                            name = getInnerTypeQName(element);
-
-                            if (name != null) {
-                                partElement = getType(name);
-                                element =
-                                        (org.w3c.dom.Element) partElement.getNode();
-                            }
-                        }
-                    }
-
-                    if (element != null) {
-                        org.w3c.dom.Element e =
-                                (org.w3c.dom.Element) XMLUtils.findNode(
-                                        element,
-                                        new QName(
-                                                Constants.URI_DIME_CONTENT, "mediaType"));
-
-                        if (e != null) {
-                            String value = e.getAttribute("value");
-
-                            bEntry.setOperationDIME(operation.getName());
-                            bEntry.setMIMEInfo(operation.getName(),
-                                    part.getName(), value, dims);
-                        }
-                    }
-                }
-            }
-        }
-    }
+						   SchemaType stype = null;
+							if (part.getTypeName() != null) {
+								stype = getType(part.getTypeName());
+								if (stype.getArrayDimension() > 0) {
+									dims = stype.getDimensions();
+									stype = stype.getArrayType();
+								}
+							} else if (part.getElementName() != null) {
+								SchemaElement eleinfo =
+									getElement(part.getElementName());
+								stype = stype.getArrayType();                            
+								if (eleinfo.getMaxOccurs()>1) {
+									dims += "[]";
+								} 
+							}
+                    
+							//TODO start parsing attachement Info
+							//TODO find the way to get the anoontaions
+							XSType xstype = stype.getJaxmetype();
+							if(xstype != null){
+								XSAnnotation[] anots = xstype.getAnnotations();
+								for(int i=0;i<anots.length;i++){
+									XSAppinfo[] appinfo = anots[i].getAppinfos();
+									for(int j=0;j<anots.length;j++){
+										System.out.println(appinfo[j].getText());
+										//TODO find the value of the value;
+										String value = null;//e.getAttribute("value");
+										bEntry.setOperationDIME(operation.getName());
+										bEntry.setMIMEInfo(
+											operation.getName(),
+											part.getName(),
+											value,
+											dims);
+									}//end of for
+								}//end of for
+							}//end of if(xstype != null){
+						}//end of if	
+					}//end of while
+				}//end of if(parts != null) 
+			}//end of method
 
     /**
      * Get the faults from the soap:fault clause.
-     * 
-     * @param binding   
-     * @param bindOp    
-     * @param operation 
-     * @param faults    
-     * @throws IOException 
      */
     private void faultsFromSOAPFault(
-            Binding binding, BindingOperation bindOp, Operation operation, ArrayList faults)
-            throws IOException {
-
+        Binding binding,
+        BindingOperation bindOp,
+        Operation operation,
+        ArrayList faults)
+        throws IOException {
         Iterator faultMapIter = bindOp.getBindingFaults().values().iterator();
-
         for (; faultMapIter.hasNext();) {
             BindingFault bFault = (BindingFault) faultMapIter.next();
 
@@ -2622,49 +2349,45 @@ public class SymbolTable {
             String faultName = bFault.getName();
 
             // Check to make sure this fault is named
-            if ((faultName == null) || (faultName.length() == 0)) {
+            if (faultName == null || faultName.length() == 0) {
                 throw new IOException(
-                        Messages.getMessage(
-                                "unNamedFault00", bindOp.getName(),
-                                binding.getQName().toString()));
+                    Messages.getMessage(
+                        "unNamedFault00",
+                        bindOp.getName(),
+                        binding.getQName().toString()));
             }
 
             boolean foundSOAPFault = false;
             String soapFaultUse = "";
             String soapFaultNamespace = "";
-            Iterator faultIter =
-                    bFault.getExtensibilityElements().iterator();
 
+            Iterator faultIter = bFault.getExtensibilityElements().iterator();
             for (; faultIter.hasNext();) {
                 Object obj = faultIter.next();
-
                 if (obj instanceof SOAPFault) {
                     foundSOAPFault = true;
                     soapFaultUse = ((SOAPFault) obj).getUse();
                     soapFaultNamespace = ((SOAPFault) obj).getNamespaceURI();
-
                     break;
                 } else if (obj instanceof UnknownExtensibilityElement) {
-
-                    // TODO: After WSDL4J supports soap12, change this code
+                    //TODO: After WSDL4J supports soap12, change this code
                     UnknownExtensibilityElement unkElement =
-                            (UnknownExtensibilityElement) obj;
-                    QName name =
-                            unkElement.getElementType();
-
-                    if (name.getNamespaceURI().equals(Constants.URI_WSDL12_SOAP)
-                            && name.getLocalPart().equals("fault")) {
+                        (UnknownExtensibilityElement) obj;
+                    QName name = unkElement.getElementType();
+                    if (name
+                        .getNamespaceURI()
+                        .equals(Constants.URI_WSDL12_SOAP)
+                        && name.getLocalPart().equals("fault")) {
                         if (unkElement.getElement().getAttribute("use")
-                                != null) {
+                            != null) {
                             soapFaultUse =
-                                    unkElement.getElement().getAttribute("use");
+                                unkElement.getElement().getAttribute("use");
                         }
-
                         if (unkElement.getElement().getAttribute("namespace")
-                                != null) {
+                            != null) {
                             soapFaultNamespace =
-                                    unkElement.getElement().getAttribute(
-                                            "namespace");
+                                unkElement.getElement().getAttribute(
+                                    "namespace");
                         }
                     }
                 }
@@ -2673,133 +2396,134 @@ public class SymbolTable {
             // Check to make sure we have a soap:fault element
             if (!foundSOAPFault) {
                 throw new IOException(
-                        Messages.getMessage(
-                                "missingSoapFault00", faultName, bindOp.getName(),
-                                binding.getQName().toString()));
+                    Messages.getMessage(
+                        "missingSoapFault00",
+                        faultName,
+                        bindOp.getName(),
+                        binding.getQName().toString()));
             }
 
             // TODO error checking:
             // if use=literal, no use of namespace on the soap:fault
             // if use=encoded, no use of element on the part
+
             // Check this fault to make sure it matches the one
             // in the matching portType Operation
             Fault opFault = operation.getFault(bFault.getName());
-
             if (opFault == null) {
-                throw new IOException(Messages.getMessage("noPortTypeFault",
-                        new String[]{
+                throw new IOException(
+                    Messages.getMessage(
+                        "noPortTypeFault",
+                        new String[] {
                             bFault.getName(),
                             bindOp.getName(),
                             binding.getQName().toString()}));
             }
-
             // put the updated entry back in the map
-            faults.add(new FaultInfo(opFault, Use.getUse(soapFaultUse),
-                    soapFaultNamespace, this));
+            faults.add(
+                new FaultInfo(
+                    opFault,
+                    Use.getUse(soapFaultUse),
+                    soapFaultNamespace,
+                    this));
         }
-    }    // faultsFromSOAPFault
+    } // faultsFromSOAPFault
 
     /**
      * Set the body type.
-     * 
-     * @param use       
-     * @param bEntry    
-     * @param operation 
-     * @param input     
-     * @throws IOException 
      */
     private void setBodyType(
-            String use, BindingEntry bEntry, Operation operation, boolean input)
-            throws IOException {
-
+        String use,
+        BindingEntry bEntry,
+        Operation operation,
+        boolean input)
+        throws IOException {
         if (use == null) {
-            throw new IOException(Messages.getMessage("noUse",
-                    operation.getName()));
+            throw new IOException(
+                Messages.getMessage("noUse", operation.getName()));
         }
-
         if (use.equalsIgnoreCase("literal")) {
             bEntry.setBodyType(operation, Use.LITERAL, input);
         }
-    }    // setBodyType
+    } // setBodyType
 
     /**
      * Add the parts that are really MIME types as MIME types.
      * A side effect is to return the body Type of the given
      * MIMEMultipartRelated object.
-     * 
-     * @param bEntry 
-     * @param mpr    
-     * @param op     
-     * @return 
-     * @throws IOException 
      */
     private Use addMIMETypes(
-            BindingEntry bEntry, MIMEMultipartRelated mpr, Operation op)
-            throws IOException {
-
+        BindingEntry bEntry,
+        MIMEMultipartRelated mpr,
+        Operation op)
+        throws IOException {
         Use bodyType = Use.ENCODED;
         List parts = mpr.getMIMEParts();
         Iterator i = parts.iterator();
-
         while (i.hasNext()) {
             MIMEPart part = (MIMEPart) i.next();
             List elems = part.getExtensibilityElements();
             Iterator j = elems.iterator();
-
             while (j.hasNext()) {
                 Object obj = j.next();
-
                 if (obj instanceof MIMEContent) {
                     MIMEContent content = (MIMEContent) obj;
                     TypeEntry typeEntry = findPart(op, content.getPart());
-                    String dims = typeEntry.getDimensions();
-
-                    if ((dims.length() <= 0)
-                            && (typeEntry.getRefType() != null)) {
-                        Node node = typeEntry.getRefType().getNode();
-
-                        if (getInnerCollectionComponentQName(node) != null) {
-                            dims += "[]";
-                        }
-                    }
-
+                    
+//                    String dims = typeEntry.getDimensions();
+//                    if (dims.length() <= 0 && typeEntry.getRefType() != null) {
+//                        Node node = typeEntry.getRefType().getNode();
+//                        if (getInnerCollectionComponentQName(node) != null)
+//                            dims += "[]";
+//                    }
+					String dims = null;
+					if(typeEntry instanceof SchemaType){
+						dims = typeEntry.getDimensions();
+						SchemaType stype = (SchemaType)typeEntry;
+						if(stype.isArray()){
+							dims = stype.getRefType().getDimensions();
+						}
+					}
+					if(typeEntry instanceof SchemaElement){
+						SchemaElement stype = (SchemaElement)typeEntry;
+						dims = stype.getType().getDimensions();
+						if(stype.getMaxOccurs()>1){
+							dims = dims + "[]";
+						}
+					}
+					
                     String type = content.getType();
-
-                    if ((type == null) || (type.length() == 0)) {
+                    if (type == null || type.length() == 0)
                         type = "text/plain";
-                    }
-
-                    bEntry.setMIMEInfo(op.getName(), content.getPart(), type,
-                            dims);
+                    bEntry.setMIMEInfo(
+                        op.getName(),
+                        content.getPart(),
+                        type,
+                        dims);
                 } else if (obj instanceof SOAPBody) {
                     String use = ((SOAPBody) obj).getUse();
-
                     if (use == null) {
                         throw new IOException(
-                                Messages.getMessage("noUse", op.getName()));
+                            Messages.getMessage("noUse", op.getName()));
                     }
-
                     if (use.equalsIgnoreCase("literal")) {
                         bodyType = Use.LITERAL;
                     }
                 } else if (obj instanceof UnknownExtensibilityElement) {
-
-                    // TODO: After WSDL4J supports soap12, change this code
+                    //TODO: After WSDL4J supports soap12, change this code
                     UnknownExtensibilityElement unkElement =
-                            (UnknownExtensibilityElement) obj;
-                    QName name =
-                            unkElement.getElementType();
-
-                    if (name.getNamespaceURI().equals(Constants.URI_WSDL12_SOAP)
-                            && name.getLocalPart().equals("body")) {
+                        (UnknownExtensibilityElement) obj;
+                    QName name = unkElement.getElementType();
+                    if (name
+                        .getNamespaceURI()
+                        .equals(Constants.URI_WSDL12_SOAP)
+                        && name.getLocalPart().equals("body")) {
                         String use =
-                                unkElement.getElement().getAttribute("use");
-
+                            unkElement.getElement().getAttribute("use");
                         if (use == null) {
                             throw new IOException(
-                                    Messages.getMessage("noUse", op.getName()));
+                                Messages.getMessage("noUse", op.getName()));
                         }
-
                         if (use.equalsIgnoreCase("literal")) {
                             bodyType = Use.LITERAL;
                         }
@@ -2807,19 +2531,10 @@ public class SymbolTable {
                 }
             }
         }
-
         return bodyType;
-    }    // addMIMETypes
+    } // addMIMETypes
 
-    /**
-     * Method findPart
-     * 
-     * @param operation 
-     * @param partName  
-     * @return 
-     */
     private TypeEntry findPart(Operation operation, String partName) {
-
         Map parts = operation.getInput().getMessage().getParts();
         Iterator iterator = parts.values().iterator();
         TypeEntry part = findPart(iterator, partName);
@@ -2829,25 +2544,14 @@ public class SymbolTable {
             iterator = parts.values().iterator();
             part = findPart(iterator, partName);
         }
-
         return part;
     }
 
-    /**
-     * Method findPart
-     * 
-     * @param iterator 
-     * @param partName 
-     * @return 
-     */
     private TypeEntry findPart(Iterator iterator, String partName) {
-
         while (iterator.hasNext()) {
             Part part = (Part) iterator.next();
-
             if (part != null) {
                 String typeName = part.getName();
-
                 if (partName.equals(typeName)) {
                     if (part.getTypeName() != null) {
                         return getType(part.getTypeName());
@@ -2857,103 +2561,89 @@ public class SymbolTable {
                 }
             }
         }
-
         return null;
     }
 
     /**
      * Populate the symbol table with all of the ServiceEntry's from the Definition.
-     * 
-     * @param def 
-     * @throws IOException 
      */
     private void populateServices(Definition def) throws IOException {
-
         Iterator i = def.getServices().values().iterator();
-
         while (i.hasNext()) {
             Service service = (Service) i.next();
 
             // do a bit of name validation
-            if ((service.getQName() == null)
-                    || (service.getQName().getLocalPart() == null)
-                    || service.getQName().getLocalPart().equals("")) {
+            if (service.getQName() == null
+                || service.getQName().getLocalPart() == null
+                || service.getQName().getLocalPart().equals("")) {
                 throw new IOException(Messages.getMessage("BadServiceName00"));
             }
 
             ServiceEntry sEntry = new ServiceEntry(service);
-
             symbolTablePut(sEntry);
             populatePorts(service.getPorts());
         }
-    }    // populateServices
+    } // populateServices
 
     /**
-     * populates the symbol table with port elements defined within a &lt;service&gt;
+     * populates the symbol table with port elements defined within a &lt;service&gt; 
      * element.
      * 
-     * @param ports a map of name->port pairs (i.e. what is returned by service.getPorts()
-     * @throws IOException thrown, if an IO or WSDL error is detected
+     * @param ports  a map of name->port pairs (i.e. what is returned by service.getPorts()
+     * 
+     * @exception IOException  thrown, if an IO or WSDL error is detected
      * @see javax.wsdl.Service#getPorts()
      * @see javax.wsdl.Port
      */
     private void populatePorts(Map ports) throws IOException {
-
-        if (ports == null) {
+        if (ports == null)
             return;
-        }
-
         Iterator it = ports.values().iterator();
-
         while (it.hasNext()) {
+
             Port port = (Port) it.next();
             String portName = port.getName();
             Binding portBinding = port.getBinding();
 
-            // make sure there is a port name. The 'name' attribute for WSDL ports is
+            // make sure there is a port name. The 'name' attribute for WSDL ports is 
             // mandatory
-            // 
+            //
             if (portName == null) {
-
-                // REMIND: should rather be a javax.wsdl.WSDLException ?
+                //REMIND: should rather be a javax.wsdl.WSDLException ?
                 throw new IOException(
-                        Messages.getMessage("missingPortNameException"));
+                    Messages.getMessage("missingPortNameException"));
             }
 
             // make sure there is a binding for the port. The 'binding' attribute for
             // WSDL ports is mandatory
-            // 
+            //
             if (portBinding == null) {
-
-                // REMIND: should rather be a javax.wsdl.WSDLException ?
+                //REMIND: should rather be a javax.wsdl.WSDLException ?
                 throw new IOException(
-                        Messages.getMessage("missingBindingException"));
+                    Messages.getMessage("missingBindingException"));
             }
 
             // make sure the port name is unique among all port names defined in this
             // WSDL document.
             // 
             // NOTE: there's a flaw in com.ibm.wsdl.xml.WSDLReaderImpl#parsePort() and
-            // com.ibm.wsdl.xml.WSDLReaderImpl#addPort(). These methods do not enforce
+            // com.ibm.wsdl.xml.WSDLReaderImpl#addPort(). These methods do not enforce 
             // the port name exists and is unique. Actually, if two port definitions with
-            // the same name exist within the same service element, only *one* port
+            // the same name exist within the same service element, only *one* port 
             // element is present after parsing and the following exception is not thrown.
             // 
             // If two ports with the same name exist in different service elements,
             // the exception below is thrown. This is conformant to the WSDL 1.1 spec (sec 2.6)
-            // , which states: "The name attribute provides a unique name among all ports
+            // , which states: "The name attribute provides a unique name among all ports 
             // defined within in the enclosing WSDL document."
             // 
             // 
             if (existsPortWithName(new QName(portName))) {
-
-                // REMIND: should rather be a javax.wsdl.WSDLException ?
+                //REMIND: should rather be a javax.wsdl.WSDLException ?
                 throw new IOException(
-                        Messages.getMessage("twoPortsWithSameName", portName));
+                    Messages.getMessage("twoPortsWithSameName", portName));
             }
-
             PortEntry portEntry = new PortEntry(port);
-
             symbolTablePut(portEntry);
         }
     }
@@ -2964,135 +2654,184 @@ public class SymbolTable {
      * (An exception to the rule is that derived types are set as referenced if
      * their base type is referenced.  This is necessary to support generation and
      * registration of derived types.)
-     * 
-     * @param def 
-     * @param doc 
-     * @throws SAXException 
      */
     private void setReferences(Definition def, Document doc)
-            throws SAXException {
-
+        throws SAXException {
         Map stuff = def.getServices();
-
         if (stuff.isEmpty()) {
             stuff = def.getBindings();
-
             if (stuff.isEmpty()) {
                 stuff = def.getPortTypes();
-
                 if (stuff.isEmpty()) {
                     stuff = def.getMessages();
-
                     if (stuff.isEmpty()) {
-                        for (Iterator i = elementTypeEntries.values().iterator();
-                             i.hasNext();) {
+                        for (Iterator i =
+                            elementTypeEntries.values().iterator();
+                            i.hasNext();
+                            ) {
                             setTypeReferences((TypeEntry) i.next(), doc, false);
                         }
-
                         for (Iterator i = typeTypeEntries.values().iterator();
-                             i.hasNext();) {
+                            i.hasNext();
+                            ) {
                             setTypeReferences((TypeEntry) i.next(), doc, false);
                         }
                     } else {
                         Iterator i = stuff.values().iterator();
-
                         while (i.hasNext()) {
                             Message message = (Message) i.next();
                             MessageEntry mEntry =
-                                    getMessageEntry(message.getQName());
-
+                                getMessageEntry(message.getQName());
                             setMessageReferences(mEntry, def, doc, false);
                         }
                     }
                 } else {
                     Iterator i = stuff.values().iterator();
-
                     while (i.hasNext()) {
                         PortType portType = (PortType) i.next();
                         PortTypeEntry ptEntry =
-                                getPortTypeEntry(portType.getQName());
-
+                            getPortTypeEntry(portType.getQName());
                         setPortTypeReferences(ptEntry, null, def, doc);
                     }
                 }
             } else {
                 Iterator i = stuff.values().iterator();
-
                 while (i.hasNext()) {
                     Binding binding = (Binding) i.next();
                     BindingEntry bEntry = getBindingEntry(binding.getQName());
-
                     setBindingReferences(bEntry, def, doc);
                 }
             }
         } else {
             Iterator i = stuff.values().iterator();
-
             while (i.hasNext()) {
                 Service service = (Service) i.next();
                 ServiceEntry sEntry = getServiceEntry(service.getQName());
-
                 setServiceReferences(sEntry, def, doc);
             }
         }
 
-        // TODO
-        // //////////////////////////////////////////////////////////////////////////////////
-        try {
 
-            // TODO jaxme refactoring
-            this.dump(System.out);
+        //		//////////////////////////////////////////////////////////////////////////////////        
+//        try {
+//            // TODO jaxme refactoring
+//	        this.dump(System.out);
+//            PrintStream w =
+//               new PrintStream(new FileOutputStream("st.txt", false));
+////            this.dump(w);
+//            w.close();
+//
+//            System.out.println("a");
+//                "--------------------DUMPING JAXME----------------");
+//            Iterator it = getAllSchemaTypes();
+//            while (it.hasNext()) {
+//            	SchemaType type = (SchemaType)it.next();
+//				if (isInbuildType(type.getQName()))
+//                	System.out.println(type.toString());
+//            }
+//            System.out.println(
+//                "--------------------DUMPING JAXME----------------");
+//        } catch (FileNotFoundException e) {
+//            e.printStackTrace();
+//        }
+//        //		/////////////////////////////////////////////////////////////////////////////////		 
+    } // setReferences
 
-            PrintStream w = new PrintStream(new FileOutputStream("st.txt",
-                    false));
+//	/**
+//	 * Set the isReferenced flag to true on the given TypeEntry and all
+//	 * SymTabEntries that it refers to.
+//	 */
+//	private void setTypeReferences(
+//		TypeEntry entry,
+//		Document doc,
+//		boolean literal)
+//		throws SAXException {
+//
+//		// Check to see if already processed.
+//		if ((entry.isReferenced() && !literal)
+//			|| (entry.isOnlyLiteralReferenced() && literal)) {
+//			return;
+//		}
+//
+//		if (wrapped) {
+//			// If this type is ONLY referenced from a literal usage in a binding,
+//			// then isOnlyLiteralReferenced should return true.
+//			if (!entry.isReferenced() && literal) {
+//				entry.setOnlyLiteralReference(true);
+//			}
+//			// If this type was previously only referenced as a literal type,
+//			// but now it is referenced in a non-literal manner, turn off the
+//			// onlyLiteralReference flag.
+//			else if (entry.isOnlyLiteralReferenced() && !literal) {
+//				entry.setOnlyLiteralReference(false);
+//			}
+//		}
+//
+//		// If we don't want to emit stuff from imported files, only set the
+//		// isReferenced flag if this entry exists in the immediate WSDL file.
+//		Node node = entry.getNode();
+//		if (addImports || node == null || node.getOwnerDocument() == doc) {
+//			entry.setIsReferenced(true);
+//			if (entry instanceof DefinedElement) {
+//				BooleanHolder forElement = new BooleanHolder();
+//				QName referentName =
+//					Utils.getTypeQName(node, forElement, false);
+//				if (referentName != null) {
+//					TypeEntry referent =
+//						getTypeEntry(referentName, forElement.value);
+//					if (referent != null) {
+//						setTypeReferences(referent, doc, literal);
+//					}
+//				}
+//				// If the Defined Element has an anonymous type,
+//				// process it with the current literal flag setting.
+//				QName anonQName =
+//					SchemaUtils.getElementAnonQName(entry.getNode());
+//				if (anonQName != null) {
+//					TypeEntry anonType = getType(anonQName);
+//					if (anonType != null) {
+//						setTypeReferences(anonType, doc, literal);
+//						return;
+//					}
+//				}
+//			}
+//		}
+//
+//		HashSet nestedTypes = Utils.getNestedTypes(entry, this, true);
+//		Iterator it = nestedTypes.iterator();
+//		while (it.hasNext()) {
+//			TypeEntry nestedType = (TypeEntry) it.next();
+//			if (!nestedType.isReferenced()) {
+//				//setTypeReferences(nestedType, doc, literal);
+//				if (nestedType != entry)
+//					setTypeReferences(nestedType, doc, false);
+//			}
+//		}
+//	} // setTypeReferences
 
-            this.dump(w);
-            w.close();
-            System.out.println(
-                    "--------------------DUMPING JAXME----------------");
-
-            Iterator it = getAllSchemaTypes();
-
-            while (it.hasNext()) {
-                System.out.println(it.next().toString());
-            }
-
-            System.out.println(
-                    "--------------------DUMPING JAXME----------------");
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-
-        // /////////////////////////////////////////////////////////////////////////////////
-    }    // setReferences
 
     /**
      * Set the isReferenced flag to true on the given TypeEntry and all
      * SymTabEntries that it refers to.
-     * 
-     * @param entry   
-     * @param doc     
-     * @param literal 
-     * @throws SAXException 
      */
     private void setTypeReferences(
-            TypeEntry entry, Document doc, boolean literal)
-            throws SAXException {
+        TypeEntry entry,
+        Document doc,
+        boolean literal)
+        throws SAXException {
 
         // Check to see if already processed.
         if ((entry.isReferenced() && !literal)
-                || (entry.isOnlyLiteralReferenced() && literal)) {
+            || (entry.isOnlyLiteralReferenced() && literal)) {
             return;
         }
 
         if (wrapped) {
-
             // If this type is ONLY referenced from a literal usage in a binding,
             // then isOnlyLiteralReferenced should return true.
             if (!entry.isReferenced() && literal) {
                 entry.setOnlyLiteralReference(true);
             }
-
             // If this type was previously only referenced as a literal type,
             // but now it is referenced in a non-literal manner, turn off the
             // onlyLiteralReference flag.
@@ -3100,88 +2839,79 @@ public class SymbolTable {
                 entry.setOnlyLiteralReference(false);
             }
         }
+//		// If we don't want to emit stuff from imported files, only set the
+//		// isReferenced flag if this entry exists in the immediate WSDL file.
+//
+//		Node node = entry.getNode();
+//		if (addImports || node == null || node.getOwnerDocument() == doc) {
+//			entry.setIsReferenced(true);
+//			if (entry instanceof DefinedElement) {
+//				BooleanHolder forElement = new BooleanHolder();
+//				QName referentName =
+//					Utils.getTypeQName(node, forElement, false);
+//				if (referentName != null) {
+//					TypeEntry referent =
+//						getTypeEntry(referentName, forElement.value);
+//					if (referent != null) {
+//						setTypeReferences(referent, doc, literal);
+//					}
+//				}
+//				// If the Defined Element has an anonymous type,
+//				// process it with the current literal flag setting.
+//				QName anonQName =
+//					SchemaUtils.getElementAnonQName(entry.getNode());
+//				if (anonQName != null) {
+//					TypeEntry anonType = getType(anonQName);
+//					if (anonType != null) {
+//						setTypeReferences(anonType, doc, literal);
+//						return;
+//					}
+//				}
+//			}
+//		}
 
+		//TODO still this code emmits the stuff if they referanced find a way 
         // If we don't want to emit stuff from imported files, only set the
         // isReferenced flag if this entry exists in the immediate WSDL file.
-        Node node = entry.getNode();
 
-        if (addImports || (node == null) || (node.getOwnerDocument() == doc)) {
-            entry.setIsReferenced(true);
-
-            if (entry instanceof DefinedElement) {
-                BooleanHolder forElement = new BooleanHolder();
-                QName referentName = Utils.getTypeQName(node,
-                        forElement, false);
-
-                if (referentName != null) {
-                    TypeEntry referent = getTypeEntry(referentName,
-                            forElement.value);
-
-                    if (referent != null) {
-                        setTypeReferences(referent, doc, literal);
-                    }
-                }
-
-                // If the Defined Element has an anonymous type,
-                // process it with the current literal flag setting.
-                QName anonQName =
-                        SchemaUtils.getElementAnonQName(entry.getNode());
-
-                if (anonQName != null) {
-                    TypeEntry anonType = getType(anonQName);
-
-                    if (anonType != null) {
-                        setTypeReferences(anonType, doc, literal);
-
-                        return;
-                    }
-                }
-            }
+        entry.setIsReferenced(true);
+        if (entry instanceof SchemaElement) {
+			setTypeReferences(((SchemaElement)entry).getType(), doc, literal);
         }
+
 
         HashSet nestedTypes = Utils.getNestedTypes(entry, this, true);
         Iterator it = nestedTypes.iterator();
-
         while (it.hasNext()) {
             TypeEntry nestedType = (TypeEntry) it.next();
-
             if (!nestedType.isReferenced()) {
-
-                // setTypeReferences(nestedType, doc, literal);
-                if (nestedType != entry) {
+                //setTypeReferences(nestedType, doc, literal);
+                if (nestedType != entry)
                     setTypeReferences(nestedType, doc, false);
-                }
             }
         }
-    }    // setTypeReferences
+    } // setTypeReferences
 
     /**
      * Set the isReferenced flag to true on the given MessageEntry and all
      * SymTabEntries that it refers to.
-     * 
-     * @param entry   
-     * @param def     
-     * @param doc     
-     * @param literal 
-     * @throws SAXException 
      */
     private void setMessageReferences(
-            MessageEntry entry, Definition def, Document doc, boolean literal)
-            throws SAXException {
-
+        MessageEntry entry,
+        Definition def,
+        Document doc,
+        boolean literal)
+        throws SAXException {
         // If we don't want to emit stuff from imported files, only set the
         // isReferenced flag if this entry exists in the immediate WSDL file.
         Message message = entry.getMessage();
-
         if (addImports) {
             entry.setIsReferenced(true);
         } else {
-
             // NOTE:  I thought I could have simply done:
             // if (def.getMessage(message.getQName()) != null)
             // but that method traces through all imported messages.
             Map messages = def.getMessages();
-
             if (messages.containsValue(message)) {
                 entry.setIsReferenced(true);
             }
@@ -3189,56 +2919,43 @@ public class SymbolTable {
 
         // Set all the message's types
         Iterator parts = message.getParts().values().iterator();
-
         while (parts.hasNext()) {
             Part part = (Part) parts.next();
             TypeEntry type = getType(part.getTypeName());
-
             if (type != null) {
                 setTypeReferences(type, doc, literal);
             }
-
             type = getElement(part.getElementName());
-
             if (type != null) {
                 setTypeReferences(type, doc, literal);
-
                 TypeEntry refType = type.getRefType();
-
                 if (refType != null) {
                     setTypeReferences(refType, doc, literal);
                 }
             }
         }
-    }    // setMessageReference
+    } // setMessageReference
 
     /**
      * Set the isReferenced flag to true on the given PortTypeEntry and all
      * SymTabEntries that it refers to.
-     * 
-     * @param entry  
-     * @param bEntry 
-     * @param def    
-     * @param doc    
-     * @throws SAXException 
      */
     private void setPortTypeReferences(
-            PortTypeEntry entry, BindingEntry bEntry, Definition def, Document doc)
-            throws SAXException {
-
+        PortTypeEntry entry,
+        BindingEntry bEntry,
+        Definition def,
+        Document doc)
+        throws SAXException {
         // If we don't want to emit stuff from imported files, only set the
         // isReferenced flag if this entry exists in the immediate WSDL file.
         PortType portType = entry.getPortType();
-
         if (addImports) {
             entry.setIsReferenced(true);
         } else {
-
             // NOTE:  I thought I could have simply done:
             // if (def.getPortType(portType.getQName()) != null)
             // but that method traces through all imported portTypes.
             Map portTypes = def.getPortTypes();
-
             if (portTypes.containsValue(portType)) {
                 entry.setIsReferenced(true);
             }
@@ -3250,27 +2967,25 @@ public class SymbolTable {
         // For each operation, query its input, output, and fault messages
         while (operations.hasNext()) {
             Operation operation = (Operation) operations.next();
+
             Input input = operation.getInput();
             Output output = operation.getOutput();
 
             // Find out if this reference is a literal reference or not.
             boolean literalInput = false;
             boolean literalOutput = false;
-
             if (bEntry != null) {
-                literalInput = bEntry.getInputBodyType(operation)
-                        == Use.LITERAL;
-                literalOutput = bEntry.getOutputBodyType(operation)
-                        == Use.LITERAL;
+                literalInput =
+                    bEntry.getInputBodyType(operation) == Use.LITERAL;
+                literalOutput =
+                    bEntry.getOutputBodyType(operation) == Use.LITERAL;
             }
 
             // Query the input message
             if (input != null) {
                 Message message = input.getMessage();
-
                 if (message != null) {
                     MessageEntry mEntry = getMessageEntry(message.getQName());
-
                     if (mEntry != null) {
                         setMessageReferences(mEntry, def, doc, literalInput);
                     }
@@ -3280,10 +2995,8 @@ public class SymbolTable {
             // Query the output message
             if (output != null) {
                 Message message = output.getMessage();
-
                 if (message != null) {
                     MessageEntry mEntry = getMessageEntry(message.getQName());
-
                     if (mEntry != null) {
                         setMessageReferences(mEntry, def, doc, literalOutput);
                     }
@@ -3292,49 +3005,39 @@ public class SymbolTable {
 
             // Query the fault messages
             Iterator faults = operation.getFaults().values().iterator();
-
             while (faults.hasNext()) {
                 Message message = ((Fault) faults.next()).getMessage();
-
                 if (message != null) {
                     MessageEntry mEntry = getMessageEntry(message.getQName());
-
                     if (mEntry != null) {
                         setMessageReferences(mEntry, def, doc, false);
                     }
                 }
             }
         }
-    }    // setPortTypeReferences
+    } // setPortTypeReferences
 
     /**
      * Set the isReferenced flag to true on the given BindingEntry and all
      * SymTabEntries that it refers to ONLY if this binding is a SOAP binding.
-     * 
-     * @param entry 
-     * @param def   
-     * @param doc   
-     * @throws SAXException 
      */
     private void setBindingReferences(
-            BindingEntry entry, Definition def, Document doc)
-            throws SAXException {
+        BindingEntry entry,
+        Definition def,
+        Document doc)
+        throws SAXException {
 
         if (entry.getBindingType() == BindingEntry.TYPE_SOAP) {
-
             // If we don't want to emit stuff from imported files, only set the
             // isReferenced flag if this entry exists in the immediate WSDL file.
             Binding binding = entry.getBinding();
-
             if (addImports) {
                 entry.setIsReferenced(true);
             } else {
-
                 // NOTE:  I thought I could have simply done:
                 // if (def.getBindng(binding.getQName()) != null)
                 // but that method traces through all imported bindings.
                 Map bindings = def.getBindings();
-
                 if (bindings.containsValue(binding)) {
                     entry.setIsReferenced(true);
                 }
@@ -3343,39 +3046,31 @@ public class SymbolTable {
             // Set all the binding's portTypes
             PortType portType = binding.getPortType();
             PortTypeEntry ptEntry = getPortTypeEntry(portType.getQName());
-
             if (ptEntry != null) {
                 setPortTypeReferences(ptEntry, entry, def, doc);
             }
         }
-    }    // setBindingReferences
+    } // setBindingReferences
 
     /**
      * Set the isReferenced flag to true on the given ServiceEntry and all
      * SymTabEntries that it refers to.
-     * 
-     * @param entry 
-     * @param def   
-     * @param doc   
-     * @throws SAXException 
      */
     private void setServiceReferences(
-            ServiceEntry entry, Definition def, Document doc)
-            throws SAXException {
-
+        ServiceEntry entry,
+        Definition def,
+        Document doc)
+        throws SAXException {
         // If we don't want to emit stuff from imported files, only set the
         // isReferenced flag if this entry exists in the immediate WSDL file.
         Service service = entry.getService();
-
         if (addImports) {
             entry.setIsReferenced(true);
         } else {
-
             // NOTE:  I thought I could have simply done:
             // if (def.getService(service.getQName()) != null)
             // but that method traces through all imported services.
             Map services = def.getServices();
-
             if (services.containsValue(service)) {
                 entry.setIsReferenced(true);
             }
@@ -3383,806 +3078,1115 @@ public class SymbolTable {
 
         // Set all the service's bindings
         Iterator ports = service.getPorts().values().iterator();
-
         while (ports.hasNext()) {
             Port port = (Port) ports.next();
             Binding binding = port.getBinding();
-
             if (binding != null) {
                 BindingEntry bEntry = getBindingEntry(binding.getQName());
-
                 if (bEntry != null) {
                     setBindingReferences(bEntry, def, doc);
                 }
             }
         }
-    }    // setServiceReferences
+    } // setServiceReferences
+
+//	/**
+//	 * Put the given SymTabEntry into the symbol table, if appropriate.
+//	 */
+//	private void symbolTablePut(SymTabEntry entry) throws IOException {
+//		QName name = entry.getQName();
+//		if (get(name, entry.getClass()) == null) {
+//			// An entry of the given qname of the given type doesn't exist yet.
+//			if (entry instanceof Type
+//				&& get(name, UndefinedType.class) != null) {
+//
+//				// A undefined type exists in the symbol table, which means
+//				// that the type is used, but we don't yet have a definition for
+//				// the type.  Now we DO have a definition for the type, so
+//				// replace the existing undefined type with the real type.
+//
+//				if (((TypeEntry) get(name, UndefinedType.class)).isSimpleType()
+//					&& !((TypeEntry) entry).isSimpleType()) {
+//					// Problem if the undefined type was used in a
+//					// simple type context.
+//					throw new IOException(
+//						Messages.getMessage(
+//							"AttrNotSimpleType01",
+//							name.toString()));
+//
+//				}
+//				Vector v = (Vector) symbolTable.get(name);
+//				for (int i = 0; i < v.size(); ++i) {
+//					Object oldEntry = v.elementAt(i);
+//					if (oldEntry instanceof UndefinedType) {
+//
+//						// Replace it in the symbol table
+//						v.setElementAt(entry, i);
+//
+//						// Replace it in the types index
+//						typeTypeEntries.put(name, entry);
+//
+//						// Update all of the entries that refer to the unknown type
+//						 ((UndefinedType) oldEntry).update((Type) entry);
+//					}
+//				}
+//			} else if (
+//				entry instanceof Element
+//					&& get(name, UndefinedElement.class) != null) {
+//				// A undefined element exists in the symbol table, which means
+//				// that the element is used, but we don't yet have a definition for
+//				// the element.  Now we DO have a definition for the element, so
+//				// replace the existing undefined element with the real element.
+//				Vector v = (Vector) symbolTable.get(name);
+//				for (int i = 0; i < v.size(); ++i) {
+//					Object oldEntry = v.elementAt(i);
+//					if (oldEntry instanceof UndefinedElement) {
+//
+//						// Replace it in the symbol table
+//						v.setElementAt(entry, i);
+//
+//						// Replace it in the elements index
+//						elementTypeEntries.put(name, entry);
+//
+//						// Update all of the entries that refer to the unknown type
+//						 ((Undefined) oldEntry).update((Element) entry);
+//					}
+//				}
+//			} else {
+//				// Add this entry to the symbol table
+//				Vector v = (Vector) symbolTable.get(name);
+//				if (v == null) {
+//					v = new Vector();
+//					symbolTable.put(name, v);
+//				}
+//				v.add(entry);
+//				// add TypeEntries to specialized indices for
+//				// fast lookups during reference resolution.
+//				if (entry instanceof SchemaElement) {
+//					elementTypeEntries.put(name, entry);
+//				} else if (entry instanceof SchemaType) {
+//					typeTypeEntries.put(name, entry);
+//				}
+//			}
+//		} else {
+//			System.out.println(
+//				Messages.getMessage("alreadyExists00", "" + name));
+//		}
+//	} // symbolTablePut
+
 
     /**
      * Put the given SymTabEntry into the symbol table, if appropriate.
-     * 
-     * @param entry 
-     * @throws IOException 
      */
     private void symbolTablePut(SymTabEntry entry) throws IOException {
-
         QName name = entry.getQName();
-
-        if (get(name, entry.getClass()) == null) {
-
-            // An entry of the given qname of the given type doesn't exist yet.
-            if ((entry instanceof Type)
-                    && (get(name, UndefinedType.class) != null)) {
-
-                // A undefined type exists in the symbol table, which means
-                // that the type is used, but we don't yet have a definition for
-                // the type.  Now we DO have a definition for the type, so
-                // replace the existing undefined type with the real type.
-                if (((TypeEntry) get(name, UndefinedType.class)).isSimpleType()
-                        && !((TypeEntry) entry).isSimpleType()) {
-
-                    // Problem if the undefined type was used in a
-                    // simple type context.
-                    throw new IOException(
-                            Messages.getMessage(
-                                    "AttrNotSimpleType01", name.toString()));
-                }
-
-                Vector v = (Vector) symbolTable.get(name);
-
-                for (int i = 0; i < v.size(); ++i) {
-                    Object oldEntry = v.elementAt(i);
-
-                    if (oldEntry instanceof UndefinedType) {
-
-                        // Replace it in the symbol table
-                        v.setElementAt(entry, i);
-
-                        // Replace it in the types index
-                        typeTypeEntries.put(name, entry);
-
-                        // Update all of the entries that refer to the unknown type
-                        ((UndefinedType) oldEntry).update((Type) entry);
-                    }
-                }
-            } else if ((entry instanceof Element)
-                    && (get(name, UndefinedElement.class) != null)) {
-
-                // A undefined element exists in the symbol table, which means
-                // that the element is used, but we don't yet have a definition for
-                // the element.  Now we DO have a definition for the element, so
-                // replace the existing undefined element with the real element.
-                Vector v = (Vector) symbolTable.get(name);
-
-                for (int i = 0; i < v.size(); ++i) {
-                    Object oldEntry = v.elementAt(i);
-
-                    if (oldEntry instanceof UndefinedElement) {
-
-                        // Replace it in the symbol table
-                        v.setElementAt(entry, i);
-
-                        // Replace it in the elements index
-                        elementTypeEntries.put(name, entry);
-
-                        // Update all of the entries that refer to the unknown type
-                        ((Undefined) oldEntry).update((Element) entry);
-                    }
-                }
-            } else {
-
-                // Add this entry to the symbol table
-                Vector v = (Vector) symbolTable.get(name);
-
-                if (v == null) {
-                    v = new Vector();
-
-                    symbolTable.put(name, v);
-                }
-
-                v.add(entry);
-
-                // add TypeEntries to specialized indices for
-                // fast lookups during reference resolution.
-                if (entry instanceof Element) {
-                    elementTypeEntries.put(name, entry);
-                } else if (entry instanceof Type) {
-                    typeTypeEntries.put(name, entry);
-                }
-            }
-        } else {
-            System.out.println(Messages.getMessage("alreadyExists00",
-                    "" + name));
+        // Add this entry to the symbol table
+        Vector v = (Vector) symbolTable.get(name);
+        if (v == null) {
+             v = new Vector();
+             symbolTable.put(name, v);
         }
-    }    // symbolTablePut
+        v.add(entry);
+        // add TypeEntries to specialized indices for
+        // fast lookups during reference resolution.
+        if (entry instanceof SchemaElement) {
+    	    elementTypeEntries.put(name, entry);
+        } else if (entry instanceof SchemaType) {
+	        typeTypeEntries.put(name, entry);
+        }
+    } // symbolTablePut
 
     /**
      * checks whether there exists a WSDL port with a given name in the current
      * symbol table
      * 
-     * @param name the QName of the port. Note: only the local part of the qname is relevant,
-     *             since port names are not qualified with a namespace. They are of type nmtoken in WSDL 1.1
-     *             and of type ncname in WSDL 1.2
+     * @param  name   the QName of the port. Note: only the local part of the qname is relevant,
+     *    since port names are not qualified with a namespace. They are of type nmtoken in WSDL 1.1
+     *    and of type ncname in WSDL 1.2
+     * 
      * @return true, if there is a port element with the specified name; false, otherwise
      */
     protected boolean existsPortWithName(QName name) {
-
         Vector v = (Vector) symbolTable.get(name);
-
-        if (v == null) {
+        if (v == null)
             return false;
-        }
-
         Iterator it = v.iterator();
-
         while (it.hasNext()) {
             Object o = it.next();
-
-            if (o instanceof PortEntry) {
+            if (o instanceof PortEntry)
                 return true;
-            }
         }
-
         return false;
     }
 
-    /**
-     * Method getInnerCollectionComponentQName
-     * 
-     * @param node 
-     * @return 
-     */
-    private static QName getInnerCollectionComponentQName(Node node) {
+//    private static QName getInnerCollectionComponentQName(Node node) {
+//        if (node == null) {
+//            return null;
+//        }
+//
+//        QName name = SchemaUtils.getCollectionComponentQName(node);
+//        if (name != null)
+//            return name;
+//
+//        // Dive into the node if necessary
+//        NodeList children = node.getChildNodes();
+//        for (int i = 0; i < children.getLength(); i++) {
+//            name = getInnerCollectionComponentQName(children.item(i));
+//            if (name != null)
+//                return name;
+//        }
+//        return null;
+//    }
+//
+//    private static QName getInnerTypeQName(Node node) {
+//        if (node == null) {
+//            return null;
+//        }
+//
+//        BooleanHolder forElement = new BooleanHolder();
+//        QName name = Utils.getTypeQName(node, forElement, true);
+//        if (name != null)
+//            return name;
+//
+//        // Dive into the node if necessary
+//        NodeList children = node.getChildNodes();
+//        for (int i = 0; i < children.getLength(); i++) {
+//            name = getInnerTypeQName(children.item(i));
+//            if (name != null)
+//                return name;
+//        }
+//        return null;
+//    }
 
-        if (node == null) {
-            return null;
-        }
-
-        QName name = SchemaUtils.getCollectionComponentQName(node);
-
-        if (name != null) {
-            return name;
-        }
-
-        // Dive into the node if necessary
-        NodeList children = node.getChildNodes();
-
-        for (int i = 0; i < children.getLength(); i++) {
-            name = getInnerCollectionComponentQName(children.item(i));
-
-            if (name != null) {
-                return name;
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * Method getInnerTypeQName
-     * 
-     * @param node 
-     * @return 
-     */
-    private static QName getInnerTypeQName(Node node) {
-
-        if (node == null) {
-            return null;
-        }
-
-        BooleanHolder forElement = new BooleanHolder();
-        QName name = Utils.getTypeQName(node, forElement, true);
-
-        if (name != null) {
-            return name;
-        }
-
-        // Dive into the node if necessary
-        NodeList children = node.getChildNodes();
-
-        for (int i = 0; i < children.getLength(); i++) {
-            name = getInnerTypeQName(children.item(i));
-
-            if (name != null) {
-                return name;
-            }
-        }
-
-        return null;
-    }
-
-    // //////////////////////////////////////////////////////////////////////////////
-    // / following are jame parsing codes.
-    // /////////////////////////////////////////////////////////////
-
-    /** Field schema */
+    ////////////////////////////////////////////////////////////////////////////////
+    /// following are jame parsing codes. 
+    ///////////////////////////////////////////////////////////////
     private XSSchema schema;
+    private XSParser parser;
 
-    /** Field schemaTypes */
-    private HashMap schemaTypes = new HashMap();
+	private static HashMap elementMap = new HashMap();
+    private static HashMap schemaTypes;
+	private static HashMap schemaInbuildTypes;
+	static{
+		if(schemaTypes == null)
+			schemaTypes = new HashMap();
+		if(schemaInbuildTypes == null)
+			schemaInbuildTypes = new HashMap();			
+	}
+	
+	public SchemaElement getToplevelElement(QName qname){
+		return (SchemaElement)elementMap.get(qname);
+	}
+	
+	public void putToplevelElement(SchemaElement ele){
+		try{
+			elementMap.put(ele.getQName(),ele);
+			symbolTablePut(ele);
+		}catch(IOException e){
+			throw new JAXMEInternalException(e);
+		}		
+	}
+	
+	public void putInbuildSchemaType(SchemaType type) {
+		//schemaInbuildTypes.put(type.getQName(), type);
+	}
 
-    /**
-     * Method putSchemaType
-     * 
-     * @param type 
-     */
-    public void putSchemaType(SchemaType type) {
-        schemaTypes.put(type.getQName(), type);
+    public void putSchemaType(SchemaType type){
+    	try{
+	        schemaTypes.put(type.getQName(), type);
+			symbolTablePut(type);
+    	}catch(IOException e){
+    		throw new JAXMEInternalException(e);
+    	}	
     }
 
-    /**
-     * Method getSchemaType
-     * 
-     * @param name 
-     * @return 
-     */
+/**
+ * this method is a crap. should be removed the code following is just a 
+ * palster till the final refactoring done.
+ * @param name
+ * @return
+ */
     public SchemaType getSchemaType(QName name) {
-
-        if (name == null) {
+    	QName tempname = name;
+		//System.out.print("..a>name "+name);
+        if (name == null)
             return null;
-        }
-
+        //try custom types 
+           
         Object obj = schemaTypes.get(name);
+        //else try build in types 
+		if(obj==null)
+			obj = schemaInbuildTypes.get(name);
 
+		//is it a element 	   			
+		if(obj == null){
+			SchemaElement ele = getToplevelElement(name);
+			if(ele != null){
+				obj = ele.getType();
+			}
+		}
+			
+        int index;
         if (obj == null) {
-            if (name.getLocalPart().startsWith(">")) {
-                name = new QName(name.getNamespaceURI(),
-                        name.getLocalPart().substring(1));
-
-                System.out.println(name);
-
-                obj = schemaTypes.get(name);
+			if((index = name.getLocalPart().indexOf('>'))>=0){
+            	String localpart = name.getLocalPart();
+            	while((index= localpart.indexOf('>'))>=0){
+					localpart = localpart.substring(index+1);
+					//System.out.println("..b>name "+localpart);
+            	}
+				name = new QName(
+					   name.getNamespaceURI(),
+					   localpart);
+				obj = schemaTypes.get(name);
+				
+			    
+			   if(obj==null){
+					obj = schemaTypes.get(new QName(name.getLocalPart()));
+			   }	     
             }
         }
 
         return (SchemaType) obj;
     }
 
-    /**
-     * Method getAllSchemaTypes
-     * 
-     * @return 
-     */
     public Iterator getAllSchemaTypes() {
         return schemaTypes.values().iterator();
     }
-
+    
+	public Iterator getElements() {
+			return elementMap.values().iterator();
+	}
     /**
-     * This method create (not not exists already) and fill the TypeEntry with
-     * the shema information taken from the JAXME.
-     * 
-     * @param xstype      
-     * @param elementName 
-     * @throws SAXException 
-     * @throws IOException  
+     * This method create (not not exists already) and fill the TypeEntry with 
+     * the shema information taken from the JAXME.  
      */
-    public void createTypeEntry(XSType xstype, XsQName elementName)
-            throws SAXException, IOException {
+    public SchemaType createTypeEntry(XSType xstype, XsQName elementName)
+        throws IOException {
+		try{
+	        QName typeName = xsQName2QName(xstype.getName());
+	        QName ename = xsQName2QName(elementName);
+	        //type name
+	        //some times <complexType> tag do not have name=".." when inside
+	        //element then use element name 		
+	        typeName = (typeName == null) ? ename : typeName;
+	
+	
+			//if type exists do not need to worry about them as well
+	        SchemaType type = getSchemaType(typeName);
+	        if (type != null) {
+	        	return type;
+	        }	
+	
+			//check are they base/Inbuild types just add them and, return 	
+			if (schemaInbuildTypes.containsKey(typeName)){
+				SchemaType inbuildType = getSchemaType(typeName);
+				if(inbuildType == null){
+					inbuildType = new SchemaType(typeName);
+					inbuildType.setJaxmetype(xstype);
+					putInbuildSchemaType(inbuildType);
+				}	
+				return inbuildType;
+			}
+				
+	        
+	
+	        //if does not exists create and add it to the SymbolTable 
+	        type = new SchemaType(typeName);
+	        putSchemaType(type);
+	   
+	
+	        type.setJaxmetype(xstype);
+	
+	        if (xstype.isSimple()) {
+	            //TODO	the best way to deal with enumerations lists, unions ect
+	            //is to parse them in the place it needed. But this make the 
+	            //code jaxme dependent. measure and wrap the info of required. 
+	            type.setSimpleType(true);
+	        } else {
+	
+	            XSComplexType se = xstype.getComplexType();
+	
+	            //XSType extendtype = xstype.getComplexType().getExtendedType();				
+	            //if(extendtype != null){
+	            //	type.sTypeEntry extendedentry = getType(xsQName2QName(extendtype.getName()));
+	            //}				
+	
+	            //check weather the type extend from the SOAPENC:ArrayType deal with it 	
+	            XSType restrictedType = null;
+	            if (se.isRestriction()) {
+	                restrictedType = se.getRestrictedType();
+	                if (Constants
+	                    .SOAP_ARRAY
+	                    .equals(xsQName2QName(restrictedType.getName()))
+	                    || Constants.SOAP_ARRAY12.equals(
+	                        xsQName2QName(restrictedType.getName()))) {
+	                    createArrayType4SOAPENCExtention(type, xstype);
+	                    return type;
+	                }
+	            }
+	
+	            //set attributes as the class attributes.	
+	            XSAttributable[] attributes = se.getAttributes();
+	
+	            for (int i = 0; i < attributes.length; i++) {
+	                if (attributes[i] instanceof XSAttribute){
+						XsQName attribName = ((XSAttribute) attributes[i]).getName();
+						XsQName attribTypeName = ((XSAttribute) attributes[i]).getType().getName();
+						if(attribTypeName == null){
+							//this is to adress the cases
+							//&lt;xsd:attribute name="enumAttr"&gt;
+							//  &lt;xsd:simpleType&gt;
+							//  &lt;/xsd:simpleType&gt;
+							//&lt;/xsd:attribute&gt;
+							attribTypeName = attribName;
+						}
+	               
+						SchemaType attributeType = 
+							createTypeEntry(((XSAttribute) attributes[i]).getType(),attribName);
+	
+	                    type.addAttributes(
+	                        xsQName2QName(attribName),attributeType);
+	                 }            
+	            }
+	
+	            if (se.hasSimpleContent()) {
+	                //TODO what to do with simple content
+	                //the simple content type is added as a type apart fom the 
+	                //attributes
+	                //you should not have enumerations inside the simpleContent !!!
+	                type.setSimpleType(true);
+	                //adding the simple content as a element will make sense 
+	                //in the encoding styles but the in doc-literal style it 
+	                //might be misleading. In doc literal enccoding it is advisable to 
+	                //use the XSType taken from the getJAXMEType() in the TypeEntry
+	                
+					SchemaType simpleContentType = createTypeEntry(se.getSimpleContent().getType(),null);			
+				
+												
+	                type.addElement(
+	                    new ElementInfo(
+	                        SchemaType.SIMPLE_CONTENT,
+							simpleContentType));
+	            } else {
+	                //complex content, go foward 
+	                addAllElements(se.getParticle(), type, 1);
+	            }
+	        }
+	        return type;
+		}catch(SAXException e){
+			throw new JAXMEInternalException(e);
+		}	
 
-        QName typeName = xsQName2QName(xstype.getName());
-        QName ename = xsQName2QName(elementName);
-
-        // type name
-        // some times <complexType> tag do not have name=".." when inside
-        // element then use element name
-        typeName = (typeName == null)
-                ? ename
-                : typeName;
-
-        // check are they base/Inbuild types do not need to worry abut them, return
-        if (btm.getBaseName(typeName) != null) {
-            return;
-        }
-
-        SchemaType type = getSchemaType(typeName);
-
-        if (type == null) {
-
-            // if does not exists create and add it to the SymbolTable
-            type = new SchemaType(typeName);
-
-            putSchemaType(type);
-        }
-
-        type.setJaxmetype(xstype);
-
-        if (xstype.isSimple()) {
-
-            // TODO  the best way to deal with enumerations lists, unions ect
-            // is to parse them in the place it needed. But this make the
-            // code jaxme dependent. measure and wrap the info of required.
-            type.setSimpleType(true);
-        } else {
-            XSComplexType se = xstype.getComplexType();
-
-            // XSType extendtype = xstype.getComplexType().getExtendedType();
-            // if(extendtype != null){
-            // type.sTypeEntry extendedentry = getType(xsQName2QName(extendtype.getName()));
-            // }
-            // check weather the type extend from the SOAPENC:ArrayType deal with it
-            XSType restrictedType = null;
-
-            if (se.isRestriction()) {
-                restrictedType = se.getRestrictedType();
-
-                if (Constants.SOAP_ARRAY.equals(
-                        xsQName2QName(restrictedType.getName()))
-                        || Constants.SOAP_ARRAY12.equals(
-                                xsQName2QName(restrictedType.getName()))) {
-                    createArrayType4SOAPENCExtention(type, xstype);
-
-                    return;
-                }
-            }
-
-            // set attributes as the class attributes.
-            XSAttributable[] attributes = se.getAttributes();
-
-            for (int i = 0; i < attributes.length; i++) {
-                if (attributes[i] instanceof XSAttribute) {
-                    type.addAttributes(
-                            xsQName2QName(((XSAttribute) attributes[i]).getName()),
-                            xsQName2QName(
-                                    ((XSAttribute) attributes[i]).getType().getName()));
-                }
-            }
-
-            if (se.hasSimpleContent()) {
-
-                // TODO what to do with simple content
-                // the simple content type is added as a type apart fom the
-                // attributes
-                // you should not have enumerations inside the simpleContent !!!
-                type.setSimpleType(true);
-
-                // adding the simple content as a element will make sense
-                // in the encoding styles but the in doc-literal style it
-                // might be misleading. In doc literal enccoding it is advisable to
-                // use the XSType taken from the getJAXMEType() in the TypeEntry
-                type.addElement(
-                        new ElementInfo(
-                                SchemaType.SIMPLE_CONTENT,
-                                xsQName2QName(
-                                        se.getSimpleContent().getType().getName())));
-            } else {
-
-                // complex content, go foward
-                addAllElements(se.getParticle(), type, 1);
-            }
-        }
     }
 
     /**
      * This code parse the complex type. Start from the particle it goes in to
      * the complexType
-     * 
-     * @param particle   is element/group of elements under all/sequence
-     * @param type       is the type entry of this type
-     * @param companions the number of particles that where in the particle
-     *                   set just before drive into this method.
-     * @throws IOException 
+     * @param particle is element/group of elements under all/sequence
+     * @param type is the type entry of this type
+     * @param companions the number of particles that where in the particle 
+     * 		  set just before drive into this method.
+     * @throws IOException
      */
+
     public void addAllElements(
-            XSParticle particle, SchemaType type, int companions)
-            throws IOException {
-
-        if (particle == null) {
+        XSParticle particle,
+        SchemaType type,
+        int companions)
+        throws IOException{
+        if (particle == null)
             return;
-        }
-
         if (particle.isElement()) {
+        	//if the particle type is a anonymous type of the not upper level elemnt 
+        	//the type may not have added, create and registor the type
+			SchemaType arrayType = 
+				createTypeEntry(particle.getElement().getType(),particle.getElement().getName()); 
+        	
             XsQName typeName = particle.getElement().getType().getName();
-
-            // some times <complexType> tag do not have name=".." when inside
-            // element then use element name
-            QName theTypeName = xsQName2QName((typeName == null)
-                    ? particle.getElement().getName()
-                    : typeName);
+            //some times <complexType> tag do not have name=".." when inside
+            //element then use element name  
+            QName theTypeName =
+                xsQName2QName(
+                    (typeName == null)
+                        ? particle.getElement().getName()
+                        : typeName);
             QName theName = xsQName2QName(particle.getElement().getName());
-
+            
             if (particle.getMaxOccurs() > 1) {
-                if (!type.getAttributeNames().hasNext()
-                        && !type.getElementNames().hasNext()
-                        && (companions == 1)) {
 
-                    // means it is array of the type
-                    // <complexType>                     <complexType>
-                    // <element maxoccurs ="6"/>   or      <sequance>
-                    // </complexType>                            <element maxoccurs ="6"/>
-                    // </sequance>
-                    // </complexType>
-                    // this is the single element and no companions SO
-                    // type is Array set it so
+                if (!type.getAttributeNames().hasNext()
+                    && !type.getElementNames().hasNext()
+                    && companions == 1) {
+                    //means it is array of the type 
+                    //<complexType>						<complexType>
+                    //	<element maxoccurs ="6"/>   or 		<sequance>
+                    //</complexType>							<element maxoccurs ="6"/>		
+                    //										</sequance>
+                    //									</complexType>
+                    //this is the single element and no companions SO
+                    //type is Array set it so
                     type.setArray(true);
 
-                    ElementInfo elementInfo =
-                            new ElementInfo(SchemaType.ARRAY_TYPE, theTypeName);
 
-                    elementInfo.setMinOccurs(particle.getMinOccurs());
-                    elementInfo.setMaxOccurs(particle.getMaxOccurs());
-                    type.addElement(elementInfo);
+
+                    //elementInfo.setMinOccurs(particle.getMinOccurs());
+                    //elementInfo.setMaxOccurs(particle.getMaxOccurs());
+                    type.setArrayType(arrayType);
                 } else {
-
-                    // this is array occured anywhere so we create ayyay type
-                    // create and add arrray type to the type MAP
+                    //this is array occured anywhere so we create ayyay type
+                    //create and add arrray type to the type MAP
                     QName theArrayTypeName = theTypeName;
 
-                    // if  array type already exists in ST we use it else
-                    // we create new  TypeEntry and add it to ST
-                    theTypeName = new QName(theTypeName.getNamespaceURI(),
-                            theTypeName.getLocalPart() + "["
-                            + particle.getMaxOccurs() + "]");
+                    //if  array type already exists in ST we use it else 
+                    //we create new  TypeEntry and add it to ST
+					SchemaType newarraytype = null;
+                    
+                    
+                    theTypeName =
+                        new QName(
+                            theTypeName.getNamespaceURI(),
+                            theTypeName.getLocalPart()
+                                + "["
+                                + particle.getMaxOccurs()
+                                + "]");
 
-                    SchemaType arraytype = getSchemaType(theTypeName);
-
-                    if (arraytype == null) {
-
-                        // should be a better way than double check,fix it
-                        theTypeName = new QName(theTypeName.getNamespaceURI(),
-                                theTypeName.getLocalPart()
-                                + "[]");
-                        arraytype = getSchemaType(theTypeName);
-
-                        if (arraytype == null) {
-                            arraytype = new SchemaType(theTypeName);
-
-                            putSchemaType(arraytype);
-                        }
+                    newarraytype = getSchemaType(theTypeName);
+                    if (newarraytype == null) {
+                        //should be a better way than double check,fix it
+                        theTypeName =
+                            new QName(
+                                theTypeName.getNamespaceURI(),
+                                theTypeName.getLocalPart() + "[]");
+						newarraytype = getSchemaType(theTypeName);
+                        if (newarraytype == null) {
+							theTypeName = new QName(
+								theTypeName.getNamespaceURI(),
+								theTypeName.getLocalPart() + "[unbounded]");
+							newarraytype = getSchemaType(theTypeName);
+							if (newarraytype == null) {
+								newarraytype = new SchemaType(theTypeName);
+                           		putSchemaType(newarraytype);
+                        	}
+                        }		
                     }
-
-                    // set the array type to the type
-                    arraytype.addElement(new ElementInfo(SchemaType.ARRAY_TYPE,
-                            theArrayTypeName));
-                    arraytype.setArray(true);
-                    type.addElement(new ElementInfo(theName, theTypeName));
+                    
+                    //set the array type to the type	
+                     type.setArrayType(newarraytype);
                 }
             } else {
-                type.addElement(new ElementInfo(theName, theTypeName));
-
-                // 
-                // //if type refer
-                // TypeEntry te = getType(theTypeName);
-                // if(te == null){
-                // te = new SchemaType(theTypeName);
-                // symbolTablePut(te);
-                // }
-                // type.setRefType(te);
+                type.addElement(new ElementInfo(theName, arrayType));
+                //				
+                //				//if type refer 
+                //				TypeEntry te = getType(theTypeName);
+                //				if(te == null){
+                //					te = new SchemaType(theTypeName);
+                //					symbolTablePut(te);
+                //				} 
+                //				type.setRefType(te);
             }
         } else if (particle.isGroup()) {
             XSParticle[] parray = particle.getGroup().getParticles();
-
             for (int i = 0; i < parray.length; i++) {
                 addAllElements(parray[i], type, parray.length);
             }
         }
     }
 
-    /**
-     * Method xsQName2QName
-     * 
-     * @param qname 
-     * @return 
-     */
     public static QName xsQName2QName(XsQName qname) {
-
-        if (qname == null) {
+        if (qname == null)
             return null;
-        }
-
         return new QName(qname.getNamespaceURI(), qname.getLocalName());
     }
 
     /**
      * precondition: the xsType is an complex type with extension.
-     * 
-     * @param type   
-     * @param xstype 
-     * @throws SAXException 
+     * @param type
+     * @param xstype
+     * @throws SAXException
      */
-    public void createArrayType4SOAPENCExtention(SchemaType type, XSType xstype)
-            throws SAXException {
-
-        XSComplexType complexType = xstype.getComplexType();
-        XSType restrictedType = complexType.getRestrictedType();
-
-        type.setArray(true);
-
-        XSParticle arrayparticle =
-                restrictedType.getComplexType().getParticle();
-
-        if (arrayparticle != null) {
-
-            // find the first element from where ever
-            while (!arrayparticle.isElement()) {
-                if (arrayparticle.isGroup()) {
-                    XSParticle[] group =
-                            arrayparticle.getGroup().getParticles();
-
-                    if ((group != null) && (group.length > 0)) {
-                        arrayparticle = group[0];
-                    } else {
-
-                        // array type no type defined
-                        return;
-                    }
-                }
-
-                return;
-            }
-
-            XSElement element = arrayparticle.getElement();
-            XsQName arraytype = element.getType().getName();
-            ElementInfo elementInfo = new ElementInfo(SchemaType.ARRAY_TYPE,
-                    xsQName2QName((arraytype
-                    == null)
-                    ? element.getName()
-                    : arraytype));
-
-            type.addElement(elementInfo);
-
-            return;
-        } else {
-            Attributes attrs = xstype.getOpenAttributes();
-            String wsdlArrayTypeValue =
-                    attrs.getValue(Constants.URI_WSDL11_SOAP, "arrayType");
-
-            if (wsdlArrayTypeValue == null) {
-                wsdlArrayTypeValue = attrs.getValue(Constants.URI_WSDL12_SOAP,
-                        "arrayType");
-            }
-
-            // The value could have any number of [] or [,] on the end
-            // Strip these off to get the prefixed name.
-            // The convert the prefixed name into a qname.
-            // Count the number of [ and , to get the dim information.
-            // if (wsdlArrayTypeValue != null) {
-            // int i = wsdlArrayTypeValue.indexOf('[');
-            // if (i > 0) {
-            // String prefixedName = wsdlArrayTypeValue.substring(0,i);
-            // String mangledString = wsdlArrayTypeValue.replace(',', '[');
-            // dims.value = 0;
-            // int index = mangledString.indexOf('[');
-            // while (index > 0) {
-            // dims.value++;
-            // index = mangledString.indexOf('[',index+1);
-            // }
-            // }
-            // }
-        }
+    public void createArrayType4SOAPENCExtention(
+        SchemaType type,
+        XSType xstype)
+        throws IOException {
+		try{        	
+	        XSComplexType complexType = xstype.getComplexType();
+	
+	        XSType restrictedType = complexType.getRestrictedType();
+	        type.setArray(true);
+	        XSParticle arrayparticle = 
+	        	getFirstElement(restrictedType.getComplexType().getParticle());
+			if(arrayparticle == null)	
+				arrayparticle = 
+							getFirstElement(complexType.getParticle());    	
+	           
+	        if (arrayparticle != null) {
+	        	//this code hanlde the stuff like follows
+				//&lt;complexType name="ArrayOf_tns2_Point"&gt;
+				//   &lt;complexContent&gt;
+				//	&lt;restriction base="soapenc:Array"&gt;
+				//    &xsd:element name="alias" type="xsd:string" maxOccurs="unbounded"/>
+				//	&lt;/restriction&gt;
+				//  &lt;/complexContent&gt;
+				//&lt;/complexType&ht;
+	        	
+	            //find the first element from where ever
+	            XSElement element = arrayparticle.getElement();
+	
+				SchemaType sType  = createTypeEntry(arrayparticle.getElement().getType()
+							,arrayparticle.getElement().getName());			
+	
+	            type.setArrayType(sType);
+	            return;
+	        } else {
+			//this code handle the stuff like 
+			//&lt;complexType name="ArrayOf_tns2_Point"&gt;
+			//   &lt;complexContent&gt;
+			//	&lt;restriction base="soapenc:Array"&gt;
+			//	  &lt;attribute ref="soapenc:arrayType" wsdl:arrayType="tns2:Point[]"/&gt;
+			//	&lt;/restriction&gt;
+			//  &lt;/complexContent&gt;
+			//&lt;/complexType&ht;
+			
+				String wsdlArrayTypeValue = null;
+				QName qvalue = null;
+			
+	            XSAttributable[] attrs = xstype.getComplexType().getAttributes();
+				for(int i = 0;i< attrs.length;i++){
+					if(attrs[i] instanceof XSAttribute){
+						AxisAttributeImpl openattribs = (AxisAttributeImpl)((XSAttribute)attrs[i]).getOpenAttributes();
+						qvalue = openattribs.getValueAsQName("arrayType");
+						wsdlArrayTypeValue = qvalue.getLocalPart();
+					}else{
+						throw new JAXMEInternalException("there are  other attr types fixed this");
+					}	
+				}
+				
+				
+				int value = 1;
+				if(wsdlArrayTypeValue == null)
+					throw new JAXMEInternalException("the array type not specified");
+				// The value could have any number of [] or [,] on the end
+				// Strip these off to get the prefixed name.
+				// The convert the prefixed name into a qname.
+				// Count the number of [ and , to get the dim information.
+	
+				String prefixedName;
+				int i = wsdlArrayTypeValue.indexOf('[');
+				if (i > 0) {
+					
+					prefixedName = wsdlArrayTypeValue.substring(0,i);
+					String mangledString = wsdlArrayTypeValue.replace(',', '[');
+					value = 0;
+					int index = mangledString.indexOf('[');
+					while (index > 0) {
+						value++;
+						index = mangledString.indexOf('[',index+1);
+					}
+				}else
+					prefixedName = wsdlArrayTypeValue;
+				//fine we have the prefixed name(x:val) and the dimension
+				//information
+				//prefixed name -> QName
+				int prefixIndex = prefixedName.indexOf((int)':');
+				
+				
+				SchemaType stype = null;
+				
+				if(prefixIndex < 0){
+				}else{
+					String prefix =  prefixedName.substring(0,prefixIndex);
+					prefixedName =  prefixedName.substring(prefixIndex+1);
+				}
+				System.out.println("qname "+ new QName(qvalue.getNamespaceURI(),prefixedName));
+				QName qname = new QName(qvalue.getNamespaceURI(),prefixedName);
+				stype = getSchemaType(new QName(qvalue.getNamespaceURI(),prefixedName));	
+				
+				if(stype == null){
+					XSElement element = this.schema.getElement(new XsQName(qname.getNamespaceURI(),qname.getLocalPart()));
+					if(element != null)
+						stype = createTypeEntry(element.getType(),element.getName());
+					else{	
+						XSType aType = this.schema.getType(new XsQName(qname.getNamespaceURI(),qname.getLocalPart()));
+						if(aType == null){
+							throw new JAXMEInternalException("type not found");
+						}
+						stype = createTypeEntry(aType,null);
+					}
+				}
+				
+				type.setArrayType(stype);
+				type.setArrayDimension(value);				
+	        }
+		}catch(SAXException e){
+			throw new JAXMEInternalException(e);
+		}	   
+    }
+    
+    private XSParticle getFirstElement(XSParticle arrayparticle){
+    	if(arrayparticle == null)
+    		return null;
+		if(arrayparticle.isElement()) {
+				return arrayparticle;
+		}else if (arrayparticle.isGroup()) {
+				XSParticle[] particles = arrayparticle.getGroup().getParticles();
+				for(int i = 0;i<particles.length;i++){
+				arrayparticle = getFirstElement(particles[i]);
+					if(arrayparticle!= null)
+						return arrayparticle;
+				}
+				return null;	
+		}else{
+//			System.out.println("white card is" +arrayparticle.isWildcard());
+			return null;
+		}
     }
 
-    /**
-     * Method getTypeQNameAssociatedWithElement
-     * 
-     * @param element 
-     * @return 
-     */
     public QName getTypeQNameAssociatedWithElement(QName element) {
-
         System.out.println(element);
-
-        if (element == null) {
+        if (element == null)
             return null;
-        }
-
-        XsQName xselementName = new XsQName(element.getNamespaceURI(),
-                element.getLocalPart());
+		//get the type and get the name 
+        XsQName xselementName =
+            new XsQName(element.getNamespaceURI(), element.getLocalPart());
+            
         XSElement xselement = this.schema.getElement(xselementName);
-
-        if (xselement == null) {
+        if (xselement == null)
             return null;
-        }
-
         System.out.println(xselement.getType());
-
-        QName elementQName = xsQName2QName(xselement.getType().getName());
-
-        System.out.println(elementQName);
-
-        if (elementQName == null) {
+        QName elementTypeQName = xsQName2QName(xselement.getType().getName());
+        
+        
+        System.out.println(elementTypeQName);
+        //if the type is given via ref or type attributes the type is not
+        //null. but if the type is anonymous
+        //&lt;element name="xx"&gt;
+        //	&lt;complexType&gt;...&lt;/complexType&gt;
+		//&lt;/element&gt;
+		//the element name is the type name.
+        if (elementTypeQName == null)
             return element;
-        } else {
-            return elementQName;
-        }
+        else
+            return elementTypeQName;
     }
-
+    
+	/**
+	 * The JAXME XS is a schema parser and has nothing to do with WSDL. So the 
+	 * jaxme do not know about the schema types defined in the soap encoding. This 
+	 * has adresses by the adding 
+	 * &lt;import namespace="xxx" schemalocation="yyy"/&gt; to the element   
+	 * @param e
+	 */    
+	public void createImportNode(org.w3c.dom.Element e){
+		Document doc = e.getOwnerDocument();
+		org.w3c.dom.Element element = doc.createElementNS("http://www.w3.org/2001/XMLSchema","import");
+		
+		Attr attr1 = doc.createAttribute("namespace");
+		attr1.setValue("http://schemas.xmlsoap.org/soap/encoding/");
+		
+		Attr attr2 = doc.createAttribute("schemaLocation");
+		attr2.setValue("./schema/schemas.xsd");
+		
+		element.setAttributeNode(attr1);
+		element.setAttributeNode(attr2);
+		
+		e.insertBefore(element,e.getFirstChild());
+	}
+    
+	private String targetNameSpace; 
     /**
      * Populate the symbol table with all of the Types from the Document.
-     * 
-     * @param context 
-     * @param doc     doc doc This must be the XML Document containing the WSDL
-     *                "OR" this must be the XML document containing schema.
-     * @throws IOException                  
-     * @throws SAXException                 
-     * @throws WSDLException                
-     * @throws ParserConfigurationException 
+     * @param doc doc doc This must be the XML Document containing the WSDL 
+     * "OR" this must be the XML document containing schema.       
      */
     public void populateTypes(URL context, Document doc)
-            throws IOException, SAXException, WSDLException,
-            ParserConfigurationException {
-
-        addTypes(context, doc, ABOVE_SCHEMA_LEVEL);
-
+        throws
+            IOException,
+            WSDLException,
+            ParserConfigurationException,
+            SAXException {
         org.w3c.dom.Element root = doc.getDocumentElement();
         org.w3c.dom.Element ele = null;
         NodeList nodes = null;
-
+        Vector domelements = new Vector();
         // check if the root is schema
-        // /////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////////	
         // TODO for some tests schema is null so this has replace by the following , yet should be
-        // fixed ASAP
-        // if (root.getTagName()!=null && root.getTagName().endsWith("schema") &&
-        // Constants.isSchemaXSD(root.getNamespaceURI())) {
-        // ///////////////////////////////////////////////////////////////////////////
-        if ((root.getTagName() != null)
-                && root.getTagName().endsWith("schema")) {
-
-            // /////////////////////////////////////////////////////////////////////////
-            addTypes(context, root, doc);
-        } else if ((root.getTagName() != null)
+        // fixed ASAP  
+        //	  if (root.getTagName()!=null && root.getTagName().endsWith("schema") &&
+        //					  Constants.isSchemaXSD(root.getNamespaceURI())) {
+        /////////////////////////////////////////////////////////////////////////////
+        if (root.getTagName() != null
+            && root.getTagName().endsWith("schema")) {
+            ///////////////////////////////////////////////////////////////////////////					  	
+			domelements.add(root);;
+        } else if (
+            root.getTagName() != null
                 && root.getTagName().endsWith("definitions")) {
-
-            // search for 'types' element
+			targetNameSpace = root.getAttribute("targetNamespace");                	
+            // search for 'types' element        
             Node node = null;
             boolean found = false;
-
             nodes = root.getChildNodes();
-
             for (int i = 0; i < nodes.getLength(); i++) {
                 node = nodes.item(i);
-
-                if ((node.getNodeName() != null)
-                        && node.getNodeName().endsWith("types")) {
+                if (node.getNodeName() != null
+                    && node.getNodeName().endsWith("types")) {
                     found = true;
-
                     break;
                 }
             }
-
             if (found = true) {
                 nodes = node.getChildNodes();
-
                 for (int i = 0; i < nodes.getLength(); i++) {
                     node = nodes.item(i);
-
-                    if ((node.getNodeName() != null)
-                            && node.getNodeName().endsWith("schema")
-                            && Constants.isSchemaXSD(node.getNamespaceURI())) {
-                        addTypes(context, (org.w3c.dom.Element) node, doc);
+                    if (node.getNodeName() != null
+                        && node.getNodeName().endsWith("schema")
+                        && Constants.isSchemaXSD(node.getNamespaceURI())) {
+							domelements.add((org.w3c.dom.Element) node);
                     }
                 }
-            }    // found
+            } //found  		
         } else {
             throw new WSDLException(
-                    "I can not handle this. The parameter passed in -doc's root is not the schema or definition",
-                    "at addtypes");
+                "I can not handle this. The parameter passed in -doc's root is not the schema or definition",
+                "at addtypes");
         }
+		addTypes(context,domelements,doc);
+        
+        //usual parsing 
+		//addTypes(context, doc, ABOVE_SCHEMA_LEVEL);
+    } // populateTypes
 
-        System.out.println("type populated");
-    }    // populateTypes
+	public String getTargetNameSpace(org.w3c.dom.Element element){
+		String targetNameSpace = element.getAttribute("targetNamespace");
+		if(targetNameSpace != null)
+			return targetNameSpace;
+		else 
+			return this.targetNameSpace;	
+	}
 
     /**
      * Utility method which walks the Document and creates Type objects for
      * each complexType, simpleType, or element referenced or defined.
-     * <p/>
-     * What goes into the symbol table?  In general, only the top-level types
+     *
+     * What goes into the symbol table?  In general, only the top-level types 
      * (ie., those just below
-     * the schema tag).  But base types and references can
+     * the schema tag).  But base types and references can 
      * appear below the top level.  So anything
-     * at the top level is added to the symbol table,
+     * at the top level is added to the symbol table, 
      * plus non-Element types (ie, base and refd)
      * that appear deep within other types.
-     * <p/>
-     * TODO
-     * <p/>
-     * TODO
-     * 
-     * @param context 
-     * @param ele     
-     * @param doc     
-     * @throws IOException                  
-     * @throws ParserConfigurationException 
-     * @throws WSDLException                
-     * @throws SAXException                 TODO
-     *                                      <p/>
-     *                                      TODO
      */
+    //TODO
+    public void addTypes(URL context,Vector domelements, Document doc)
+        throws
+            IOException,
+            ParserConfigurationException,
+            WSDLException,
+            SAXException{
+		try{            	
+			//this is to add Soap encoding types
+	//		createImportNode(ele);
+	//        XSParser parser = new XSParser();
+	//		parser.setValidating(false);
+	//        this.schema = parser.parse(ele);
+			  parser = new AxisXSParser();
+			  parser.setValidating(false);
+		
+			  if(domelements.size() >0){
+				
+				  //parser.addImport("http://schemas.xmlsoap.org/soap/encoding/","./schema/schemas.xsd");
+				  for(int i = 1;i<domelements.size();i++){
+					  org.w3c.dom.Element e = (org.w3c.dom.Element)domelements.get(i);
+					  parser.addImport(getTargetNameSpace(e),e);
+				  }
+	
+			   	//createImportNode((org.w3c.dom.Element)domelements.get(0));
+			   	parser.addImport("http://schemas.xmlsoap.org/soap/encoding/","./schema/schemas.xsd");
+			   	this.schema = parser.parse((org.w3c.dom.Element)domelements.get(0));
+	
+			
+			
+			        //////////////////////////////////////////////////////////////////////////
+			
+			        //deal with types in the form of 
+			        // <schema ...>
+			        //  <complexType name="...">
+			        //		..........	
+			        //  </complexType>
+			        //	.........
+			        // </schema>
+			        XSType[] types = schema.getTypes();
+			        for (int i = 0; i < types.length; i++) {
+			            createTypeEntry(types[i], null);
+			        }
+			
+			        //deal with types inside elements  
+			        // <schema ...>
+			        //	<element name="xyz"> 
+			        //  	<complexType name="...">
+			        //			..........	
+			        //  	</complexType>
+			        //  </element>
+			        //	.........
+			        // </schema>
+			
+			        XSElement[] elements = schema.getElements();
+			        for (int i = 0; i < elements.length; i++) {
+			            //this get element Tag from anywhere	 	
+			            if (elements[i].isTopLevelObject()) {
+			                //TypeEntry is inside the Symbol table
+			                XSType type = elements[i].getType();
+			                SchemaType stype = createTypeEntry(type, elements[i].getName());
+			                
+							QName elementname = xsQName2QName(elements[i].getName());
+							if(elementname == null)
+								elementname = stype.getQName();
+			                
+							SchemaElement eleInfo = new SchemaElement(elementname,stype);
+							//TODO find a way to get maxoccurences
+							putToplevelElement(eleInfo);	                
+			            }
+			        }
+			}
+	//  		System.out.println("Elements");
+	//		Iterator it = elementMap.values().iterator();
+	//		
+	//		while(it.hasNext()){
+	//			System.out.println(it.next());
+	//		}
+			if(verbose){
+				//TODO JAXME_REFACTOR///////////////////
+				System.out.println(
+					"--------------------DUMPING JAXME----------------");
+				Iterator it = getAllSchemaTypes();
+				while (it.hasNext()) {
+				  SchemaType type = (SchemaType)it.next();
+				  if (!isInbuildType(type.getQName()))
+					  System.out.println(type);
+				}
+				System.out.println("------ ELEMENTS ------");
+				it = getElements();
+				while (it.hasNext()) {
+					SchemaElement type = (SchemaElement)it.next();
+					  System.out.println(type.getQName());
+				}
+				
+				System.out.println(
+					"--------------------DUMPING JAXME----------------");
+			}		
+		}catch(SAXException e){
+			throw new JAXMEInternalException(e);
+		}	
+    } // addTypes
+    
+    public static Vector inbuildTypesList = new Vector();
+	static{
+		inbuildTypesList.add(new QName("http://schemas.xmlsoap.org/soap/encoding/","double"));
+		inbuildTypesList.add(new QName("http://schemas.xmlsoap.org/soap/encoding/","long"));
+		inbuildTypesList.add(new QName("http://schemas.xmlsoap.org/soap/encoding/","byte"));
+		inbuildTypesList.add(new QName("http://schemas.xmlsoap.org/soap/encoding/","char"));
+		inbuildTypesList.add(new QName("http://schemas.xmlsoap.org/soap/encoding/","short"));
+		inbuildTypesList.add(new QName("http://schemas.xmlsoap.org/soap/encoding/","decimal"));
+		inbuildTypesList.add(new QName("http://schemas.xmlsoap.org/soap/encoding/","float"));
+		inbuildTypesList.add(new QName("http://schemas.xmlsoap.org/soap/encoding/","boolean"));
+		
+		inbuildTypesList.add(new QName("http://schemas.xmlsoap.org/soap/encoding/","string"));
+		inbuildTypesList.add(new QName("http://schemas.xmlsoap.org/soap/encoding/","int"));
+		inbuildTypesList.add(new QName("http://schemas.xmlsoap.org/soap/encoding/","IDREF"));
+		inbuildTypesList.add(new QName("http://schemas.xmlsoap.org/soap/encoding/","unsignedInt"));
+		inbuildTypesList.add(new QName("http://schemas.xmlsoap.org/soap/encoding/","NMTOKENS"));
+		inbuildTypesList.add(new QName("http://schemas.xmlsoap.org/soap/encoding/","hexBinary"));
+		inbuildTypesList.add(new QName("http://schemas.xmlsoap.org/soap/encoding/","arrayCoordinate"));
+		inbuildTypesList.add(new QName("http://schemas.xmlsoap.org/soap/encoding/","unsignedLong"));
+		inbuildTypesList.add(new QName("http://schemas.xmlsoap.org/soap/encoding/","unsignedShort"));
+		inbuildTypesList.add(new QName("http://schemas.xmlsoap.org/soap/encoding/","NMTOKEN"));	
+		inbuildTypesList.add(new QName("http://schemas.xmlsoap.org/soap/encoding/","Struct"));
+		inbuildTypesList.add(new QName("http://schemas.xmlsoap.org/soap/encoding/","negativeInteger"));
+		inbuildTypesList.add(new QName("http://schemas.xmlsoap.org/soap/encoding/","duration"));														
+		inbuildTypesList.add(new QName("http://schemas.xmlsoap.org/soap/encoding/","anyURI"));
+		inbuildTypesList.add(new QName("http://schemas.xmlsoap.org/soap/encoding/","positiveInteger"));	
+		inbuildTypesList.add(new QName("http://schemas.xmlsoap.org/soap/encoding/","NOTATION"));	
+		inbuildTypesList.add(new QName("http://schemas.xmlsoap.org/soap/encoding/","nonNegativeInteger"));
+		inbuildTypesList.add(new QName("http://schemas.xmlsoap.org/soap/encoding/","gMonthDay"));	
+		inbuildTypesList.add(new QName("http://schemas.xmlsoap.org/soap/encoding/","ENTITY"));
+		inbuildTypesList.add(new QName("http://schemas.xmlsoap.org/soap/encoding/","dateTime"));	
+		inbuildTypesList.add(new QName("http://schemas.xmlsoap.org/soap/encoding/","unsignedByte"));	
+		inbuildTypesList.add(new QName("http://schemas.xmlsoap.org/soap/encoding/","ID"));
+		inbuildTypesList.add(new QName("http://schemas.xmlsoap.org/soap/encoding/","gYearMonth"));
+		inbuildTypesList.add(new QName("http://schemas.xmlsoap.org/soap/encoding/","time"));	
+		inbuildTypesList.add(new QName("http://schemas.xmlsoap.org/soap/encoding/","QName"));
+		inbuildTypesList.add(new QName("http://schemas.xmlsoap.org/soap/encoding/","Name"));	
+		inbuildTypesList.add(new QName("http://schemas.xmlsoap.org/soap/encoding/","NCName"));
+		inbuildTypesList.add(new QName("http://schemas.xmlsoap.org/soap/encoding/","token"));	
+		inbuildTypesList.add(new QName("http://schemas.xmlsoap.org/soap/encoding/","normalizedString"));		
+		inbuildTypesList.add(new QName("http://schemas.xmlsoap.org/soap/encoding/","ENTITIES"));
+		inbuildTypesList.add(new QName("http://schemas.xmlsoap.org/soap/encoding/","Array"));	
+		inbuildTypesList.add(new QName("http://schemas.xmlsoap.org/soap/encoding/","gDay"));	
+		inbuildTypesList.add(new QName("http://schemas.xmlsoap.org/soap/encoding/","IDREFS"));	
+		inbuildTypesList.add(new QName("http://schemas.xmlsoap.org/soap/encoding/","gYear"));
+		inbuildTypesList.add(new QName("http://schemas.xmlsoap.org/soap/encoding/","nonPositiveInteger"));
+		inbuildTypesList.add(new QName("http://schemas.xmlsoap.org/soap/encoding/","gMonth"));	
+		inbuildTypesList.add(new QName("http://schemas.xmlsoap.org/soap/encoding/","date"));
+		inbuildTypesList.add(new QName("http://schemas.xmlsoap.org/soap/encoding/","language"));	
+	} 
 
-    // TODO
-    public void addTypes(URL context, org.w3c.dom.Element ele, Document doc)
-            throws IOException, ParserConfigurationException, WSDLException,
-            SAXException {
+    public static boolean  isInbuildType(QName name){
+		return 	(schemaInbuildTypes.containsKey(name)) || inbuildTypesList.contains(name);																																																
+    }
+    
+    public void buildTheSchemaTypes(){
+    	for(Iterator it = this.typeIndex.values().iterator();it.hasNext();){
+    		TypeEntry te = (TypeEntry)it.next();
+    		if(te.getQName().getLocalPart().indexOf((int)'[')>0){
+    			SchemaType stype = getSchemaType(te.getQName());
+    			if(stype == null){
+    				stype = new SchemaType(te.getQName());
+    				stype.setArray(true);
+    				stype.setArrayType(getSchemaType(te.getRefType().getQName()));
+    			}
+				stype.setArrayDimension(te.getDimensions());	
+    		} 
+    	}
 
-        // /////////////////////////////////////////////////////////////////////////////
-        // JAXME work on SAX but we have DOM.
-        // 1) if we use XSLT to genarate DOM events it failed due to start element
-        // 2) if we use serialize and read back the file can't find the namespaces defined
-        // in other element.
-        // We do not worry much over this on the understanding of the JAXME will
-        // have method to acess dom in the future.
-        // ///////////////////////////////////////////////////////
-        // PipedWriter pwriter = new PipedWriter();
-        // PipedReader preader = new PipedReader(pwriter);
-        File file = new File("schema.txt");
+    }
+    
+    static{
+    	QName name = null;
+    	name = new QName(Constants.URI_2001_SCHEMA_XSD,"int");
+		schemaInbuildTypes.put(name,new SchemaType(name));
+		name = new QName(Constants.URI_2001_SCHEMA_XSD,"byte");
+		schemaInbuildTypes.put(name,new SchemaType(name));
+		name = new QName(Constants.URI_2001_SCHEMA_XSD,"float");
+		schemaInbuildTypes.put(name,new SchemaType(name));
+		name = new QName(Constants.URI_2001_SCHEMA_XSD,"long");
+		schemaInbuildTypes.put(name,new SchemaType(name));
+		name = new QName(Constants.URI_2001_SCHEMA_XSD,"double");
+		schemaInbuildTypes.put(name,new SchemaType(name));
+		name = new QName(Constants.URI_2001_SCHEMA_XSD,"boolean");
+		schemaInbuildTypes.put(name,new SchemaType(name));
+		name = new QName(Constants.URI_2001_SCHEMA_XSD, "char");
+		schemaInbuildTypes.put(name,new SchemaType(name));
+		name = new QName(Constants.URI_2001_SCHEMA_XSD,"short");
+		schemaInbuildTypes.put(name,new SchemaType(name));
+		name = new QName(Constants.URI_2001_SCHEMA_XSD,"string");
+		schemaInbuildTypes.put(name,new SchemaType(name));
+		name = new QName(Constants.URI_2001_SCHEMA_XSD,"decimal");
+		schemaInbuildTypes.put(name,new SchemaType(name));
+		name = new QName(Constants.URI_2001_SCHEMA_XSD,"QName");
+		schemaInbuildTypes.put(name,new SchemaType(name));
+		name = new QName(Constants.URI_2001_SCHEMA_XSD,"dateTime");
+		schemaInbuildTypes.put(name,new SchemaType(name));
+		name = new QName(Constants.URI_2001_SCHEMA_XSD,"base64Binary");
+		schemaInbuildTypes.put(name,new SchemaType(name));
+		name = new QName(Constants.URI_2001_SCHEMA_XSD,"hexBinary");
+		schemaInbuildTypes.put(name,new SchemaType(name));
+		name = new QName(Constants.URI_2001_SCHEMA_XSD,"duration");
+		schemaInbuildTypes.put(name,new SchemaType(name));
+		name = new QName(Constants.URI_2001_SCHEMA_XSD,"ENTITIES");
+		schemaInbuildTypes.put(name,new SchemaType(name));		
+		name = new QName(Constants.URI_2001_SCHEMA_XSD,"time");
+		schemaInbuildTypes.put(name,new SchemaType(name));
+		name = new QName(Constants.URI_2001_SCHEMA_XSD,"date");
+		schemaInbuildTypes.put(name,new SchemaType(name));
+		name = new QName(Constants.URI_2001_SCHEMA_XSD,"gYearMonth");
+		schemaInbuildTypes.put(name,new SchemaType(name));
+		name = new QName(Constants.URI_2001_SCHEMA_XSD,"gYear");
+		schemaInbuildTypes.put(name,new SchemaType(name));
+		name = new QName(Constants.URI_2001_SCHEMA_XSD,"gMonthDay");
+		schemaInbuildTypes.put(name,new SchemaType(name));
+		name = new QName(Constants.URI_2001_SCHEMA_XSD,"gDay");
+		schemaInbuildTypes.put(name,new SchemaType(name));
+		name = new QName(Constants.URI_2001_SCHEMA_XSD,"gMonth");
+		schemaInbuildTypes.put(name,new SchemaType(name));
 
-        file.createNewFile();
+		name = new QName(Constants.URI_2001_SCHEMA_XSD,"anyURI");
+		schemaInbuildTypes.put(name,new SchemaType(name));
+		name = new QName(Constants.URI_2001_SCHEMA_XSD,"normalizedString");
+		schemaInbuildTypes.put(name,new SchemaType(name));
+		name = new QName(Constants.URI_2001_SCHEMA_XSD,"token");
+		schemaInbuildTypes.put(name,new SchemaType(name));
+		name = new QName(Constants.URI_2001_SCHEMA_XSD,"language");
+		schemaInbuildTypes.put(name,new SchemaType(name));
 
-        Writer pwriter = new FileWriter(file);
-        FileReader preader = new FileReader(file);
+		name = new QName(Constants.URI_2001_SCHEMA_XSD,"NMTOKEN");
+		schemaInbuildTypes.put(name,new SchemaType(name));
+		name = new QName(Constants.URI_2001_SCHEMA_XSD,"NMTOKENS");
+		schemaInbuildTypes.put(name,new SchemaType(name));
+		name = new QName(Constants.URI_2001_SCHEMA_XSD,"Name");
+		schemaInbuildTypes.put(name,new SchemaType(name));
+		name = new QName(Constants.URI_2001_SCHEMA_XSD,"NCName");
+		schemaInbuildTypes.put(name,new SchemaType(name));
+		name = new QName(Constants.URI_2001_SCHEMA_XSD,"ID");
+		schemaInbuildTypes.put(name,new SchemaType(name));
+		name = new QName(Constants.URI_2001_SCHEMA_XSD,"IDREF");
+		schemaInbuildTypes.put(name,new SchemaType(name));
+		name = new QName(Constants.URI_2001_SCHEMA_XSD,"IDREFS");
+		schemaInbuildTypes.put(name,new SchemaType(name));
+		name = new QName(Constants.URI_2001_SCHEMA_XSD,"ENTITY");
+		schemaInbuildTypes.put(name,new SchemaType(name));
+		name = new QName(Constants.URI_2001_SCHEMA_XSD,"integer");
+		schemaInbuildTypes.put(name,new SchemaType(name));
+		name = new QName(Constants.URI_2001_SCHEMA_XSD,"nonPositiveInteger");
+		schemaInbuildTypes.put(name,new SchemaType(name));
+		name = new QName(Constants.URI_2001_SCHEMA_XSD,"negativeInteger");
+		schemaInbuildTypes.put(name,new SchemaType(name));
 
-        // SerializationContextImpl con = new SerializationContextImpl(pwriter);
-        // con.writeDOMElement(ele);
-        OutputFormat format = new OutputFormat(doc);
-        XMLSerializer output = new XMLSerializer(pwriter, format);
+		name = new QName(Constants.URI_2001_SCHEMA_XSD,"nonNegativeInteger");
+		schemaInbuildTypes.put(name,new SchemaType(name));
+		name = new QName(Constants.URI_2001_SCHEMA_XSD,"unsignedLong");
+		schemaInbuildTypes.put(name,new SchemaType(name));
+		name = new QName(Constants.URI_2001_SCHEMA_XSD,"unsignedInt");
+		schemaInbuildTypes.put(name,new SchemaType(name));
+		name = new QName(Constants.URI_2001_SCHEMA_XSD,"unsignedShort");
+		schemaInbuildTypes.put(name,new SchemaType(name));
+		name = new QName(Constants.URI_2001_SCHEMA_XSD,"unsignedByte");
+		schemaInbuildTypes.put(name,new SchemaType(name));
+		name = new QName(Constants.URI_2001_SCHEMA_XSD,"positiveInteger");
+		schemaInbuildTypes.put(name,new SchemaType(name));
+    }
+    public void changeTheHashMaps(){
+    	System.out.println("this is jaxme");
+		if(tempsymbolTable == null)
+			tempsymbolTable = new HashMap(symbolTable);
+		Iterator it = getTypeIndex().values().iterator();
+		while(it.hasNext()){
+			SchemaType stype = (SchemaType)it.next();
+			Vector vec = (Vector)tempsymbolTable.remove(stype.getQName());
+			if(vec == null) 
+				vec = new Vector();
+			 for(int i = 0; i<vec.size();i++){
+				if(vec.get(i) instanceof Type){
+					vec.remove(i);
+				}
+			 }		
+			vec.add(stype);
+			tempsymbolTable.put(stype.getQName(),vec);
+		}
+		it = schemaInbuildTypes.values().iterator();
+		while(it.hasNext()){
+			SchemaType stype = (SchemaType)it.next();
+			Vector vec = (Vector)tempsymbolTable.remove(stype.getQName());
+			if(vec == null) 
+				vec = new Vector();
+			 for(int i = 0; i<vec.size();i++){
+				if(vec.get(i) instanceof Type){
+					vec.remove(i);
+				}
+			 }		
+			vec.add(stype);
+			tempsymbolTable.put(stype.getQName(),vec);
+		}
+    }
+	/**
+	 * Fill in DIME information
+	 * 
+	 * @param unkElement
+	 * @param input
+	 * @param operation
+	 * @param bEntry
+	 */
+	
 
-        output.serialize(ele);
-        pwriter.flush();
-
-        // /OP1////////////////////////////////////////////////////////////////////////////////
-        // 
-        // InputSource inp = new InputSource(preader);
-        // if(wsdlURI != null){
-        // URI uri = new File(this.wsdlURI).toURI();
-        // inp.setSystemId(uri.toString()); // This is important, if you use a DTD,
-        // // external entities, schema validation, ...                                    // in other words: Other files
-        // }
-        // //create JAXME logical parser schema Object
-        // XSParser parser = new XSParser();
-        // parser.setValidating(false);
-        // 
-        // this.schema = parser.parse(inp);
-        // OP2////////////////////////////////////////////////////////////////////////////////////
-        XSParser parser = new XSParser();
-
-        // parser.setValidating(false);
-        XSContentHandler handler = parser.getXSContentHandler();
-        DOMSerializer ds = new DOMSerializer();
-
-        handler.startDocument();
-        ds.serialize(ele, handler);
-        handler.endDocument();
-
-        XSSchema schema = handler.getXSSchema();
-
-        // ////////////////////////////////////////////////////////////////////////
-        // deal with types in the form of
-        // <schema ...>
-        // <complexType name="...">
-        // ..........
-        // </complexType>
-        // .........
-        // </schema>
-        XSType[] types = schema.getTypes();
-
-        for (int i = 0; i < types.length; i++) {
-            createTypeEntry(types[i], null);
-        }
-
-        // deal with types inside elements
-        // <schema ...>
-        // <element name="xyz">
-        // <complexType name="...">
-        // ..........
-        // </complexType>
-        // </element>
-        // .........
-        // </schema>
-        XSElement[] elements = schema.getElements();
-
-        for (int i = 0; i < elements.length; i++) {
-
-            // this get element Tag from anywhere
-            if (elements[i].isTopLevelObject()) {
-
-                // TypeEntry is inside the Symbol table
-                XSType type = elements[i].getType();
-
-                createTypeEntry(type, elements[i].getName());
-            }
-        }
-
-        // pwriter.close();
-        // preader.close();
-        // //file.delete();
-    }    // addTypes
-}    // class SymbolTable
+   
+} // class SymbolTable

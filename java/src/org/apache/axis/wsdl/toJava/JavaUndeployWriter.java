@@ -54,14 +54,6 @@
  */
 package org.apache.axis.wsdl.toJava;
 
-import org.apache.axis.deployment.wsdd.WSDDConstants;
-import org.apache.axis.utils.Messages;
-import org.apache.axis.wsdl.symbolTable.SymbolTable;
-import org.xml.sax.SAXException;
-
-import javax.wsdl.Definition;
-import javax.wsdl.Port;
-import javax.wsdl.Service;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -69,6 +61,14 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.Iterator;
 import java.util.Map;
+
+import javax.wsdl.Definition;
+import javax.wsdl.Port;
+import javax.wsdl.Service;
+
+import org.apache.axis.deployment.wsdd.WSDDConstants;
+import org.apache.axis.utils.Messages;
+import org.apache.axis.wsdl.symbolTable.SymbolTable;
 
 /**
  * This is Wsdl2java's deploy Writer.  It writes the deploy.java file.
@@ -93,19 +93,15 @@ public class JavaUndeployWriter extends JavaWriter {
         this.definition = definition;
     }    // ctor
 
-    /**
-     * Generate undeploy.wsdd.  Only generate it if the emitter
-     * is generating server-side mappings.
-     * 
-     * @throws IOException  
-     * @throws SAXException 
-     */
-    public void generate() throws IOException, SAXException {
-
-        if (emitter.isServerSide()) {
-            super.generate();
-        }
-    }    // generate
+	/**
+	 * Generate undeploy.wsdd.  Only generate it if the emitter
+	 * is generating server-side mappings.
+	 */
+	public void generate() throws IOException{
+		if (emitter.isServerSide()) {
+			super.generate();
+		}
+	} // generate
 
     /**
      * Return the fully-qualified name of the undeploy.wsdd file

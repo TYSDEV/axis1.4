@@ -54,21 +54,16 @@
  */
 package org.apache.axis.wsdl.toJava;
 
-import org.apache.axis.Constants;
-import org.apache.axis.enum.Style;
-import org.apache.axis.utils.JavaUtils;
-import org.apache.axis.wsdl.symbolTable.BindingEntry;
-import org.apache.axis.wsdl.symbolTable.CollectionTE;
-import org.apache.axis.wsdl.symbolTable.Element;
-import org.apache.axis.wsdl.symbolTable.MessageEntry;
-import org.apache.axis.wsdl.symbolTable.MimeInfo;
-import org.apache.axis.wsdl.symbolTable.Parameter;
-import org.apache.axis.wsdl.symbolTable.Parameters;
-import org.apache.axis.wsdl.symbolTable.SchemaUtils;
-import org.apache.axis.wsdl.symbolTable.SymbolTable;
-import org.apache.axis.wsdl.symbolTable.TypeEntry;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.StringTokenizer;
+import java.util.Vector;
 
 import javax.wsdl.BindingInput;
 import javax.wsdl.BindingOperation;
@@ -82,16 +77,24 @@ import javax.wsdl.extensions.mime.MIMEMultipartRelated;
 import javax.wsdl.extensions.soap.SOAPBody;
 import javax.xml.namespace.QName;
 import javax.xml.rpc.holders.BooleanHolder;
-import java.io.File;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.StringTokenizer;
-import java.util.Vector;
+
+import org.apache.axis.Constants;
+import org.apache.axis.enum.Style;
+import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.wsdl.jaxme.JAXMEInternalException;
+import org.apache.axis.wsdl.symbolTable.BindingEntry;
+import org.apache.axis.wsdl.symbolTable.MessageEntry;
+import org.apache.axis.wsdl.symbolTable.MimeInfo;
+import org.apache.axis.wsdl.symbolTable.Parameter;
+import org.apache.axis.wsdl.symbolTable.Parameters;
+import org.apache.axis.wsdl.symbolTable.SchemaElement;
+import org.apache.axis.wsdl.symbolTable.SchemaType;
+import org.apache.axis.wsdl.symbolTable.SymbolTable;
+import org.apache.axis.wsdl.symbolTable.TypeEntry;
+import org.apache.ws.jaxme.xs.XSEnumeration;
+import org.apache.ws.jaxme.xs.XSSimpleType;
+import org.apache.ws.jaxme.xs.XSType;
+import org.xml.sax.SAXException;
 
 /**
  * Class Utils
@@ -295,152 +298,151 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
         }
     }    // isFaultComplex
 
-    /**
-     * If the specified node represents a supported JAX-RPC enumeration,
-     * a Vector is returned which contains the base type and the enumeration values.
-     * The first element in the vector is the base type (an TypeEntry).
-     * Subsequent elements are values (Strings).
-     * If this is not an enumeration, null is returned.
-     * 
-     * @param node        
-     * @param symbolTable 
-     * @return 
-     */
-    public static Vector getEnumerationBaseAndValues(Node node,
-                                                     SymbolTable symbolTable) {
 
-        if (node == null) {
-            return null;
-        }
+	/**
+	 * If the specified node represents a supported JAX-RPC enumeration,
+	 * a Vector is returned which contains the base type and the enumeration values.
+	 * The first element in the vector is the base type (an TypeEntry).
+	 * Subsequent elements are values (Strings).
+	 * If this is not an enumeration, null is returned.
+	 */
+	public static Vector getEnumerationBaseAndValues(TypeEntry type, SymbolTable symbolTable) {
+		try{
+			SchemaType stype = null;
+			if(type instanceof SchemaType)
+				stype  = (SchemaType)type;
+			else
+				stype = ((SchemaElement)type).getType();	
+			if (type == null || stype.getJaxmetype() == null) {
+				return null;
+			}
+			XSType xstype = stype.getJaxmetype();
+			if(!xstype.isSimple())
+				return null;
+			XSSimpleType xssimpletype = xstype.getSimpleType();	
+			
+			Vector enuinfo = new Vector();
+			enuinfo.add(symbolTable.getType(
+				SymbolTable.xsQName2QName(xssimpletype.getRestrictedType().getName())));
+			XSEnumeration[] xsenus = xssimpletype.getEnumerations();
+			if(xsenus == null)
+				return null;
+			for(int i = 0;i<xsenus.length;i++)
+				enuinfo.add(xsenus[0].getValue());	
+			return 	enuinfo;
+		}catch(SAXException e){
+			throw new JAXMEInternalException(e);
+		}		
+	}
+//	/**
+//	 * If the specified node represents a supported JAX-RPC enumeration,
+//	 * a Vector is returned which contains the base type and the enumeration values.
+//	 * The first element in the vector is the base type (an TypeEntry).
+//	 * Subsequent elements are values (Strings).
+//	 * If this is not an enumeration, null is returned.
+//	 */
+//	public static Vector getEnumerationBaseAndValues(Node node, SymbolTable symbolTable) {
+//		if (node == null) {
+//			return null;
+//		}
+//
+//		// If the node kind is an element, dive into it.
+//		QName nodeKind = Utils.getNodeQName(node);
+//		if (nodeKind != null &&
+//			nodeKind.getLocalPart().equals("element") &&
+//			Constants.isSchemaXSD(nodeKind.getNamespaceURI())) {
+//			NodeList children = node.getChildNodes();
+//			Node simpleNode = null;
+//			for (int j = 0; j < children.getLength() && simpleNode == null; j++) {
+//				QName simpleKind = Utils.getNodeQName(children.item(j));
+//				if (simpleKind != null &&
+//					simpleKind.getLocalPart().equals("simpleType") &&
+//					Constants.isSchemaXSD(simpleKind.getNamespaceURI())) {
+//					simpleNode = children.item(j);
+//					node = simpleNode;
+//				}
+//			}
+//		}
+//		// Get the node kind, expecting a schema simpleType
+//		nodeKind = Utils.getNodeQName(node);
+//		if (nodeKind != null &&
+//			nodeKind.getLocalPart().equals("simpleType") &&
+//			Constants.isSchemaXSD(nodeKind.getNamespaceURI())) {
+//
+//			// Under the simpleType there should be a restriction.
+//			// (There may be other #text nodes, which we will ignore).
+//			NodeList children = node.getChildNodes();
+//			Node restrictionNode = null;
+//			for (int j = 0; j < children.getLength() && restrictionNode == null; j++) {
+//				QName restrictionKind = Utils.getNodeQName(children.item(j));
+//				if (restrictionKind != null &&
+//					restrictionKind.getLocalPart().equals("restriction") &&
+//					Constants.isSchemaXSD(restrictionKind.getNamespaceURI()))
+//					restrictionNode = children.item(j);
+//			}
+//
+//			// The restriction node indicates the type being restricted
+//			// (the base attribute contains this type).
+//			// The base type must be a simple type, and not boolean
+//			TypeEntry baseEType = null;
+//			if (restrictionNode != null) {
+//				QName baseType = Utils.getTypeQName(restrictionNode, new BooleanHolder(), false);
+//				baseEType = symbolTable.getType(baseType);
+//				if (baseEType != null) {
+//					String javaName = baseEType.getName();
+//					if (javaName.equals("boolean") ||
+//						! SchemaUtils.isSimpleSchemaType(baseEType.getQName())) {
+//						baseEType = null;
+//					}
+//				}
+//			}
+//
+//			// Process the enumeration elements underneath the restriction node
+//			if (baseEType != null && restrictionNode != null) {
+//
+//				Vector v = new Vector();                
+//				NodeList enums = restrictionNode.getChildNodes();
+//				for (int i=0; i < enums.getLength(); i++) {
+//					QName enumKind = Utils.getNodeQName(enums.item(i));
+//					if (enumKind != null &&
+//						enumKind.getLocalPart().equals("enumeration") &&
+//						Constants.isSchemaXSD(enumKind.getNamespaceURI())) {
+//
+//						// Put the enum value in the vector.
+//						Node enumNode = enums.item(i);
+//						String value = Utils.getAttribute(enumNode, "value");
+//						if (value != null) {
+//							v.add(value);
+//						}
+//					}
+//				}
+//                
+//				// is this really an enumeration?
+//				if(v.isEmpty()) return null;
+//                
+//				// The first element in the vector is the base type (an TypeEntry).
+//				v.add(0,baseEType);
+//				return v;
+//			}
+//		}
+//		return null;
+//	}
 
-        // If the node kind is an element, dive into it.
-        QName nodeKind = Utils.getNodeQName(node);
+  /**
+   * Capitalize the first character of the name.
+   */
+  public static String capitalizeFirstChar(String name) {
+	  if (name == null || name.equals(""))
+		  return name;
+        
+	  char start = name.charAt(0);
 
-        if ((nodeKind != null) && nodeKind.getLocalPart().equals("element")
-                && Constants.isSchemaXSD(nodeKind.getNamespaceURI())) {
-            NodeList children = node.getChildNodes();
-            Node simpleNode = null;
-
-            for (int j = 0; (j < children.getLength()) && (simpleNode == null);
-                 j++) {
-                QName simpleKind = Utils.getNodeQName(children.item(j));
-
-                if ((simpleKind != null)
-                        && simpleKind.getLocalPart().equals("simpleType")
-                        && Constants.isSchemaXSD(
-                                simpleKind.getNamespaceURI())) {
-                    simpleNode = children.item(j);
-                    node = simpleNode;
-                }
-            }
-        }
-
-        // Get the node kind, expecting a schema simpleType
-        nodeKind = Utils.getNodeQName(node);
-
-        if ((nodeKind != null) && nodeKind.getLocalPart().equals("simpleType")
-                && Constants.isSchemaXSD(nodeKind.getNamespaceURI())) {
-
-            // Under the simpleType there should be a restriction.
-            // (There may be other #text nodes, which we will ignore).
-            NodeList children = node.getChildNodes();
-            Node restrictionNode = null;
-
-            for (int j = 0;
-                 (j < children.getLength()) && (restrictionNode == null);
-                 j++) {
-                QName restrictionKind = Utils.getNodeQName(children.item(j));
-
-                if ((restrictionKind != null)
-                        && restrictionKind.getLocalPart().equals("restriction")
-                        && Constants.isSchemaXSD(
-                                restrictionKind.getNamespaceURI())) {
-                    restrictionNode = children.item(j);
-                }
-            }
-
-            // The restriction node indicates the type being restricted
-            // (the base attribute contains this type).
-            // The base type must be a simple type, and not boolean
-            TypeEntry baseEType = null;
-
-            if (restrictionNode != null) {
-                QName baseType = Utils.getTypeQName(restrictionNode,
-                        new BooleanHolder(), false);
-
-                baseEType = symbolTable.getType(baseType);
-
-                if (baseEType != null) {
-                    String javaName = baseEType.getName();
-
-                    if (javaName.equals("boolean")
-                            || !SchemaUtils.isSimpleSchemaType(
-                                    baseEType.getQName())) {
-                        baseEType = null;
-                    }
-                }
-            }
-
-            // Process the enumeration elements underneath the restriction node
-            if ((baseEType != null) && (restrictionNode != null)) {
-                Vector v = new Vector();
-                NodeList enums = restrictionNode.getChildNodes();
-
-                for (int i = 0; i < enums.getLength(); i++) {
-                    QName enumKind = Utils.getNodeQName(enums.item(i));
-
-                    if ((enumKind != null)
-                            && enumKind.getLocalPart().equals("enumeration")
-                            && Constants.isSchemaXSD(
-                                    enumKind.getNamespaceURI())) {
-
-                        // Put the enum value in the vector.
-                        Node enumNode = enums.item(i);
-                        String value = Utils.getAttribute(enumNode, "value");
-
-                        if (value != null) {
-                            v.add(value);
-                        }
-                    }
-                }
-
-                // is this really an enumeration?
-                if (v.isEmpty()) {
-                    return null;
-                }
-
-                // The first element in the vector is the base type (an TypeEntry).
-                v.add(0, baseEType);
-
-                return v;
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * Capitalize the first character of the name.
-     * 
-     * @param name 
-     * @return 
-     */
-    public static String capitalizeFirstChar(String name) {
-
-        if ((name == null) || name.equals("")) {
-            return name;
-        }
-
-        char start = name.charAt(0);
-
-        if (Character.isLowerCase(start)) {
-            start = Character.toUpperCase(start);
-
-            return start + name.substring(1);
-        }
-
-        return name;
-    }    // capitalizeFirstChar
+	  if (Character.isLowerCase(start)) {
+		  start = Character.toUpperCase(start);
+		  return start + name.substring(1);
+	  }
+	  return name;
+  } // capitalizeFirstChar
 
     /**
      * Prepend an underscore to the name
@@ -735,118 +737,95 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
         return TYPES.get(type.getName()) != null;
     }    // isPrimitiveType
 
-    /**
-     * Return the operation QName.  The namespace is determined from
-     * the soap:body namespace, if it exists, otherwise it is "".
-     * 
-     * @param bindingOper the operation
-     * @param bEntry      the symbol table binding entry
-     * @param symbolTable SymbolTable
-     * @return the operation QName
-     */
-    public static QName getOperationQName(BindingOperation bindingOper,
-                                          BindingEntry bEntry,
-                                          SymbolTable symbolTable) {
+	/**
+	 * Return the operation QName.  The namespace is determined from
+	 * the soap:body namespace, if it exists, otherwise it is "".
+	 * 
+	 * @param bindingOper the operation
+	 * @param bEntry the symbol table binding entry
+	 * @param symbolTable SymbolTable  
+	 * @return the operation QName
+	 */ 
+	public static QName getOperationQName(BindingOperation bindingOper, 
+										  BindingEntry bEntry,
+										  SymbolTable symbolTable) {
 
-        Operation operation = bindingOper.getOperation();
-        String operationName = operation.getName();
+		Operation operation = bindingOper.getOperation();
+		String operationName = operation.getName();
 
-        // For the wrapped case, use the part element's name...which is
-        // is the same as the operation name, but may have a different
-        // namespace ?
-        // example:
-        // <part name="paramters" element="ns:myelem">
-        if ((bEntry.getBindingStyle() == Style.DOCUMENT)
-                && symbolTable.isWrapped()) {
-            Input input = operation.getInput();
+		// For the wrapped case, use the part element's name...which is
+		// is the same as the operation name, but may have a different
+		// namespace ?
+		// example:
+		//   <part name="paramters" element="ns:myelem">
+		if (bEntry.getBindingStyle() == Style.DOCUMENT &&
+			symbolTable.isWrapped()) {
+			Input input = operation.getInput();
+			if (input != null) {
+				Map parts = input.getMessage().getParts();
+				if (parts != null && !parts.isEmpty()) {
+					Iterator i = parts.values().iterator();
+					Part p = (Part) i.next();
+					return p.getElementName();
+				}
+			}
+		}
 
-            if (input != null) {
-                Map parts = input.getMessage().getParts();
+		String ns = null;
 
-                if ((parts != null) && !parts.isEmpty()) {
-                    Iterator i = parts.values().iterator();
-                    Part p = (Part) i.next();
+		// Get a namespace from the soap:body tag, if any
+		// example:
+		//   <soap:body namespace="this_is_what_we_want" ..>
+		BindingInput bindInput = bindingOper.getBindingInput();
+		if (bindInput != null) {
+			Iterator it = bindInput.getExtensibilityElements().iterator();
+			while (it.hasNext()) {
+				ExtensibilityElement elem = (ExtensibilityElement) it.next();
+				if (elem instanceof SOAPBody) {
+					SOAPBody body = (SOAPBody) elem;
+					ns = body.getNamespaceURI();
+					break;
+				} else if (elem instanceof MIMEMultipartRelated) {
+					Object part = null;
+					javax.wsdl.extensions.mime.MIMEMultipartRelated mpr=
+					(javax.wsdl.extensions.mime.MIMEMultipartRelated) elem;
+					List l =  mpr.getMIMEParts();
+					for(int j=0; l!= null && j< l.size() && part == null; j++){
+						javax.wsdl.extensions.mime.MIMEPart mp = (javax.wsdl.extensions.mime.MIMEPart)l.get(j);
+						List ll= mp.getExtensibilityElements();
+						for(int k=0; ll != null && k < ll.size() && part == null; k++){
+							part = ll.get(k);
+							if (part instanceof SOAPBody) {
+								SOAPBody body = (SOAPBody) part;
+								ns = body.getNamespaceURI();
+								break;
+							} else {
+								part = null;
+							}
+					   }
+					}
+				} else if (elem instanceof UnknownExtensibilityElement) {
+					//TODO: After WSDL4J supports soap12, change this code
+					UnknownExtensibilityElement unkElement = (UnknownExtensibilityElement) elem;
+					QName name = unkElement.getElementType();
+					if(name.getNamespaceURI().equals(Constants.URI_WSDL12_SOAP) && 
+					   name.getLocalPart().equals("body")){
+						ns = unkElement.getElement().getAttribute("namespace");
+					}                    
+				}
+			}
+		}
 
-                    return p.getElementName();
-                }
-            }
-        }
-
-        String ns = null;
-
-        // Get a namespace from the soap:body tag, if any
-        // example:
-        // <soap:body namespace="this_is_what_we_want" ..>
-        BindingInput bindInput = bindingOper.getBindingInput();
-
-        if (bindInput != null) {
-            Iterator it = bindInput.getExtensibilityElements().iterator();
-
-            while (it.hasNext()) {
-                ExtensibilityElement elem = (ExtensibilityElement) it.next();
-
-                if (elem instanceof SOAPBody) {
-                    SOAPBody body = (SOAPBody) elem;
-
-                    ns = body.getNamespaceURI();
-
-                    break;
-                } else if (elem instanceof MIMEMultipartRelated) {
-                    Object part = null;
-                    javax.wsdl.extensions.mime.MIMEMultipartRelated mpr =
-                            (javax.wsdl.extensions.mime.MIMEMultipartRelated) elem;
-                    List l =
-                            mpr.getMIMEParts();
-
-                    for (int j = 0;
-                         (l != null) && (j < l.size()) && (part == null);
-                         j++) {
-                        javax.wsdl.extensions.mime.MIMEPart mp =
-                                (javax.wsdl.extensions.mime.MIMEPart) l.get(j);
-                        List ll =
-                                mp.getExtensibilityElements();
-
-                        for (int k = 0; (ll != null) && (k < ll.size())
-                                && (part == null); k++) {
-                            part = ll.get(k);
-
-                            if (part instanceof SOAPBody) {
-                                SOAPBody body = (SOAPBody) part;
-
-                                ns = body.getNamespaceURI();
-
-                                break;
-                            } else {
-                                part = null;
-                            }
-                        }
-                    }
-                } else if (elem instanceof UnknownExtensibilityElement) {
-
-                    // TODO: After WSDL4J supports soap12, change this code
-                    UnknownExtensibilityElement unkElement =
-                            (UnknownExtensibilityElement) elem;
-                    QName name =
-                            unkElement.getElementType();
-
-                    if (name.getNamespaceURI().equals(Constants.URI_WSDL12_SOAP)
-                            && name.getLocalPart().equals("body")) {
-                        ns = unkElement.getElement().getAttribute("namespace");
-                    }
-                }
-            }
-        }
-
-        // If we didn't get a namespace from the soap:body, then
-        // use "".  We should probably use the targetNamespace,
-        // but the target namespace of what?  binding?  portType?
-        // Also, we don't have enough info for to get it.
-        if (ns == null) {
-            ns = "";
-        }
-
-        return new QName(ns, operationName);
-    }
+		// If we didn't get a namespace from the soap:body, then
+		// use "".  We should probably use the targetNamespace,
+		// but the target namespace of what?  binding?  portType?
+		// Also, we don't have enough info for to get it.
+		if (ns == null) {
+			ns = "";
+		}
+        
+		return new QName(ns, operationName);
+	}
 
     /**
      * Common code for generating a QName in emitted code.  Note that there's
@@ -905,69 +884,86 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
         return getXSIType(param.getType());
     }    // getXSIType
 
-    /**
-     * Get the QName that could be used in the xsi:type
-     * when serializing an object of the given type.
-     * 
-     * @param te is the type entry
-     * @return the QName of the type's xsi type
-     */
-    public static QName getXSIType(TypeEntry te) {
+	/**
+	 * Get the QName that could be used in the xsi:type
+	 * when serializing an object of the given type.
+	 * @param te is the type entry
+	 * @return the QName of the type's xsi type
+	 */
+/////////////////////////////////////////////////////////////////////////////    
+//	  public static QName getXSIType(TypeEntry te) {
+//		  QName xmlType = null;
+//
+//		  // If the TypeEntry describes an Element, get
+//		  // the referenced Type.
+//		  if (te != null &&
+//			  te instanceof Element &&
+//			  te.getRefType() != null) {
+//			  te = te.getRefType();
+//		  } 
+//		  // If the TypeEntry is a CollectionTE, use
+//		  // the TypeEntry representing the component Type
+//		  // So for example a parameter that takes a 
+//		  // collection type for
+//		  // <element name="A" type="xsd:string" maxOccurs="unbounded"/>
+//		  // will be 
+//		  // new ParameterDesc(<QName of A>, IN,
+//		  //                   <QName of xsd:string>,
+//		  //                   String[])
+//		  if (te != null &&
+//			  te instanceof CollectionTE &&
+//			  te.getRefType() != null) {
+//			  te = te.getRefType();
+//		  }
+//		  if (te != null) {
+//			  xmlType = te.getQName();
+//		  }
+//		  return xmlType;
+//	  }
+///NEWCODE//////////////////////////////////////////////////
+	public static QName getXSIType(TypeEntry te) {
+		QName xmlType = null;
 
-        QName xmlType = null;
+		// If the TypeEntry describes an Element, get
+		// the referenced Type.
+		if (te != null &&
+			te instanceof SchemaElement &&
+			te.getRefType() != null) {
+			te = te.getRefType();
+		} 
+		if (te != null) {
+			xmlType = te.getQName();
+		}
+		return xmlType;
+	}
 
-        // If the TypeEntry describes an Element, get
-        // the referenced Type.
-        if ((te != null) && (te instanceof Element)
-                && (te.getRefType() != null)) {
-            te = te.getRefType();
-        }
+//	//////////////////////////////////////////////////////////////////////
 
-        // If the TypeEntry is a CollectionTE, use
-        // the TypeEntry representing the component Type
-        // So for example a parameter that takes a
-        // collection type for
-        // <element name="A" type="xsd:string" maxOccurs="unbounded"/>
-        // will be
-        // new ParameterDesc(<QName of A>, IN,
-        // <QName of xsd:string>,
-        // String[])
-        if ((te != null) && (te instanceof CollectionTE)
-                && (te.getRefType() != null)) {
-            te = te.getRefType();
-        }
-
-        if (te != null) {
-            xmlType = te.getQName();
-        }
-
-        return xmlType;
-    }
-
-    /**
-     * Given a MIME type, return the AXIS-specific type QName.
-     * 
-     * @param mimeName the MIME type name
-     * @return the AXIS-specific QName for the MIME type
-     */
-    public static QName getMIMETypeQName(String mimeName) {
-
-        if ("text/plain".equals(mimeName)) {
-            return Constants.MIME_PLAINTEXT;
-        } else if ("image/gif".equals(mimeName)
-                || "image/jpeg".equals(mimeName)) {
-            return Constants.MIME_IMAGE;
-        } else if ("text/xml".equals(mimeName)
-                || "applications/xml".equals(mimeName)) {
-            return Constants.MIME_SOURCE;
-        } else if ("application/octetstream".equals(mimeName)) {
-            return Constants.MIME_OCTETSTREAM;
-        } else if ((mimeName != null) && mimeName.startsWith("multipart/")) {
-            return Constants.MIME_MULTIPART;
-        } else {
-            return Constants.MIME_DATA_HANDLER;
-        }
-    }    // getMIMEType
+	  /**
+	   * Given a MIME type, return the AXIS-specific type QName.
+	   * @param mimeName the MIME type name
+	   * @return the AXIS-specific QName for the MIME type
+	   */
+	  public static QName getMIMETypeQName(String mimeName) {
+		  if ("text/plain".equals(mimeName)) {
+			  return Constants.MIME_PLAINTEXT;
+		  }
+		  else if ("image/gif".equals(mimeName) || "image/jpeg".equals(mimeName)) {
+			  return Constants.MIME_IMAGE;
+		  }
+		  else if ("text/xml".equals(mimeName) || "applications/xml".equals(mimeName)) {
+			  return Constants.MIME_SOURCE;
+		  }
+		  else if ("application/octetstream".equals(mimeName)) {
+			  return Constants.MIME_OCTETSTREAM;
+		  }
+		  else if (mimeName != null && mimeName.startsWith("multipart/")) {
+			  return Constants.MIME_MULTIPART;
+		  }
+		  else {
+			  return Constants.MIME_DATA_HANDLER;
+		  }
+	  } // getMIMEType
 
     /**
      * Are there any MIME parameters in the given binding?
@@ -1090,96 +1086,87 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
                 "new org.apache.axis.types.MonthDay(1, 1)");
     }
 
-    /**
-     * Return a constructor for the provided Parameter
-     * This string will be suitable for assignment:
-     * <p/>
-     * Foo var = <i>string returned</i>
-     * <p/>
-     * Handles basic java types (int, float, etc), wrapper types (Integer, etc)
-     * and certain java.math (BigDecimal, BigInteger) types.
-     * Will also handle all Axis specific types (org.apache.axis.types.*)
-     * <p/>
-     * Caller should expect to wrap the construction in a try/catch block
-     * if bThrow is set to <i>true</i>.
-     * 
-     * @param param       info about the parameter we need a constructor for
-     * @param symbolTable used to lookup enumerations
-     * @param bThrow      set to true if contructor needs try/catch block
-     * @return 
-     */
-    public static String getConstructorForParam(Parameter param,
-                                                SymbolTable symbolTable,
-                                                BooleanHolder bThrow) {
+	/**
+	 * Return a constructor for the provided Parameter
+	 * This string will be suitable for assignment:
+	 * <p>
+	 *    Foo var = <i>string returned</i>
+	 * <p>
+	 * Handles basic java types (int, float, etc), wrapper types (Integer, etc)
+	 * and certain java.math (BigDecimal, BigInteger) types.
+	 * Will also handle all Axis specific types (org.apache.axis.types.*)
+	 * <p>
+	 * Caller should expect to wrap the construction in a try/catch block
+	 * if bThrow is set to <i>true</i>.
+	 * 
+	 * @param param info about the parameter we need a constructor for
+	 * @param symbolTable used to lookup enumerations
+	 * @param bThrow set to true if contructor needs try/catch block
+	 */ 
+	public static String getConstructorForParam(Parameter param, 
+										 SymbolTable symbolTable,
+										 BooleanHolder bThrow) {
+        
+		String paramType = param.getType().getName();
+		String mimeType = param.getMIMEInfo() == null ? null : param.getMIMEInfo().getType();
+		String mimeDimensions = param.getMIMEInfo() == null ? "" : param.getMIMEInfo().getDimensions();
+		String out = null;
+        
+		// Handle mime types
+		if (mimeType != null) {
+			if (mimeType.equals("image/gif") ||
+					mimeType.equals("image/jpeg")) {
+				return "null";
+			}
+			else if (mimeType.equals("text/xml") ||
+					mimeType.equals("application/xml")) {
+				if(mimeDimensions.length() <= 0)
+					return "new javax.xml.transform.stream.StreamSource()";
+				else
+					return "new javax.xml.transform.stream.StreamSource[0]";
+			}
+			else if (mimeType.equals("application/octetstream")) {
+				if(mimeDimensions.length() <= 0)
+					return "new org.apache.axis.attachments.OctetStream()";
+				else
+					return "new org.apache.axis.attachments.OctetStream[0]";
+			}
+			else {
+				return "new " + Utils.getParameterTypeName(param) + "()";
+			}
+		}
+        
+		// Look up paramType in the table
+		out = (String) constructorMap.get(paramType);
+		if (out != null) {
+			return out;
+		}
+        
+		// Look up paramType in the table of constructors that can throw exceptions
+		out = (String) constructorThrowMap.get(paramType);
+		if (out != null) {
+			bThrow.value = true;
+			return out;
+		}
+        
+		// Handle arrays
+		if (paramType.endsWith("[]")) {
+			return "new " + JavaUtils.replace(paramType, "[]", "[0]");
+		}
 
-        String paramType = param.getType().getName();
-        String mimeType = (param.getMIMEInfo() == null)
-                ? null
-                : param.getMIMEInfo().getType();
-        String mimeDimensions = (param.getMIMEInfo() == null)
-                ? ""
-                : param.getMIMEInfo().getDimensions();
-        String out = null;
-
-        // Handle mime types
-        if (mimeType != null) {
-            if (mimeType.equals("image/gif") || mimeType.equals("image/jpeg")) {
-                return "null";
-            } else if (mimeType.equals("text/xml")
-                    || mimeType.equals("application/xml")) {
-                if (mimeDimensions.length() <= 0) {
-                    return "new javax.xml.transform.stream.StreamSource()";
-                } else {
-                    return "new javax.xml.transform.stream.StreamSource[0]";
-                }
-            } else if (mimeType.equals("application/octetstream")) {
-                if (mimeDimensions.length() <= 0) {
-                    return "new org.apache.axis.attachments.OctetStream()";
-                } else {
-                    return "new org.apache.axis.attachments.OctetStream[0]";
-                }
-            } else {
-                return "new " + Utils.getParameterTypeName(param) + "()";
-            }
-        }
-
-        // Look up paramType in the table
-        out = (String) constructorMap.get(paramType);
-
-        if (out != null) {
-            return out;
-        }
-
-        // Look up paramType in the table of constructors that can throw exceptions
-        out = (String) constructorThrowMap.get(paramType);
-
-        if (out != null) {
-            bThrow.value = true;
-
-            return out;
-        }
-
-        // Handle arrays
-        if (paramType.endsWith("[]")) {
-            return "new " + JavaUtils.replace(paramType, "[]", "[0]");
-        }
-
-        /** * We have some constructed type. */
-
-        // Check for enumeration
-        Vector v = Utils.getEnumerationBaseAndValues(param.getType().getNode(),
-                symbolTable);
-
-        if (v != null) {
-
-            // This constructed type is an enumeration.  Use the first one.
-            String enumeration =
-                    (String) JavaEnumTypeWriter.getEnumValueIds(v).get(0);
-
-            return paramType + "." + enumeration;
-        }
-
-        // This constructed type is a normal type, instantiate it.
-        return "new " + paramType + "()";
-    }
+		/*** We have some constructed type. */
+        
+		// Check for enumeration
+		Vector v = Utils.getEnumerationBaseAndValues(param.getType(), symbolTable);
+		if (v != null) {
+			// This constructed type is an enumeration.  Use the first one.
+			String enumeration = (String)
+					JavaEnumTypeWriter.getEnumValueIds(v).get(0);
+			return paramType + "." + enumeration;
+		}
+        
+		// This constructed type is a normal type, instantiate it.
+		return "new " + paramType + "()";
+        
+	}
 }    // class Utils

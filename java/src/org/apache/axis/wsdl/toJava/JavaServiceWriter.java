@@ -54,13 +54,13 @@
  */
 package org.apache.axis.wsdl.toJava;
 
+import java.io.IOException;
+
+import javax.wsdl.Service;
+
 import org.apache.axis.wsdl.gen.Generator;
 import org.apache.axis.wsdl.symbolTable.ServiceEntry;
 import org.apache.axis.wsdl.symbolTable.SymbolTable;
-import org.xml.sax.SAXException;
-
-import javax.wsdl.Service;
-import java.io.IOException;
 
 /**
  * This is Wsdl2java's Service Writer.  It writes the following files, as appropriate:
@@ -102,24 +102,18 @@ public class JavaServiceWriter implements Generator {
         }
     }    // ctor
 
-    /**
-     * Write all the service bindnigs:  service and testcase.
-     * 
-     * @throws IOException  
-     * @throws SAXException 
-     */
-    public void generate() throws IOException, SAXException {
-
-        if (serviceIfaceWriter != null) {
-            serviceIfaceWriter.generate();
-        }
-
-        if (serviceImplWriter != null) {
-            serviceImplWriter.generate();
-        }
-
-        if (testCaseWriter != null) {
-            testCaseWriter.generate();
-        }
-    }    // generate
+	/**
+	 * Write all the service bindnigs:  service and testcase.
+	 */
+	public void generate() throws IOException{
+		if (serviceIfaceWriter != null) {
+			serviceIfaceWriter.generate();
+		}
+		if (serviceImplWriter != null) {
+			serviceImplWriter.generate();
+		}
+		if (testCaseWriter != null) {
+			testCaseWriter.generate();
+		}
+	} // generate
 }    // class JavaServiceWriter

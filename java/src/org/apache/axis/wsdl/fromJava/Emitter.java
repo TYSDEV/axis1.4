@@ -54,32 +54,16 @@
  */
 package org.apache.axis.wsdl.fromJava;
 
-import com.ibm.wsdl.BindingFaultImpl;
-import com.ibm.wsdl.extensions.soap.SOAPAddressImpl;
-import com.ibm.wsdl.extensions.soap.SOAPBindingImpl;
-import com.ibm.wsdl.extensions.soap.SOAPBodyImpl;
-import com.ibm.wsdl.extensions.soap.SOAPOperationImpl;
-import org.apache.axis.AxisFault;
-import org.apache.axis.Constants;
-import org.apache.axis.InternalException;
-import org.apache.axis.Version;
-import org.apache.axis.description.FaultDesc;
-import org.apache.axis.description.OperationDesc;
-import org.apache.axis.description.ParameterDesc;
-import org.apache.axis.description.ServiceDesc;
-import org.apache.axis.encoding.DefaultTypeMappingImpl;
-import org.apache.axis.encoding.TypeMapping;
-import org.apache.axis.enum.Style;
-import org.apache.axis.enum.Use;
-import org.apache.axis.utils.ClassUtils;
-import org.apache.axis.utils.JavaUtils;
-import org.apache.axis.utils.Messages;
-import org.apache.axis.utils.XMLUtils;
-import org.w3c.dom.Comment;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Text;
-import org.xml.sax.SAXException;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.StringTokenizer;
+import java.util.Vector;
 
 import javax.wsdl.Binding;
 import javax.wsdl.BindingFault;
@@ -107,16 +91,34 @@ import javax.wsdl.extensions.soap.SOAPOperation;
 import javax.wsdl.factory.WSDLFactory;
 import javax.xml.namespace.QName;
 import javax.xml.parsers.ParserConfigurationException;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.StringTokenizer;
-import java.util.Vector;
+
+import org.apache.axis.AxisFault;
+import org.apache.axis.Constants;
+import org.apache.axis.InternalException;
+import org.apache.axis.Version;
+import org.apache.axis.description.FaultDesc;
+import org.apache.axis.description.OperationDesc;
+import org.apache.axis.description.ParameterDesc;
+import org.apache.axis.description.ServiceDesc;
+import org.apache.axis.encoding.DefaultTypeMappingImpl;
+import org.apache.axis.encoding.TypeMapping;
+import org.apache.axis.enum.Style;
+import org.apache.axis.enum.Use;
+import org.apache.axis.utils.ClassUtils;
+import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
+import org.apache.axis.utils.XMLUtils;
+import org.w3c.dom.Comment;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Text;
+import org.xml.sax.SAXException;
+
+import com.ibm.wsdl.BindingFaultImpl;
+import com.ibm.wsdl.extensions.soap.SOAPAddressImpl;
+import com.ibm.wsdl.extensions.soap.SOAPBindingImpl;
+import com.ibm.wsdl.extensions.soap.SOAPBodyImpl;
+import com.ibm.wsdl.extensions.soap.SOAPOperationImpl;
 
 /**
  * This class emits WSDL from Java classes.  It is used by the ?WSDL

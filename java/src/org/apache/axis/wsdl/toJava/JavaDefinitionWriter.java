@@ -54,24 +54,24 @@
  */
 package org.apache.axis.wsdl.toJava;
 
-import org.apache.axis.utils.Messages;
-import org.apache.axis.wsdl.gen.Generator;
-import org.apache.axis.wsdl.symbolTable.BindingEntry;
-import org.apache.axis.wsdl.symbolTable.FaultInfo;
-import org.apache.axis.wsdl.symbolTable.MessageEntry;
-import org.apache.axis.wsdl.symbolTable.SymbolTable;
-import org.xml.sax.SAXException;
-
-import javax.wsdl.Binding;
-import javax.wsdl.Definition;
-import javax.wsdl.Import;
-import javax.wsdl.Message;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Vector;
+
+import javax.wsdl.Binding;
+import javax.wsdl.Definition;
+import javax.wsdl.Import;
+import javax.wsdl.Message;
+
+import org.apache.axis.utils.Messages;
+import org.apache.axis.wsdl.gen.Generator;
+import org.apache.axis.wsdl.symbolTable.BindingEntry;
+import org.apache.axis.wsdl.symbolTable.FaultInfo;
+import org.apache.axis.wsdl.symbolTable.MessageEntry;
+import org.apache.axis.wsdl.symbolTable.SymbolTable;
 
 /**
  * This is Wsdl2java's Definition Writer.
@@ -104,79 +104,65 @@ public class JavaDefinitionWriter implements Generator {
         this.symbolTable = symbolTable;
     }    // ctor
 
-    /**
-     * Write other items from the definition as needed.
-     * 
-     * @throws IOException  
-     * @throws SAXException 
-     */
-    public void generate() throws IOException, SAXException {
-        writeFaults();
-    }    // generate
+	/**
+	 * Write other items from the definition as needed.
+	 */
+	public void generate() throws IOException {
+		writeFaults();
+	} // generate
 
-    /**
-     * Write all the simple type faults.
-     * The complexType Faults are automatically handled by JavaTypeWriter.
-     * The fault name is derived from the fault message name per JAX-RPC
-     * 
-     * @throws IOException  
-     * @throws SAXException 
-     */
-    private void writeFaults() throws IOException, SAXException {
+	/**
+	 * Write all the simple type faults.
+	 * The complexType Faults are automatically handled by JavaTypeWriter.
+	 * The fault name is derived from the fault message name per JAX-RPC
+	 */
+	private void writeFaults() throws IOException{
+		ArrayList faults = new ArrayList();
+		collectFaults(definition, faults);
+        
+		// Fault classes we're actually writing (for dup checking)
+		HashSet generatedFaults = new HashSet();
 
-        ArrayList faults = new ArrayList();
+		// iterate over fault list, emitting code.
+		Iterator fi = faults.iterator();
+		while (fi.hasNext()) {
+			FaultInfo faultInfo = (FaultInfo) fi.next();
+			Message message = faultInfo.getMessage();
+			String name = Utils.getFullExceptionName(message, symbolTable);
+			if (generatedFaults.contains(name)) {
+				continue;
+			}
+			generatedFaults.add(name);
 
-        collectFaults(definition, faults);
-
-        // Fault classes we're actually writing (for dup checking)
-        HashSet generatedFaults = new HashSet();
-
-        // iterate over fault list, emitting code.
-        Iterator fi = faults.iterator();
-
-        while (fi.hasNext()) {
-            FaultInfo faultInfo = (FaultInfo) fi.next();
-            Message message = faultInfo.getMessage();
-            String name = Utils.getFullExceptionName(message,
-                    symbolTable);
-
-            if (generatedFaults.contains(name)) {
-                continue;
-            }
-
-            generatedFaults.add(name);
-
-            // Generate the 'Simple' Faults.
-            // The complexType Faults are automatically handled
-            // by JavaTypeWriter.
-            MessageEntry me =
-                    symbolTable.getMessageEntry(message.getQName());
-            boolean emitSimpleFault = true;
-
-            if (me != null) {
-                Boolean complexTypeFault = (Boolean) me.getDynamicVar(
-                        JavaGeneratorFactory.COMPLEX_TYPE_FAULT);
-
-                if ((complexTypeFault != null)
-                        && complexTypeFault.booleanValue()) {
-                    emitSimpleFault = false;
-                }
-            }
-
-            if (emitSimpleFault) {
-                try {
-                    JavaFaultWriter writer = new JavaFaultWriter(emitter,
-                            symbolTable, faultInfo);
-
-                    // Go write the file
-                    writer.generate();
-                } catch (DuplicateFileException dfe) {
-                    System.err.println(Messages.getMessage("fileExistError00",
-                            dfe.getFileName()));
-                }
-            }
-        }
-    }    // writeFaults
+			// Generate the 'Simple' Faults.
+			// The complexType Faults are automatically handled
+			// by JavaTypeWriter.
+			MessageEntry me = symbolTable.getMessageEntry(message.getQName());
+			boolean emitSimpleFault = true;
+			if (me != null) {
+				Boolean complexTypeFault = (Boolean)
+					me.getDynamicVar(JavaGeneratorFactory.COMPLEX_TYPE_FAULT);
+				if (complexTypeFault != null &&
+					complexTypeFault.booleanValue()) {
+					emitSimpleFault = false;
+				}
+			}
+			if (emitSimpleFault) {
+				System.out.println("fault = "+faultInfo.getQName());
+				try {
+					JavaFaultWriter writer = 
+							new JavaFaultWriter(emitter, 
+												symbolTable, 
+												faultInfo); 
+					// Go write the file
+					writer.generate();
+				} catch (DuplicateFileException dfe) {
+					System.err.println(
+							Messages.getMessage("fileExistError00", dfe.getFileName()));
+				}
+			}
+		}
+	} // writeFaults
 
     /** Collect all of the faults used in this definition. */
     private HashSet importedFiles = new HashSet();

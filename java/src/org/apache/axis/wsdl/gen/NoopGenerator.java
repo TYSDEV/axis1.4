@@ -63,8 +63,6 @@ public class NoopGenerator implements Generator {
 
     /**
      * Do a whole lot of nothing.
-     * 
-     * @throws IOException 
      */
     public void generate() throws IOException {
     }    // generate

@@ -52,28 +52,67 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-package org.apache.axis.wsdl.gen;
 
-import java.io.IOException;
-
+package org.apache.axis.wsdl.jaxme;
 /**
- * This is the interface for all writers.  All writers, very simply, must
- * support a write method.
- * <p/>
- * Writer and WriterFactory are part of the Writer framework.  Folks who want
- * to use the emitter to generate stuff from WSDL should do 3 things:
- * 1.  Write implementations of the Writer interface, one each for PortType,
- * Binding, Service, and Type.  These implementations generate the stuff
- * for each of these WSDL types.
- * 2.  Write an implementation of the WriterFactory interface that returns
- * instantiations of these Writer implementations as appropriate.
- * 3.  Implement a class with a main method (like Wsdl2java) that instantiates
- * an emitter and passes it the WriterFactory implementation
+ * <p>This denotes the Exception occured at the code genaration.
+ * There is a isssue of wrapping the Exception such that JDK1.3 compatibility.
+ * This code write same way as it was done at the RemoteException.</p>
  */
-public interface Generator {
+public class JAXMEInternalException extends RuntimeException {
+	/**
+	 * Nested Exception to hold wrapped exception.
+	 *
+	 * <p>This field predates the general-purpose exception chaining facility.
+	 * The {@link Throwable#getCause()} method is now the preferred means of
+	 * obtaining this information.</p>
+	 *
+	 * @serial
+	 */
+	public Throwable detail;
 
-    /**
-     * Generate something.
-     */
-    public void generate() throws IOException;
+	public JAXMEInternalException(Exception e){
+		super(e);
+	}
+	
+	public JAXMEInternalException(String message){
+		super(message);
+	}
+
+	/**
+	 * Constructs a <code>Exception</code> with the specified
+	 * detail message and nested exception.
+	 *
+	 * @param s the detail message
+	 * @param ex the nested exception
+	 */
+	public JAXMEInternalException(String s, Throwable ex) {
+	super(s);
+		initCause(null);  // Disallow subsequent initCause
+	detail = ex;
+	}
+
+	/**
+	 * Returns the detail message, including the message from the nested
+	 * exception if there is one.
+	 * 
+	 * @return	the detail message, including nested exception message if any
+	 */
+	public String getMessage() {
+	if (detail == null) {
+		return super.getMessage();
+	} else {
+		return super.getMessage() + "; nested exception is: \n\t" +
+		detail.toString();
+	}
+	}
+
+	/**
+	 * Returns the wrapped exception (the <i>cause</i>).
+	 *
+	 * @return  the wrapped exception, which may be <tt>null</tt>.
+	 */
+	public Throwable getCause() {
+		return detail;
+	}
 }

@@ -54,15 +54,15 @@
  */
 package org.apache.axis.wsdl.toJava;
 
+import java.io.IOException;
+
+import javax.wsdl.Binding;
+
 import org.apache.axis.utils.Messages;
 import org.apache.axis.wsdl.gen.Generator;
 import org.apache.axis.wsdl.symbolTable.BindingEntry;
 import org.apache.axis.wsdl.symbolTable.PortTypeEntry;
 import org.apache.axis.wsdl.symbolTable.SymbolTable;
-import org.xml.sax.SAXException;
-
-import javax.wsdl.Binding;
-import java.io.IOException;
 
 /**
  * This is Wsdl2java's Binding Writer.  It writes the following files, as appropriate:
@@ -172,12 +172,8 @@ public class JavaBindingWriter implements Generator {
 
     /**
      * Write all the binding bindings:  stub, skeleton, and impl.
-     * 
-     * @throws IOException  
-     * @throws SAXException 
      */
-    public void generate() throws IOException, SAXException {
-
+    public void generate() throws IOException {
         setGenerators();
 
         if (interfaceWriter != null) {

@@ -54,6 +54,23 @@
  */
 package org.apache.axis.wsdl.fromJava;
 
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
+import javax.wsdl.Definition;
+import javax.wsdl.WSDLException;
+import javax.xml.namespace.QName;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.rpc.holders.Holder;
+
 import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
 import org.apache.axis.InternalException;
@@ -241,7 +258,8 @@ public class Types {
             SymbolTable symbolTable = new SymbolTable(btm, true, false, false);
 
             symbolTable.populateTypes(new URL(inputSchema), doc);
-            processSymTabEntries(symbolTable);
+  //jaxme take care of this            
+   //         processSymTabEntries(symbolTable);
         } else {
 
             // If not, we'll just bail out... perhaps we should log a warning
@@ -250,49 +268,43 @@ public class Types {
         }
     }
 
-    /**
-     * Walk the type/element entries in the symbol table and
-     * add each one to the list of processed types. This prevents
-     * the types from being duplicated.
-     * 
-     * @param symbolTable 
-     */
-    private void processSymTabEntries(SymbolTable symbolTable) {
 
-        Iterator iterator = symbolTable.getElementIndex().entrySet().iterator();
 
-        while (iterator.hasNext()) {
-            Map.Entry me = (Map.Entry) iterator.next();
-            QName name = (QName) me.getKey();
-            TypeEntry te = (TypeEntry) me.getValue();
-            String prefix = XMLUtils.getPrefix(name.getNamespaceURI(),
-                    te.getNode());
-
-            if (!((null == prefix) || "".equals(prefix))) {
-                namespaces.putPrefix(name.getNamespaceURI(), prefix);
-                def.addNamespace(prefix, name.getNamespaceURI());
-            }
-
-            addToElementsList(name);
-        }
-
-        iterator = symbolTable.getTypeIndex().entrySet().iterator();
-
-        while (iterator.hasNext()) {
-            Map.Entry me = (Map.Entry) iterator.next();
-            QName name = (QName) me.getKey();
-            TypeEntry te = (TypeEntry) me.getValue();
-            String prefix = XMLUtils.getPrefix(name.getNamespaceURI(),
-                    te.getNode());
-
-            if (!((null == prefix) || "".equals(prefix))) {
-                namespaces.putPrefix(name.getNamespaceURI(), prefix);
-                def.addNamespace(prefix, name.getNamespaceURI());
-            }
-
-            addToTypesList(name);
-        }
-    }
+//    /**
+//     * Walk the type/element entries in the symbol table and
+//     * add each one to the list of processed types. This prevents
+//     * the types from being duplicated.
+//     *      
+//     * @param symbolTable
+//     */
+//    private void processSymTabEntries(SymbolTable symbolTable) {
+//        Iterator iterator = symbolTable.getElementIndex().entrySet().iterator();
+//        while (iterator.hasNext()) {
+//            Map.Entry me = (Map.Entry) iterator.next();
+//            QName name = (QName) me.getKey();
+//            TypeEntry te = (TypeEntry) me.getValue();
+//            String prefix =
+//                XMLUtils.getPrefix(name.getNamespaceURI(), te.getNode());
+//            if (!(null == prefix || "".equals(prefix))) {
+//                namespaces.putPrefix(name.getNamespaceURI(), prefix);
+//                def.addNamespace(prefix, name.getNamespaceURI());
+//            }
+//            addToElementsList(name);
+//        }
+//        iterator = symbolTable.getTypeIndex().entrySet().iterator();
+//        while (iterator.hasNext()) {
+//            Map.Entry me = (Map.Entry) iterator.next();
+//            QName name = (QName) me.getKey();
+//            TypeEntry te = (TypeEntry) me.getValue();
+//            String prefix =
+//                XMLUtils.getPrefix(name.getNamespaceURI(), te.getNode());
+//            if (!(null == prefix || "".equals(prefix))) {
+//                namespaces.putPrefix(name.getNamespaceURI(), prefix);
+//                def.addNamespace(prefix, name.getNamespaceURI());
+//            }
+//            addToTypesList(name);
+//        }
+//    }
 
     /**
      * Load the types from the input wsdl file.
@@ -358,7 +370,8 @@ public class Types {
         SymbolTable symbolTable = new SymbolTable(btm, true, false, false);
 
         symbolTable.populate(null, doc);
-        processSymTabEntries(symbolTable);
+//TODO remove this
+//        processSymTabEntries(symbolTable);
     }
 
     /**

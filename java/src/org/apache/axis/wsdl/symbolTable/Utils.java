@@ -57,6 +57,10 @@ package org.apache.axis.wsdl.symbolTable;
 import org.apache.axis.Constants;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.XMLUtils;
+import org.apache.axis.wsdl.jaxme.JAXMEInternalException;
+import org.apache.ws.jaxme.xs.XSEnumeration;
+import org.apache.ws.jaxme.xs.XSSimpleType;
+import org.apache.ws.jaxme.xs.XSType;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
@@ -266,272 +270,13 @@ public class Utils {
         return (findQName(namespace, localName));
     }
 
-    /**
-     * XML nodes may have a name attribute.
-     * For example &lt.element name="foo" type="b:bar"&gt.
-     * has the name attribute value "foo".  This routine gets the QName of the name attribute value.
-     * 
-     * @param node 
-     * @return 
-     */
-    public static QName getNodeNameQName(Node node) {
 
-        if (node == null) {
-            return null;
-        }
 
-        String localName = null;
-        String namespace = null;
 
-        // First try to get the name directly
-        localName = getAttribute(node, "name");
 
-        // If this fails and the node has a ref, use the ref name.
-        if (localName == null) {
-            QName ref = getTypeQNameFromAttr(node, "ref");
 
-            if (ref != null) {
-                localName = ref.getLocalPart();
-                namespace = ref.getNamespaceURI();
-            }
-        }
 
-        // This routine may be called for complexType elements.  In some cases,
-        // the complexType may be anonymous, which is why the getScopedAttribute
-        // method is used.
-        if (localName == null) {
-            localName = "";
 
-            Node search = node.getParentNode();
-
-            while (search != null) {
-                QName kind = getNodeQName(search);
-
-                if (kind.getLocalPart().equals("schema")) {
-                    search = null;
-                } else if (kind.getLocalPart().equals("element")
-                        || kind.getLocalPart().equals("attribute")) {
-                    localName = SymbolTable.ANON_TOKEN
-                            + getNodeNameQName(search).getLocalPart();
-                    search = search.getParentNode();
-                } else if (kind.getLocalPart().equals("complexType")
-                        || kind.getLocalPart().equals("simpleType")) {
-                    localName = getNodeNameQName(search).getLocalPart()
-                            + localName;
-                    search = null;
-                } else {
-                    search = search.getParentNode();
-                }
-            }
-        }
-
-        if (localName == null) {
-            return null;
-        }
-
-        // Build and return the QName
-        if (namespace == null) {
-            namespace = getScopedAttribute(node, "targetNamespace");
-        }
-
-        return (findQName(namespace, localName));
-    }
-
-    /**
-     * An XML element or attribute node has several ways of
-     * identifying the type of the element or attribute:
-     * - use the type attribute to reference a complexType/simpleType
-     * - use the ref attribute to reference another element
-     * - use of an anonymous type (i.e. a nested type underneath itself)
-     * - a wsdl:part can use the element attribute.
-     * - an extension can use the base attribute.
-     * <p/>
-     * This routine returns a QName representing this "type".
-     * The forElement value is also returned to indicate whether the
-     * QName represents an element (i.e. obtained using the ref attribute)
-     * or a type.
-     * <p/>
-     * Other attributes affect the QName that is returned.
-     * If the "minOccurs" and "maxOccurs" are set such that the
-     * type is a collection of "types", then an artificial qname is
-     * returned to represent the collection.
-     * 
-     * @param node            of the reference
-     * @param forElement      output parameter is set to true if QName is for an element
-     *                        (i.e. ref= or element= attribute was used).
-     * @param ignoreMaxOccurs indicates whether minOccurs/maxOccurs affects the QName
-     * @return QName representing the type of this element
-     */
-    public static QName getTypeQName(Node node, BooleanHolder forElement,
-                                     boolean ignoreMaxOccurs) {
-
-        if (node == null) {
-            return null;
-        }
-
-        forElement.value = false;    // Assume QName returned is for a type
-
-        // Try getting the QName of the type attribute.
-        // Note this also retrieves the type if an anonymous type is used.
-        QName qName = getTypeQNameFromAttr(node, "type");
-
-        // If not successful, try using the ref attribute.
-        if (qName == null) {
-            forElement.value = true;
-            qName = getTypeQNameFromAttr(node, "ref");
-        }
-
-        // If the node has "type"/"ref" and "maxOccurs" then the type is really
-        // a collection.  There is no qname in the wsdl which we can use to represent
-        // the collection, so we need to invent one.
-        // The local part of the qname is changed to <local>[minOccurs, maxOccurs]
-        // The namespace uri is changed to the targetNamespace of this node
-        if (!ignoreMaxOccurs) {
-            if (qName != null) {
-                String maxOccursValue = getAttribute(node, "maxOccurs");
-                String minOccursValue = getAttribute(node, "minOccurs");
-
-                if (maxOccursValue == null) {
-                    maxOccursValue = "1";
-                }
-
-                if (minOccursValue == null) {
-                    minOccursValue = "1";
-                }
-
-                if (minOccursValue.equals("0") && maxOccursValue.equals("1")) {
-
-                    // If we have a minoccurs="0"/maxoccurs="1", this is just
-                    // like a nillable single value, so treat it as such.
-                    qName = getNillableQName(qName);
-                } else if (!maxOccursValue.equals("1")
-                        || !minOccursValue.equals("1")) {
-                    String localPart = qName.getLocalPart();
-
-                    localPart += "[" + maxOccursValue + "]";
-                    qName = findQName(qName.getNamespaceURI(), localPart);
-                }
-            }
-        }
-
-        // A WSDL Part uses the element attribute instead of the ref attribute
-        if (qName == null) {
-            forElement.value = true;
-            qName = getTypeQNameFromAttr(node, "element");
-        }
-
-        // "base" references a "type"
-        if (qName == null) {
-            forElement.value = false;
-            qName = getTypeQNameFromAttr(node, "base");
-        }
-
-        return qName;
-    }
-
-    /**
-     * Method getMemberTypeQNames
-     * 
-     * @param node 
-     * @return 
-     */
-    public static QName[] getMemberTypeQNames(Node node) {
-
-        String attribute = getAttribute(node, "memberTypes");
-
-        if (attribute == null) {
-            return null;
-        }
-
-        StringTokenizer tokenizer = new StringTokenizer(attribute, " ");
-        QName[] memberTypes = new QName[tokenizer.countTokens()];
-
-        for (int i = 0; tokenizer.hasMoreElements(); i++) {
-            String element = (String) tokenizer.nextElement();
-
-            memberTypes[i] = XMLUtils.getFullQNameFromString(element, node);
-        }
-
-        return memberTypes;
-    }
-
-    /**
-     * Gets the QName of the type of the node via the specified attribute
-     * name.
-     * <p/>
-     * If "type", the QName represented by the type attribute's value is
-     * returned.  If the type attribute is not set, the anonymous type
-     * or anyType is returned if no other type information is available.
-     * Note that the QName returned in these cases is affected by
-     * the presence of the nillable attribute.
-     * <p/>
-     * If "ref", the QName represented by the ref attribute's value is
-     * returned.
-     * <p/>
-     * If "base" or "element", the QName represented by the base/element
-     * attribute's value is returned.
-     * 
-     * @param node         in the dom
-     * @param typeAttrName (type, base, element, ref)
-     * @return 
-     */
-    private static QName getTypeQNameFromAttr(Node node, String typeAttrName) {
-
-        if (node == null) {
-            return null;
-        }
-
-        // Get the raw prefixed value
-        String prefixedName = getAttribute(node, typeAttrName);
-
-        // If "type" was specified but there is no type attribute,
-        // check for an anonymous type.  If no anonymous type
-        // then the type is anyType.
-        if ((prefixedName == null) && typeAttrName.equals("type")) {
-            if ((getAttribute(node, "ref") == null)
-                    && (getAttribute(node, "base") == null)
-                    && (getAttribute(node, "element") == null)) {
-
-                // Try getting the anonymous qname
-                QName anonQName = SchemaUtils.getElementAnonQName(node);
-
-                if (anonQName == null) {
-                    anonQName = SchemaUtils.getAttributeAnonQName(node);
-                }
-
-                if (anonQName != null) {
-                    return anonQName;
-                }
-
-                // Try returning anyType
-                QName nodeName = getNodeQName(node);
-
-                if ((nodeName != null)
-                        && Constants.isSchemaXSD(nodeName.getNamespaceURI())
-                        && (nodeName.getLocalPart().equals("element")
-                        || nodeName.getLocalPart().equals("attribute"))) {
-                    return Constants.XSD_ANYTYPE;
-                }
-            }
-        }
-
-        // Return null if not found
-        if (prefixedName == null) {
-            return null;
-        }
-
-        // Change the prefixed name into a full qname
-        QName qName = getQNameFromPrefixedName(node, prefixedName);
-
-        // An alternate qname is returned if nillable
-        if (typeAttrName.equals("type")) {
-            if (JavaUtils.isTrueExplicitly(getAttribute(node, "nillable"))) {
-                qName = getNillableQName(qName);
-            }
-        }
-
-        return qName;
-    }
 
     /**
      * Convert a prefixed name into a qname
@@ -561,292 +306,273 @@ public class Utils {
         return (findQName(namespace, localName));
     }
 
-    /**
-     * This method returns a set of all types that are derived
-     * from this type via an extension of a complexType
-     * 
-     * @param type        
-     * @param symbolTable 
-     * @return 
-     */
-    public static HashSet getDerivedTypes(TypeEntry type,
-                                          SymbolTable symbolTable) {
+//	/**
+//	 * This method returns a set of all types that are derived
+//	 * from this type via an extension of a complexType
+//	 */
+//	public static HashSet getDerivedTypes(TypeEntry type, SymbolTable symbolTable) {
+//		HashSet types = new HashSet();
+//		if (type != null && type.getNode() != null) {
+//			getDerivedTypes(type, types, symbolTable);
+//		} else if (Constants.isSchemaXSD(type.getQName().getNamespaceURI()) &&
+//				   (type.getQName().getLocalPart().equals("anyType")||
+//					type.getQName().getLocalPart().equals("any"))) {
+//			// All types are derived from anyType
+//			types.addAll(symbolTable.getTypeIndex().values());
+//		}
+//		return types;
+//	} // getNestedTypes
 
-        HashSet types = new HashSet();
+//	private static void getDerivedTypes(TypeEntry type, HashSet types, SymbolTable symbolTable) {
+//
+//		// If all types are in the set, return
+//		if (types.size() == symbolTable.getTypeEntryCount()) {
+//			return;
+//		}
+//
+//		// Search the dictionary for derived types of type
+//		for (Iterator it = symbolTable.getTypeIndex().values().iterator(); it.hasNext();) {
+//			Type t = (Type)it.next();
+//			if (t instanceof DefinedType &&
+//				t.getNode() != null &&
+//				!types.contains(t) &&
+//				(((DefinedType)t).getComplexTypeExtensionBase(symbolTable) == type)) {
+//				types.add(t);
+//				getDerivedTypes(t, types, symbolTable);
+//			}
+//		}
+//	} // getDerivedTypes
 
-        if ((type != null) && (type.getNode() != null)) {
-            getDerivedTypes(type, types, symbolTable);
-        } else if (Constants.isSchemaXSD(type.getQName().getNamespaceURI())
-                && (type.getQName().getLocalPart().equals("anyType")
-                || type.getQName().getLocalPart().equals("any"))) {
 
-            // All types are derived from anyType
-            types.addAll(symbolTable.getTypeIndex().values());
-        }
+	/**
+	 * This method returns a set of all types that are derived
+	 * from this type via an extension of a complexType
+	 */
+	public static HashSet getDerivedTypes(TypeEntry type, SymbolTable symbolTable) {
+		HashSet types = new HashSet();
+		if (type != null) {
+			getDerivedTypes(type, types, symbolTable);
+		} else if (Constants.isSchemaXSD(type.getQName().getNamespaceURI()) &&
+				   (type.getQName().getLocalPart().equals("anyType")||
+					type.getQName().getLocalPart().equals("any"))) {
+			// All types are derived from anyType
+			types.addAll(symbolTable.getTypeIndex().values());
+		}
+		return types;
+	} // getNestedTypes
 
-        return types;
-    }    // getNestedTypes
+	private static void getDerivedTypes(TypeEntry type, HashSet types, SymbolTable symbolTable) {
 
-    /**
-     * Method getDerivedTypes
-     * 
-     * @param type        
-     * @param types       
-     * @param symbolTable 
-     */
-    private static void getDerivedTypes(TypeEntry type, HashSet types,
-                                        SymbolTable symbolTable) {
+		// If all types are in the set, return
+		if (types.size() == symbolTable.getTypeEntryCount()) {
+			return;
+		}
 
-        // If all types are in the set, return
-        if (types.size() == symbolTable.getTypeEntryCount()) {
-            return;
-        }
+		// Search the dictionary for derived types of type
+		for (Iterator it = symbolTable.getTypeIndex().values().iterator(); it.hasNext();) {
+			Type t = (Type)it.next();
+			if (t instanceof SchemaType &&
+				!types.contains(t) &&
+				(symbolTable.getType(((SchemaType)t).getExtentionBase()) == type)) {
+				types.add(t);
+				getDerivedTypes(t, types, symbolTable);
+			}
+		}
+	} // getDerivedTypes
 
-        // Search the dictionary for derived types of type
-        for (Iterator it = symbolTable.getTypeIndex().values().iterator();
-             it.hasNext();) {
-            Type t = (Type) it.next();
+	/**
+	 * This method returns a set of all the nested types.
+	 * Nested types are types declared within this TypeEntry (or descendents)
+	 * plus any extended types and the extended type nested types
+	 * The elements of the returned HashSet are Types.
+	 * @param type is the type entry to consider
+	 * @param symbolTable is the symbolTable
+	 * @param derivedFlag should be set if all dependendent derived types should also be 
+	 * returned.
+	 */
+	public static HashSet getNestedTypes(TypeEntry type, SymbolTable symbolTable, 
+										 boolean derivedFlag) {
+		HashSet types = new HashSet();
+		getNestedTypes(type, types, symbolTable, derivedFlag);
+        
+		return types;
+	} // getNestedTypes
 
-            if ((t instanceof DefinedType) && (t.getNode() != null)
-                    && !types.contains(t)
-                    && (((DefinedType) t).getComplexTypeExtensionBase(symbolTable)
-                    == type)) {
-                types.add(t);
-                getDerivedTypes(t, types, symbolTable);
-            }
-        }
-    }    // getDerivedTypes
+	private static void getNestedTypes(
+			TypeEntry type, HashSet types, SymbolTable symbolTable, 
+			boolean derivedFlag) {
+				
+		if (type == null) {
+			return;
+		}
 
-    /**
-     * This method returns a set of all the nested types.
-     * Nested types are types declared within this TypeEntry (or descendents)
-     * plus any extended types and the extended type nested types
-     * The elements of the returned HashSet are Types.
-     * 
-     * @param type        is the type entry to consider
-     * @param symbolTable is the symbolTable
-     * @param derivedFlag should be set if all dependendent derived types should also be
-     *                    returned.
-     * @return 
-     * @throws SAXException 
-     */
-    public static HashSet getNestedTypes(
-            TypeEntry type, SymbolTable symbolTable, boolean derivedFlag)
-            throws SAXException {
+		// If all types are in the set, return
+		if (types.size() == symbolTable.getTypeEntryCount()) {
+			return;
+		}
+        
+		// Process types derived from this type
+		if (derivedFlag) {
+			HashSet derivedTypes = getDerivedTypes(type, symbolTable);
+			Iterator it = derivedTypes.iterator();
+			while(it.hasNext()) {
+				TypeEntry derivedType = (TypeEntry) it.next();
+				if (!types.contains(derivedType)) {
+					types.add(derivedType);
+					getNestedTypes(derivedType, types, symbolTable, derivedFlag);
+				}
+			}
+		}
+////////JAXME_REFACTOR///////////////////////////////////////////////////////////////        
+//		  // Continue only if the node exists
+//		  if(type.getNode() == null) {
+//			  return;
+//		  }
+//		  Node node = type.getNode();
+//
+//		  // Process types declared in this type
+//		  Vector v = SchemaUtils.getContainedElementDeclarations(node, symbolTable);
+//		  if (v != null) {
+//			  for (int i = 0; i < v.size(); i++) {
+//				  ElementDecl elem = (ElementDecl)v.get(i);
+//				  if (!types.contains(elem.getType())) {
+//					  types.add(elem.getType());
+//					  getNestedTypes(elem.getType(), 
+//									 types, 
+//									 symbolTable, derivedFlag);
+//				  }
+//			  }
+//		  }
+//
+//		  // Process attributes declared in this type
+//		  v = SchemaUtils.getContainedAttributeTypes(node, symbolTable);
+//		  if (v != null) {
+//			  for (int i = 0; i < v.size(); i+=2) {
+//				  if (!types.contains(v.get(i))) {
+//					  types.add(v.get(i));
+//					  getNestedTypes(
+//							  ((TypeEntry) v.get(i)), types, symbolTable, derivedFlag);
+//				  }
+//			  }
+//		  }
+//		  // Process referenced types
+//		  if (type.getRefType() != null &&
+//			  !types.contains(type.getRefType())) {
+//			  types.add(type.getRefType());
+//			  getNestedTypes(type.getRefType(), types, symbolTable, derivedFlag);
+//		  }
+//
+//		  /* Anonymous processing and should be automatically handled by the 
+//			 reference processing above
+//		  // Get the anonymous type of the element
+//		  QName anonQName = SchemaUtils.getElementAnonQName(node);
+//		  if (anonQName != null) {
+//			  TypeEntry anonType = symbolTable.getType(anonQName);
+//			  if (anonType != null && !types.contains(anonType)) {
+//				  types.add(anonType);
+//			  }
+//		  }
+//
+//		  // Get the anonymous type of an attribute
+//		  anonQName = SchemaUtils.getAttributeAnonQName(node);
+//		  if (anonQName != null) {
+//			  TypeEntry anonType = symbolTable.getType(anonQName);
+//			  if (anonType != null && !types.contains(anonType)) {
+//				  types.add(anonType);
+//			  }
+//		  }
+//		  */
+//
+//		  // Process extended types
+//		  TypeEntry extendType = SchemaUtils.getComplexElementExtensionBase(node, symbolTable);
+//		  if (extendType != null) {
+//			  if (!types.contains(extendType)) {
+//				  types.add(extendType);
+//				  getNestedTypes(extendType, types, symbolTable, derivedFlag);
+//			  }
+//		  }
+//
+//		  /* Array component processing should be automatically handled by the
+//			 reference processing above.
+//		  // Process array components
+//		  QName componentQName = SchemaUtils.getArrayComponentQName(node, new IntHolder(0));
+//		  TypeEntry componentType = symbolTable.getType(componentQName);
+//		  if (componentType == null) {
+//			  componentType = symbolTable.getElement(componentQName);
+//		  }
+//		  if (componentType != null) {
+//			  if (!types.contains(componentType)) {
+//				  types.add(componentType);
+//				  getNestedTypes(componentType, types, symbolTable, derivedFlag);
+//			  }
+//		  }
+//		  */
+//
+//
+//NEW CODE//////////////////////////////////////////////////////////////////////////////////////        
+  // Process referenced types
+  if (type.getRefType() != null &&
+	  !types.contains(type.getRefType())) {
+	  types.add(type.getRefType());
+	  getNestedTypes(type.getRefType(), types, symbolTable, derivedFlag);
+  }
 
-        HashSet types = new HashSet();
 
-        getNestedTypes(type, types, symbolTable, derivedFlag);
+   // Process types declared in this type
+   SchemaType stype; 
+   if(type instanceof SchemaType)
+		stype = (SchemaType)type;
+   else
+		stype = symbolTable.getSchemaType(type.getQName());
+   System.out.println(type.getQName());
+   if(stype == null && type.getQName().getLocalPart().indexOf((int)'[')>0){
+		//TODO FIXTHIS this is becouse x[number] types (arrays)
+		//still the array handling have problems and it compansate by the 
+		//ref type. so afford to return 
+		return;   		
+   }
+   
+	Iterator v = stype.getElementNames();
+	if (v != null) {
+		for (;v.hasNext();) {
+			TypeEntry entry = symbolTable.getSchemaType(stype.getElementTypeByName((QName)v.next()).getType().getQName());
+			if (!types.contains(entry)) {
+				types.add(entry);
+				getNestedTypes(entry, 
+							   types, 
+							   symbolTable, derivedFlag);
+			}
+		}
+	}
 
-        Iterator it = types.iterator();
+	// Process attributes declared in this type
+	v = stype.getAttributeNames();
+	if (v != null) {
+		for (;v.hasNext();) {
+			TypeEntry entry = symbolTable.getType(stype.getAttributeTypeByName((QName)v.next()).getQName());
+			if (!types.contains(entry)) {
+				types.add(entry);
+				getNestedTypes(entry, 
+							   types, 
+							   symbolTable, derivedFlag);
+			}
+		}
+	}
 
-        while (it.hasNext()) {
-            System.out.println(((TypeEntry) it.next()).getQName());
-        }
 
-        return types;
-    }    // getNestedTypes
-
-    /**
-     * Method getNestedTypes
-     * 
-     * @param type        
-     * @param types       
-     * @param symbolTable 
-     * @param derivedFlag 
-     * @throws SAXException 
-     */
-    private static void getNestedTypes(
-            TypeEntry type, HashSet types, SymbolTable symbolTable, boolean derivedFlag)
-            throws SAXException {
-
-        if (type == null) {
-            return;
-        }
-
-        System.out.println("starting with " + type.getQName());
-
-        // If all types are in the set, return
-        if (types.size() == symbolTable.getTypeEntryCount()) {
-            return;
-        }
-
-        // Process types derived from this type
-        if (derivedFlag) {
-            HashSet derivedTypes = getDerivedTypes(type, symbolTable);
-            Iterator it = derivedTypes.iterator();
-
-            while (it.hasNext()) {
-                TypeEntry derivedType = (TypeEntry) it.next();
-
-                if (!types.contains(derivedType)) {
-                    types.add(derivedType);
-                    getNestedTypes(derivedType, types, symbolTable,
-                            derivedFlag);
-                }
-            }
-        }
-
-        // //////JAXME_REFACTOR///////////////////////////////////////////////////////////////
-        // Continue only if the node exists
-        if (type.getNode() == null) {
-            return;
-        }
-
-        Node node = type.getNode();
-
-        // Process types declared in this type
-        Vector v = SchemaUtils.getContainedElementDeclarations(node,
-                symbolTable);
-
-        if (v != null) {
-            for (int i = 0; i < v.size(); i++) {
-                ElementDecl elem = (ElementDecl) v.get(i);
-
-                if (!types.contains(elem.getType())) {
-                    types.add(elem.getType());
-                    getNestedTypes(elem.getType(), types, symbolTable,
-                            derivedFlag);
-                }
-            }
-        }
-
-        // Process attributes declared in this type
-        v = SchemaUtils.getContainedAttributeTypes(node, symbolTable);
-
-        if (v != null) {
-            for (int i = 0; i < v.size(); i += 2) {
-                if (!types.contains(v.get(i))) {
-                    types.add(v.get(i));
-                    getNestedTypes(((TypeEntry) v.get(i)), types, symbolTable,
-                            derivedFlag);
-                }
-            }
-        }
-
-        // Process referenced types
-        if ((type.getRefType() != null) && !types.contains(type.getRefType())) {
-            types.add(type.getRefType());
-            getNestedTypes(type.getRefType(), types, symbolTable, derivedFlag);
-        }
-
-        /*
-         * Anonymous processing and should be automatically handled by the
-         *  reference processing above
-         * // Get the anonymous type of the element
-         * QName anonQName = SchemaUtils.getElementAnonQName(node);
-         * if (anonQName != null) {
-         *   TypeEntry anonType = symbolTable.getType(anonQName);
-         *   if (anonType != null && !types.contains(anonType)) {
-         *       types.add(anonType);
-         *   }
-         * }
-         *
-         * // Get the anonymous type of an attribute
-         * anonQName = SchemaUtils.getAttributeAnonQName(node);
-         * if (anonQName != null) {
-         *   TypeEntry anonType = symbolTable.getType(anonQName);
-         *   if (anonType != null && !types.contains(anonType)) {
-         *       types.add(anonType);
-         *   }
-         * }
-         */
-
-        // Process extended types
-        TypeEntry extendType = SchemaUtils.getComplexElementExtensionBase(node,
-                symbolTable);
-
-        if (extendType != null) {
-            if (!types.contains(extendType)) {
-                types.add(extendType);
-                getNestedTypes(extendType, types, symbolTable, derivedFlag);
-            }
-        }
-
-        /*
-         * Array component processing should be automatically handled by the
-         *  reference processing above.
-         * // Process array components
-         * QName componentQName = SchemaUtils.getArrayComponentQName(node, new IntHolder(0));
-         * TypeEntry componentType = symbolTable.getType(componentQName);
-         * if (componentType == null) {
-         *   componentType = symbolTable.getElement(componentQName);
-         * }
-         * if (componentType != null) {
-         *   if (!types.contains(componentType)) {
-         *       types.add(componentType);
-         *       getNestedTypes(componentType, types, symbolTable, derivedFlag);
-         *   }
-         * }
-         */
-
-        // NEW CODE//////////////////////////////////////////////////////////////////////////////////////
-        // //THIS algoruthem works But can be used only after the JAXME support the
-        // //complx content. Otherwise this will ignore the complex content
-        // 
-        // //the commneted code get the all the types  associated via attribytes and the
-        // //elements of the the type
-        // // Process types declared in this type
-        // SchemaType stype = symbolTable.getSchemaType(type.getQName());
-        // //may be the type can be built in type
-        // if(stype == null)
-        // return;
-        // 
-        // Iterator v = stype.getElementNames();
-        // if (v != null) {
-        // for (;v.hasNext();) {
-        // TypeEntry entry = symbolTable.getType(stype.getElementTypeByName((QName)v.next()));
-        // if(entry == null)
-        // continue;
-        // if (!types.contains(entry)) {
-        // System.out.println("come across type "+entry.getQName());
-        // types.add(entry);
-        // getNestedTypes(entry,
-        // types,
-        // symbolTable, derivedFlag);
-        // }
-        // }
-        // }
-        // 
-        // // Process attributes declared in this type
-        // v = stype.getAttributeNames();
-        // if (v != null) {
-        // for (;v.hasNext();) {
-        // TypeEntry entry = symbolTable.getType(stype.getAttributeTypeByName((QName)v.next()));
-        // if(entry == null)
-        // continue;
-        // if (!types.contains(entry)) {
-        // System.out.println("come across attribute "+entry.getQName());
-        // types.add(entry);
-        // getNestedTypes(entry,
-        // types,
-        // symbolTable, derivedFlag);
-        // }
-        // }
-        // }
-        // // Process referenced types
-        // if (type.getRefType() != null &&
-        // !types.contains(type.getRefType())) {
-        // System.out.println("come across ref type "+type.getRefType().getQName());
-        // types.add(type.getRefType());
-        // getNestedTypes(type.getRefType(), types, symbolTable, derivedFlag);
-        // }
-        // 
-        // 
-        // // Process extended types
-        // QName extendedname = stype.getExtentionBase();
-        // if(extendedname!= null){
-        // TypeEntry extendType = symbolTable.getType(extendedname);
-        // if (extendType != null) {
-        // if (!types.contains(extendType)) {
-        // System.out.println("come across extended type "+type.getRefType().getQName());
-        // types.add(extendType);
-        // getNestedTypes(extendType, types, symbolTable, derivedFlag);
-        // }
-        // }
-        // }
-        // ////////////////////////////////////////////////////////////////////////////////
-    }    // getNestedTypes
+		// Process extended types
+		QName extendedname = stype.getExtentionBase();
+		if(extendedname!= null){
+			TypeEntry extendType = symbolTable.getType(extendedname);
+			if (extendType != null) {
+				if (!types.contains(extendType)) {
+					types.add(extendType);
+					getNestedTypes(extendType, types, symbolTable, derivedFlag);
+				}
+			}
+		}
+//////////////////////////////////////////////////////////////////////////////////		
+	} // getNestedTypes
 
     /**
      * Generate an XML prefixed attribute value with a corresponding xmlns
@@ -871,4 +597,22 @@ public class Utils {
         return prefix + ":" + qname.getLocalPart() + "\" xmlns:" + prefix
                 + "=\"" + qname.getNamespaceURI();
     }
+//	///////////////////////////////////////////////////////////////////////
+//	TODO this is a new method
+//	///////////////////////////////////////////////////////////////////////    
+	  public static boolean  isEnumeration(SchemaType stype){
+		  try{
+			  XSType type = stype.getJaxmetype();
+			  //if type is null it is a inbuilt type. no way that it is an 
+			  //enumeration
+			  if(type != null && type.isSimple()){
+				  XSSimpleType simpleType = type.getSimpleType();
+				  XSEnumeration[] xsenu = simpleType.getEnumerations();
+				  return !((xsenu == null) || (xsenu.length == 0));
+			  }
+			  return false;
+		  }catch(SAXException e){
+			  throw new JAXMEInternalException(e);
+		  }
+	  }/////////////////////////////////////////////////////////////////////////
 }
