@@ -22,7 +22,8 @@ from within c\samples\client\session\headers\sessionclient to generate the clien
 
 Linux
 
--compile the sessionhandler using the sources in c\samples\client\session\headers\sessionhandler
+-compile the sessionhandler using the sources in c\samples\client\session\headers\sessionhandler.
+ To do that you can use the build.sh file in there.
 
 -Run the command java org.apache.axis.wsdl.wsdl2ws.WSDL2Ws ../Counter.wsdl -o./gen_src -lc++ -sclient 
 from within c\samples\client\session\headers\sessionclient to generate the client stubs
