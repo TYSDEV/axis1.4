@@ -4,27 +4,28 @@
 </head>
 <body>
 <h1>Using the Ws4J2ee tool</h1>
-<p>you need to have the following files 
-<ol>
-<li>webservice.xml file</li>
-<li>SEI(class file)</li>
-<li>Implementation bean(class file)</li>
-<li>ejb-jar.xml/web.xml file</li>
-<li>(optional wsdl file and jaxrpcmapping file/both or none) 
-</ol>
+
+<code>org.apache.geronimo.ews.ws4j2ee.toWs.Ws4J2ee module [-o out-dir]</code>
+
+<p>EWS tool accept a module (jar,war,ear file) as explained by the WebService for J2EE specification
+and generate Axis specific artifacts for deploy a J2EE Web service inside a J2EE contianer. 
+Axis Geronimo module support the deployment of the generated artifacts inside the Geronimo container.
+For Other J2EE continers users have to deploy the artifacts manually.
 </p>
-<p>Above files should be packaged in to a jar file as 
-follows</p>
 
-<h2>Use with JAR/(WAR/EAR not yet implemented) file</h2>
-<code>
-org.apache.geronimo.ews.ws4j2ee.toWs.Ws4J2EEwithoutWSDL jar-filec out-dir
-</code>
-<br><br>
-(WAR/EAR file is not implemented)
-<p> for sample jar files build the ews and look in the <code>target/generated/samples</code>
+<h2>Content of the Module</h2>
+<p>
+	<ol>
+		<li>webservices.xml file</li>
+		<li>SEI(class file)</li>
+		<li>Implementation bean(class file)</li>
+		<li>ejb-jar.xml/web.xml file</li>
+		<li>(optional wsdl file and jaxrpcmapping file/both or none) 
+	</ol>
+</p>
 
-<h3>If EJB based jar file should be like this</h3>
+<h2>Packaging</h2>
+<h3>ejb based Jar file</h3>
 <pre> 
 	/-META-INF/webservice.xml
 	 -META-INF/ejb-jar.xml
@@ -32,7 +33,7 @@ org.apache.geronimo.ews.ws4j2ee.toWs.Ws4J2EEwithoutWSDL jar-filec out-dir
          -service implementation bean class
          -any other referance classes
 </pre>
-<h3>If web based jar file should be like this</h3>
+<h3>Web based jar file</h3>
 <pre> 
 	/-META-INF/webservice.xml
 	 -META-INF/web.xml
@@ -41,29 +42,7 @@ org.apache.geronimo.ews.ws4j2ee.toWs.Ws4J2EEwithoutWSDL jar-filec out-dir
          -any other referance classes
 </pre>
 
-<h2>Use with Class files and DD are in directory hirachey</h2>
-	<code>org.apache.geronimo.ews.ws4j2ee.toWs.Ws4J2EEwithoutWSDL arguments</code>
-	<p>args is String array s.t.</p>
-	<ol>
-		<li>first argument is webservice.xml file</li> 
-	 	<li>Other arguments are any option that can given to Java2WSDL</li> 
-		 <li>the SEI and the service Implementation bean should be avalible on the class path</li> 
-		<li>the ws4j2ee will search for the web.xml or ejb-jar.xml</li>  
-			<ul>
-				<li>same directory as the webservice.xml file</li>  
-				<li>file should be in the class path s.t META-INF/web.xml or META-INF/ejb-jar.xml</li> 
-			</ul>
-		<li>if no file found at the #4 the ws4j2ee continue assuming the Impl bean and the DD is not avalible. This is additional to spec.</li>
-	</ol>	
 
-
-<p>look at the org.apache.geronimo.ews.ws4j2ee.GenerateWithoutWSDLTest</p>
-
-<!--
-<h2>Using with WSDL</h2>
-you need the webservice.xml file, jaxrpcmapper.xml file, x.wsdl file
-<p>look at the org.apache.geronimo.ews.ws4j2ee.GenerateTest</p>
--->
 
 <h2>Appendix</h2>
 <h3>Service Endpoint Interface</h3>
