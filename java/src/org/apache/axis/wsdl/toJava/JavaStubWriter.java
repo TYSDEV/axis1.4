@@ -56,6 +56,8 @@ package org.apache.axis.wsdl.toJava;
 
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
+import org.apache.axis.enum.Style;
+import org.apache.axis.enum.Use;
 import org.apache.axis.wsdl.symbolTable.BindingEntry;
 import org.apache.axis.wsdl.symbolTable.CollectionTE;
 import org.apache.axis.wsdl.symbolTable.Element;
@@ -363,7 +365,8 @@ public class JavaStubWriter extends JavaClassWriter {
                 Fault f = (Fault) i.next();
                 partTypes(v,
                         f.getMessage().getOrderedParts(null),
-                        (bEntry.getFaultBodyType(operation, f.getName()) == BindingEntry.USE_LITERAL));
+                        (bEntry.getFaultBodyType(operation, 
+                                                 f.getName()) == Use.LITERAL));
             }
         }
         // Put all these types into a set.  This operation eliminates all duplicates.
@@ -574,14 +577,14 @@ public class JavaStubWriter extends JavaClassWriter {
         boolean hasMIME = Utils.hasMIME(bEntry, operation);
 
         // Encoding: literal or encoded use.
-        int use = bEntry.getInputBodyType(operation.getOperation());
-        if (use == BindingEntry.USE_LITERAL) {
+        Use use = bEntry.getInputBodyType(operation.getOperation());
+        if (use == Use.LITERAL) {
             // Turn off encoding
             pw.println("        _call.setEncodingStyle(null);");
             // turn off XSI types
             pw.println("        _call.setScopedProperty(org.apache.axis.client.Call.SEND_TYPE_ATTR, Boolean.FALSE);");
         }
-        if (hasMIME || use == BindingEntry.USE_LITERAL) {
+        if (hasMIME || use == Use.LITERAL) {
             // If it is literal, turn off multirefs.
             //
             // If there are any MIME types, turn off multirefs.
@@ -590,28 +593,18 @@ public class JavaStubWriter extends JavaClassWriter {
             pw.println("        _call.setScopedProperty(org.apache.axis.AxisEngine.PROP_DOMULTIREFS, Boolean.FALSE);");
         }
 
-        // Style: document, RPC, or wrapped
-        String styleStr = opStyle;  // operation style override binding
-        if (styleStr == null) {     // get default from binding
-            styleStr = "rpc";
-            int style = bEntry.getBindingStyle();
-            if (style == BindingEntry.STYLE_DOCUMENT) {
-                styleStr = "document";
-            }
-        }
-            
-        // FIXME: this only checks for wrapped in a global way, which
-        // is not really right as some ops can be wrapped and some not
-        if (styleStr.equals("document") && symbolTable.isWrapped()) {
-            styleStr = "wrapped";
+        Style style = Style.getStyle(opStyle, bEntry.getBindingStyle());
+        if (style == Style.DOCUMENT && symbolTable.isWrapped()) {
+            style = Style.WRAPPED;
         }
 
         if (!hasMIME) {
-            pw.println("        _call.setOperationStyle(\"" + styleStr + "\");");
+            pw.println("        _call.setOperationStyle(\"" + style.getName() + "\");");
+            pw.println("        _call.setOperationUse(\"" + use.getName() + "\");");
         }
 
         // Operation name
-        if (styleStr.equals("wrapped")) {
+        if (style == Style.WRAPPED) {
             // We need to make sure the operation name, which is what we
             // wrap the elements in, matches the Qname of the parameter
             // element.
@@ -629,7 +622,8 @@ public class JavaStubWriter extends JavaClassWriter {
                 }
             }
         } else {
-            QName elementQName = Utils.getOperationQName(operation);
+            QName elementQName = 
+                Utils.getOperationQName(operation, bEntry, symbolTable);
             if (elementQName != null) {
                 pw.println("        _call.setOperationName(" +
                         Utils.getNewQName(elementQName) + ");" );

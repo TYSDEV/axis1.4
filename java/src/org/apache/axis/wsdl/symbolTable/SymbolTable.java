@@ -107,6 +107,8 @@ import javax.xml.rpc.holders.IntHolder;
 
 import org.apache.axis.Constants;
 
+import org.apache.axis.enum.Style;
+import org.apache.axis.enum.Use;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.XMLUtils;
 import org.apache.axis.utils.URLHashSet;
@@ -1034,8 +1036,8 @@ public class SymbolTable {
         boolean literalInput = false;
         boolean literalOutput = false;
         if (bindingEntry != null) {
-            literalInput = (bindingEntry.getInputBodyType(operation) == BindingEntry.USE_LITERAL);
-            literalOutput = (bindingEntry.getOutputBodyType(operation) == BindingEntry.USE_LITERAL);
+            literalInput = (bindingEntry.getInputBodyType(operation) == Use.LITERAL);
+            literalOutput = (bindingEntry.getOutputBodyType(operation) == Use.LITERAL);
         }
 
         // Collect all the input parameters
@@ -1332,11 +1334,11 @@ public class SymbolTable {
                 setMIMEType(param, bindingEntry == null ? null :
                         bindingEntry.getMIMEType(opName, partName));
                 if (bindingEntry != null &&
-                        bindingEntry.isInHeaderParameter(opName, partName)) {
+                    bindingEntry.isInHeaderPart(opName, partName)) {
                     param.setInHeader(true);
                 }
                 if (bindingEntry != null &&
-                        bindingEntry.isOutHeaderParameter(opName, partName)) {
+                        bindingEntry.isOutHeaderPart(opName, partName)) {
                     param.setOutHeader(true);
                 }
 
@@ -1419,10 +1421,10 @@ public class SymbolTable {
                     p.setType(elem.getType());
                     setMIMEType(p, bindingEntry == null ? null :
                             bindingEntry.getMIMEType(opName, partName));
-                    if (bindingEntry.isInHeaderParameter(opName, partName)) {
+                    if (bindingEntry.isInHeaderPart(opName, partName)) {
                         p.setInHeader(true);
                     }
-                    if (bindingEntry.isOutHeaderParameter(opName, partName)) {
+                    if (bindingEntry.isOutHeaderPart(opName, partName)) {
                         p.setOutHeader(true);
                     }
                     v.add(p);
@@ -1440,10 +1442,10 @@ public class SymbolTable {
                 }
                 setMIMEType(param, bindingEntry == null ? null :
                         bindingEntry.getMIMEType(opName, partName));
-                if (bindingEntry.isInHeaderParameter(opName, partName)) {
+                if (bindingEntry.isInHeaderPart(opName, partName)) {
                     param.setInHeader(true);
                 }
-                if (bindingEntry.isOutHeaderParameter(opName, partName)) {
+                if (bindingEntry.isOutHeaderPart(opName, partName)) {
                     param.setOutHeader(true);
                 }
 
@@ -1500,7 +1502,7 @@ public class SymbolTable {
                     SOAPBinding sb = (SOAPBinding) obj;
                     String style = sb.getStyle();
                     if ("rpc".equalsIgnoreCase(style)) {
-                        bEntry.setBindingStyle(BindingEntry.STYLE_RPC);
+                        bEntry.setBindingStyle(Style.RPC);
                     }
                 }
                 else if (obj instanceof HTTPBinding) {
@@ -1563,7 +1565,7 @@ public class SymbolTable {
 
                     // Set default entry for this fault
                     String faultName = bFault.getName();
-                    int faultBodyType = BindingEntry.USE_ENCODED;
+                    Use faultBodyType = Use.ENCODED;
 
                     Iterator faultIter =
                             bFault.getExtensibilityElements().iterator();
@@ -1576,13 +1578,13 @@ public class SymbolTable {
                                         "noUse", opName));
                             }
                             if (use.equalsIgnoreCase("literal")) {
-                                faultBodyType = BindingEntry.USE_LITERAL;
+                                faultBodyType = Use.LITERAL;
                             }
                             break;
                         }
                     }
                     // Add this fault name and bodyType to the map
-                    faultMap.put(faultName, new Integer(faultBodyType));
+                    faultMap.put(faultName, faultBodyType);
                 }
                 bEntry.setFaultBodyTypeMap(operation, faultMap);
             } // binding operations
@@ -1610,7 +1612,7 @@ public class SymbolTable {
                 // headers - those whose parts come from messages not used in
                 // the portType's operation's input/output clauses.  I don't
                 // know what we're supposed to emit for implicit headers.
-                bEntry.setHeaderParameter(operation.getName(), header.getPart(),
+                bEntry.setHeaderPart(operation.getName(), header.getPart(),
                         input ? BindingEntry.IN_HEADER : BindingEntry.OUT_HEADER);
             }
             else if (obj instanceof MIMEMultipartRelated) {
@@ -1631,7 +1633,7 @@ public class SymbolTable {
                     "noUse", operation.getName()));
         }
         if (use.equalsIgnoreCase("literal")) {
-            bEntry.setBodyType(operation, BindingEntry.USE_LITERAL,
+            bEntry.setBodyType(operation, Use.LITERAL,
                     input);
         }
     } // setBodyType
@@ -1641,9 +1643,9 @@ public class SymbolTable {
      * A side effect is to return the body Type of the given
      * MIMEMultipartRelated object.
      */
-    private int addMIMETypes(BindingEntry bEntry, MIMEMultipartRelated mpr,
+    private Use addMIMETypes(BindingEntry bEntry, MIMEMultipartRelated mpr,
             Operation op) throws IOException {
-        int bodyType = BindingEntry.USE_ENCODED;
+        Use bodyType = Use.ENCODED;
         List parts = mpr.getMIMEParts();
         Iterator i = parts.iterator();
         while (i.hasNext()) {
@@ -1663,7 +1665,7 @@ public class SymbolTable {
                                 "noUse", op.getName()));
                     }
                     if (use.equalsIgnoreCase("literal")) {
-                        bodyType = BindingEntry.USE_LITERAL;
+                        bodyType = Use.LITERAL;
                     }
                 }
             }
@@ -1896,9 +1898,9 @@ public class SymbolTable {
             boolean literalOutput = false;
             if (bEntry != null) {
                 literalInput = bEntry.getInputBodyType(operation) ==
-                        BindingEntry.USE_LITERAL;
+                        Use.LITERAL;
                 literalOutput = bEntry.getOutputBodyType(operation) ==
-                        BindingEntry.USE_LITERAL;
+                        Use.LITERAL;
             }
 
             // Query the input message
