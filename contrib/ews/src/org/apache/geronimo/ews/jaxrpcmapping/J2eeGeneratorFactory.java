@@ -89,7 +89,9 @@ import org.apache.axis.wsdl.gen.GeneratorFactory;
 import org.apache.axis.wsdl.gen.NoopGenerator;
 import org.apache.axis.wsdl.symbolTable.BaseTypeMapping;
 import org.apache.axis.wsdl.symbolTable.BindingEntry;
+import org.apache.axis.wsdl.symbolTable.ContainedAttribute;
 import org.apache.axis.wsdl.symbolTable.Element;
+import org.apache.axis.wsdl.symbolTable.ElementDecl;
 import org.apache.axis.wsdl.symbolTable.FaultInfo;
 import org.apache.axis.wsdl.symbolTable.MessageEntry;
 import org.apache.axis.wsdl.symbolTable.Parameter;
@@ -493,6 +495,23 @@ public class J2eeGeneratorFactory implements GeneratorFactory {
                 tEntry.setName(emitter.getJavaName(typeQName));
             } else {
                 tEntry.setName(javaType);
+            }
+            Vector elements = tEntry.getContainedElements();
+            if (elements != null) {
+                for (int i = 0; i < elements.size(); i++) {
+                    ElementDecl elem = (ElementDecl) elements.get(i);
+                    String varName = emitter.getJavaVariableName(typeQName, elem.getQName(), true);
+                    elem.setName(varName);
+                }
+            }
+            
+            Vector attributes = tEntry.getContainedAttributes();
+            if (attributes != null) {
+                for (int i = 0; i < attributes.size(); i++) {
+                    ContainedAttribute attr = (ContainedAttribute) attributes.get(i);
+                    String varName = emitter.getJavaVariableName(typeQName, attr.getQName(), false);
+                    attr.setName(varName);
+                }
             }
         }
         // Set the entry with the same name as the ref'd entry
@@ -1016,7 +1035,7 @@ public class J2eeGeneratorFactory implements GeneratorFactory {
             if (p.getMode() == Parameter.IN) {
                 signature = signature + Utils.getParameterTypeName(p) + " " + javifiedName;
             } else {
-                signature = signature + Utils.holder(p.getMIMEInfo(), p.getType(), emitter) + " "
+                signature = signature + Utils.holder(p, emitter) + " "
                         + javifiedName;
             }
         }
