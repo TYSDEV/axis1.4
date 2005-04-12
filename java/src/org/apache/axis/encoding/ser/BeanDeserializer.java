@@ -291,7 +291,7 @@ public class BeanDeserializer extends DeserializerImpl implements Serializable
 
         // Fastpath nil checks...
         if (context.isNil(attributes)) {
-            if (propDesc != null && propDesc.isIndexedOrArray()) {
+            if (propDesc != null && propDesc.isIndexed()) {
                 if (!((dSer != null) && (dSer instanceof ArrayDeserializer))) {
                     collectionIndex++;
                     dSer.registerValueTarget(new BeanPropertyTarget(value,

@@ -254,7 +254,7 @@ public class RPCHandler extends SOAPHandler
         } else {
             dser = context.getDeserializer(destClass, type);
             // !!!
-            if (dser == null && destClass.isArray() &&
+            if (dser == null && destClass != null && destClass.isArray() &&
                     operation.getStyle() == Style.DOCUMENT) {
                 dser = context.getDeserializerForClass(destClass);
             }
