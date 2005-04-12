@@ -99,6 +99,8 @@ public class SerializationContext implements javax.xml.rpc.encoding.Serializatio
     private int lastPrefixIndex = 1;
     private MessageContext msgContext;
     private QName currentXMLType;
+    /** The component QName if we're serializing a literal array... */
+    private QName componentQName;
 
     /** The SOAP context we're using */
     private SOAPConstants soapConstants = SOAPConstants.SOAP11_CONSTANTS;
@@ -1584,5 +1586,13 @@ public class SerializationContext implements javax.xml.rpc.encoding.Serializatio
      */
     public void setEncoding(String encoding) {
         this.encoding = encoding;
+    }
+
+    public QName getComponentQName() {
+        return componentQName;
+    }
+
+    public void setComponentQName(QName componentQName) {
+        this.componentQName = componentQName;
     }
 }
