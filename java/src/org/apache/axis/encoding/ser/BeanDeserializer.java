@@ -327,7 +327,8 @@ public class BeanDeserializer extends DeserializerImpl implements Serializable
             // list of deserializers that shouldn't use the indexed way to recreate the Bean
             boolean shouldUseArray = (!(dSer instanceof ArrayDeserializer) &&
                     !(dSer instanceof Base64Deserializer) &&
-                    !(dSer instanceof HexDeserializer));
+                    !(dSer instanceof HexDeserializer) &&
+                    !(dSer instanceof SimpleListDeserializer));
             if (propDesc.isIndexedOrArray() && shouldUseArray) {
                     collectionIndex++;
                     dSer.registerValueTarget(new BeanPropertyTarget(value,
