@@ -27,6 +27,7 @@ public class SOAPHeaderElementImpl extends SOAPElementImpl implements
 	 * @param headerElement
 	 */
 	public SOAPHeaderElementImpl(org.apache.axis.om.SOAPHeaderBlock headerElement){
+		super(headerElement);
 		this.omHeaderElement = headerElement;
 	}
 

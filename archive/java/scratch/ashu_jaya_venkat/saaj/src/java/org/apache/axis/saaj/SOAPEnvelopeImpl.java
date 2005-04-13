@@ -31,11 +31,13 @@ public class SOAPEnvelopeImpl extends SOAPElementImpl implements SOAPEnvelope {
 	 * Constructor SOAPEnvelopeImpl
 	 */
 	public SOAPEnvelopeImpl(){
+		//super(omEnv);
 		OMFactory fac = OMFactory.newInstance();
-		omSOAPEnvelope = fac.getDefaultEnvelope();
+		omNode = omElement =omSOAPEnvelope = fac.getDefaultEnvelope();
 	}
 	
 	public SOAPEnvelopeImpl(org.apache.axis.om.SOAPEnvelope omEnvelope){
+		super(omEnvelope);
 		this.omSOAPEnvelope = omEnvelope;
 	}
 	
@@ -101,7 +103,10 @@ public class SOAPEnvelopeImpl extends SOAPElementImpl implements SOAPEnvelope {
 		{
 			throw new SOAPException(e);
 		}
-		return  new SOAPHeaderImpl(omSOAPHeader);
+		if(omSOAPHeader != null)
+			return  new SOAPHeaderImpl(omSOAPHeader);
+		else
+			return null;
 	}
 
 	/**
@@ -113,15 +118,18 @@ public class SOAPEnvelopeImpl extends SOAPElementImpl implements SOAPEnvelope {
 	 */
 	public SOAPBody getBody() throws SOAPException {
 
-		org.apache.axis.om.SOAPBody omSOAPBody;
+		org.apache.axis.om.SOAPBody omSOAPBody = null;
 		try
 		{
 			omSOAPBody = omSOAPEnvelope.getBody();
 		} catch (Exception e)
 		{
-			throw new SOAPException(e);
+			//throw new SOAPException(e);
 		}
-		return (new SOAPBodyImpl(omSOAPBody));
+		if(omSOAPBody != null)
+			return (new SOAPBodyImpl(omSOAPBody));
+		else
+			return null;
 	}
 
 	/**

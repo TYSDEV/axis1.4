@@ -33,6 +33,7 @@ public class SOAPHeaderImpl extends SOAPElementImpl implements SOAPHeader {
 	 * @param header
 	 */
 	public SOAPHeaderImpl(org.apache.axis.om.SOAPHeader header){
+		super(header);
 		this.omHeader = header; 
 	}
 	
@@ -166,5 +167,13 @@ public class SOAPHeaderImpl extends SOAPElementImpl implements SOAPHeader {
 		}
 		return aList.iterator();
 	}
+	
+	/*public boolean equals(Object o){
+		if(o instanceof SOAPHeaderImpl){
+			if(this.omHeader.equals(((SOAPHeaderImpl)o).omHeader))
+					return true;
+		}
+		return false;
+	}*/
 
 }

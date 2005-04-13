@@ -124,7 +124,7 @@ public class NodeImpl implements Node {
 	 * @see javax.xml.soap.Node#detachNode()
 	 */
 	public void detachNode() {
-		
+	
 		omNode.detach();
 	}
 
@@ -403,6 +403,14 @@ public class NodeImpl implements Node {
 			org.w3c.dom.Node arg1) throws DOMException {
 		
 		return null;
+	}
+	
+	public boolean equals(Object o){
+		if(o instanceof NodeImpl){
+			if(this.omNode.equals(((NodeImpl)o).omNode))
+					return true;
+		}
+		return false;
 	}
 
 }

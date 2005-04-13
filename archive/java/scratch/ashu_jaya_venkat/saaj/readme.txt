@@ -11,4 +11,14 @@ to change when the OM implementation is changed.
 
 A test client is provided to demonstrate creating a basic soap message and sending it to the server.
 
+12th April 2005
+
+All the classes except AttachmentPart implemented. AttachmentPart will come after MTOM implementation.
+Some classes have some DOM related methods not implemented yet. 
+
+13th April 2005
+
+Fixed some bugs related to NullPointerException. Provided test cases to check correctness of SOAP
+Envelope and SOAP body.
+
 Ashutosh Shahi

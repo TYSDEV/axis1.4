@@ -38,7 +38,7 @@ public class SOAPConnectionImpl extends SOAPConnection {
 			URL url = new URL(endpoint.toString());
 			call.setListenerTransport("http", true);
 			call.setTo(new EndpointReference(AddressingConstants.WSA_TO, url.toString()));
-			org.apache.axis.om.SOAPEnvelope responseEnv = call.sendReceive(envelope);
+			org.apache.axis.om.SOAPEnvelope responseEnv = call.sendReceiveSync(envelope);
 			SOAPEnvelopeImpl response = new SOAPEnvelopeImpl(responseEnv);
 			return new SOAPMessageImpl(response);
 			

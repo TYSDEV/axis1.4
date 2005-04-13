@@ -62,7 +62,7 @@ public class TestClient {
 		call.setListenerTransport("http", true);
 		call.setTo(new EndpointReference(AddressingConstants.WSA_TO, url.toString()));
 		
-		org.apache.axis.om.SOAPEnvelope responseEnv = call.sendReceive(omEnv);
+		org.apache.axis.om.SOAPEnvelope responseEnv = call.sendReceiveSync(omEnv);
 
 		System.out.println("Responce received  ...");
 		responseEnv.serialize(writer,true);

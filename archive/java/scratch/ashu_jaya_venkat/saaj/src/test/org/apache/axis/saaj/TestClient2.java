@@ -17,7 +17,7 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamWriter;
 import javax.xml.stream.XMLStreamException;
 /**
- * @author shaas02
+ * @author Ashutosh Shahi
  *
  * TODO To change the template for this generated type comment go to
  * Window - Preferences - Java - Code Style - Code Templates
@@ -40,24 +40,23 @@ public class TestClient2 {
 			//TextImpl data = new TextImpl((SOAPElementImpl)text, "Echo String");
 			//System.out.println(data.getParentElement().getElementName());
 			//data.setParentElement(text);
-			
-			
-			SOAPConnectionFactory factory = SOAPConnectionFactory.newInstance();
+					
+		/*	SOAPConnectionFactory factory = SOAPConnectionFactory.newInstance();
 			SOAPConnection connection = factory.createConnection();
 			javax.xml.soap.SOAPMessage respMsg = ((SOAPConnectionImpl)connection).call(message, "http://localhost:8080/axis2/services/myecho");
 			SOAPEnvelope response = respMsg.getSOAPPart().getEnvelope();
-			
+		*/	
 			org.apache.axis.om.SOAPEnvelope omEnv = env.getOMEnvelope();
 			System.out.println("Request sent   ...");
 			XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(System.out);
 			omEnv.serialize(writer,true);
 			writer.flush();
 			System.out.println();
-			org.apache.axis.om.SOAPEnvelope omResp = ((SOAPEnvelopeImpl)response).getOMEnvelope();
+		/*	org.apache.axis.om.SOAPEnvelope omResp = ((SOAPEnvelopeImpl)response).getOMEnvelope();
 			System.out.println("Response received  ...");
 			omResp.serialize(writer,true);
 			writer.flush();
-			
+			*/
 			} catch(SOAPException e){
 				e.printStackTrace();
 			} catch(XMLStreamException e1){

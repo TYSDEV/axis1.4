@@ -41,6 +41,7 @@ public class SOAPBodyImpl extends SOAPElementImpl implements SOAPBody {
 	 */
 	public SOAPBodyImpl(org.apache.axis.om.SOAPBody omSoapBody)
 	{
+		super(omSoapBody);
 		this.omSOAPBody = omSoapBody;
 	}
 

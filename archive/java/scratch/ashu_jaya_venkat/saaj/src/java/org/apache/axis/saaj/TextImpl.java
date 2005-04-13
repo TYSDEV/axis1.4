@@ -26,15 +26,14 @@ public class TextImpl extends NodeImpl implements Text {
 	
 	public TextImpl(String s){
 		//super();
-		omText = org.apache.axis.om.OMFactory.newInstance().createText(s);
+		omNode = omText = org.apache.axis.om.OMFactory.newInstance().createText(s);
 	}
 	
 	public TextImpl(SOAPElementImpl parent, String s) throws SOAPException{
 		//super();
 		//super.setParentElement(parent);
 		OMElement par = parent.getOMElement();
-		omText = org.apache.axis.om.OMFactory.newInstance().createText(par, s);
-		omNode = omText;
+		omNode = omText = org.apache.axis.om.OMFactory.newInstance().createText(par, s);
 	}
 	
 	public TextImpl(org.w3c.dom.CharacterData data){
