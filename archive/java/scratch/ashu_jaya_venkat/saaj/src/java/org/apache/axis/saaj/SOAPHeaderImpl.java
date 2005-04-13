@@ -12,8 +12,8 @@ import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPHeaderElement;
 
+import org.apache.axis.om.OMFactory;
 import org.apache.axis.om.OMNamespace;
-import org.apache.axis.om.impl.llom.OMNamespaceImpl;
 
 /**
  * Class SOAPHeaderImpl
@@ -48,9 +48,10 @@ public class SOAPHeaderImpl extends SOAPElementImpl implements SOAPHeader {
 		// Create an OMHeaderBlock out of name and add it a SOAPHeaderElement
 		//to SOAPHeader
 		String localName = name.getLocalName();
-		OMNamespace ns = new OMNamespaceImpl(name.getURI(), name.getPrefix());
+		OMFactory omFactory = OMFactory.newInstance();
+		OMNamespace ns = omFactory.createOMNamespace(name.getURI(), name.getPrefix());
 		org.apache.axis.om.SOAPHeaderBlock headerBlock = omHeader.addHeaderBlock(localName, ns);
-		return (SOAPHeaderElement)(new SOAPHeaderElementImpl(headerBlock));
+		return (new SOAPHeaderElementImpl(headerBlock));
 	}
 
 	/**
@@ -69,7 +70,7 @@ public class SOAPHeaderImpl extends SOAPElementImpl implements SOAPHeader {
 			Object o = headerElementsIter.next();
 			if(o instanceof org.apache.axis.om.SOAPHeaderBlock){
 				org.apache.axis.om.SOAPHeaderBlock headerBlock = (org.apache.axis.om.SOAPHeaderBlock)o;
-				SOAPHeaderElement element = (SOAPHeaderElement)(new SOAPHeaderElementImpl(headerBlock)); 
+				SOAPHeaderElement element = (new SOAPHeaderElementImpl(headerBlock)); 
 				aList.add(element);
 			}
 		}
@@ -92,7 +93,7 @@ public class SOAPHeaderImpl extends SOAPElementImpl implements SOAPHeader {
 			Object o = headerElementsIter.next();
 			if(o instanceof org.apache.axis.om.SOAPHeaderBlock){
 				org.apache.axis.om.SOAPHeaderBlock headerBlock = (org.apache.axis.om.SOAPHeaderBlock)o;
-				SOAPHeaderElement element = (SOAPHeaderElement)(new SOAPHeaderElementImpl(headerBlock)); 
+				SOAPHeaderElement element = (new SOAPHeaderElementImpl(headerBlock)); 
 				aList.add(element);
 			}
 		}
@@ -115,7 +116,7 @@ public class SOAPHeaderImpl extends SOAPElementImpl implements SOAPHeader {
 			Object o = headerElementsIter.next();
 			if(o instanceof org.apache.axis.om.SOAPHeaderBlock){
 				org.apache.axis.om.SOAPHeaderBlock headerBlock = (org.apache.axis.om.SOAPHeaderBlock)o;
-				SOAPHeaderElement element = (SOAPHeaderElement)(new SOAPHeaderElementImpl(headerBlock)); 
+				SOAPHeaderElement element = (new SOAPHeaderElementImpl(headerBlock)); 
 				aList.add(element);
 			}
 		}
@@ -137,7 +138,7 @@ public class SOAPHeaderImpl extends SOAPElementImpl implements SOAPHeader {
 			Object o = headerElementsIter.next();
 			if(o instanceof org.apache.axis.om.SOAPHeaderBlock){
 				org.apache.axis.om.SOAPHeaderBlock headerBlock = (org.apache.axis.om.SOAPHeaderBlock)o;
-				SOAPHeaderElement element = (SOAPHeaderElement)(new SOAPHeaderElementImpl(headerBlock)); 
+				SOAPHeaderElement element = (new SOAPHeaderElementImpl(headerBlock)); 
 				aList.add(element);
 			}
 		}
@@ -159,7 +160,7 @@ public class SOAPHeaderImpl extends SOAPElementImpl implements SOAPHeader {
 			Object o = headerElementsIter.next();
 			if(o instanceof org.apache.axis.om.SOAPHeaderBlock){
 				org.apache.axis.om.SOAPHeaderBlock headerBlock = (org.apache.axis.om.SOAPHeaderBlock)o;
-				SOAPHeaderElement element = (SOAPHeaderElement)(new SOAPHeaderElementImpl(headerBlock)); 
+				SOAPHeaderElement element = (new SOAPHeaderElementImpl(headerBlock)); 
 				aList.add(element);
 			}
 		}

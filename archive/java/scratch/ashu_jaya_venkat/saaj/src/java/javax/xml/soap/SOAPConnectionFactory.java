@@ -58,7 +58,7 @@ public abstract class SOAPConnectionFactory {
     public abstract SOAPConnection createConnection() throws SOAPException;
 
     private static final String DEFAULT_SOAP_CONNECTION_FACTORY =
-        "org.apache.axis.soap.SOAPConnectionFactoryImpl";
+        "org.apache.axis.saaj.SOAPConnectionFactoryImpl";
 
     private static final String SF_PROPERTY =
         "javax.xml.soap.SOAPConnectionFactory";

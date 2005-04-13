@@ -18,6 +18,7 @@ import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.NodeList;
+import org.w3c.dom.CharacterData;
 
 /**
  * Class NodeImpl
@@ -30,18 +31,20 @@ public class NodeImpl implements Node {
 	/**
 	 * Field omNode
 	 */
-	private org.apache.axis.om.OMNode omNode;
+	protected org.apache.axis.om.OMNode omNode;
 	/**
 	 * field document
 	 */
-	private org.w3c.dom.Document document;
+	protected org.w3c.dom.Document document;
+	
+	//protected CharacterData textRep = null;
 	
 	/**
 	 * Constructor NodeImpl
 	 *
 	 */
 	public NodeImpl(){
-		
+	
 	}
 	
 	/**
@@ -75,7 +78,15 @@ public class NodeImpl implements Node {
 		// Find out a way to construct OMNode from OMNamespace
 		// OMNamespace is immutable
 	}
-
+	
+     /**
+     * constructor which adopts the name and NS of the char data, and its text
+     * @param text
+     */
+/*    public NodeImpl(CharacterData text) {
+    	
+    }
+*/
 	/**
 	 * Method getValue
 	 * 

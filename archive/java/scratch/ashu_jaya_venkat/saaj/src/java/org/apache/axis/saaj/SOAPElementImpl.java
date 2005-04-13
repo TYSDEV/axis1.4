@@ -18,35 +18,37 @@ import javax.xml.namespace.QName;
 import java.util.ArrayList;
 /**
  * Class SOAPElementImpl
- * 
+ *
  * @author Jayachandra
  * jayachandra@gmail.com
  */
 public class SOAPElementImpl extends NodeImpl implements SOAPElement {
 	/**
 	 * Field omElement
-	 * The corresponding OM object for SOAPElement is OMElement, so we would 
+	 * The corresponding OM object for SOAPElement is OMElement, so we would
 	 * have a datamember of type OMElement in this class
 	 */
 	protected org.apache.axis.om.OMElement omElement;
-	
+
 	/**
 	 * Constructor SOAPElementImpl
-	 * The standard constructor of being able to create soapelement given a omElement
+	 * The standard constructor for being able to create SOAPElement given a omElement
 	 * @param omElement
 	 */
 	public SOAPElementImpl(org.apache.axis.om.OMElement omElement)
 	{
+		super(omElement);
 		this.omElement = omElement;
 	}
-	
+
 	/**
 	 * Constructor SOAPElementImpl
 	 * The empty constructor
 	 */
 	public SOAPElementImpl() {
+		super();
 	}
-	
+
 	/**
 	 * Method getOMElement
 	 * getter method on the data member omElement
@@ -64,15 +66,15 @@ public class SOAPElementImpl extends NodeImpl implements SOAPElement {
 	 * @see javax.xml.soap.SOAPElement#addChildElement(javax.xml.soap.Name)
 	 */
 	public SOAPElement addChildElement(Name name) throws SOAPException {
-		//We will create a new OMElement and add that as a child to the OMElement datamember that 
-		//we are carrying along. And return back a wrapped SOAPElement corresponding to the 
+		//We will create a new OMElement and add that as a child to the OMElement datamember that
+		//we are carrying along. And return back a wrapped SOAPElement corresponding to the
 		//created OMElement
-		
+
 		//Since a <code>Name</code> object is given as parameter we should try to create an OMElement
-		//and register it with the contents of the <code>name</code> element 
-		org.apache.axis.om.OMElement newOMElement = new org.apache.axis.om.impl.llom.OMElementImpl(new QName(name.getURI(), name.getLocalName(), name.getPrefix()), omElement);
-		omElement.addChild(newOMElement); 
-		return (SOAPElement)(new SOAPElementImpl(newOMElement));
+		//and register it with the contents of the <code>name</code> element
+		org.apache.axis.om.OMElement newOMElement = org.apache.axis.om.OMFactory.newInstance().createOMElement(new QName(name.getURI(), name.getLocalName(), name.getPrefix()), omElement);
+		omElement.addChild(newOMElement);
+		return new SOAPElementImpl(newOMElement);
 	}
 
 	/**
@@ -83,12 +85,12 @@ public class SOAPElementImpl extends NodeImpl implements SOAPElement {
 	 * @see javax.xml.soap.SOAPElement#addChildElement(java.lang.String)
 	 */
 	public SOAPElement addChildElement(String localName) throws SOAPException {
-		//We will create a new OMElement and add that as a child to the OMElement datamember that 
-		//we are carrying along. And return back a wrapped SOAPElement corresponding to the 
+		//We will create a new OMElement and add that as a child to the OMElement datamember that
+		//we are carrying along. And return back a wrapped SOAPElement corresponding to the
 		//created OMElement
-		org.apache.axis.om.OMElement newOMElement = new org.apache.axis.om.impl.llom.OMElementImpl(new QName(localName), omElement);
-		omElement.addChild(newOMElement); 
-		return (SOAPElement)(new SOAPElementImpl(newOMElement));
+		org.apache.axis.om.OMElement newOMElement = org.apache.axis.om.OMFactory.newInstance().createOMElement(new QName(localName), omElement);
+		omElement.addChild(newOMElement);
+		return new SOAPElementImpl(newOMElement);
 	}
 
 	/**
@@ -100,14 +102,14 @@ public class SOAPElementImpl extends NodeImpl implements SOAPElement {
 	 * @see javax.xml.soap.SOAPElement#addChildElement(java.lang.String, java.lang.String)
 	 */
 	public SOAPElement addChildElement(String localName, String prefix)
-			throws SOAPException {		
-		org.apache.axis.om.OMElement newOMElement = new org.apache.axis.om.impl.llom.OMElementImpl(new QName(null,localName,prefix), omElement);		
-		omElement.addChild(newOMElement); 
-		return (SOAPElement)(new SOAPElementImpl(newOMElement));
+			throws SOAPException {
+		org.apache.axis.om.OMElement newOMElement = org.apache.axis.om.OMFactory.newInstance().createOMElement(new QName(null,localName,prefix), omElement);
+		omElement.addChild(newOMElement);
+		return new SOAPElementImpl(newOMElement);
 	}
 
 	/**
-	 * Method addChileElement
+	 * Method addChildElement
 	 * @param localName
 	 * @param prefix
 	 * @return
@@ -116,13 +118,13 @@ public class SOAPElementImpl extends NodeImpl implements SOAPElement {
 	 */
 	public SOAPElement addChildElement(String localName, String prefix,
 			String uri) throws SOAPException {
-		org.apache.axis.om.OMElement newOMElement = new org.apache.axis.om.impl.llom.OMElementImpl(new QName(uri,localName,prefix), omElement);
-		omElement.addChild(newOMElement); 
-		return (SOAPElement)(new SOAPElementImpl(newOMElement));
+		org.apache.axis.om.OMElement newOMElement = org.apache.axis.om.OMFactory.newInstance().createOMElement(new QName(uri,localName,prefix), omElement);
+		omElement.addChild(newOMElement);
+		return new SOAPElementImpl(newOMElement);
 	}
 
 	/**
-	 * Method addChileElement
+	 * Method addChildElement
 	 * @param element
 	 * @return
 	 * @throws SOAPException
@@ -135,11 +137,11 @@ public class SOAPElementImpl extends NodeImpl implements SOAPElement {
 		//The fragment rooted in element cannot contain elements named “Envelope”, “Header” or “Body”
 		//and in the SOAP namespace. Any namespace prefixes present in the fragment should be fully
 		//resolved using appropriate namespace declarations within the fragment itself.
-		
+
 		org.apache.axis.om.OMElement omElementToAdd = ((SOAPElementImpl)element).getOMElement();
 		omElementToAdd.setParent(omElement);
 		omElement.addChild(omElementToAdd);
-		return (SOAPElement)(new SOAPElementImpl(omElementToAdd));		
+		return new SOAPElementImpl(omElementToAdd);
 	}
 
 	/**
@@ -151,10 +153,10 @@ public class SOAPElementImpl extends NodeImpl implements SOAPElement {
 	 */
 	public SOAPElement addTextNode(String text) throws SOAPException {
 		//This doesn't seem to have support directly in OM
-		//But work should always be possible.
-		
-		//My objective would be to create an OMText node and add that to 
-		//the omElement delegate member that we have with us.		
+		//But work around should always be possible.
+
+		//My objective would be to create an OMText node and add that to
+		//the omElement delegate member that we have with us.
 		omElement.setValue(text);
 		return this;
 	}
@@ -242,9 +244,9 @@ public class SOAPElementImpl extends NodeImpl implements SOAPElement {
 	 * @see javax.xml.soap.SOAPElement#getElementName()
 	 */
 	public Name getElementName() {
-		//TODO: Ashu! Look into PrefixeQName implementation, and undesired extra <code>prefix</code> field
+		//TODO: Ashu! Look into PrefixeQName implementation, an undesired extra <code>prefix</code> field
 		//is present inside it, which might create some problems up the execution flow.
-		return (Name)(new PrefixedQName(((org.apache.axis.om.impl.llom.OMElementImpl)omElement).getQName()));
+		return (Name)(new PrefixedQName(omElement.getQName()));
 	}
 
 	/**
@@ -264,7 +266,7 @@ public class SOAPElementImpl extends NodeImpl implements SOAPElement {
 	 * @see javax.xml.soap.SOAPElement#removeNamespaceDeclaration(java.lang.String)
 	 */
 	public boolean removeNamespaceDeclaration(String prefix) {
-		
+
 		//Couldn't figure out corresponding functionality in OM
 		return false;
 	}
@@ -277,7 +279,7 @@ public class SOAPElementImpl extends NodeImpl implements SOAPElement {
 	public Iterator getChildElements() {
 		//Actually all the children are being treated as OMNodes and are being
 		//wrapped accordingly to a single type and being returned
-		//Ideally speaking, node type should be observed and wrapped into 
+		//Ideally speaking, node type should be observed and wrapped into
 		//corresponding type.
 		Iterator childIter = omElement.getChildren();
 		ArrayList arrayList = new ArrayList();
@@ -317,7 +319,7 @@ public class SOAPElementImpl extends NodeImpl implements SOAPElement {
 	 * @see javax.xml.soap.SOAPElement#setEncodingStyle(java.lang.String)
 	 */
 	public void setEncodingStyle(String encodingStyle) throws SOAPException {
-		
+
 		//Donno how to tackle this right now.
 		//Couldn't figure out corresponding functionality in OM
 
@@ -332,18 +334,19 @@ public class SOAPElementImpl extends NodeImpl implements SOAPElement {
 		return null;
 	}
 
-	/*&
+	/**
 	 * method removeContents
 	 * @see javax.xml.soap.SOAPElement#removeContents()
 	 */
 	public void removeContents() {
+		//We will get all the children and iteratively call the detach() on all of 'em.
+		Iterator childIter = omElement.getChildren();
 		
-		//Couldn't figure out corresponding functionality in OM
-		//Actually there is a detach() method in OMElementImpl, but
-		//that discards the current information item also. Here we only have to
-		//remove contents and return back a void. Will have to consult
-		//Venkat in making a work around for this.
-
+		while(childIter.hasNext()) {
+			Object o = childIter.next();
+			if(o instanceof org.apache.axis.om.OMNode) 
+				((org.apache.axis.om.OMNode)o).detach();			
+		}		
 	}
 
 	/**
@@ -356,16 +359,30 @@ public class SOAPElementImpl extends NodeImpl implements SOAPElement {
 		// getAllDeclaredNamespaces() of the OMElementImpl as of now.
 		// But I doubt if that is going to cover the namespaces that are
 		// in the scope of the document at the higher levels of hierarchy
-		
+
+		//I'll recursively return all the declared namespaces till this node, including its parents etc.
 		Iterator namespacesIter = omElement.getAllDeclaredNamespaces();
-		ArrayList returnList = new ArrayList();
+		ArrayList returnList = new ArrayList();		
 		while(namespacesIter.hasNext()) {
 			Object o = namespacesIter.next();
 			if (o instanceof org.apache.axis.om.OMNamespace) {
 				javax.xml.soap.Node soapNode = new NodeImpl((org.apache.axis.om.OMNamespace)o);
 				returnList.add(soapNode);
-			}			
-		}
+			}
+		}//taken care of adding namespaces of this node.
+		//now we have to take care of adding the namespaces that are in the scope till the level of
+		//this nodes' parent.
+		org.apache.axis.om.OMElement parent = omElement.getParent();
+		if (parent!=null) {
+			Iterator parentScopeNamespacesIter = parent.getAllDeclaredNamespaces();
+			while(parentScopeNamespacesIter.hasNext()) {
+				Object o = parentScopeNamespacesIter.next();
+				if (o instanceof org.apache.axis.om.OMNamespace) {
+					javax.xml.soap.Node soapNode = new NodeImpl((org.apache.axis.om.OMNamespace)o);
+					returnList.add(soapNode);
+				}
+			}
+		}			
 		return returnList.iterator();
 	}
 
@@ -411,7 +428,7 @@ public class SOAPElementImpl extends NodeImpl implements SOAPElement {
 	 */
 	public void removeAttributeNS(String arg0, String arg1) throws DOMException {
 
-//		Couldn't figure out corresponding functionality in OM
+		//Couldn't figure out corresponding functionality in OM
 		//but looking into OMAttribute code might help you with some work around.
 
 	}
@@ -428,7 +445,7 @@ public class SOAPElementImpl extends NodeImpl implements SOAPElement {
 	 * @see org.w3c.dom.Element#hasAttributeNS(java.lang.String, java.lang.String)
 	 */
 	public boolean hasAttributeNS(String arg0, String arg1) {
-	
+
 		return false;
 	}
 
@@ -436,7 +453,7 @@ public class SOAPElementImpl extends NodeImpl implements SOAPElement {
 	 * @see org.w3c.dom.Element#getAttributeNode(java.lang.String)
 	 */
 	public Attr getAttributeNode(String arg0) {
-	
+
 		return null;
 	}
 
@@ -444,7 +461,7 @@ public class SOAPElementImpl extends NodeImpl implements SOAPElement {
 	 * @see org.w3c.dom.Element#removeAttributeNode(org.w3c.dom.Attr)
 	 */
 	public Attr removeAttributeNode(Attr arg0) throws DOMException {
-	
+
 		return null;
 	}
 
@@ -452,7 +469,7 @@ public class SOAPElementImpl extends NodeImpl implements SOAPElement {
 	 * @see org.w3c.dom.Element#setAttributeNode(org.w3c.dom.Attr)
 	 */
 	public Attr setAttributeNode(Attr arg0) throws DOMException {
-	
+
 		return null;
 	}
 
@@ -460,7 +477,7 @@ public class SOAPElementImpl extends NodeImpl implements SOAPElement {
 	 * @see org.w3c.dom.Element#setAttributeNodeNS(org.w3c.dom.Attr)
 	 */
 	public Attr setAttributeNodeNS(Attr arg0) throws DOMException {
-	
+
 		return null;
 	}
 
@@ -468,7 +485,7 @@ public class SOAPElementImpl extends NodeImpl implements SOAPElement {
 	 * @see org.w3c.dom.Element#getElementsByTagName(java.lang.String)
 	 */
 	public NodeList getElementsByTagName(String arg0) {
-	
+
 		return null;
 	}
 
@@ -476,7 +493,7 @@ public class SOAPElementImpl extends NodeImpl implements SOAPElement {
 	 * @see org.w3c.dom.Element#getAttributeNS(java.lang.String, java.lang.String)
 	 */
 	public String getAttributeNS(String arg0, String arg1) {
-	
+
 		return null;
 	}
 
@@ -501,8 +518,8 @@ public class SOAPElementImpl extends NodeImpl implements SOAPElement {
 	 * @see org.w3c.dom.Element#getElementsByTagNameNS(java.lang.String, java.lang.String)
 	 */
 	public NodeList getElementsByTagNameNS(String arg0, String arg1) {
-	
+
 		return null;
-	} 
+	}
 
 }

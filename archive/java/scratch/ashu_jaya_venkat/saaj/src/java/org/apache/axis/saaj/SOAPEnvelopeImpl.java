@@ -11,8 +11,6 @@ import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPHeader;
 
 import org.apache.axis.om.OMFactory;
-import org.apache.axis.saaj.SOAPBodyImpl;
-import org.apache.axis.saaj.SOAPHeaderImpl;
 
 
 /**
@@ -35,6 +33,10 @@ public class SOAPEnvelopeImpl extends SOAPElementImpl implements SOAPEnvelope {
 	public SOAPEnvelopeImpl(){
 		OMFactory fac = OMFactory.newInstance();
 		omSOAPEnvelope = fac.getDefaultEnvelope();
+	}
+	
+	public SOAPEnvelopeImpl(org.apache.axis.om.SOAPEnvelope omEnvelope){
+		this.omSOAPEnvelope = omEnvelope;
 	}
 	
 	/**
@@ -94,12 +96,12 @@ public class SOAPEnvelopeImpl extends SOAPElementImpl implements SOAPEnvelope {
 		org.apache.axis.om.SOAPHeader omSOAPHeader;
 		try
 		{
-			omSOAPHeader = (org.apache.axis.om.impl.llom.SOAPHeaderImpl) omSOAPEnvelope.getHeader();
+			omSOAPHeader = (org.apache.axis.om.SOAPHeader) omSOAPEnvelope.getHeader();
 		}catch (Exception e)
 		{
 			throw new SOAPException(e);
 		}
-		return (SOAPHeader) new SOAPHeaderImpl(omSOAPHeader);
+		return  new SOAPHeaderImpl(omSOAPHeader);
 	}
 
 	/**
@@ -119,7 +121,7 @@ public class SOAPEnvelopeImpl extends SOAPElementImpl implements SOAPEnvelope {
 		{
 			throw new SOAPException(e);
 		}
-		return (SOAPBody)(new SOAPBodyImpl(omSOAPBody));
+		return (new SOAPBodyImpl(omSOAPBody));
 	}
 
 	/**
@@ -136,9 +138,10 @@ public class SOAPEnvelopeImpl extends SOAPElementImpl implements SOAPEnvelope {
 		try {
 			org.apache.axis.om.SOAPHeader header = omSOAPEnvelope.getHeader();
 			if (header == null) {
-				header = new org.apache.axis.om.impl.llom.SOAPHeaderImpl(omSOAPEnvelope);
+				OMFactory omFactory = OMFactory.newInstance();
+				header = omFactory.createSOAPHeader(omSOAPEnvelope);
 				omSOAPEnvelope.addChild(header);
-				return (SOAPHeader)(new SOAPHeaderImpl(header));
+				return (new SOAPHeaderImpl(header));
 			} else {
 				throw new SOAPException("Header already present, can't set body again without deleting the existing header");
 			}
@@ -162,9 +165,10 @@ public class SOAPEnvelopeImpl extends SOAPElementImpl implements SOAPEnvelope {
 		try {
 			org.apache.axis.om.SOAPBody body = omSOAPEnvelope.getBody();
 			if (body == null) {
-				body = new org.apache.axis.om.impl.llom.SOAPBodyImpl(omSOAPEnvelope);
+				OMFactory omFactory = OMFactory.newInstance();
+				body = omFactory.createSOAPBody(omSOAPEnvelope);
 				omSOAPEnvelope.addChild(body);
-				return (SOAPBody)(new SOAPBodyImpl(body));
+				return (new SOAPBodyImpl(body));
 			} else {
 				throw new SOAPException("Body already present, can't set body again without deleting the existing body");
 			}

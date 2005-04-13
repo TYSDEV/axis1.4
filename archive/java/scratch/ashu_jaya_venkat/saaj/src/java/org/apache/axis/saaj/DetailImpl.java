@@ -13,8 +13,8 @@ import javax.xml.soap.Name;
 import javax.xml.soap.SOAPException;
 
 import org.apache.axis.om.OMElement;
+import org.apache.axis.om.OMFactory;
 import org.apache.axis.om.OMNamespace;
-import org.apache.axis.om.impl.llom.OMElementImpl;
 
 /**
  * Class DetailImpl
@@ -36,7 +36,8 @@ public class DetailImpl extends SOAPFaultElementImpl implements Detail {
 	 * @param parent
 	 */
 	public DetailImpl(javax.xml.namespace.QName detailName, OMElement parent){
-		detail = new OMElementImpl(detailName, parent);
+		OMFactory omFactory = OMFactory.newInstance();
+		detail = omFactory.createOMElement(detailName, parent);
 	}
 	
 	/*public DetailImpl(OMElement detail){
@@ -57,10 +58,11 @@ public class DetailImpl extends SOAPFaultElementImpl implements Detail {
 		// May need change after OM allows adding multiple detailEntries
 		// as then we can delegate the task there rather than dealing with OMElement here 
 		String localName = name.getLocalName();
-		OMNamespace ns = new org.apache.axis.om.impl.llom.OMNamespaceImpl(name.getURI(), name.getPrefix());
-		OMElement detailEntry = new org.apache.axis.om.impl.llom.OMElementImpl(localName, ns);
+		OMFactory omFactory = OMFactory.newInstance(); 
+		OMNamespace ns = omFactory.createOMNamespace(name.getURI(), name.getPrefix());
+		OMElement detailEntry = omFactory.createOMElement(localName, ns);
 		detail.addChild(detailEntry);
-		return (DetailEntry)(new DetailEntryImpl(detailEntry));
+		return (new DetailEntryImpl(detailEntry));
 	}
 	
 	/**
@@ -71,7 +73,7 @@ public class DetailImpl extends SOAPFaultElementImpl implements Detail {
 	 */
 	protected DetailEntry addDetailEntry(org.apache.axis.om.OMNode detailEntry){
 		detail.addChild(detailEntry);
-		return (DetailEntry)(new DetailEntryImpl((OMElement)detailEntry));
+		return (new DetailEntryImpl((OMElement)detailEntry));
 	}
 
 	/**

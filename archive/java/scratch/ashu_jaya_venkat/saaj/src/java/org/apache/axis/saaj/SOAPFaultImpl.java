@@ -118,7 +118,7 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
 		DetailImpl detail = new DetailImpl(detailName, fault);
 		OMNode entry = fault.getDetailInformation();
 		detail.addDetailEntry(entry);
-		return (Detail)detail;
+		return detail;
 	}
 
 	/**
@@ -133,7 +133,7 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
 		//May need to change later
 		QName detailName = new QName("detail");
 		DetailImpl detail = new DetailImpl(detailName, fault);
-		return (Detail)detail;
+		return detail;
 	}
 
 	/**
