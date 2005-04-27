@@ -16,6 +16,8 @@ import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.SOAPPart;
 import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPHeader;
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.axis.transport.http.HTTPConstants;
 
@@ -32,12 +34,24 @@ public class SOAPMessageImpl extends SOAPMessage {
     private MimeHeaders headers;
 
 	public SOAPMessageImpl(Object initialContents){
+		try{
 		setup(initialContents, false, null, null, null);
+		} catch(SOAPException e){
+			e.printStackTrace();
+		}
 	}
+	
+    public SOAPMessageImpl(Object initialContents, boolean bodyInStream, javax.xml.soap.MimeHeaders headers) {
+    	try{
+    	setup(initialContents, bodyInStream, null, null, (MimeHeaders)headers);
+		} catch(SOAPException e){
+			e.printStackTrace();
+		}   	
+    }
 	
 	private void setup(Object initialContents, boolean bodyInStream,
 			String contentType, String contentLocation,
-			MimeHeaders mimeHeaders){
+			MimeHeaders mimeHeaders)throws SOAPException{
 		if(null == mSOAPPart)
 			mSOAPPart = new SOAPPartImpl(this, initialContents, bodyInStream);
 		else
@@ -171,8 +185,13 @@ public class SOAPMessageImpl extends SOAPMessage {
 	 * @see javax.xml.soap.SOAPMessage#writeTo(java.io.OutputStream)
 	 */
 	public void writeTo(OutputStream out) throws SOAPException, IOException {
-		// TODO Auto-generated method stub
-
+		try{
+		XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(out);
+		((SOAPEnvelopeImpl)mSOAPPart.getEnvelope()).getOMEnvelope().serialize(writer, true);
+		writer.flush();
+		} catch(Exception e){
+			throw new SOAPException(e);
+		}
 	}
 
 }

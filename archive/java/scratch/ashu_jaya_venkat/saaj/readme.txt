@@ -19,6 +19,10 @@ Some classes have some DOM related methods not implemented yet.
 13th April 2005
 
 Fixed some bugs related to NullPointerException. Provided test cases to check correctness of SOAP
-Envelope and SOAP body.
+Envelope
+
+27th April
+Added some more code for some functions and more test cases for soapbody, header, element, prefixes etc
+
 
 Ashutosh Shahi

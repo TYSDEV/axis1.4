@@ -37,7 +37,8 @@ public class MessageFactoryImpl extends MessageFactory {
 	public SOAPMessage createMessage(MimeHeaders mimeheaders,
 			InputStream inputstream) throws IOException, SOAPException {
 		// TODO Auto-generated method stub
-		return null;
+		SOAPMessageImpl message = new SOAPMessageImpl(inputstream, false,mimeheaders);
+		return message;
 	}
 
 }

@@ -3,20 +3,11 @@
 	<classpathentry kind="src" path="src/java"/>
 	<classpathentry kind="src" path="src/test"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="C:/tomcat5/webapps/axis2/WEB-INF/lib/stax-api-1.0.jar"/>
-	<classpathentry kind="lib" path="C:/tomcat5/webapps/axis2/WEB-INF/lib/axis2-core-M1.jar"/>
-	<classpathentry kind="lib" path="C:/tomcat5/webapps/axis2/WEB-INF/lib/axis2-deployment-M1.jar"/>
-	<classpathentry kind="lib" path="C:/tomcat5/webapps/axis2/WEB-INF/lib/axis2-http-M1.jar"/>
-	<classpathentry kind="lib" path="C:/tomcat5/webapps/axis2/WEB-INF/lib/axis2-mail-M1.jar"/>
-	<classpathentry kind="lib" path="C:/tomcat5/webapps/axis2/WEB-INF/lib/axis2-om-M1.jar"/>
-	<classpathentry kind="lib" path="C:/tomcat5/webapps/axis2/WEB-INF/lib/axis2-Samples-M1.jar"/>
-	<classpathentry kind="lib" path="C:/tomcat5/webapps/axis2/WEB-INF/lib/axis2-Tools-M1.jar"/>
-	<classpathentry kind="lib" path="C:/tomcat5/webapps/axis2/WEB-INF/lib/axis2-wsdl-M1.jar"/>
-	<classpathentry kind="lib" path="C:/tomcat5/webapps/axis2/WEB-INF/lib/commons-fileupload-1.0.jar"/>
-	<classpathentry kind="lib" path="C:/tomcat5/webapps/axis2/WEB-INF/lib/commons-logging-1.0.3.jar"/>
-	<classpathentry kind="lib" path="C:/tomcat5/webapps/axis2/WEB-INF/lib/log4j-1.2.8.jar"/>
-	<classpathentry kind="lib" path="C:/tomcat5/webapps/axis2/WEB-INF/lib/stax-1.1.1-dev.jar"/>
 	<classpathentry kind="lib" path="C:/Apache/ws-axis/java/lib/mailapi_1_3_1.jar"/>
 	<classpathentry kind="lib" path="C:/Apache/ws-axis/java/lib/activation.jar"/>
+	<classpathentry kind="lib" path="C:/Apache/ws-axis/java/lib/junit.jar"/>
+	<classpathentry kind="lib" path="C:/tomcat5/webapps/axis2/WEB-INF/lib/stax-1.1.1-dev.jar"/>
+	<classpathentry kind="lib" path="C:/tomcat5/webapps/axis2/WEB-INF/lib/stax-api-1.0.jar"/>
+	<classpathentry kind="src" path="/Axis2"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

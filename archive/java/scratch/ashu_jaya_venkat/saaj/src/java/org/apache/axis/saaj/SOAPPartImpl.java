@@ -6,6 +6,8 @@
  */
 package org.apache.axis.saaj;
 
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Iterator;
 
 import javax.xml.soap.MimeHeaders;
@@ -13,6 +15,10 @@ import javax.xml.soap.SOAPEnvelope;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPPart;
 import javax.xml.transform.Source;
+
+import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLInputFactory;
+import org.apache.axis.om.impl.llom.builder.StAXSOAPModelBuilder;
 
 import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.axis.util.SessionUtils;
@@ -48,15 +54,28 @@ public class SOAPPartImpl extends SOAPPart {
      */
     private String currentEncoding = "UTF-8";
 	
-	public SOAPPartImpl(SOAPMessageImpl parent, Object initialContents, boolean isBodyStream){
+	public SOAPPartImpl(SOAPMessageImpl parent, Object initialContents, boolean isBodyStream) throws SOAPException{
 		
         setMimeHeader(HTTPConstants.HEADER_CONTENT_ID , SessionUtils.generateSessionId());
         setMimeHeader(HTTPConstants.HEADER_CONTENT_TYPE , "text/xml");
+        StAXSOAPModelBuilder stAXSOAPModelBuilder;
         
         msgObject = parent;
-        if(initialContents instanceof SOAPEnvelope){
-        	((SOAPEnvelopeImpl)initialContents).setOwnerDocument(this);
-        	envelope = initialContents;
+        try{
+        	if(initialContents instanceof SOAPEnvelope){
+        		((SOAPEnvelopeImpl)initialContents).setOwnerDocument(this);
+        		envelope = initialContents;
+        	} else if(initialContents instanceof InputStream){
+        		//XMLStreamReader reader = XMLInputFactory.newInstance().createXMLStreamReader((InputStream)initialContents);
+        		InputStreamReader inr = new InputStreamReader((InputStream)initialContents);
+        		stAXSOAPModelBuilder = new StAXSOAPModelBuilder(XMLInputFactory.newInstance().createXMLStreamReader(inr));
+        		org.apache.axis.om.SOAPEnvelope omEnv = stAXSOAPModelBuilder.getSOAPEnvelope();
+        		envelope = new SOAPEnvelopeImpl(omEnv);
+        		((SOAPEnvelopeImpl)envelope).setOwnerDocument(this);
+        	}
+        
+        }catch(Exception e){
+        	throw new SOAPException(e);
         }
 	}
 	
