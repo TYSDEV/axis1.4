@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.2//EN" "./dtd/document-v12.dtd">
 <document>
   <header>
@@ -797,6 +797,22 @@ you about now.
 <p>This looks a lot like the &lt;beanMapping&gt; tag we saw earlier, but there are three extra attributes. One, <b>serializer</b>, is the Java class name of the Serializer <i>factory</i> which gets the serializer to be used to marshal an object of the specified Java class (i.e., my.java.thingy) into XML. Another, <b>deserializer</b>, is the class name of a Deserializer <i>factory</i> that gets the deserializer to be used to unmarshall XML into the correct Java class. The final attribute, the <b>encodingStyle</b>, which is SOAP encoding.</p>
 
 <p>(The &lt;beanMapping&gt; tag is really just shorthand for a &lt;typeMapping&gt; tag with <code>serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"</code>, <code>deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"</code>, and <code>encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"</code>, but clearly it can save a lot of typing!)</p>
+
+</section>
+
+<section>
+<title>Deploying array mappings - the &lt;arrayMapping&gt; tag</title>
+
+<p>nother variation around typeMapping is arrayMapping. The arrayMapping tag is useful for advanced users wanting to exatly control how their arrays are serialized throught the wire. </p>
+
+<source>&lt;arrayMapping qname="ns:ArrayOfthingy" xmlns:ns="someNamespaceURI"
+             languageSpecificType="java:my.java.array.thingy[]"
+			 innerType="ns2:thingy" xmlns:ns2="anotherNamespaceURI"
+             encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/&gt;</source>
+
+<p>No need here to specify a serializer/deserializer couple, the arrayMapping tag
+is only about arrays (no List, ...). The added attribute (<i>innerType</i>) is used
+to tell Axis what precisely is the item type of the Array.</p>
 
 </section>
 

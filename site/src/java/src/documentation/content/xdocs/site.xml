@@ -56,8 +56,9 @@ See http://xml.apache.org/forrest/linking.html for more info
 </translation>
 <related label="Related Projects">
   <wsif label="WSIF" href="http://ws.apache.org/wsif/"/>
+  <wsif label="jUDDI" href="http://ws.apache.org/juddi/"/>
   <wsil label="WSIL" href="http://cvs.apache.org/viewcvs/*checkout*/ws-wsil/java/README.htm"/>
-  <wsdl4j label="WSDL4J" href="http://www-124.ibm.com/developerworks/projects/wsdl4j/"/>
+  <wsdl4j label="WSDL4J" href="http://wsdl4j.sourceforge.net"/>
   <uddi4j label="UDDI4J" href="http://www.uddi4j.org/"/>
 </related>
 <misc label="Misc">

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.2//EN" "./dtd/document-v12.dtd">
 <document>
   <header>
@@ -481,14 +481,17 @@ In this example, the query string that the Axis servlet should respond to is <i>
 
 <dd>Defines a transport on the client side, which is invoked when sending a SOAP message. The "pivot" attribute specifies a Handler to be used as the actual sender for this transport (for example, the HTTPSender). Request and response flows may be specified as in server-side transports to do processing on the request (i.e. outgoing message) or response (i.e. incoming message).</dd>
 
-<dt>&lt;typeMapping qname="<i>ns:localName</i>" classname="<i>classname</i>" serializer="<i>classname</i>" deserializer="<i>classname</i>"/&gt;</dt>
+<dt>&lt;typeMapping qname="<i>ns:localName</i>" type="<i>java:classname</i>" serializer="<i>classname</i>" deserializer="<i>classname</i>"/&gt;</dt>
 
 <dd>Each typeMapping maps an XML qualified name to/from a Java class, using a specified Serializer and Deserializer.</dd>
 
-<dt>&lt;beanMapping qname="<i>ns:localName</i>" classname="<i>classname</i>"&gt;</dt>
+<dt>&lt;beanMapping qname="<i>ns:localName</i>" type="<i>java:classname</i>"&gt;</dt>
 <dd>A simplified type mapping, which uses pre-defined serializers/deserializers to encode/decode JavaBeans. The class named by "classname" must follow the JavaBean standard pattern of get/set accessors.</dd>
 
-<dt>&lt;documentation&gt;</dt> 
+<dt>&lt;arrayMapping qname="<i>ns:localName</i>" type="<i>java:classname</i>" innerType="<i>ns:innerTypeQName</i>"&gt;</dt>
+<dd>A specialized type mapping, which uses pre-defined serializers/deserializers to encode/decode Arrays. The class named by "classname" must be an array type (ie name ending with "[]").</dd>
+
+	<dt>&lt;documentation&gt;</dt> 
 <dd>Can be used inside a <b>&lt;service&gt;</b>, an <b>&lt;operation&gt;</b> or an operation <b>&lt;parameter&gt;</b>. The content of the element is arbitrary text which will be put in the generated wsdl inside a wsdl:document element.<br/><br/>
 Example:
 <source>&lt;operation name="echoString" &gt;
