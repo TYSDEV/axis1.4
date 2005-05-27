@@ -45,6 +45,13 @@
     <ant target="putmessage"/>
   </target>
 
+  <target name="build-site-only" depends="clean">
+    <ant target="backcopy"/>
+    <ant target="forrest"/>
+    <ant target="replace"/>
+    <ant target="putmessage"/>
+  </target>
+
 <!-- ***************************************************************** -->
 <!-- **                                                             ** -->
 <!-- **                  TARGET: clean                              ** -->
