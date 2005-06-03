@@ -1,0 +1,1 @@
+1. Look at SOAPConnection class. After change in InvokeBlocking() of Call, may have regression issues.
