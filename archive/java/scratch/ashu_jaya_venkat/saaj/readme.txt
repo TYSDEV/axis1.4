@@ -24,5 +24,9 @@ Envelope
 27th April
 Added some more code for some functions and more test cases for soapbody, header, element, prefixes etc
 
+3rd Jun
+
+Maven module added, changed code to reflect recent chanegs in OM
+
 
 Ashutosh Shahi
