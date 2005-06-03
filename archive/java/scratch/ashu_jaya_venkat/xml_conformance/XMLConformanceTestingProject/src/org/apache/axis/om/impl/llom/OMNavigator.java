@@ -17,7 +17,7 @@
  package org.apache.axis.om.impl.llom;
 
  import org.apache.axis.om.OMElement;
- import org.apache.axis.om.OMNode;
+import org.apache.axis.om.OMNode;
 
  /**
   * Refer to the testClass to find out how to use
@@ -132,7 +132,7 @@
              }
          } else {
              OMNode nextSibling = ((OMNodeImpl) next).nextSibling;
-             OMNode parent = (OMNode)next.getParent();
+             OMNode parent = next.getParent();
              if (nextSibling != null) {
                  next = nextSibling;
              } else if ((parent != null) && parent.isComplete()) {

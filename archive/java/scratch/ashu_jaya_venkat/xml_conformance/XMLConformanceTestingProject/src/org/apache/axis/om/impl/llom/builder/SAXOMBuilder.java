@@ -16,17 +16,14 @@
 
 package org.apache.axis.om.impl.llom.builder;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.axis.om.OMElement;
-import org.apache.axis.om.OMException;
-import org.apache.axis.om.OMFactory;
-import org.apache.axis.om.OMNode;
+import org.apache.axis.om.*;
 import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class SAXOMBuilder extends DefaultHandler {
 	OMElement root = null;
@@ -35,7 +32,7 @@ public class SAXOMBuilder extends DefaultHandler {
 
 	OMElement nextElem = null;
 
-	OMFactory factory = OMFactory.newInstance();
+	OMFactory factory = OMAbstractFactory.getOMFactory();
 
 	List prefixMappings = new ArrayList();
 
@@ -98,11 +95,11 @@ public class SAXOMBuilder extends DefaultHandler {
 		else
 			nextElem.setLocalName(localName);
 		nextElem
-				.setNamespace(nextElem.findInScopeNamespace(namespaceURI, null));
+				.setNamespace(nextElem.findNamespace(namespaceURI, null));
 		int j = atts.getLength();
 		for (int i = 0; i < j; i++)
-			nextElem.insertAttribute(atts.getLocalName(i), atts.getValue(i),
-					nextElem.findInScopeNamespace(atts.getURI(i), null));
+			nextElem.addAttribute(atts.getLocalName(i), atts.getValue(i),
+					nextElem.findNamespace(atts.getURI(i), null));
 		lastNode = nextElem;
 		nextElem = null;
 	}

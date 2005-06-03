@@ -15,28 +15,18 @@
  */
 package org.apache.axis.om.impl.llom.builder;
 
-import javax.xml.stream.XMLStreamConstants;
-import javax.xml.stream.XMLStreamReader;
-
-import org.apache.axis.om.OMConstants;
-import org.apache.axis.om.OMElement;
-import org.apache.axis.om.OMException;
-import org.apache.axis.om.OMFactory;
-import org.apache.axis.om.OMNamespace;
-import org.apache.axis.om.OMNode;
-import org.apache.axis.om.OMXMLParserWrapper;
+import org.apache.axis.om.*;
 import org.apache.axis.om.impl.llom.OMElementImpl;
 import org.apache.axis.om.impl.llom.OMNodeImpl;
+
+import javax.xml.stream.XMLStreamConstants;
+import javax.xml.stream.XMLStreamReader;
 
 /**
  * OM should be able to built from any data source. And the model it builds may be a SOAP specific one
  * or just an XML model. This class will give some common functionality of OM Building from StAX.
  */
 public abstract class StAXBuilder implements OMXMLParserWrapper {
-    /**
-     * Field ombuilderFactory
-     */
-    protected OMFactory ombuilderFactory;
 
     /**
      * Field parser
@@ -52,12 +42,6 @@ public abstract class StAXBuilder implements OMXMLParserWrapper {
      * Field lastNode
      */
     protected OMNode lastNode;
-    
-    // keeps state of occurence of document element
-    /**
-     * Field foundRootElement
-     */
-    protected boolean foundRootElement = false;
 
     // returns the state of completion
 
@@ -88,9 +72,8 @@ public abstract class StAXBuilder implements OMXMLParserWrapper {
      * @param parser
      */
     protected StAXBuilder(OMFactory ombuilderFactory, XMLStreamReader parser) {
-        this.ombuilderFactory = ombuilderFactory;
         this.parser = parser;
-        omfactory = OMFactory.newInstance();
+        omfactory = ombuilderFactory;
     }
 
     /**
@@ -99,8 +82,7 @@ public abstract class StAXBuilder implements OMXMLParserWrapper {
      * @param parser
      */
     protected StAXBuilder(XMLStreamReader parser) {
-        this(OMFactory.newInstance(), parser);
-        omfactory = OMFactory.newInstance();
+        this(OMAbstractFactory.getOMFactory(), parser);
     }
 
     /**
@@ -109,7 +91,7 @@ public abstract class StAXBuilder implements OMXMLParserWrapper {
      * @param ombuilderFactory
      */
     public void setOmbuilderFactory(OMFactory ombuilderFactory) {
-        this.ombuilderFactory = ombuilderFactory;
+        this.omfactory = ombuilderFactory;
     }
 
     /**
@@ -135,13 +117,13 @@ public abstract class StAXBuilder implements OMXMLParserWrapper {
             OMNamespace ns = null;
             String uri = parser.getAttributeNamespace(i);
             if (uri.hashCode() != 0) {
-                ns = node.findInScopeNamespace(uri,
+                ns = node.findNamespace(uri,
                         parser.getAttributePrefix(i));
             }
 
             // todo if the attributes are supposed to namespace qualified all the time
             // todo then this should throw an exception here
-            node.insertAttribute(parser.getAttributeLocalName(i),
+            node.addAttribute(parser.getAttributeLocalName(i),
                     parser.getAttributeValue(i), ns);
         }
     }

@@ -17,20 +17,21 @@ package org.apache.axis.om;
 
 import javax.xml.namespace.QName;
 import org.apache.axis.om.impl.llom.OMDocument;
-//Actually importing a implemenation class in an api abstract class definition is not good
+//Actually importing an implemenation class in an api abstract class definition is not good
 //But as of now OMDocument has no corresponding API interface defined for it, hence
 //couldn't help importing the above line.
+
 
 /**
  * Class OMFactory
  */
-public abstract class OMFactory {
+public interface OMFactory {
     /**
      * @param localName
      * @param ns
      * @return
      */
-    public abstract OMElement createOMElement(String localName, OMNamespace ns);
+    public OMElement createOMElement(String localName, OMNamespace ns);
 
     /**
      * @param localName
@@ -39,7 +40,7 @@ public abstract class OMFactory {
      * @param builder
      * @return
      */
-    public abstract OMElement createOMElement(String localName, OMNamespace ns,
+    public OMElement createOMElement(String localName, OMNamespace ns,
                                               OMElement parent,
                                               OMXMLParserWrapper builder);
 
@@ -54,7 +55,7 @@ public abstract class OMFactory {
      * @param namespacePrefix
      * @return
      */
-    public abstract OMElement createOMElement(String localName,
+    public OMElement createOMElement(String localName,
                                               String namespaceURI,
                                               String namespacePrefix);
 
@@ -68,9 +69,31 @@ public abstract class OMFactory {
      * @return
      * @throws OMException
      */
-    public abstract OMElement createOMElement(QName qname, OMElement parent)
+    public OMElement createOMElement(QName qname, OMElement parent)
             throws OMException;
 
+    /**
+     * @param uri
+     * @param prefix
+     * @return
+     */
+    public OMNamespace createOMNamespace(String uri, String prefix);
+
+    /**
+     * @param parent
+     * @param text
+     * @return
+     */
+    public OMText createText(OMElement parent, String text);
+
+    /**
+     * @param s
+     * @return
+     */
+    public OMText createText(String s);
+
+    public OMAttribute createOMAttribute(String localName, OMNamespace ns, String value);
+    
     /**
      * Method createOMDTD
      * 
@@ -79,20 +102,6 @@ public abstract class OMFactory {
      * @return
      */
     public abstract OMDTD createOMDTD(OMDocument parent, String content);
-
-    /**
-     * @param uri
-     * @param prefix
-     * @return
-     */
-    public abstract OMNamespace createOMNamespace(String uri, String prefix);
-
-    /**
-     * @param parent
-     * @param text
-     * @return
-     */
-    public abstract OMText createText(OMElement parent, String text);
 
     /**
      * @param parent
@@ -109,109 +118,9 @@ public abstract class OMFactory {
      */
     public abstract OMComment createOMComment(OMElement parent, String content);
     
-    /**
-     * @param s
-     * @return
-     */
-    public abstract OMText createText(String s);
-
-    /**
-     * @param envelope
-     * @return
-     */
-    public abstract SOAPBody createSOAPBody(SOAPEnvelope envelope);
-
-    /**
-     * @param envelope
-     * @param builder
-     * @return
-     */
-    public abstract SOAPBody createSOAPBody(SOAPEnvelope envelope,
-                                            OMXMLParserWrapper builder);
-
-    /**
-     * @param ns
-     * @param builder
-     * @return
-     */
-    public abstract SOAPEnvelope createSOAPEnvelope(OMNamespace ns,
-                                                    OMXMLParserWrapper builder);
-
-    /**
-     * @param ns
-     * @return
-     */
-    public abstract SOAPEnvelope createSOAPEnvelope(OMNamespace ns);
-
-    /**
-     * @param envelope
-     * @return
-     */
-    public abstract SOAPHeader createSOAPHeader(SOAPEnvelope envelope);
-
-    /**
-     * @param envelope
-     * @param builder
-     * @return
-     */
-    public abstract SOAPHeader createSOAPHeader(SOAPEnvelope envelope,
-                                                OMXMLParserWrapper builder);
-
-    /**
-     * @param localName
-     * @param ns
-     * @return
-     */
-    public abstract SOAPHeaderBlock createSOAPHeaderBlock(String localName,
-                                                          OMNamespace ns);
-
-    /**
-     * @param localName
-     * @param ns
-     * @param parent
-     * @param builder
-     * @return
-     */
-    public abstract SOAPHeaderBlock createSOAPHeaderBlock(String localName,
-                                                          OMNamespace ns, OMElement parent, OMXMLParserWrapper builder);
-
-    /**
-     * @param parent
-     * @param e
-     * @return
-     */
-    public abstract SOAPFault createSOAPFault(SOAPBody parent, Exception e);
-
-    /**
-     * @param ns
-     * @param parent
-     * @param builder
-     * @return
-     */
-    public abstract SOAPFault createSOAPFault(OMNamespace ns, SOAPBody parent,
-                                              OMXMLParserWrapper builder);
 
     // make the constructor protected
 
-    /**
-     * Constructor OMFactory
-     */
-    protected OMFactory() {
-    }
 
-    /**
-     * Method newInstance
-     *
-     * @return
-     */
-    public static OMFactory newInstance() {
-        return FactoryFinder.findFactory(null);
-    }
-
-    /**
-     * Method getDefaultEnvelope
-     *
-     * @return
-     */
-    public abstract SOAPEnvelope getDefaultEnvelope();
+    
 }

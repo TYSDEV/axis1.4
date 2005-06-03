@@ -17,7 +17,8 @@ package org.apache.axis.om.impl.llom.factory;
 
 import org.apache.axis.om.OMFactory;
 import org.apache.axis.om.impl.llom.builder.StAXOMBuilder;
-import org.apache.axis.om.impl.llom.builder.StAXSOAPModelBuilder;
+import org.apache.axis.soap.SOAPFactory;
+import org.apache.axis.soap.impl.llom.builder.StAXSOAPModelBuilder;
 
 import javax.xml.stream.XMLStreamReader;
 
@@ -48,13 +49,13 @@ public class OMXMLBuilderFactory {
     /**
      * Method createStAXSOAPModelBuilder
      *
-     * @param ombuilderFactory
+     * @param soapFactory
      * @param parser
      * @return
      */
     public static StAXSOAPModelBuilder createStAXSOAPModelBuilder(
-            OMFactory ombuilderFactory, XMLStreamReader parser) {
-        return new StAXSOAPModelBuilder(ombuilderFactory, parser);
+            SOAPFactory soapFactory, XMLStreamReader parser) {
+        return new StAXSOAPModelBuilder(parser);
     }
 
     /**

@@ -15,40 +15,22 @@
  */
 package org.apache.axis.om.impl.llom.factory;
 
-import org.apache.axis.om.OMComment;
-import org.apache.axis.om.OMConstants;
-import org.apache.axis.om.OMElement;
-import org.apache.axis.om.OMException;
-import org.apache.axis.om.OMFactory;
-import org.apache.axis.om.OMNamespace;
-import org.apache.axis.om.OMPI;
-import org.apache.axis.om.OMDTD;
-import org.apache.axis.om.OMText;
-import org.apache.axis.om.OMXMLParserWrapper;
-import org.apache.axis.om.SOAPBody;
-import org.apache.axis.om.SOAPEnvelope;
-import org.apache.axis.om.SOAPFault;
-import org.apache.axis.om.SOAPHeader;
-import org.apache.axis.om.SOAPHeaderBlock;
-import org.apache.axis.om.impl.llom.OMDocument;
-import org.apache.axis.om.impl.llom.OMCommentImpl;
+import org.apache.axis.om.*;
 import org.apache.axis.om.impl.llom.OMElementImpl;
 import org.apache.axis.om.impl.llom.OMNamespaceImpl;
+import org.apache.axis.om.impl.llom.OMTextImpl;
+import org.apache.axis.om.impl.llom.OMAttributeImpl;
 import org.apache.axis.om.impl.llom.OMPIImpl;
 import org.apache.axis.om.impl.llom.OMDTDImpl;
-import org.apache.axis.om.impl.llom.OMTextImpl;
-import org.apache.axis.om.impl.llom.SOAPBodyImpl;
-import org.apache.axis.om.impl.llom.SOAPEnvelopeImpl;
-import org.apache.axis.om.impl.llom.SOAPFaultImpl;
-import org.apache.axis.om.impl.llom.SOAPHeaderBlockImpl;
-import org.apache.axis.om.impl.llom.SOAPHeaderImpl;
+import org.apache.axis.om.impl.llom.OMCommentImpl;
+import org.apache.axis.om.impl.llom.OMDocument;
 
 import javax.xml.namespace.QName;
 
 /**
  * Class OMLinkedListImplFactory
  */
-public class OMLinkedListImplFactory extends OMFactory {
+public class OMLinkedListImplFactory implements OMFactory {
     /**
      * Field MAX_TO_POOL
      */
@@ -110,6 +92,45 @@ public class OMLinkedListImplFactory extends OMFactory {
             throws OMException {
         return new OMElementImpl(qname, parent);
     }
+
+    /**
+     * Method createOMNamespace
+     *
+     * @param uri
+     * @param prefix
+     * @return
+     */
+    public OMNamespace createOMNamespace(String uri, String prefix) {
+        return new OMNamespaceImpl(uri, prefix);
+    }
+
+    /**
+     * Method createText
+     *
+     * @param parent
+     * @param text
+     * @return
+     */
+    public OMText createText(OMElement parent, String text) {
+        OMTextImpl textNode = new OMTextImpl(parent, text);
+        return textNode;
+    }
+
+    /**
+     * Method createText
+     *
+     * @param s
+     * @return
+     */
+    public OMText createText(String s) {
+        OMTextImpl textNode = new OMTextImpl(s);
+    ;
+        return textNode;
+    }
+
+    public OMAttribute createOMAttribute(String localName, OMNamespace ns, String value) {
+          return new OMAttributeImpl(localName, ns, value);
+      }
     
     /**
      * Method createOMDTD
@@ -140,29 +161,6 @@ public class OMLinkedListImplFactory extends OMFactory {
     	OMPIImpl omPI = new OMPIImpl(parent, piTarget, piData);
     	return omPI;
     }
-
-    /**
-     * Method createOMNamespace
-     *
-     * @param uri
-     * @param prefix
-     * @return
-     */
-    public OMNamespace createOMNamespace(String uri, String prefix) {
-        return new OMNamespaceImpl(uri, prefix);
-    }
-
-    /**
-     * Method createText
-     *
-     * @param parent
-     * @param text
-     * @return
-     */
-    public OMText createText(OMElement parent, String text) {
-        OMTextImpl textNode = new OMTextImpl(parent, text);
-        return textNode;
-    }
     
     /**
      * Method createOMComment
@@ -175,153 +173,5 @@ public class OMLinkedListImplFactory extends OMFactory {
     	OMCommentImpl commentNode = new OMCommentImpl(parent,content);
     	return commentNode;
     }
-
-    /**
-     * Method createText
-     *
-     * @param s
-     * @return
-     */
-    public OMText createText(String s) {
-        OMTextImpl textNode = new OMTextImpl(s);
-    ;
-        return textNode;
-    }
-
-    /**
-     * Method createSOAPBody
-     *
-     * @param envelope
-     * @return
-     */
-    public SOAPBody createSOAPBody(SOAPEnvelope envelope) {
-        SOAPBody soapBody = new SOAPBodyImpl(envelope);
-        return soapBody;
-    }
-
-    /**
-     * Method createSOAPBody
-     *
-     * @param envelope
-     * @param builder
-     * @return
-     */
-    public SOAPBody createSOAPBody(SOAPEnvelope envelope,
-                                   OMXMLParserWrapper builder) {
-        return new SOAPBodyImpl(envelope, builder);
-    }
-
-    /**
-     * Method createSOAPEnvelope
-     *
-     * @param ns
-     * @param builder
-     * @return
-     */
-    public SOAPEnvelope createSOAPEnvelope(OMNamespace ns,
-                                           OMXMLParserWrapper builder) {
-        return new SOAPEnvelopeImpl(ns, builder);
-    }
-
-    /**
-     * Method createSOAPEnvelope
-     *
-     * @param ns
-     * @return
-     */
-    public SOAPEnvelope createSOAPEnvelope(OMNamespace ns) {
-        return new SOAPEnvelopeImpl(ns);
-    }
-
-    /**
-     * Method createSOAPHeader
-     *
-     * @param envelope
-     * @return
-     */
-    public SOAPHeader createSOAPHeader(SOAPEnvelope envelope) {
-        return new SOAPHeaderImpl(envelope);
-    }
-
-    /**
-     * Method createSOAPHeader
-     *
-     * @param envelope
-     * @param builder
-     * @return
-     */
-    public SOAPHeader createSOAPHeader(SOAPEnvelope envelope,
-                                       OMXMLParserWrapper builder) {
-        return new SOAPHeaderImpl(envelope, builder);
-    }
-
-    /**
-     * Method createSOAPHeaderBlock
-     *
-     * @param localName
-     * @param ns
-     * @return
-     */
-    public SOAPHeaderBlock createSOAPHeaderBlock(String localName,
-                                                 OMNamespace ns) {
-        return new SOAPHeaderBlockImpl(localName, ns);
-    }
-
-    /**
-     * Method createSOAPHeaderBlock
-     *
-     * @param localName
-     * @param ns
-     * @param parent
-     * @param builder
-     * @return
-     */
-    public SOAPHeaderBlock createSOAPHeaderBlock(String localName,
-                                                 OMNamespace ns, OMElement parent, OMXMLParserWrapper builder) {
-        return new SOAPHeaderBlockImpl(localName, ns, parent, builder);
-    }
-
-    /**
-     * Method createSOAPFault
-     *
-     * @param parent
-     * @param e
-     * @return
-     */
-    public SOAPFault createSOAPFault(SOAPBody parent, Exception e) {
-        return new SOAPFaultImpl(parent, e);
-    }
-
-    /**
-     * Method createSOAPFault
-     *
-     * @param ns
-     * @param parent
-     * @param builder
-     * @return
-     */
-    public SOAPFault createSOAPFault(OMNamespace ns, SOAPBody parent,
-                                     OMXMLParserWrapper builder) {
-        return new SOAPFaultImpl(ns, parent, builder);
-    }
-
-    /**
-     * Method getDefaultEnvelope
-     *
-     * @return
-     */
-    public SOAPEnvelope getDefaultEnvelope() {
-        // Create an envelope
-        OMNamespace ns =
-        new OMNamespaceImpl(OMConstants.SOAP_ENVELOPE_NAMESPACE_URI,
-                OMConstants.SOAPENVELOPE_NAMESPACE_PREFIX);
-        SOAPEnvelopeImpl env = new SOAPEnvelopeImpl(ns);
-        SOAPBodyImpl bodyImpl = new SOAPBodyImpl(env);
-        env.addChild(bodyImpl);
-
-        SOAPHeaderImpl headerImpl = new SOAPHeaderImpl(env);
-        headerImpl.setComplete(true);
-        env.addChild(headerImpl);
-        return env;
-    }
+    
 }

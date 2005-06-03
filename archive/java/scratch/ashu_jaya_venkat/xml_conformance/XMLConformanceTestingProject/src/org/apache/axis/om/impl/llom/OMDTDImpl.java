@@ -11,6 +11,7 @@ import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.axis.om.OMDTD;
 import org.apache.axis.om.OMElement;
+import org.apache.axis.om.OMException;
 import org.apache.axis.om.OMNode;
 
 /**
@@ -21,20 +22,25 @@ import org.apache.axis.om.OMNode;
  */
 public class OMDTDImpl extends OMNodeImpl implements OMDTD {
 	
+	String value;
+	
 	public OMDTDImpl(OMElement parentNode, String content) {
 		super(parentNode);
-		this.setValue(content);
+		this.value = content;
 	}
 		
 	/* (non-Javadoc)
 	 * @see org.apache.axis.om.OMNode#serialize(javax.xml.stream.XMLStreamWriter, boolean)
 	 */
-	public void serialize(XMLStreamWriter writer, boolean cache)
+	private void serialize(XMLStreamWriter writer, boolean cache)
 			throws XMLStreamException {		
 		writer.writeDTD(this.value);
 		OMNode nextSibling = this.getNextSibling();
         if (nextSibling != null) {
-            nextSibling.serialize(writer, cache);
+        	if(!cache)
+        		nextSibling.serialize(writer);
+        	else
+        		nextSibling.serializeWithCache(writer);
         }
 	}
 
@@ -44,5 +50,17 @@ public class OMDTDImpl extends OMNodeImpl implements OMDTD {
 	public void serialize(XMLStreamWriter writer) throws XMLStreamException {
 		serialize(writer,false);
 	}
+	
+	public void serializeWithCache(XMLStreamWriter writer) throws XMLStreamException {
+		serialize(writer,true);
+	}
+	
+	public void discard() throws OMException {
+        if (done) {
+            this.detach();
+        } else {
+            builder.discard(this.parent);
+        }
+    }
 
 }

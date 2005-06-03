@@ -21,6 +21,8 @@ import javax.xml.stream.XMLStreamException;
  * Window - Preferences - Java - Code Style - Code Templates
  */
 public class OMCommentImpl extends OMNodeImpl implements OMComment {
+	
+	protected String value;
 
 	//Object parent;		
 	
@@ -34,7 +36,7 @@ public class OMCommentImpl extends OMNodeImpl implements OMComment {
 		} else {
 			throw new OMException("Comment should have a non-null Document or Element as its parent");
 		}
-		setValue(contentText);
+		this.value = contentText;
 	}
 
 	/**
@@ -59,18 +61,33 @@ public class OMCommentImpl extends OMNodeImpl implements OMComment {
     }
 		
 	public String getContent() {
-		return getValue();
+		return value;
 	}
 	
 	public void serialize (XMLStreamWriter writer) throws XMLStreamException {
 		serialize(writer, false);
 	}
 	
-	public void serialize (XMLStreamWriter writer, boolean cache) throws XMLStreamException {
+	public void serializeWithCache (XMLStreamWriter writer) throws XMLStreamException {
+		serialize(writer, true);
+	}
+	
+	private void serialize (XMLStreamWriter writer, boolean cache) throws XMLStreamException {
 		writer.writeComment(this.value);
 		OMNode nextSibling = this.getNextSibling();
         if (nextSibling != null) {
-            nextSibling.serialize(writer, cache);
+        	if(!cache)
+        		nextSibling.serialize(writer);
+        	else
+        		nextSibling.serializeWithCache(writer);
         }
 	}
+	
+	public void discard() throws OMException {
+        if (done) {
+            this.detach();
+        } else {
+            builder.discard(this.parent);
+        }
+    }
 }

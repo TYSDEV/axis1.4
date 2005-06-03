@@ -16,7 +16,13 @@
 package org.apache.axis.om.impl.llom;
 
 import org.apache.axis.om.OMElement;
+import org.apache.axis.om.OMNode;
 import org.apache.axis.om.OMXMLParserWrapper;
+
+import java.util.Iterator;
+import javax.xml.stream.XMLStreamWriter;
+import javax.xml.stream.XMLStreamException;
+
 
 /**
  * Class OMDocument
@@ -58,7 +64,7 @@ public class OMDocument extends OMElementImpl{
      * @return
      */
     public OMElement getRootElement() {
-        while (rootElement == null) {
+        if (rootElement == null) {
             parserWrapper.next();
         }
         return rootElement;
@@ -71,5 +77,30 @@ public class OMDocument extends OMElementImpl{
      */
     public void setRootElement(OMElement rootElement) {
         this.rootElement = rootElement;
+    }
+    
+    //Though for historic reasons OMDocument has been made to extend OMElement
+    //during serialization of OMDocument we wouldn't expect it to get serialized
+    //like any OMElement. Hence am overriding this method.
+    //Essentially, serializing a OMDocument means writing out all its children
+    //and only the children i.e. OMDocument start and end parts are abstract and
+    //should not figure in the written out piece of XML
+    private void serialize(XMLStreamWriter writer, boolean cache) 
+    	throws XMLStreamException {
+    	OMNode firstChild;
+    	firstChild = this.getFirstChild();
+    	
+		if(!cache) 
+			firstChild.serialize(writer);
+		else
+			firstChild.serializeWithCache(writer);
+    }
+    
+    public void serialize(XMLStreamWriter writer) throws XMLStreamException {
+    	serialize(writer, false);
+    }
+    
+    public void serializeWithCache(XMLStreamWriter writer) throws XMLStreamException {
+    	serialize(writer, true);
     }
 }

@@ -15,18 +15,9 @@
  */
 package org.apache.axis.om.impl.llom.builder;
 
-import org.apache.axis.om.OMElement;
-import org.apache.axis.om.OMException;
-import org.apache.axis.om.OMFactory;
-import org.apache.axis.om.OMNamespace;
-import org.apache.axis.om.OMNode;
-import org.apache.axis.om.OMComment;
-import org.apache.axis.om.OMPI;
-import org.apache.axis.om.OMDTD;
-//import org.apache.axis.om.OMText;
-import org.apache.axis.om.OMXMLParserWrapper;
-import org.apache.axis.om.SOAPEnvelope;
+import org.apache.axis.om.*;
 import org.apache.axis.om.impl.llom.OMDocument;
+import org.apache.axis.soap.SOAPEnvelope;
 
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamReader;
@@ -45,6 +36,12 @@ public class StAXOMBuilder extends StAXBuilder implements OMXMLParserWrapper {
      * Field omFactory
      */
     protected OMFactory omFactory;
+    
+    //keeps state of occurence of document element
+    /**
+     * Field foundRootElement
+     */
+    protected boolean foundRootElement = false;
 
     /**
      * Constructor StAXOMBuilder
@@ -55,7 +52,7 @@ public class StAXOMBuilder extends StAXBuilder implements OMXMLParserWrapper {
     public StAXOMBuilder(OMFactory ombuilderFactory, XMLStreamReader parser) {
         super(ombuilderFactory, parser);
         document = new OMDocument(this);
-        omfactory = OMFactory.newInstance();
+        omfactory = OMAbstractFactory.getOMFactory();
     }
 
     /**
@@ -66,7 +63,7 @@ public class StAXOMBuilder extends StAXBuilder implements OMXMLParserWrapper {
     public StAXOMBuilder(XMLStreamReader parser) {
         super(parser);
         document = new OMDocument(this);
-        omfactory = OMFactory.newInstance();
+        omfactory = OMAbstractFactory.getOMFactory();
     }
 
     /**
@@ -193,8 +190,7 @@ public class StAXOMBuilder extends StAXBuilder implements OMXMLParserWrapper {
     	}
     	return dtd;
     }
-     /**/
-       
+
     /**
      * Method getOMEnvelope
      *
@@ -240,30 +236,6 @@ public class StAXOMBuilder extends StAXBuilder implements OMXMLParserWrapper {
                         e.setComplete(true);
                     }
                     break;
-                case XMLStreamConstants.DTD:
-                	/*
-                    System.out.println("DTD element encountered. Currently no support for DTD");
-                	System.out.println("DTD text is: "+parser.getText());
-                	next();
-                	*/
-                	lastNode = createOMDTD();
-                	break;
-                case XMLStreamConstants.PROCESSING_INSTRUCTION:
-                	/*
-                    System.out.println("Processing Instruction element encountered. Currently no support for Processing Instruction");
-                	System.out.println("PI text is: "+parser.getText());
-                	next();
-                	*/
-                	lastNode = createOMPI();
-                	break;               
-                case XMLStreamConstants.COMMENT:
-                	/*
-                	System.out.println("Comment element encountered. Currently no support for Comment");
-            		System.out.println("Comment text is: "+parser.getText());
-            		next();
-            		*/
-            		lastNode = createOMComment();
-                	break;                	
                 case XMLStreamConstants.END_DOCUMENT:
                     done = true;
                 	document.setComplete(true);
@@ -271,6 +243,15 @@ public class StAXOMBuilder extends StAXBuilder implements OMXMLParserWrapper {
                 case XMLStreamConstants.SPACE:
                     next();
                     break;
+                case XMLStreamConstants.DTD:
+                	lastNode = createOMDTD();
+                	break;
+                case XMLStreamConstants.PROCESSING_INSTRUCTION:
+                	lastNode = createOMPI();
+                	break;               
+                case XMLStreamConstants.COMMENT:
+                	lastNode = createOMComment();
+                	break;
                 default :
                     throw new OMException();
             }
@@ -315,7 +296,7 @@ public class StAXOMBuilder extends StAXBuilder implements OMXMLParserWrapper {
 
         // set the own namespace
         OMNamespace namespace =
-                node.findInScopeNamespace(parser.getNamespaceURI(),
+                node.findNamespace(parser.getNamespaceURI(),
                 parser.getPrefix());
         node.setNamespace(namespace);
     }
