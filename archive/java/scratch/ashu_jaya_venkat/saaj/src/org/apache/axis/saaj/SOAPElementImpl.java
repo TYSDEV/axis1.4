@@ -10,6 +10,7 @@ import javax.xml.soap.Name;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPException;
 
+import org.apache.axis.om.OMText;
 import org.w3c.dom.Attr;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.NodeList;
@@ -320,8 +321,15 @@ public class SOAPElementImpl extends NodeImpl implements SOAPElement {
 		while(childIter.hasNext()) {
 			Object o = childIter.next();
 			if (o instanceof org.apache.axis.om.OMNode) {
+				if(o instanceof org.apache.axis.om.OMText){
+					javax.xml.soap.Text childText = new TextImpl(((org.apache.axis.om.OMText)o).getText());
+					arrayList.add(childText);
+				}else{
 				SOAPElement childElement = new SOAPElementImpl((org.apache.axis.om.OMElement)o);
 				arrayList.add(childElement);
+				}
+				//javax.xml.soap.Node childElement = new NodeImpl((org.apache.axis.om.OMNode)o);
+				
 			}
 		}
 		return arrayList.iterator();

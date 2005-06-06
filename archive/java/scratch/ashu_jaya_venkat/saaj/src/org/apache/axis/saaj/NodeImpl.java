@@ -104,7 +104,7 @@ public class NodeImpl implements Node {
 		if(omNode.getType() == OMNode.TEXT_NODE)
 			return ((OMText)omNode).getText();
 		else if(omNode.getType() == OMNode.ELEMENT_NODE)
-			new NodeImpl(((OMElement)omNode).getFirstChild()).getValue();
+			return new NodeImpl(((OMElement)omNode).getFirstChild()).getValue();
 		return null;
 	}
 
