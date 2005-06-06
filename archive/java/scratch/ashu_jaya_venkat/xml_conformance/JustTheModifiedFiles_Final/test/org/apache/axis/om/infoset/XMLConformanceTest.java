@@ -55,7 +55,7 @@ public class XMLConformanceTest extends XMLTestCase {
 	public void testXMLConformance() throws Exception{
 		//The 'testSuiteDirectory' value can also be a specific file location
 		//value, needn't necessarily be a directory
-		File testSuiteDirectory = new File("../../../../../../test-resources/XMLSuite/");
+		File testSuiteDirectory = new File("test-resources/XMLSuite/xmlconf");
 		ProcessDir(testSuiteDirectory);
 		System.out.println("File count is " + fileCount);
 		System.out.println("Parsed count is " + parsedCount +
