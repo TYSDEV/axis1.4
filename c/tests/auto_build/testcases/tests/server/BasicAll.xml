@@ -1,8 +1,0 @@
-<service>
-    <name>BasicAll</name>
-    <description>BasicAllTest</description>
-    <serviceLang>cpp</serviceLang>
-    <serviceCode>AllTestSoap.cpp</serviceCode>
-    <wsdl>BasicAllTest.wsdl</wsdl>
-	<servicename></servicename>
-</service>

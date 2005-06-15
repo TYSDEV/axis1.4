@@ -1,8 +1,0 @@
-<service>
-    <name>RecurseTypes</name>
-    <description>RecurseTypes Service</description>
-    <serviceLang>cpp</serviceLang>
-    <serviceCode>RecurseTypesWS.cpp</serviceCode>
-    <wsdl>RecurseTypes.wsdl</wsdl>
-	<servicename></servicename>
-</service>
