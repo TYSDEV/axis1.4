@@ -7,11 +7,12 @@
 package javax.xml.rpc;
 
 /**
- * @author sunja07
- * 
  * Interface LogicalMessage
  * The LogicalMessage interface represents a protocol agnostic XML message 
  * and contains methods that provide access to the payload of the message.
+ * 
+ * @version 1.0
+ * @author sunja07
  */
 public interface LogicalMessage {
 	

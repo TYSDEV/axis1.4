@@ -7,10 +7,12 @@
 package javax.xml.rpc;
 
 /**
+ * Interface Call
+ * The javax.xml.rpc.Call interface provides support for the dynamic invocation of a service endpoint. The javax.xml.rpc.Service interface acts as a factory for the creation of Call instances.
+ * Once a Call instance is created, various setter and getter methods may be used to configure this Call instance.
+ * 
+ * @version 1.0
  * @author sunja07
- *
- * TODO To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Style - Code Templates
  */
 public interface Call extends BindingProvider{
 	

@@ -7,10 +7,11 @@
 package javax.xml.rpc;
 
 /**
+ * Class NamespaceConstants
+ * Constants used in JAX-RPC for namespace prefixes and URIs
+ * 
+ * @version 1.0
  * @author sunja07
- *
- * TODO To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Style - Code Templates
  */
 public class NamespaceConstants {
 

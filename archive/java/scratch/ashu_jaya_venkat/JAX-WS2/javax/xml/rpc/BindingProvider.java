@@ -7,10 +7,11 @@
 package javax.xml.rpc;
 
 /**
+ * Interface BindingProvider
+ * The javax.xml.rpc.BindingProvider interface provides access to the protocol binding and associated JAXRPCContext objects for request and response message processing.
+ * 
+ * @version 1.0
  * @author sunja07
- *
- * TODO To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Style - Code Templates
  */
 public interface BindingProvider {
 	

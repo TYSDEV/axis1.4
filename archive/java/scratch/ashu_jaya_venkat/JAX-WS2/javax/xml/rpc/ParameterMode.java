@@ -7,10 +7,12 @@
 package javax.xml.rpc;
 
 /**
+ * Class ParameterMode
+ * The javax.xml.rpc.ParameterMode is a type-safe enumeration for parameter mode. This class is used in the CallAPI to specify parameter passing modes.
+ * 
+ * @version 1.0
  * @author sunja07
- *
- * TODO To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Style - Code Templates
+ * @see Call
  */
 public class ParameterMode {
 

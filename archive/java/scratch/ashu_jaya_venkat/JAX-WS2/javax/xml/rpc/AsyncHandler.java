@@ -7,15 +7,20 @@
 package javax.xml.rpc;
 
 /**
+ * Interface AsyncHandler<T>
+ * The javax.xml.rpc.AsyncHandler interface is implemented by clients that wish to receive callback notification of the completion of service endpoint operations invoked asynchronously.
+ * 
+ * @version 1.0
  * @author sunja07
- *
- * TODO To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Style - Code Templates
  */
-public class AsyncHandler {
+public interface AsyncHandler<T> {
 
-	void handleResponse(Response<T> res) {
-		
-	}
-	
+	/**
+	 * Method handleResponse
+	 * Called when the response to an asynchronous operation is available.
+	 * 
+	 * @param res - The response to the operation invocation. 
+	 */
+	void handleResponse(Response<T> res) ;
+
 }

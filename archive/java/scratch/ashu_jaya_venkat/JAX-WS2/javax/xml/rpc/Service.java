@@ -11,26 +11,21 @@ import javax.xml.rpc.security.SecurityConfiguration;
 import javax.xml.rpc.handler.HandlerRegistry;
 
 /**
- * @author sunja07
- *
  * Interface Service
  * Service acts as a factory of the following:
  * 1. Instance of javax.xml.rpc.Dispatch for dynamic message-oriented invocation of a remote operation.
  * 2. Instance of javax.xml.rpc.Call for the dynamic invocation of a remote operation on the target service endpoint.
  * 3. Instance of a generated stub class.
  * 4. Dynamic proxy for the target service endpoint.
- */
-/**
- * @author sunja07
  *
- * TODO To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Style - Code Templates
+ * @version 2.0
+ * @author sunja07
  */
 public interface Service {
 	
 	/** 
 	 * I've tried to create a nested class in here. Absolutely
-	 * needs a revisit. Don't rely on this as it is now.
+	 * needs a revisit. Don't rely on this as it exists now.
 	 */
 	public static enum Mode extends java.lang.Enum<Service.Mode> {
 		
@@ -47,7 +42,9 @@ public interface Service {
 		 * </code>
 		 * @return
 		 */
-		public static final Mode[] values();
+		public static final Mode[] values() {
+			return null;
+		}
 		
 		/**
 		 * Method valueOf
@@ -56,7 +53,9 @@ public interface Service {
 		 * @return the enum constant with the specified name
 		 * @throws java.lang.IllegalArgumentException if this enum type has no constant with the specified name
 		 */
-		public static Service.Mode valueOf(java.lang.String name) throws java.lang.IllegalArgumentException;
+		public static Service.Mode valueOf(java.lang.String name) throws java.lang.IllegalArgumentException {
+			return null;
+		}
 		
 	}
 	
@@ -103,20 +102,40 @@ public interface Service {
             java.lang.String endpointAddress)
             throws ServiceException;
 	
-	/* This involves generics, needs a revisit
+	// This involves generics, needs a revisit
+	/**
+	 * Method createDispatch
+	 * Creates a Dispatch instance for use with objects of the users choosing.
+	 * 
+	 * @param - Qualified name for the target service endpoint
+	 * @param - The class of object used to messages or message payloads. Implementations are required to support javax.xml.transform.Source and javax.xml.soap.SOAPMessage.
+	 * @param - Controls whether the created dispatch instance is message or payload oriented, i.e. whether the user will work with complete protocol messages or message payloads. E.g. when using the SOAP protocol, this parameter controls whether the user will work with SOAP messages or the contents of a SOAP body. Mode must be MESSAGE when type is SOAPMessage.
+	 * @return Dispatch instance 
+	 * @throws ServiceException - If any error in the creation of the Dispatch object
+	 * @see javax.xml.transform.Source, javax.xml.soap.SOAPMessage
+	 */
 	<T> Dispatch<T> createDispatch(javax.xml.namespace.QName portName,
             java.lang.Class<T> type,
             Service.Mode mode)
         throws ServiceException;
-      */
-	
-	/* This involves generics, needs a revisit
+      
+	// This involves generics, needs a revisit
+	/**
+	 * Method createDispatch
+	 * Creates a Dispatch instance for use with JAXB generated objects.
+	 * 
+	 * @param portName - Qualified name for the target service endpoint
+	 * @param context - The JAXB context used to marshall and unmarshall messages or message payloads.
+	 * @param mode - Controls whether the created dispatch instance is message or payload oriented, i.e. whether the user will work with complete protocol messages or message payloads. E.g. when using the SOAP protocol, this parameter controls whether the user will work with SOAP messages or the contents of a SOAP body.
+	 * @return Dispatch instance 
+	 * @throws ServiceException - If any error in the creation of the Dispatch object
+	 * @see JAXBContext
+	 */
 	Dispatch<java.lang.Object> createDispatch(javax.xml.namespace.QName portName,
             javax.xml.bind.JAXBContext context,
             Service.Mode mode)
             throws ServiceException;
-     */
-	
+     
 	/**
 	 * Method getCalls
 	 * Gets an array of preconfigured Call objects for invoking operations on the specified port. There is one Call object per operation that can be invoked on the specified port. Each Call object is pre-configured and does not need to be configured using the setter methods on Call interface.

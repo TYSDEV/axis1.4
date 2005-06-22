@@ -7,10 +7,12 @@
 package javax.xml.rpc;
 
 /**
+ * Class ServiceFactory
+ * The javax.xml.rpc.ServiceFactory is an abstract class that provides a factory for the creation of instances of the type javax.xml.rpc.Service. This abstract class follows the abstract static factory design pattern. This enables a J2SE based client to create a Service instance in a portable manner without using the constructor of the Service implementation class.
+ * The ServiceFactory implementation class is set using the system property SERVICEFACTORY_PROPERTY.
+ * 
+ * @version 1.1
  * @author sunja07
- *
- * TODO To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Style - Code Templates
  */
 public abstract class ServiceFactory {
 

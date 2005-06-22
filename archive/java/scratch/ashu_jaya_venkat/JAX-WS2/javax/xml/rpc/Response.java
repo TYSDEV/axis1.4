@@ -9,13 +9,18 @@ package javax.xml.rpc;
 import java.util.concurrent.Future<T>;
 
 /**
+ * Interface Response<T>
+ * 
  * @author sunja07
- *
- * TODO To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Style - Code Templates
  */
 //TODO: Needs a revisit, b'coz generics are involved.
-public interface Response extends java.util.concurrent.Future<T> {
+public interface Response<T> extends java.util.concurrent.Future<T> {
 	
+	/**
+	 * Method getContext
+	 * Gets the contained response context.
+	 * 
+	 * @return The contained response context. May be null if a response is not yet available.
+	 */
 	JAXRPCContext getContext();
 }
