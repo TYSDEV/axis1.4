@@ -12,6 +12,23 @@ package javax.xml.rpc.holders;
  * TODO To change the template for this generated type comment go to
  * Window - Preferences - Java - Code Style - Code Templates
  */
-public class FloatWrapperHolder {
+public final class FloatWrapperHolder implements Holder {
+	
+	/**
+	 * Comment for <code>value</code>
+	 */
+	public java.lang.Float value;
+	
+	/**
+	 * Empty Constructor
+	 */
+	public FloatWrapperHolder(){}
+	
+	/**
+	 * Constructor
+	 * Sets the value of <code>value</code> property to the given input parameter value
+	 * @param myfloat
+	 */
+	public FloatWrapperHolder(java.lang.Float myfloat){}
 
 }

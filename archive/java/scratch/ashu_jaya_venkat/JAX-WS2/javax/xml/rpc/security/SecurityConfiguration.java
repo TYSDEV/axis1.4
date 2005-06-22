@@ -49,9 +49,9 @@ public interface SecurityConfiguration {
 		/**
 		 * Method valueOf
 		 * Returns the enum constant of this type with the specified name. The string must match exactly an identifier used to declare an enum constant in this type. (Extraneous whitespace characters are not permitted.)
-		 * @param name the name of the enum constant to be returned.
+		 * @param name - the name of the enum constant to be returned.
 		 * @return the enum constant with the specified name 
-		 * @throws java.lang.IllegalArgumentException if this enum type has no constant with the specified name
+		 * @throws java.lang.IllegalArgumentException - if this enum type has no constant with the specified name
 		 */
 		public static SecurityConfiguration.SecurityFeature valueOf(java.lang.String name) throws java.lang.IllegalArgumentException {
 			
@@ -60,61 +60,81 @@ public interface SecurityConfiguration {
 	
 	/**
 	 * Method setOutboundConfigId
-	 * @param configId
+	 * Sets the configuration for outbound messages. 
+	 * 
+	 * @param configId - Logical identifier of the configuration entry that describes how to fulfil the requested security features.
 	 */
 	void setOutboundConfigId(java.lang.String configId);
 	
 	/**
 	 * Method getOutboundConfigId
-	 * @return
+	 * Gets the configuration for outbound messages.
+	 * 
+	 * @return Logical identifier of the configuration entry that describes how to fulfil the requested security features.
 	 */
 	java.lang.String getOutboundConfigId();
 	
 	/**
 	 * Method setInboundConfigId
-	 * @param configId
+	 * Sets the configuration for inbound messages.
+	 * 
+	 * @param configId - Logical identifier of the configuration entry that describes how to fulfil the requested security features.
 	 */
 	void setInboundConfigId(java.lang.String configId);
 	
 	/**
 	 * Method getInboundConfigId
-	 * @return
+	 * Gets the configuration for inbound messages.
+	 * 
+	 * @return Logical identifier of the configuration entry that describes how to fulfil the requested security features.
 	 */
 	java.lang.String getInboundConfigId();
 	
 	/**
 	 * Method setInboundFeatures
+	 * Sets the requested security features for inbound messages.
 	 * 
+	 * @param features - The requested security features.
 	 */
 	void setInboundFeatures(SecurityConfiguration.SecurityFeature... features);
-	
+		
 	/**
 	 * Method getInbound
-	 * @return
+	 * Gets the requested security features for inbound messages.
+	 * 
+	 * @return The requested security features.
 	 */
 	SecurityConfiguration.SecurityFeature[] getInbound();
 	
 	/**
 	 * Method setOutboundFeatures
+	 * Sets the requested security features for outbound messages.
 	 * 
+	 * @param features - The requested security features.
 	 */
 	void setOutboundFeatures(SecurityConfiguration.SecurityFeature... features);
 	
 	/**
 	 * Method getOutbound
-	 * @return
+	 * Gets the requested security features for outbound messages.
+	 * 
+	 * @return The requested security features.
 	 */
 	SecurityConfiguration.SecurityFeature[] getOutbound();
 	
 	/**
 	 * Method setCallbackHandler
-	 * @param callbackHandler
+	 * Sets the JAAS callback handler that may be used to obtain security information from the application.
+	 * 
+	 * @param callbackHandler - The CallbackHandlerinstance to use to retrieve security information from the application.
 	 */
 	void setCallbackHandler(javax.security.auth.callback.CallbackHandler callbackHandler);
 	
 	/**
-	 * Method getCallbackHandler 
-	 * @return
+	 * Method getCallbackHandler
+	 * Gets the JAAS callback handler that may be used to obtain security information from the application.
+	 * 
+	 * @return The CallbackHandlerinstance to use to retrieve security information from the application.
 	 */
 	javax.security.auth.callback.CallbackHandler getCallbackHandler();
 

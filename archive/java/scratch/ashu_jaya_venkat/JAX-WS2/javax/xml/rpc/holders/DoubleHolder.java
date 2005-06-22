@@ -14,10 +14,21 @@ package javax.xml.rpc.holders;
  */
 public final class DoubleHolder implements Holder {
 	
+	/**
+	 * Comment for <code>value</code>
+	 */
 	public double value;
 	
+	/**
+	 * Empty Constructor
+	 */
 	public DoubleHolder(){}
 	
+	/**
+	 * Constructor
+	 * Sets the value of <code>value</code> property to the given input parameter value
+	 * @param mydouble
+	 */
 	public DoubleHolder(double mydouble){}
 
 }

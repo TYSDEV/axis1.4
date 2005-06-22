@@ -14,10 +14,21 @@ package javax.xml.rpc.holders;
  */
 public final class CalendarHolder {
 	
+	/**
+	 * Comment for <code>value</code>
+	 */
 	public java.util.Calendar value;
 	
+	/**
+	 * Empty Constructor
+	 */
 	public CalendarHolder(){}
 	
+	/**
+	 * Constructor
+	 * Sets the value of <code>value</code> property to the given input parameter value
+	 * @param myCalendar
+	 */
 	public CalendarHolder(java.util.Calendar myCalendar){}
 
 }

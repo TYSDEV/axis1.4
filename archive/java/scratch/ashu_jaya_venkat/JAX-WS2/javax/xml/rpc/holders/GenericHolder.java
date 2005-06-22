@@ -15,10 +15,21 @@ package javax.xml.rpc.holders;
 //This involves 1.5 new feature 'generics', needs a revisit
 public final class GenericHolder<T> implements Holder {
 	
+	/**
+	 * Comment for <code>value</code>
+	 */
 	public T value;
 	
+	/**
+	 * Empty Constructor
+	 */
 	public GenericHolder() {}
 	
+	/**
+	 * Constructor
+	 * Sets the value of <code>value</code> property to the given input parameter value
+	 * @param v
+	 */
 	public GenericHolder(T v){}
 
 }

@@ -14,10 +14,21 @@ package javax.xml.rpc.holders;
  */
 public class ByteArrayHolder implements Holder {
 	
+	/**
+	 * Comment for <code>value</code>
+	 */
 	public byte[] value;
 	
+	/**
+	 * Empty Constructor
+	 */
 	public ByteArrayHolder() {}
 	
+	/**
+	 * Constructor
+	 * Sets the value of <code>value</code> property to the given input parameter value
+	 * @param mybyteArray
+	 */
 	public ByteArrayHolder(byte[] mybyteArray) {}
 
 }

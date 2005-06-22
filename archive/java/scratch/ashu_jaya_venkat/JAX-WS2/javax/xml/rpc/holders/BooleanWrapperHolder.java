@@ -14,10 +14,21 @@ package javax.xml.rpc.holders;
  */
 public class BooleanWrapperHolder implements Holder{
 	
+	/**
+	 * Comment for <code>value</code>
+	 */
 	public java.lang.Boolean value;
 	
+	/**
+	 * Empty Constructor
+	 */
 	public BooleanWrapperHolder(){}
 	
+	/**
+	 * Constructor
+	 * Sets the value of <code>value</code> property to the given input parameter value
+	 * @param myboolean
+	 */
 	public BooleanWrapperHolder(java.lang.Boolean myboolean){}
 
 }

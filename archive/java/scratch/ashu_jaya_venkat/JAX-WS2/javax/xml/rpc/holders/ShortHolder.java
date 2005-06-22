@@ -14,10 +14,21 @@ package javax.xml.rpc.holders;
  */
 public final class ShortHolder implements Holder {
 	
+	/**
+	 * Comment for <code>value</code>
+	 */
 	public short value;
 	
+	/**
+	 * Empty Constructor
+	 */
 	public ShortHolder(){}
 	
+	/**
+	 * Constructor
+	 * Sets the value of <code>value</code> property to the given input parameter value
+	 * @param myshort
+	 */
 	public ShortHolder(short myshort){}
 
 }

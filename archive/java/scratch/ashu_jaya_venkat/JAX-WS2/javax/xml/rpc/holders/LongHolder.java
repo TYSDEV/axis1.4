@@ -14,10 +14,21 @@ package javax.xml.rpc.holders;
  */
 public final class LongHolder implements Holder {
 	
+	/**
+	 * Comment for <code>value</code>
+	 */
 	public long value;
 	
+	/**
+	 * Empty Constructor
+	 */
 	public LongHolder(){}
 	
+	/**
+	 * Constructor
+	 * Sets the value of <code>value</code> property to the given input parameter value
+	 * @param mylong
+	 */
 	public LongHolder(long mylong){}
 
 }

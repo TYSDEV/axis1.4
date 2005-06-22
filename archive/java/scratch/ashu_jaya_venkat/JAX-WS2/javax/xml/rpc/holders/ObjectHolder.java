@@ -13,5 +13,22 @@ package javax.xml.rpc.holders;
  * Window - Preferences - Java - Code Style - Code Templates
  */
 public class ObjectHolder {
+	
+	/**
+	 * Comment for <code>value</code>
+	 */
+	public java.lang.Object value;
+	
+	/**
+	 * Empty Constructor
+	 */
+	public ObjectHolder(){}
+	
+	/**
+	 * Constructor
+	 * Sets the value of <code>value</code> property to the given input parameter value
+	 * @param value
+	 */
+	public ObjectHolder(java.lang.Object value){}
 
 }

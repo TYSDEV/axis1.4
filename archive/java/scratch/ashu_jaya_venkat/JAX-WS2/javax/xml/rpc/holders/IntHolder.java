@@ -14,10 +14,21 @@ package javax.xml.rpc.holders;
  */
 public final class IntHolder implements Holder {
 	
+	/**
+	 * Comment for <code>value</code>
+	 */
 	public int value;
 	
+	/**
+	 * Empty Constructor
+	 */
 	public IntHolder(){}
 	
+	/**
+	 * Constructor
+	 * Sets the value of <code>value</code> property to the given input parameter value
+	 * @param myint
+	 */
 	public IntHolder(int myint) {}
 
 }

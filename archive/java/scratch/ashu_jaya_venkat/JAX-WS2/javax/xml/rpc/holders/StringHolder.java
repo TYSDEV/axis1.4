@@ -14,10 +14,21 @@ package javax.xml.rpc.holders;
  */
 public final class StringHolder implements Holder {
 	
+	/**
+	 * Comment for <code>value</code>
+	 */
 	public java.lang.String value;
 	
+	/**
+	 * Empty Constructor
+	 */
 	public StringHolder(){}
 	
+	/**
+	 * Constructor
+	 * Sets the value of <code>value</code> property to the given input parameter value
+	 * @param myString
+	 */
 	public StringHolder(java.lang.String myString){}
 
 }
