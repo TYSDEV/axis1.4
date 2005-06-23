@@ -27,11 +27,11 @@ public interface Service {
 	 * I've tried to create a nested class in here. Absolutely
 	 * needs a revisit. Don't rely on this as it exists now.
 	 */
-	public static enum Mode extends java.lang.Enum<Service.Mode> {
+	public static enum Mode { //extends java.lang.Enum<Service.Mode> {
 		
-		public static final Mode MESSAGE = null;
+		MESSAGE,
 		
-		public static final Mode PAYLOAD = null;
+		PAYLOAD;
 		
 		/**
 		 * Method values
@@ -42,10 +42,10 @@ public interface Service {
 		 * </code>
 		 * @return
 		 */
-		public static final Mode[] values() {
+/*		public static final Mode[] values() {
 			return null;
 		}
-		
+*/		
 		/**
 		 * Method valueOf
 		 * Returns the enum constant of this type with the specified name. The string must match exactly an identifier used to declare an enum constant in this type. (Extraneous whitespace characters are not permitted.) 
@@ -53,10 +53,10 @@ public interface Service {
 		 * @return the enum constant with the specified name
 		 * @throws java.lang.IllegalArgumentException if this enum type has no constant with the specified name
 		 */
-		public static Service.Mode valueOf(java.lang.String name) throws java.lang.IllegalArgumentException {
+/*		public static Service.Mode valueOf(java.lang.String name) throws java.lang.IllegalArgumentException {
 			return null;
 		}
-		
+*/		
 	}
 	
 	/**

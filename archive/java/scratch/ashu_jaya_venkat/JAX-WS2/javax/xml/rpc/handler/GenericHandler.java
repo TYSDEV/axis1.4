@@ -7,6 +7,8 @@
 package javax.xml.rpc.handler;
 
 import javax.xml.namespace.QName;
+import javax.xml.rpc.JAXRPCException;
+import javax.xml.rpc.soap.SOAPFaultException;
 
 
 /**

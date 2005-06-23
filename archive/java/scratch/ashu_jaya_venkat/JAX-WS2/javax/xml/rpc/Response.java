@@ -6,15 +6,15 @@
  */
 package javax.xml.rpc;
 
-import java.util.concurrent.Future<T>;
+import java.util.concurrent.Future;
 
+//TODO: Needs a revisit, b'coz generics are involved.
 /**
  * Interface Response<T>
  * 
  * @author sunja07
  */
-//TODO: Needs a revisit, b'coz generics are involved.
-public interface Response<T> extends java.util.concurrent.Future<T> {
+public interface Response<T> extends Future<T> {
 	
 	/**
 	 * Method getContext

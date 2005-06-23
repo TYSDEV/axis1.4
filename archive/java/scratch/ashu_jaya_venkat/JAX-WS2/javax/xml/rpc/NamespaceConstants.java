@@ -28,7 +28,7 @@ public class NamespaceConstants {
 	/**
 	 * Namespace prefix for XML Schema XSI 
 	 */
-	public static final java.lang.String NSPREFIX_SCHEMA_XSI
+	public static final java.lang.String NSPREFIX_SCHEMA_XSI = null;
 	
 	/**
 	 * Nameapace URI for SOAP 1.1 Envelope 

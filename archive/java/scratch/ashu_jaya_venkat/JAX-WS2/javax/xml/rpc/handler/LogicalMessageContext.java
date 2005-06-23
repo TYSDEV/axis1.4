@@ -6,6 +6,8 @@
  */
 package javax.xml.rpc.handler;
 
+import javax.xml.rpc.LogicalMessage;
+
 /**
  * public interface LogicalMessageContext
  * extends <code>MessageContext</code>

@@ -34,7 +34,7 @@ public interface Dispatch<T> {
 	 * @return The response message or message payload to the operation invocation.
 	 * @throws JAXRPCException - If there is any error in the configuration of the Dispatch instance.
 	 */
-	Response<T> invokeAsync(T msg) throws JAXRPCException
+	Response<T> invokeAsync(T msg) throws JAXRPCException;
 	
 	/**
 	 * Method invokeAsync

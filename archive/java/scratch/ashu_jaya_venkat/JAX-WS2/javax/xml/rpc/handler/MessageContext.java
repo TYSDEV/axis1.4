@@ -26,14 +26,14 @@ public interface MessageContext {
 	 * <p>
 	 * Type: boolean
 	 */
-	static final java.lang.String MESSAGE_OUTBOUND_PROPERTY;
+	static final java.lang.String MESSAGE_OUTBOUND_PROPERTY = null;
 	
 	/**
 	 * Standard property: security configuration.
 	 * <p>
 	 * Type: javax.xml.rpc.security.SecurityConfiguration
 	 */
-	static final java.lang.String MESSAGE_SECURITY_CONFIGURATION;
+	static final java.lang.String MESSAGE_SECURITY_CONFIGURATION = null;
 	
 	/**
 	 * Sets the scope of a property.

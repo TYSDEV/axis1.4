@@ -25,13 +25,9 @@ public interface SecurityConfiguration {
 	 * 	Authentication 
 	 * 		Establish or constrain the identity of the source and/or recipient of a message 
 	 */
-	public static enum SecurityFeature extends java.lang.Enum <SecurityConfiguration.SecurityFeature> {
+	public static enum SecurityFeature { //extends java.lang.Enum <SecurityConfiguration.SecurityFeature> {
 		
-		public static final SecurityConfiguration.SecurityFeature CONFIDENTIALITY=null;
-		
-		public static final SecurityConfiguration.SecurityFeature INTEGRITY = null;
-		
-		public static final SecurityConfiguration.SecurityFeature AUTHENTICATION = null;
+		CONFIDENTIALITY , INTEGRITY , AUTHENTICATION ;
 		
 		/**
 		 * Method values
@@ -42,10 +38,10 @@ public interface SecurityConfiguration {
 		 * </code>
 		 * @return an array containing the constants of this enum type, in the order they're declared
 		 */
-		public static final SecurityConfiguration.SecurityFeature[] values() {
+/*		public static final SecurityConfiguration.SecurityFeature[] values() {
 			
 		}
-		
+*/		
 		/**
 		 * Method valueOf
 		 * Returns the enum constant of this type with the specified name. The string must match exactly an identifier used to declare an enum constant in this type. (Extraneous whitespace characters are not permitted.)
@@ -53,9 +49,10 @@ public interface SecurityConfiguration {
 		 * @return the enum constant with the specified name 
 		 * @throws java.lang.IllegalArgumentException - if this enum type has no constant with the specified name
 		 */
-		public static SecurityConfiguration.SecurityFeature valueOf(java.lang.String name) throws java.lang.IllegalArgumentException {
+/*		public static SecurityConfiguration.SecurityFeature valueOf(java.lang.String name) throws java.lang.IllegalArgumentException {
 			
 		}
+*/
 	}
 	
 	/**
