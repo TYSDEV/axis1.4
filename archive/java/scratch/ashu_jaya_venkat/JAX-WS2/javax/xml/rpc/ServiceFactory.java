@@ -29,7 +29,9 @@ public abstract class ServiceFactory {
 	/**
 	 * A constant representing the property used to lookup the name of a ServiceFactory implementation class. 
 	 */
-	public static final java.lang.String SERVICEFACTORY_PROPERTY = null;
+	public static final java.lang.String SERVICEFACTORY_PROPERTY = "javax.xml.rpc.ServiceFactory";
+	
+	public static ServiceFactory serviceFactoryImpl = null;
 	
 	/**
 	 * Empty constructor
@@ -44,7 +46,34 @@ public abstract class ServiceFactory {
 	 * @throws ServiceException
 	 */
 	public static ServiceFactory newInstance() throws ServiceException {
-		return null;
+		
+		if (serviceFactoryImpl != null)
+			return serviceFactoryImpl;
+		
+		//<TBR>: Comment to be removed
+		//I must be returning the class set using the property 
+		//SERVICEFACTORY_PROPERTY. This class will be set at the
+		//configuration time(?), using configuration data viz. system props
+		//or XML/properites config files or user and system preference data
+		//</TBR>		
+		try {
+			String serviceFactoryImplName;
+			//<TBR>: Comment to be removed
+			// Here actually initialization of the name with the corresponding
+			// hashmap entry value of SERVICEFACTORY_PROPERTY key should happen 
+			// Since we didn't finalize the hash map for config information 
+			// we will use the default impl class
+			//</TBR>
+			serviceFactoryImplName = "org.apache.axis.jaxrpc.ServiceFactoryImpl";
+			Class loadedClass;
+			
+			loadedClass = Thread.currentThread().getContextClassLoader().loadClass(serviceFactoryImplName);
+			
+			serviceFactoryImpl = (ServiceFactory)loadedClass.newInstance();
+		} catch (Exception e) {
+			throw new ServiceException(e);
+		}
+		return serviceFactoryImpl;
 	}
 	
 	/**
