@@ -31,14 +31,18 @@ public class ProtocolException extends RuntimeException implements Serializable 
 	 * Empty Constructor
 	 * Constructs a new protocol exception with null as its detail message.
 	 */
-	public ProtocolException() {}
+	public ProtocolException() {
+		super();
+	}
 	
 	/**
 	 * Constructor
 	 * Constructs a new protocol exception with the specified detail message.
 	 * @param message - the detail message. The detail message is saved for later retrieval by the Throwable.getMessage() method.
 	 */
-	public ProtocolException(java.lang.String message) {}
+	public ProtocolException(java.lang.String message) {
+		super(message);
+	}
 	
 	/**
 	 * Constructor
@@ -48,7 +52,9 @@ public class ProtocolException extends RuntimeException implements Serializable 
 	 * @param cause - the cause (which is saved for later retrieval by the Throwable.getCause() method). (A null value is permitted, and indicates that the cause is nonexistent or unknown.)
 	 */
 	public ProtocolException(java.lang.String message,
-            java.lang.Throwable cause) {}
+            java.lang.Throwable cause) {
+		super(message, cause);
+	}
 	
 	/**
 	 * Constructor
@@ -57,6 +63,8 @@ public class ProtocolException extends RuntimeException implements Serializable 
 	 *  contains the class and detail message of cause).
 	 * @param cause - the cause (which is saved for later retrieval by the Throwable.getCause() method). (A null value is permitted, and indicates that the cause is nonexistent or unknown.)
 	 */
-	public ProtocolException(java.lang.Throwable cause) {}
+	public ProtocolException(java.lang.Throwable cause) {
+		super(cause==null ? null : cause.toString(), cause);
+	}
 	
 }

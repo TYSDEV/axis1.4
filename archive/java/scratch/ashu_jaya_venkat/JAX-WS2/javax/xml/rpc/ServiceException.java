@@ -31,14 +31,18 @@ public class ServiceException extends Exception implements Serializable {
 	 * Empty Constructor
 	 * Constructs a new exception with null as its detail message.
 	 */
-	public ServiceException() {}
+	public ServiceException() {
+		super();
+	}
 	
 	/**
 	 * Constructor
 	 * Constructs a new exception with the specified detail message.
 	 * @param message - The detail message which is later retrieved using the getMessage method
 	 */
-	public ServiceException(java.lang.String message) {}
+	public ServiceException(java.lang.String message) {
+		super(message);
+	}
 	
 	/**
 	 * Constructor
@@ -47,7 +51,9 @@ public class ServiceException extends Exception implements Serializable {
 	 * @param cause - The cause which is saved for the later retrieval throw by the getCause method
 	 */
 	public ServiceException(java.lang.String message,
-            java.lang.Throwable cause) {}
+            java.lang.Throwable cause) {
+		super(message, cause);
+	}
 	
 	/**
 	 * Constructor
@@ -56,7 +62,9 @@ public class ServiceException extends Exception implements Serializable {
 	 * the class and detail message of cause).
 	 * @param cause - The cause which is saved for the later retrieval throw by the getCause method. (A null value is permitted, and indicates that the cause is nonexistent or unknown.)
 	 */
-	public ServiceException(java.lang.Throwable cause) {}
+	public ServiceException(java.lang.Throwable cause) {
+		super(cause==null ? null : cause.toString(), cause);
+	}
 	
 	/**
 	 * Method getLinkedCause
@@ -64,6 +72,6 @@ public class ServiceException extends Exception implements Serializable {
 	 * @return The cause of this Exception or null if the cause is noexistent or unknown
 	 */
 	public java.lang.Throwable getLinkedCause() {
-		return null;
+		return getCause();
 	}
 }

@@ -28,37 +28,37 @@ public interface JAXRPCContext {
 	 * Standard property: Map of attachments to a message, key is the MIME Content-ID, value is a DataHandler.
 	 * Type: java.util.Map
 	 */
-	static final java.lang.String MESSAGE_ATTACHMENTS = null;
+	static final java.lang.String MESSAGE_ATTACHMENTS = "javx.xml.rpc.binding.attachments";
 
 	/**
 	 * Standard property: input source for WSDL document.
 	 * Type: org.xml.sax.InputSource
 	 */
-	static final java.lang.String WSDL_DESCRIPTION = null;
+	static final java.lang.String WSDL_DESCRIPTION = "javax.xml.rpc.wsdl.description";
 
 	/**
 	 * Standard property: name of WSDL service.
 	 * Type: javax.xml.namespace.QName
 	 */
-	static final java.lang.String WSDL_SERVICE = null;
+	static final java.lang.String WSDL_SERVICE = "javax.xml.rpc.wsdl.service";
 
 	/**
 	 * Standard property: name of WSDL port.
 	 * Type: javax.xml.namespace.QName
 	 */
-	static final java.lang.String WSDL_PORT = null;
+	static final java.lang.String WSDL_PORT = "javax.xml.rpc.wsdl.port";
 
 	/**
 	 * Standard property: name of wsdl interface (2.0) or port type (1.1).
 	 * Type: javax.xml.namespace.QName
 	 */
-	static final java.lang.String WSDL_INTERFACE = null;
+	static final java.lang.String WSDL_INTERFACE = "javax.xml.rpc.wsdl.interface";
 
 	/**
 	 * Standard property: name of WSDL operation.
 	 * Type: javax.xml.namespace.QName
 	 */
-	static final java.lang.String WSDL_OPERATION = null;
+	static final java.lang.String WSDL_OPERATION = "javax.xml.rpc.wsdl.operation";
 
 	/**
 	 * Method setProperty
