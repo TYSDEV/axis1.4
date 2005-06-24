@@ -31,14 +31,14 @@ public interface Call extends BindingProvider{
 	 * if the operation style is rpc; "document" if the operation style is 
 	 * document.
 	 */
-	static final java.lang.String OPERATION_STYLE_PROPERTY = null;
+	static final java.lang.String OPERATION_STYLE_PROPERTY = "javax.xml.rpc.soap.operation.style";
 	
 	/**
 	 * Standard property for encoding Style: Encoding style specified as a 
 	 * namespace URI. The default value is the SOAP 1.1 encoding 
 	 * http://schemas.xmlsoap.org/soap/encoding/
 	 */
-	static final java.lang.String ENCODINGSTYLE_URI_PROPERTY = null;
+	static final java.lang.String ENCODINGSTYLE_URI_PROPERTY = "javax.xml.rpc.encodingstyle.namespace.uri";
 	
 	/**
 	 * Method isParameterAndReturnSpecRequired

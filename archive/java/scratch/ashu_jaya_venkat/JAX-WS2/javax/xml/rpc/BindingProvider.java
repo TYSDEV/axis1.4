@@ -30,7 +30,7 @@ public interface BindingProvider {
 	 * the endpoint address specification must correspond to the 
 	 * protocol/transport binding for the binding in use. 
 	 */
-	static final java.lang.String ENDPOINT_ADDRESS_PROPERTY = null;
+	static final java.lang.String ENDPOINT_ADDRESS_PROPERTY = "javax.xml.rpc.service.endpoint.address";
 	
 	/**
 	 * Standard property: This boolean property is used by a service client to 
@@ -40,36 +40,36 @@ public interface BindingProvider {
 	 * the session is not maintained. The default value for this property is 
 	 * false.
 	 */
-	static final java.lang.String SESSION_MAINTAIN_PROPERTY = null;
+	static final java.lang.String SESSION_MAINTAIN_PROPERTY = "javax.xml.rpc.session.maintain";
 	
 	/**
 	 * Standard property for SOAPAction. This boolean property indicates 
 	 * whether or not SOAPAction is to be used. The default value of this 
 	 * property is false indicating that the SOAPAction is not used.
 	 */
-	static final java.lang.String SOAPACTION_USE_PROPERTY = null;
+	static final java.lang.String SOAPACTION_USE_PROPERTY = "javax.xml.rpc.soap.http.soapaction.use";
 	
 	/**
 	 * Standard property for SOAPAction. Indicates the SOAPAction URI if the 
 	 * javax.xml.rpc.soap.http.soapaction.use property is set to true.
 	 */
-	static final java.lang.String SOAPACTION_URI_PROPERTY = null;
+	static final java.lang.String SOAPACTION_URI_PROPERTY = "javax.xml.rpc.soap.http.soapaction.uri";
 	
 	/**
 	 * Standard property: Password for authentication.
 	 */
-	static final java.lang.String PASSWORD_PROPERTY = null;
+	static final java.lang.String PASSWORD_PROPERTY = "javax.xml.rpc.security.auth.password";
 	
 	/**
 	 * Standard property: User name for authentication.
 	 */
-	static final java.lang.String USERNAME_PROPERTY = null;
+	static final java.lang.String USERNAME_PROPERTY = "javax.xml.rpc.security.auth.username";
 	
 	/**
 	 * Standard property: JAXB context to use for marshalling arguments in 
 	 * dynamic APIs.
 	 */
-	static final java.lang.String JAXB_CONTEXT_PROPERTY = null;
+	static final java.lang.String JAXB_CONTEXT_PROPERTY = "javax.xml.rpc.binding.context";
 	
 	/**
 	 * Method getRequestContext

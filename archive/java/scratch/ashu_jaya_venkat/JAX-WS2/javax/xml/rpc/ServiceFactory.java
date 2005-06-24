@@ -31,7 +31,7 @@ public abstract class ServiceFactory {
 	 */
 	public static final java.lang.String SERVICEFACTORY_PROPERTY = "javax.xml.rpc.ServiceFactory";
 	
-	public static ServiceFactory serviceFactoryImpl = null;
+	private static ServiceFactory serviceFactoryImpl = null;
 	
 	/**
 	 * Empty constructor
@@ -51,7 +51,7 @@ public abstract class ServiceFactory {
 			return serviceFactoryImpl;
 		
 		//<TBR>: Comment to be removed
-		//I must be returning the class set using the property 
+		//I must be returning the implementation class set using the property 
 		//SERVICEFACTORY_PROPERTY. This class will be set at the
 		//configuration time(?), using configuration data viz. system props
 		//or XML/properites config files or user and system preference data
@@ -68,7 +68,6 @@ public abstract class ServiceFactory {
 			Class loadedClass;
 			
 			loadedClass = Thread.currentThread().getContextClassLoader().loadClass(serviceFactoryImplName);
-			
 			serviceFactoryImpl = (ServiceFactory)loadedClass.newInstance();
 		} catch (Exception e) {
 			throw new ServiceException(e);
