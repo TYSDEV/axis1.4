@@ -18,8 +18,11 @@ package javax.xml.rpc;
 
 /**
  * Interface Call
- * The javax.xml.rpc.Call interface provides support for the dynamic invocation of a service endpoint. The javax.xml.rpc.Service interface acts as a factory for the creation of Call instances.
- * Once a Call instance is created, various setter and getter methods may be used to configure this Call instance.
+ * The javax.xml.rpc.Call interface provides support for the dynamic 
+ * invocation of a service endpoint. The javax.xml.rpc.Service interface acts 
+ * as a factory for the creation of Call instances.
+ * Once a Call instance is created, various setter and getter methods may be 
+ * used to configure this Call instance.
  * 
  * @version 1.0
  * @author sunja07
@@ -31,14 +34,16 @@ public interface Call extends BindingProvider{
 	 * if the operation style is rpc; "document" if the operation style is 
 	 * document.
 	 */
-	static final java.lang.String OPERATION_STYLE_PROPERTY = "javax.xml.rpc.soap.operation.style";
+	static final java.lang.String OPERATION_STYLE_PROPERTY = 
+		"javax.xml.rpc.soap.operation.style";
 	
 	/**
 	 * Standard property for encoding Style: Encoding style specified as a 
 	 * namespace URI. The default value is the SOAP 1.1 encoding 
 	 * http://schemas.xmlsoap.org/soap/encoding/
 	 */
-	static final java.lang.String ENCODINGSTYLE_URI_PROPERTY = "javax.xml.rpc.encodingstyle.namespace.uri";
+	static final java.lang.String ENCODINGSTYLE_URI_PROPERTY = 
+		"javax.xml.rpc.encodingstyle.namespace.uri";
 	
 	/**
 	 * Method isParameterAndReturnSpecRequired
@@ -52,7 +57,9 @@ public interface Call extends BindingProvider{
 	 * @throws java.lang.IllegalArgumentException - If invalid operation name 
 	 * is specified
 	 */
-	boolean isParameterAndReturnSpecRequired(javax.xml.namespace.QName operationName) throws java.lang.IllegalArgumentException;
+	boolean isParameterAndReturnSpecRequired(
+			javax.xml.namespace.QName operationName) 
+	throws java.lang.IllegalArgumentException;
 	
 	/**
 	 * Method addParameter
@@ -66,7 +73,8 @@ public interface Call extends BindingProvider{
 	 * @param parameterMode Mode of the parameter-whether ParameterMode.IN, 
 	 * ParameterMode.OUT, or ParameterMode.INOUT
 	 * @throws javax.xml.rpc.JAXRPCException This exception may be thrown if 
-	 * the method isParameterAndReturnSpecRequired returns false for this operation.
+	 * the method isParameterAndReturnSpecRequired returns false for this 
+	 * operation.
 	 * @throws java.lang.IllegalArgumentException If any illegal parameter 
 	 * name or XML type is specified
 	 */
@@ -89,14 +97,18 @@ public interface Call extends BindingProvider{
 	 * @throws java.lang.UnsupportedOperationException If this method is not 
 	 * supported
 	 * @throws javax.xml.rpc.JAXRPCException 
-	 * 1.This exception may be thrown if this method is invoked when the method isParameterAndReturnSpecRequired returns false.
-	 * 2.If specified XML type and Java type mapping is not valid. For example, TypeMappingRegistry has no serializers for this mapping. 
+	 * 1.This exception may be thrown if this method is invoked when the 
+	 * method isParameterAndReturnSpecRequired returns false.
+	 * 2.If specified XML type and Java type mapping is not valid. For 
+	 * example, TypeMappingRegistry has no serializers for this mapping. 
 	 */
 	void addParameter(java.lang.String paramName,
             javax.xml.namespace.QName xmlType,
             java.lang.Class javaType,
-            ParameterMode parameterMode) throws java.lang.IllegalArgumentException,
-			java.lang.UnsupportedOperationException, javax.xml.rpc.JAXRPCException;
+            ParameterMode parameterMode) throws 
+            java.lang.IllegalArgumentException,
+			java.lang.UnsupportedOperationException, 
+			javax.xml.rpc.JAXRPCException;
 	
 	/**
 	 * Method getParameterTypeByName
@@ -104,7 +116,8 @@ public interface Call extends BindingProvider{
 	 * @param paramName Name of the parameter
 	 * @return Returns XML type for the specified parameter
 	 */
-	javax.xml.namespace.QName getParameterTypeByName(java.lang.String paramName);
+	javax.xml.namespace.QName getParameterTypeByName(
+			java.lang.String paramName);
 	
 	/**
 	 * Method setReturnType
@@ -113,24 +126,32 @@ public interface Call extends BindingProvider{
 	 * @param xmlType XML data type of the return value
 	 * @throws javax.xml.rpc.JAXRPCException This exception may be thrown when 
 	 * the method isParameterAndReturnSpecRequired returns false. 
-	 * @throws java.lang.IllegalArgumentException If an illegal XML type is specified 
+	 * @throws java.lang.IllegalArgumentException If an illegal XML type is 
+	 * specified 
 	 */
-	void setReturnType(javax.xml.namespace.QName xmlType) throws javax.xml.rpc.JAXRPCException,
-	java.lang.IllegalArgumentException, java.lang.UnsupportedOperationException;
+	void setReturnType(javax.xml.namespace.QName xmlType) throws 
+	javax.xml.rpc.JAXRPCException,
+	java.lang.IllegalArgumentException, 
+	java.lang.UnsupportedOperationException;
 	
 	/**
 	 * Method setReturnType
 	 * Sets the return type for a specific operation.
 	 * @param xmlType XML data type of the return value
 	 * @param javaType Java Class of the return value
-	 * @throws java.lang.UnsupportedOperationException If this method is not supported 
-	 * @throws java.lang.IllegalArgumentException If an illegal XML type is specified
+	 * @throws java.lang.UnsupportedOperationException If this method is not 
+	 * supported 
+	 * @throws java.lang.IllegalArgumentException If an illegal XML type is 
+	 * specified
 	 * @throws javax.xml.rpc.JAXRPCException
-	 * 1. This exception may be thrown if this method is invoked when the method isParameterAndReturnSpecRequired returns false.
-	 * 2. If XML type and Java type cannot be mapped using the standard type mapping or TypeMapping registry
+	 * 1. This exception may be thrown if this method is invoked when the 
+	 * method isParameterAndReturnSpecRequired returns false.
+	 * 2. If XML type and Java type cannot be mapped using the standard type 
+	 * mapping or TypeMapping registry
 	 */
 	void setReturnType(javax.xml.namespace.QName xmlType,
-            java.lang.Class javaType) throws java.lang.UnsupportedOperationException,
+            java.lang.Class javaType) throws 
+            java.lang.UnsupportedOperationException,
 			java.lang.IllegalArgumentException,
 			javax.xml.rpc.JAXRPCException;
 
@@ -143,8 +164,12 @@ public interface Call extends BindingProvider{
 	
 	/**
 	 * Method removeAllParameters
-	 * Removes all specified parameters from this Call instance. Note that this method removes only the parameters and not the return type. The setReturnType(null) is used to remove the return type.
-	 * @throws javax.xml.rpc.JAXRPCException This exception may be thrown If this method is called when the method isParameterAndReturnSpecRequired returns false for this Call's operation.
+	 * Removes all specified parameters from this Call instance. Note that 
+	 * this method removes only the parameters and not the return type. The 
+	 * setReturnType(null) is used to remove the return type.
+	 * @throws javax.xml.rpc.JAXRPCException This exception may be thrown If 
+	 * this method is called when the method isParameterAndReturnSpecRequired 
+	 * returns false for this Call's operation.
 	 */
 	void removeAllParameters() throws javax.xml.rpc.JAXRPCException;
 	
@@ -158,7 +183,8 @@ public interface Call extends BindingProvider{
 	/**
 	 * Method setOperationName
 	 * Sets the name of the operation to be invoked using this Call instance. 
-	 * @param operationName QName of the operation to be invoked using the Call instance
+	 * @param operationName QName of the operation to be invoked using the 
+	 * Call instance
 	 */
 	void setOperationName(javax.xml.namespace.QName operationName);
 	
@@ -178,8 +204,11 @@ public interface Call extends BindingProvider{
 	
 	/**
 	 * Method setTargetEndpointAddress
-	 * Sets the address of the target service endpoint. This address must correspond to the transport specified in the binding for this Call instance.
-	 * @param address Address of the target service endpoint; specified as an URI
+	 * Sets the address of the target service endpoint. This address must 
+	 * correspond to the transport specified in the binding for this Call 
+	 * instance.
+	 * @param address Address of the target service endpoint; specified as an 
+	 * URI
 	 */
 	void setTargetEndpointAddress(java.lang.String address);
 	
@@ -192,12 +221,17 @@ public interface Call extends BindingProvider{
 	
 	/**
 	 * Method setProperty
-	 * Sets the value for a named property. JAX-RPC specification specifies a standard set of properties that may be passed to the Call.setProperty method.
+	 * Sets the value for a named property. JAX-RPC specification specifies a 
+	 * standard set of properties that may be passed to the Call.setProperty 
+	 * method.
 	 * @param name Name of the property
 	 * @param value Value of the property
 	 * @throws javax.xml.rpc.JAXRPCException
-	 * 1. If an optional standard property name is specified, however this Call implementation class does not support the configuration of this property.
-	 * 2. If an invalid (or unsupported) property name is specified or if a value of mismatched property type is passed.
+	 * 1. If an optional standard property name is specified, however this 
+	 * Call implementation class does not support the configuration of this 
+	 * property.
+	 * 2. If an invalid (or unsupported) property name is specified or if a 
+	 * value of mismatched property type is passed.
 	 * 3. If there is any error in the configuration of a valid property.
 	 */
 	void setProperty(java.lang.String name,
@@ -208,7 +242,8 @@ public interface Call extends BindingProvider{
 	 * Gets the value of a named property. 
 	 * @param name Name of the property
 	 * @return Value of the named property
-	 * @throws javax.xml.rpc.JAXRPCException if an invalid or unsupported property name is passed.
+	 * @throws javax.xml.rpc.JAXRPCException if an invalid or unsupported 
+	 * property name is passed.
 	 */
 	java.lang.Object getProperty(java.lang.String name);
 	
@@ -216,7 +251,8 @@ public interface Call extends BindingProvider{
 	 * Method removeProperty
 	 * Removes a named property.
 	 * @param name Name of the property
-	 * @throws javax.xml.rpc.JAXRPCException if an invalid or unsupported property name is passed.
+	 * @throws javax.xml.rpc.JAXRPCException if an invalid or unsupported 
+	 * property name is passed.
 	 */
 	void removeProperty(java.lang.String name);
 	
@@ -229,30 +265,39 @@ public interface Call extends BindingProvider{
 	
 	/**
 	 * Method invoke
-	 * Invokes a specific operation using a synchronous request-response interaction mode.
-	 * @param inputParams Object[]--Parameters for this invocation. This includes only the input params
+	 * Invokes a specific operation using a synchronous request-response 
+	 * interaction mode.
+	 * @param inputParams Object[]--Parameters for this invocation. This 
+	 * includes only the input params
 	 * @return Returns the return value or null
-	 * @throws java.rmi.RemoteException if there is any error in the remote method invocation
+	 * @throws java.rmi.RemoteException if there is any error in the remote 
+	 * method invocation
 	 * @throws javax.xml.rpc.soap.SOAPFaultException Indicates a SOAP fault
 	 * @throws javax.xml.rpc.JAXRPCException 
 	 * 1. If there is an error in the configuration of the Call object
-	 * 2. If inputParams do not match the required parameter set (as specified through the addParameter invocations or in the corresponding WSDL)
+	 * 2. If inputParams do not match the required parameter set (as specified
+	 *    through the addParameter invocations or in the corresponding WSDL)
 	 * 3. If parameters and return type are incorrectly specified 
 	 */
 	java.lang.Object invoke(java.lang.Object[] inputParams)
-    throws java.rmi.RemoteException, javax.xml.rpc.soap.SOAPFaultException, javax.xml.rpc.JAXRPCException;
+    throws java.rmi.RemoteException, javax.xml.rpc.soap.SOAPFaultException, 
+    javax.xml.rpc.JAXRPCException;
 	
 	/**
 	 * Method invoke
-	 * Invokes a specific operation using a synchronous request-response interaction mode.
+	 * Invokes a specific operation using a synchronous request-response 
+	 * interaction mode.
 	 * @param operationName QName of the operation
-	 * @param inputParams Object[]--Parameters for this invocation. This includes only the input params.
+	 * @param inputParams Object[]--Parameters for this invocation. This 
+	 * includes only the input params.
 	 * @return Returns the return value or null
-	 * @throws java.rmi.RemoteException if there is any error in the remote method invocation
+	 * @throws java.rmi.RemoteException if there is any error in the remote 
+	 * method invocation
 	 * @throws javax.xml.rpc.soap.SOAPFaultException Indicates a SOAP fault
 	 * @throws javax.xml.rpc.JAXRPCException 
 	 * 1. If there is an error in the configuration of the Call object
-	 * 2. If inputParams do not match the required parameter set (as specified through the addParameter invocations or in the corresponding WSDL)
+	 * 2. If inputParams do not match the required parameter set (as specified 
+	 *    through the addParameter invocations or in the corresponding WSDL)
 	 * 3. If parameters and return type are incorrectly specified
 	 */
 	java.lang.Object invoke(javax.xml.namespace.QName operationName,
@@ -261,24 +306,36 @@ public interface Call extends BindingProvider{
 	
 	/**
 	 * Method invokeOneWay
-	 * @param inputParams Object[]--Parameters for this invocation. This includes only the input params.
-	 * @throws javax.xml.rpc.JAXRPCException if there is an error in the configuration of the Call object (example: a non-void return type has been incorrectly specified for the one-way call) or if there is any error during the invocation of the one-way remote call
+	 * @param inputParams Object[]--Parameters for this invocation. This 
+	 * includes only the input params.
+	 * @throws javax.xml.rpc.JAXRPCException if there is an error in the 
+	 * configuration of the Call object (example: a non-void return type has 
+	 * been incorrectly specified for the one-way call) or if there is any 
+	 * error during the invocation of the one-way remote call
 	 */
-	void invokeOneWay(java.lang.Object[] inputParams) throws javax.xml.rpc.JAXRPCException;
+	void invokeOneWay(java.lang.Object[] inputParams) throws 
+	javax.xml.rpc.JAXRPCException;
 	
 	/**
 	 * Method getOutputParams
-	 * Returns a Map of {name, value} for the output parameters of the last invoked operation. The parameter names in the returned Map are of type java.lang.String.
-	 * @return Map Output parameters for the last Call.invoke(). Empty Map is returned if there are no output parameters.
-	 * @throws JAXRPCException If this method is invoked for a one-way operation or is invoked before any invoke method has been called.
+	 * Returns a Map of {name, value} for the output parameters of the last 
+	 * invoked operation. The parameter names in the returned Map are of type 
+	 * java.lang.String.
+	 * @return Map Output parameters for the last Call.invoke(). Empty Map is 
+	 * returned if there are no output parameters.
+	 * @throws JAXRPCException If this method is invoked for a one-way 
+	 * operation or is invoked before any invoke method has been called.
 	 */
 	java.util.Map getOutputParams() throws JAXRPCException;
 	
 	/**
 	 * Method getOutputValues
-	 * Returns a List values for the output parameters of the last invoked operation.
-	 * @return java.util.List Values for the output parameters. An empty List is returned if there are no output values.
-	 * @throws JAXRPCException If this method is invoked for a one-way operation or is invoked before any invoke method has been called.
+	 * Returns a List values for the output parameters of the last invoked 
+	 * operation.
+	 * @return java.util.List Values for the output parameters. An empty List 
+	 * is returned if there are no output values.
+	 * @throws JAXRPCException If this method is invoked for a one-way 
+	 * operation or is invoked before any invoke method has been called.
 	 */
 	java.util.List getOutputValues() throws JAXRPCException;
 }

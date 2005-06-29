@@ -30,7 +30,8 @@ public interface Response<T> extends Future<T> {
 	 * Method getContext
 	 * Gets the contained response context.
 	 * 
-	 * @return The contained response context. May be null if a response is not yet available.
+	 * @return The contained response context. May be null if a response is 
+	 * not yet available.
 	 */
 	JAXRPCContext getContext();
 }

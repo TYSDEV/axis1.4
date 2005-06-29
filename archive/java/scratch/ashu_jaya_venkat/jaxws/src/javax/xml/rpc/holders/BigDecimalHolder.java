@@ -33,7 +33,8 @@ public class BigDecimalHolder implements Holder {
 	
 	/**
 	 * Constructor
-	 * Sets the value of <code>value</code> property to the given input parameter value
+	 * Sets the value of <code>value</code> property to the given input 
+	 * parameter value
 	 * @param myBigDecimal
 	 */
 	public BigDecimalHolder(java.math.BigDecimal myBigDecimal) {}

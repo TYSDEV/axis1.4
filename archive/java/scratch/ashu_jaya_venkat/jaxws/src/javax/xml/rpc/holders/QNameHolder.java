@@ -36,7 +36,8 @@ public final class QNameHolder implements Holder {
 	
 	/**
 	 * Constructor
-	 * Sets the value of <code>value</code> property to the given input parameter value
+	 * Sets the value of <code>value</code> property to the given input 
+	 * parameter value
 	 * @param myQName
 	 */
 	public QNameHolder(javax.xml.namespace.QName myQName){}

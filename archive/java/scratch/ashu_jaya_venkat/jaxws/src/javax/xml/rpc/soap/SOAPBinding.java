@@ -20,7 +20,8 @@ import javax.xml.rpc.Binding;
 
 /**
  * Interface SOAPBinding
- * The javax.xml.rpc.SOAPBinding interface is an abstraction for the JAX-RPC SOAP binding.
+ * The javax.xml.rpc.SOAPBinding interface is an abstraction for the JAX-RPC 
+ * SOAP binding.
  *
  * @version 1.0
  * @author sunja07
@@ -30,12 +31,14 @@ public interface SOAPBinding extends Binding {
     /**
      * A constant representing the identity of the SOAP 1.1 over HTTP binding.
      */
-    static final java.lang.String SOAP11HTTP_BINDING = "http://schemas.xmlsoap.org/wsdl/soap/http";
+    static final java.lang.String SOAP11HTTP_BINDING = 
+    	"http://schemas.xmlsoap.org/wsdl/soap/http";
 
     /**
      * A constant representing the identity of the SOAP 1.2 over HTTP binding.
      */
-    static final java.lang.String SOAP12HTTP_BINDING = "http://www.w3.org/2003/05/soap/bindings/HTTP/";
+    static final java.lang.String SOAP12HTTP_BINDING = 
+    	"http://www.w3.org/2003/05/soap/bindings/HTTP/";
 
     /**
      * Method getRoles
@@ -50,7 +53,8 @@ public interface SOAPBinding extends Binding {
      * Sets the roles played by the SOAP binding instance.
      *
      * @param roles - The set of roles played by the binding instance.
-     * @throws JAXRPCException - On an error in the configuration of the list of roles.
+     * @throws JAXRPCException - On an error in the configuration of the 
+     * list of roles.
      */
     void setRoles(java.util.Set<java.net.URI> roles);
 

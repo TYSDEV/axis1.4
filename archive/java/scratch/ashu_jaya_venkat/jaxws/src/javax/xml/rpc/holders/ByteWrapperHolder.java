@@ -36,7 +36,8 @@ public final class ByteWrapperHolder {
 	
 	/**
 	 * Constructor
-	 * Sets the value of <code>value</code> property to the given input parameter value
+	 * Sets the value of <code>value</code> property to the given input 
+	 * parameter value
 	 * @param mybyte
 	 */
 	public ByteWrapperHolder(java.lang.Byte mybyte) {}

@@ -36,7 +36,8 @@ public final class LongHolder implements Holder {
 	
 	/**
 	 * Constructor
-	 * Sets the value of <code>value</code> property to the given input parameter value
+	 * Sets the value of <code>value</code> property to the given input 
+	 * parameter value
 	 * @param mylong
 	 */
 	public LongHolder(long mylong){}

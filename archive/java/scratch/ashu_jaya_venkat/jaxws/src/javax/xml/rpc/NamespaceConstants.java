@@ -48,27 +48,32 @@ public class NamespaceConstants {
 	/**
 	 * Nameapace URI for SOAP 1.1 Envelope 
 	 */
-	public static final java.lang.String NSURI_SOAP_ENVELOPE = "http://schemas.xmlsoap.org/soap/envelope/";
+	public static final java.lang.String NSURI_SOAP_ENVELOPE = 
+		"http://schemas.xmlsoap.org/soap/envelope/";
 	
 	/**
 	 * Nameapace URI for SOAP 1.1 Encoding 
 	 */
-	public static final java.lang.String NSURI_SOAP_ENCODING = "http://schemas.xmlsoap.org/soap/encoding/";
+	public static final java.lang.String NSURI_SOAP_ENCODING = 
+		"http://schemas.xmlsoap.org/soap/encoding/";
 	
 	/**
 	 * Nameapace URI for SOAP 1.1 next actor role 
 	 */
-	public static final java.lang.String NSURI_SOAP_NEXT_ACTOR = "http://schemas.xmlsoap.org/soap/actor/next";
+	public static final java.lang.String NSURI_SOAP_NEXT_ACTOR = 
+		"http://schemas.xmlsoap.org/soap/actor/next";
 	
 	/**
 	 * Namespace URI for XML Schema XSD 
 	 */
-	public static final java.lang.String NSURI_SCHEMA_XSD = "http://www.w3.org/2001/XMLSchema";
+	public static final java.lang.String NSURI_SCHEMA_XSD = 
+		"http://www.w3.org/2001/XMLSchema";
 	
 	/**
 	 * Namespace URI for XML Schema XSI 
 	 */
-	public static final java.lang.String NSURI_SCHEMA_XSI = "http://www.w3.org/2001/XMLSchema-instance";
+	public static final java.lang.String NSURI_SCHEMA_XSI = 
+		"http://www.w3.org/2001/XMLSchema-instance";
 	
 	/**
 	 * Empty Constructor

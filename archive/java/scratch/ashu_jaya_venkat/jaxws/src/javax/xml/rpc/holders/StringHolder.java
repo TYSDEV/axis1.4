@@ -36,7 +36,8 @@ public final class StringHolder implements Holder {
 	
 	/**
 	 * Constructor
-	 * Sets the value of <code>value</code> property to the given input parameter value
+	 * Sets the value of <code>value</code> property to the given input 
+	 * parameter value
 	 * @param myString
 	 */
 	public StringHolder(java.lang.String myString){}

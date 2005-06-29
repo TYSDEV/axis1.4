@@ -36,7 +36,8 @@ public final class IntegerWrapperHolder implements Holder {
 	
 	/**
 	 * Constructor
-	 * Sets the value of <code>value</code> property to the given input parameter value
+	 * Sets the value of <code>value</code> property to the given input 
+	 * parameter value
 	 * @param myint
 	 */
 	public IntegerWrapperHolder(java.lang.Integer myint) {}

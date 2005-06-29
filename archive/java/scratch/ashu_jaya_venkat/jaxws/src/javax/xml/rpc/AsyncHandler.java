@@ -18,7 +18,9 @@ package javax.xml.rpc;
 
 /**
  * Interface AsyncHandler<T>
- * The javax.xml.rpc.AsyncHandler interface is implemented by clients that wish to receive callback notification of the completion of service endpoint operations invoked asynchronously.
+ * The javax.xml.rpc.AsyncHandler interface is implemented by clients that 
+ * wish to receive callback notification of the completion of service 
+ * endpoint operations invoked asynchronously.
  * 
  * @version 1.0
  * @author sunja07

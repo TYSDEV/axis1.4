@@ -18,7 +18,8 @@ package javax.xml.rpc.security;
 
 /**
  * Interface SecurityConfiguration
- * The interface SecurityConfiguration abstracts the message security configuration.
+ * The interface SecurityConfiguration abstracts the message security 
+ * configuration.
  * 
  * @version 1.0
  * @author sunja07
@@ -29,24 +30,32 @@ public interface SecurityConfiguration {
 	/**
 	 * Abstract security features. 
 	 * 	Integrity 
-	 * 		Provide assurance that the data received by a recipient is the same as the data sent by the originator 
+	 * 		Provide assurance that the data received by a recipient is the 
+	 * 		same as the data sent by the originator 
 	 * 	Confidentiality
-	 * 		Protect data from being read by anyone except the intended recipient 
+	 * 		Protect data from being read by anyone except the intended 
+	 * 		recipient 
 	 * 	Authentication 
-	 * 		Establish or constrain the identity of the source and/or recipient of a message 
+	 * 		Establish or constrain the identity of the source and/or recipient
+	 * 		of a message 
 	 */
-	public static enum SecurityFeature { //extends java.lang.Enum <SecurityConfiguration.SecurityFeature> {
+	public static enum SecurityFeature { 
+		//extends java.lang.Enum <SecurityConfiguration.SecurityFeature> {
 		
 		CONFIDENTIALITY , INTEGRITY , AUTHENTICATION ;
 		
 		/**
 		 * Method values
-		 * Returns an array containing the constants of this enum type, in the order they're declared. This method may be used to iterate over the constants as follows:
+		 * Returns an array containing the constants of this enum type, in 
+		 * the order they're declared. This method may be used to iterate 
+		 * over the constants as follows:
 		 * <code>
-		 * 		for(SecurityConfiguration.SecurityFeature c : SecurityConfiguration.SecurityFeature.values())
+		 * 		for(SecurityConfiguration.SecurityFeature c 
+		 * 			: SecurityConfiguration.SecurityFeature.values())
 		 * 			System.out.println(c);
 		 * </code>
-		 * @return an array containing the constants of this enum type, in the order they're declared
+		 * @return an array containing the constants of this enum type, in 
+		 * the order they're declared
 		 */
 /*		public static final SecurityConfiguration.SecurityFeature[] values() {
 			
@@ -54,10 +63,14 @@ public interface SecurityConfiguration {
 */		
 		/**
 		 * Method valueOf
-		 * Returns the enum constant of this type with the specified name. The string must match exactly an identifier used to declare an enum constant in this type. (Extraneous whitespace characters are not permitted.)
+		 * Returns the enum constant of this type with the specified name. The 
+		 * string must match exactly an identifier used to declare an enum 
+		 * constant in this type. (Extraneous whitespace characters are not 
+		 * permitted.)
 		 * @param name - the name of the enum constant to be returned.
 		 * @return the enum constant with the specified name 
-		 * @throws java.lang.IllegalArgumentException - if this enum type has no constant with the specified name
+		 * @throws java.lang.IllegalArgumentException - if this enum type has 
+		 * no constant with the specified name
 		 */
 /*		public static SecurityConfiguration.SecurityFeature valueOf(java.lang.String name) throws java.lang.IllegalArgumentException {
 			
@@ -69,7 +82,8 @@ public interface SecurityConfiguration {
 	 * Method setOutboundConfigId
 	 * Sets the configuration for outbound messages. 
 	 * 
-	 * @param configId - Logical identifier of the configuration entry that describes how to fulfil the requested security features.
+	 * @param configId - Logical identifier of the configuration entry that 
+	 * describes how to fulfil the requested security features.
 	 */
 	void setOutboundConfigId(java.lang.String configId);
 	
@@ -77,7 +91,8 @@ public interface SecurityConfiguration {
 	 * Method getOutboundConfigId
 	 * Gets the configuration for outbound messages.
 	 * 
-	 * @return Logical identifier of the configuration entry that describes how to fulfil the requested security features.
+	 * @return Logical identifier of the configuration entry that describes 
+	 * how to fulfil the requested security features.
 	 */
 	java.lang.String getOutboundConfigId();
 	
@@ -85,7 +100,8 @@ public interface SecurityConfiguration {
 	 * Method setInboundConfigId
 	 * Sets the configuration for inbound messages.
 	 * 
-	 * @param configId - Logical identifier of the configuration entry that describes how to fulfil the requested security features.
+	 * @param configId - Logical identifier of the configuration entry that 
+	 * describes how to fulfil the requested security features.
 	 */
 	void setInboundConfigId(java.lang.String configId);
 	
@@ -93,7 +109,8 @@ public interface SecurityConfiguration {
 	 * Method getInboundConfigId
 	 * Gets the configuration for inbound messages.
 	 * 
-	 * @return Logical identifier of the configuration entry that describes how to fulfil the requested security features.
+	 * @return Logical identifier of the configuration entry that describes 
+	 * how to fulfil the requested security features.
 	 */
 	java.lang.String getInboundConfigId();
 	
@@ -131,17 +148,22 @@ public interface SecurityConfiguration {
 	
 	/**
 	 * Method setCallbackHandler
-	 * Sets the JAAS callback handler that may be used to obtain security information from the application.
+	 * Sets the JAAS callback handler that may be used to obtain security 
+	 * information from the application.
 	 * 
-	 * @param callbackHandler - The CallbackHandlerinstance to use to retrieve security information from the application.
+	 * @param callbackHandler - The CallbackHandlerinstance to use to 
+	 * retrieve security information from the application.
 	 */
-	void setCallbackHandler(javax.security.auth.callback.CallbackHandler callbackHandler);
+	void setCallbackHandler(javax.security.auth.callback.CallbackHandler 
+			callbackHandler);
 	
 	/**
 	 * Method getCallbackHandler
-	 * Gets the JAAS callback handler that may be used to obtain security information from the application.
+	 * Gets the JAAS callback handler that may be used to obtain security 
+	 * information from the application.
 	 * 
-	 * @return The CallbackHandlerinstance to use to retrieve security information from the application.
+	 * @return The CallbackHandlerinstance to use to retrieve security 
+	 * information from the application.
 	 */
 	javax.security.auth.callback.CallbackHandler getCallbackHandler();
 

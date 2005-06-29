@@ -36,7 +36,8 @@ public final class CalendarHolder {
 	
 	/**
 	 * Constructor
-	 * Sets the value of <code>value</code> property to the given input parameter value
+	 * Sets the value of <code>value</code> property to the given input 
+	 * parameter value
 	 * @param myCalendar
 	 */
 	public CalendarHolder(java.util.Calendar myCalendar){}
