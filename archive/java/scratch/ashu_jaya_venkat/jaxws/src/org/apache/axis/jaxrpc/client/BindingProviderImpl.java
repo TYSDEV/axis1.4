@@ -14,13 +14,32 @@
  * limitations under the License.
  */
 
-package org.apache.axis.jaxrpc;
+package org.apache.axis.jaxrpc.client;
 
+import javax.xml.rpc.Binding;
 import javax.xml.rpc.BindingProvider;
+import javax.xml.rpc.JAXRPCContext;
 
-public class JAXRPCResponseContext extends JAXRPCContextImpl {
+public class BindingProviderImpl implements BindingProvider {
 
-	public JAXRPCResponseContext(BindingProvider provider){
-		super(provider);
+	protected JAXRPCRequestContext requestContext;
+	protected JAXRPCResponseContext responseContext;
+	
+	public JAXRPCContext getRequestContext() {
+		if(requestContext == null)
+			requestContext = new JAXRPCRequestContext(this);
+		return requestContext;
 	}
+
+	public JAXRPCContext getResponseContext() {
+		if(responseContext == null)
+			responseContext = new JAXRPCResponseContext(this);
+		return null;
+	}
+
+	public Binding getBinding() {
+		
+		return null;
+	}
+
 }

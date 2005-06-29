@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.apache.axis.jaxrpc;
+package org.apache.axis.jaxrpc.client;
 
 import java.util.ArrayList;
 import java.util.HashMap;
