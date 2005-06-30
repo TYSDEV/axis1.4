@@ -7,9 +7,9 @@
     * This version supports only Windows platforms.
     * You may have to edit the 'IEPath' property below.
     * The target source you have to edit will be in;
-      'ws-axis/site/src4forrest-060/java'.
+      'ws-axis/site/src4/java'.
     * After editing the target, you have to commit a set of
-      updates in 'ws-axis/site/src4forrest-060/java' and
+      updates in 'ws-axis/site/src/java' and
       'ws-site/target/axis'.
 -->
 
@@ -121,7 +121,7 @@
   <target name="putmessage">
     <echo>
       (If you are a committer,) please commit your updates in
-      'ws-axis/site/src4forrest-060/java' and 'ws-site/target/axis' !!
+      'ws-axis/site/src/java' and 'ws-site/target/axis' !!
     </echo>
   </target>
 
