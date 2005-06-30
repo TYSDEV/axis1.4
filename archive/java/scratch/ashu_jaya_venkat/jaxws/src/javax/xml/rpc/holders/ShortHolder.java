@@ -38,8 +38,10 @@ public final class ShortHolder implements Holder {
 	 * Constructor
 	 * Sets the value of <code>value</code> property to the given input 
 	 * parameter value
-	 * @param myshort
+	 * @param myShort
 	 */
-	public ShortHolder(short myshort){}
+	public ShortHolder(short myShort){
+		value = myShort;
+	}
 
 }

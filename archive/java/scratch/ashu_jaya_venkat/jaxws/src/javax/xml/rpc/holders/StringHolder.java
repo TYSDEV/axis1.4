@@ -40,6 +40,8 @@ public final class StringHolder implements Holder {
 	 * parameter value
 	 * @param myString
 	 */
-	public StringHolder(java.lang.String myString){}
+	public StringHolder(java.lang.String myString){
+		value = myString;
+	}
 
 }

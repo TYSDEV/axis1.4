@@ -38,8 +38,10 @@ public final class FloatWrapperHolder implements Holder {
 	 * Constructor
 	 * Sets the value of <code>value</code> property to the given input 
 	 * parameter value
-	 * @param myfloat
+	 * @param myFloat
 	 */
-	public FloatWrapperHolder(java.lang.Float myfloat){}
+	public FloatWrapperHolder(java.lang.Float myFloat){
+		value = myFloat;
+	}
 
 }

@@ -40,6 +40,8 @@ public class ObjectHolder {
 	 * parameter value
 	 * @param value
 	 */
-	public ObjectHolder(java.lang.Object value){}
+	public ObjectHolder(java.lang.Object value){
+		this.value = value;
+	}
 
 }

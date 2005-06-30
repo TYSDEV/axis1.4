@@ -40,6 +40,8 @@ public final class CalendarHolder {
 	 * parameter value
 	 * @param myCalendar
 	 */
-	public CalendarHolder(java.util.Calendar myCalendar){}
+	public CalendarHolder(java.util.Calendar myCalendar){
+		value = myCalendar;
+	}
 
 }

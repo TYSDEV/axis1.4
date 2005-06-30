@@ -40,6 +40,8 @@ public class ByteHolder implements Holder {
 	 * parameter value
 	 * @param mybyte
 	 */
-	public ByteHolder(byte mybyte){}
+	public ByteHolder(byte mybyte){
+		value = mybyte;
+	}
 
 }

@@ -18,6 +18,7 @@ package javax.xml.rpc.soap;
 
 import javax.xml.rpc.ProtocolException;
 import javax.xml.soap.Detail;
+import javax.xml.namespace.QName;
 
 /**
  * The SOAPFaultException exception represents a SOAP fault. 
@@ -46,7 +47,15 @@ public class SOAPFaultException extends ProtocolException {
 	public SOAPFaultException(javax.xml.namespace.QName faultcode,
             java.lang.String faultstring,
             java.lang.String faultactor,
-            javax.xml.soap.Detail faultdetail){}
+            javax.xml.soap.Detail faultdetail){
+		
+		super(faultstring);
+		
+		this.faultcode   = faultcode;
+		this.faultstring = faultstring;
+		this.faultactor  = faultactor;
+		this.detail      = faultdetail;
+	}
 	
 	/**
 	 * Method getFaultCode
@@ -57,7 +66,7 @@ public class SOAPFaultException extends ProtocolException {
 	 * @return QName of the faultcode element
 	 */
 	public javax.xml.namespace.QName getFaultCode() {
-		return null;
+		return faultcode;
 	}
 	
 	/**
@@ -69,7 +78,7 @@ public class SOAPFaultException extends ProtocolException {
 	 * @return faultstring element of the SOAP fault
 	 */
 	public java.lang.String getFaultString() {
-		return null;
+		return faultstring;
 	}
 	
 	/**
@@ -81,7 +90,7 @@ public class SOAPFaultException extends ProtocolException {
 	 * @return faultactor element of the SOAP fault
 	 */
 	public java.lang.String getFaultActor() {
-		return null;
+		return faultactor;
 	}
 	
 	/**
@@ -92,7 +101,19 @@ public class SOAPFaultException extends ProtocolException {
 	 * @return detail element of the SOAP fault
 	 */
 	public Detail getDetail() {
-		return null;
+		return detail;
 	}
+	
+    /** Qualified name of the faultcode. */
+    private QName faultcode;
+
+    /** The faultstring element of the SOAP fault. */
+    private String faultstring;
+
+    /** Faultactor element of the SOAP fault. */
+    private String faultactor;
+    
+    /** Detail element of the SOAP fault. */
+    private Detail detail;
 
 }

@@ -40,6 +40,8 @@ public final class DoubleWrapperHolder implements Holder {
 	 * parameter value
 	 * @param mydouble
 	 */
-	public DoubleWrapperHolder(java.lang.Double mydouble){}
+	public DoubleWrapperHolder(java.lang.Double myDouble){
+		value = myDouble;
+	}
 
 }

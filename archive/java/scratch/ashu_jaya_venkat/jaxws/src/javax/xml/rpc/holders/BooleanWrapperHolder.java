@@ -40,6 +40,8 @@ public class BooleanWrapperHolder implements Holder{
 	 * parameter value
 	 * @param myboolean
 	 */
-	public BooleanWrapperHolder(java.lang.Boolean myboolean){}
+	public BooleanWrapperHolder(java.lang.Boolean myBoolean){
+		value = myBoolean;
+	}
 
 }

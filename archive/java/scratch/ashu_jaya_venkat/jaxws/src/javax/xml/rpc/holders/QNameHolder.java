@@ -40,6 +40,8 @@ public final class QNameHolder implements Holder {
 	 * parameter value
 	 * @param myQName
 	 */
-	public QNameHolder(javax.xml.namespace.QName myQName){}
+	public QNameHolder(javax.xml.namespace.QName myQName){
+		value = myQName;
+	}
 
 }

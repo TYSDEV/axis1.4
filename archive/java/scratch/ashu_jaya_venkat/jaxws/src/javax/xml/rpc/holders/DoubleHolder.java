@@ -40,6 +40,8 @@ public final class DoubleHolder implements Holder {
 	 * parameter value
 	 * @param mydouble
 	 */
-	public DoubleHolder(double mydouble){}
+	public DoubleHolder(double myDouble){
+		value = myDouble;
+	}
 
 }

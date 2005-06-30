@@ -38,8 +38,10 @@ public final class IntHolder implements Holder {
 	 * Constructor
 	 * Sets the value of <code>value</code> property to the given input 
 	 * parameter value
-	 * @param myint
+	 * @param myInt
 	 */
-	public IntHolder(int myint) {}
+	public IntHolder(int myInt) {
+		value = myInt;
+	}
 
 }

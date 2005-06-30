@@ -38,8 +38,10 @@ public final class ShortWrapperHolder implements Holder {
 	 * Constructor
 	 * Sets the value of <code>value</code> property to the given input 
 	 * parameter value
-	 * @param myshort
+	 * @param myShort
 	 */
-	public ShortWrapperHolder(java.lang.Short myshort){}
+	public ShortWrapperHolder(java.lang.Short myShort){
+		value = myShort;
+	}
 
 }

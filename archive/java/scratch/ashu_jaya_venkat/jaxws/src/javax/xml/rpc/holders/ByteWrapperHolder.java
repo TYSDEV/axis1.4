@@ -40,6 +40,8 @@ public final class ByteWrapperHolder {
 	 * parameter value
 	 * @param mybyte
 	 */
-	public ByteWrapperHolder(java.lang.Byte mybyte) {}
+	public ByteWrapperHolder(java.lang.Byte mybyte) {
+		value = mybyte;
+	}
 
 }

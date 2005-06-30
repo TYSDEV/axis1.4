@@ -40,6 +40,8 @@ public final class FloatHolder implements Holder {
 	 * parameter value
 	 * @param myfloat
 	 */
-	public FloatHolder(float myfloat){}
+	public FloatHolder(float myFloat){
+		value = myFloat;
+	}
 
 }

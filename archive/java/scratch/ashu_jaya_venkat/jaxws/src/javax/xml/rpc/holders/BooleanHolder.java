@@ -40,6 +40,8 @@ public class BooleanHolder implements Holder {
 	 * parameter value
 	 * @param myboolean
 	 */
-	public BooleanHolder(boolean myboolean) {}
+	public BooleanHolder(boolean myBoolean) {
+		value = myBoolean;
+	}
 
 }

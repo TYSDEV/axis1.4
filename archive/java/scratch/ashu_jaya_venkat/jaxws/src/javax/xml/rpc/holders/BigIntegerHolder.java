@@ -40,6 +40,8 @@ public final class BigIntegerHolder implements Holder {
 	 * parameter value
 	 * @param myBigInteger
 	 */
-	public BigIntegerHolder(java.math.BigInteger myBigInteger){}
+	public BigIntegerHolder(java.math.BigInteger myBigInteger){
+		value = myBigInteger;
+	}
 
 }
