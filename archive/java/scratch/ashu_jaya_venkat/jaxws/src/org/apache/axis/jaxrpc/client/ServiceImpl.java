@@ -19,8 +19,15 @@ import javax.xml.rpc.security.SecurityConfiguration;
  * @author sunja07
  *
  */
-public class Service implements javax.xml.rpc.Service {
+public class ServiceImpl implements javax.xml.rpc.Service {
+	
+	private HandlerRegistry handlerRegistry;
+	
+	private TypeMappingRegistry typeMappingRegistry;
 
+	public static boolean JAXB_USAGE = true;
+	
+	public String wsdlLoc = null;
 	/**
 	 * Method createCall
 	 * Creates a Call object not associated with specific operation or target 
@@ -30,8 +37,8 @@ public class Service implements javax.xml.rpc.Service {
 	 * @throws ServiceException If any error in the creation of the Call object
 	 */
 	public Call createCall() throws ServiceException {
-		// TODO Auto-generated method stub
-		return null;
+		Call call = new CallImpl();
+		return call;
 	}
 
 	/**
@@ -45,8 +52,10 @@ public class Service implements javax.xml.rpc.Service {
 	 */
 	public Call createCall(QName portName, QName operationName) throws 
 	ServiceException {
-		// TODO Auto-generated method stub
-		return null;
+		Call call = createCall(portName);
+		call.setOperationName(operationName);
+		
+		return call;
 	}
 
 	/**
@@ -61,8 +70,8 @@ public class Service implements javax.xml.rpc.Service {
 	 */
 	public Call createCall(QName portName, String operationName) throws 
 	ServiceException {
-		// TODO Auto-generated method stub
-		return null;
+		QName dummyQNameForOperationName = new QName(operationName);
+		return createCall(portName, dummyQNameForOperationName);
 	}
 
 	/**
@@ -74,8 +83,36 @@ public class Service implements javax.xml.rpc.Service {
 	 * object
 	 */
 	public Call createCall(QName portName) throws ServiceException {
-		// TODO Auto-generated method stub
+		
+		Call call = new CallImpl();
+
+		//portName and portType name needn't be matching. So...
+		QName portTypeName = getPortTypeNameForPort(portName); 
+		call.setPortTypeName(portTypeName);
+		
+		
+		prefillPortFromWSDL(portName);
 		return null;
+	}
+	
+	public QName getPortTypeNameForPort(QName portName) {
+		//TODO Corresponding to a portName we can avail a binding linkage and 
+		//from the binding we can get the unique portType it binds
+		
+		//but for now. Lets assume our portName is exactly our portTypeName
+		//Will revisit once WSDL handling mechanism is in place.
+		return portName;
+	}
+	
+	public void prefillPortFromWSDL(QName portName) { 
+		//TODO Actually there is lot amount of info that can be prefetched
+		//from wsdl for a given port. But WSDL handling is yet to be thought
+		//over and finalized. Once that done, we will prefill as much info
+		//from wsdl as we can in this method.
+		//From port, we can get targetEndPointAddress, binding and from 
+		//binding the portType information. Using which may be the call
+		//object can be better configured with parameters and returnType
+		//info.
 	}
 
 	// This involves generics, needs a revisit
@@ -83,11 +120,11 @@ public class Service implements javax.xml.rpc.Service {
 	 * Method createDispatch
 	 * Creates a Dispatch instance for use with objects of the users choosing.
 	 * 
-	 * @param - Qualified name for the target service endpoint
-	 * @param - The class of object used to messages or message payloads. 
+	 * @param portName - Qualified name for the target service endpoint
+	 * @param type - The class of object used to messages or message payloads. 
 	 * Implementations are required to support javax.xml.transform.Source and 
 	 * javax.xml.soap.SOAPMessage.
-	 * @param - Controls whether the created dispatch instance is message or 
+	 * @param mode - Controls whether the created dispatch instance is message or 
 	 *  payload oriented, i.e. whether the user will work with complete protocol
 	 *  messages or message payloads. E.g. when using the SOAP protocol, this 
 	 *  parameter controls whether the user will work with SOAP messages or the
@@ -161,6 +198,16 @@ public class Service implements javax.xml.rpc.Service {
 	 * the required WSDL metadata or if an illegal portName is specified.
 	 */
 	public Call[] getCalls(QName portName) throws ServiceException {
+		
+		//Logic here is that corresponding to this portName
+		//identify the portType and within it identify all the
+		//operations in it.
+		//For each operation, create a call object, configure it and
+		//add it to an array of call objects. Configuring of call
+		//objects would be typically setting the TargetEndPointAddress, 
+		//setting the operationName, portName, portType, adding 
+		//parameters and returnType.
+
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -175,8 +222,9 @@ public class Service implements javax.xml.rpc.Service {
 	 */
 	public HandlerRegistry getHandlerRegistry() throws 
 	UnsupportedOperationException {
-		// TODO Auto-generated method stub
-		return null;
+		//Actually at the deployment configuration time positively the handler
+		//registry must be populated with handler chain info.
+		return handlerRegistry;
 	}
 
 	/**
@@ -285,8 +333,19 @@ public class Service implements javax.xml.rpc.Service {
 	 */
 	public TypeMappingRegistry getTypeMappingRegistry() throws 
 	UnsupportedOperationException {
-		// TODO Auto-generated method stub
-		return null;
+		//If the implementation is using JAXB, we should throw exception
+		//Usage of JAXB might be using a flag. This flag, I feel, is most
+		//appropriate if placed in the way the ServiceFactory itself is 
+		//instantiated. ServiceFactory.newInstance(boolean JAXB_USAGE)
+		//The flag can be copied to a boolean value in the Service object
+		//that gets created with sf.createService(...) method.
+		
+		if (JAXB_USAGE)
+			throw new UnsupportedOperationException();
+		else
+			return typeMappingRegistry;
+			//But positively at some point of execution flow
+			//typeMappingRegistry must be populated.
 	}
 
 	/**
@@ -295,11 +354,10 @@ public class Service implements javax.xml.rpc.Service {
 	 * @return URL for the location of the WSDL document for this service
 	 */
 	public URL getWSDLDocumentLocation() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public Service() {
+	public ServiceImpl() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
