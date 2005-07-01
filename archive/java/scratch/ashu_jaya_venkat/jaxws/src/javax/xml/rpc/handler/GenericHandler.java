@@ -37,7 +37,7 @@ import javax.xml.rpc.soap.SOAPFaultException;
  * @author shaas02
  *
  */
-public class GenericHandler implements Handler, HandlerLifecycle {
+public abstract class GenericHandler implements Handler, HandlerLifecycle {
 
 	protected GenericHandler(){
 		
@@ -64,8 +64,7 @@ public class GenericHandler implements Handler, HandlerLifecycle {
 	 */
 	public boolean handleRequest(MessageContext context)
 			throws JAXRPCException, SOAPFaultException {
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	/**
@@ -83,8 +82,7 @@ public class GenericHandler implements Handler, HandlerLifecycle {
 	 */
 	public boolean handleResponse(MessageContext context)
 			throws JAXRPCException {
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	/**
@@ -100,8 +98,7 @@ public class GenericHandler implements Handler, HandlerLifecycle {
 	 * @see javax.xml.rpc.handler.Handler#handleFault(javax.xml.rpc.handler.MessageContext)
 	 */
 	public boolean handleFault(MessageContext context) throws JAXRPCException {
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	/**
@@ -110,10 +107,7 @@ public class GenericHandler implements Handler, HandlerLifecycle {
 	 * outermost element of the Header block.
 	 * @see javax.xml.rpc.handler.Handler#getHeaders()
 	 */
-	public QName[] getHeaders() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	public abstract QName[] getHeaders();
 
 	/**
 	 * The init method to enable the Handler instance to initialize itself. This method should be overridden if the derived
@@ -121,19 +115,13 @@ public class GenericHandler implements Handler, HandlerLifecycle {
 	 * @param config - Configuration for the initialization of this handler
 	 * @see javax.xml.rpc.handler.HandlerLifecycle#init(null)
 	 */
-	public void init(HandlerInfo config) throws JAXRPCException {
-		// TODO Auto-generated method stub
-
-	}
+	public abstract void init(HandlerInfo config) throws JAXRPCException;
 
 	/**
 	 * The destroy method indicates the end of lifecycle for a Handler instance. This method should be overridden if the
 	 * derived Handler class needs to specialize implementation of this method.
 	 * @see javax.xml.rpc.handler.HandlerLifecycle#destroy()
 	 */
-	public void destroy() throws JAXRPCException {
-		// TODO Auto-generated method stub
-
-	}
+	public abstract void destroy() throws JAXRPCException ;
 
 }

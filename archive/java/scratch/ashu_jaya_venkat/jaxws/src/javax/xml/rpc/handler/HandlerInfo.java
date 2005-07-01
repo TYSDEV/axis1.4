@@ -17,6 +17,12 @@
 package javax.xml.rpc.handler;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.xml.namespace.QName;
 
 /**
  * public class HandlerInfo
@@ -31,11 +37,18 @@ import java.io.Serializable;
  */
 public class HandlerInfo implements Serializable {
 	
+	private Class handlerClass;
+	private Map config;
+	private List<QName> headers;
+	
+	
 	/**
 	 * Default constructor
 	 */
 	HandlerInfo(){
-		
+		handlerClass = null;
+		config = new HashMap();
+		headers = new ArrayList<QName>();
 	}
 
 	/**
@@ -47,7 +60,15 @@ public class HandlerInfo implements Serializable {
 	 */
 	HandlerInfo(java.lang.Class handlerClass, java.util.Map config,
 			javax.xml.namespace.QName[] headers){
-		
+		this.handlerClass = handlerClass;
+		this.config = config;
+		if(headers != null){
+			for(int i = 0; i < headers.length; i++){
+				if(headers[i] != null){
+					this.headers.add(headers[i]);
+				}
+			}
+		}
 	}
 	
 	/**
@@ -55,7 +76,7 @@ public class HandlerInfo implements Serializable {
 	 * @param handlerClass - Class for the Handler
 	 */
 	public void setHandlerClass(java.lang.Class handlerClass){
-		
+		this.handlerClass = handlerClass;
 	}
 	
 	/**
@@ -63,7 +84,7 @@ public class HandlerInfo implements Serializable {
 	 * @return Returns null if no Handler class has been set; otherwise the set handler class
 	 */
 	public java.lang.Class getHandlerClass(){
-		return null;
+		return handlerClass;
 	}
 	
 	/**
@@ -71,7 +92,7 @@ public class HandlerInfo implements Serializable {
 	 * @param config - Configuration map
 	 */
 	public void setHandlerConfig(java.util.Map config){
-		
+		this.config = config;
 	}
 	
 	/**
@@ -79,7 +100,7 @@ public class HandlerInfo implements Serializable {
 	 * @return Returns empty Map if no configuration map has been set; otherwise returns the set configuration map
 	 */
 	public java.util.Map getHandlerConfig(){
-		return null;
+		return config;
 	}
 	
 	/**
@@ -88,7 +109,13 @@ public class HandlerInfo implements Serializable {
 	 * header block
 	 */
 	public void setHeaders(javax.xml.namespace.QName[] headers){
-		
+		if(headers != null){
+			for(int i = 0; i < headers.length; i++){
+				if(headers[i] != null){
+					this.headers.add(headers[i]);
+				}
+			}
+		}
 	}
 	
 	/**
@@ -97,6 +124,14 @@ public class HandlerInfo implements Serializable {
 	 * method.
 	 */
 	public javax.xml.namespace.QName[] getHeaders(){
-		return null;
+		if(headers == null || headers.size() == 0){
+			return null;
+		}else{
+			QName[] elements = new QName[headers.size()];
+			for(int i = 0; i < headers.size(); i++){
+				elements[i] = headers.get(i);
+			}
+			return elements;
+		}
 	}
 }
