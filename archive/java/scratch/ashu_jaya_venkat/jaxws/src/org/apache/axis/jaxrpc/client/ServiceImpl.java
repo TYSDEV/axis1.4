@@ -3,15 +3,21 @@ package org.apache.axis.jaxrpc.client;
 import java.net.URI;
 import java.net.URL;
 import java.rmi.Remote;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.namespace.QName;
 import javax.xml.rpc.Call;
 import javax.xml.rpc.Dispatch;
+import javax.xml.rpc.JAXRPCException;
 import javax.xml.rpc.ServiceException;
 import javax.xml.rpc.Service.Mode;
 import javax.xml.rpc.encoding.TypeMappingRegistry;
+import javax.xml.rpc.handler.HandlerInfo;
 import javax.xml.rpc.handler.HandlerRegistry;
 import javax.xml.rpc.security.SecurityConfiguration;
 
@@ -21,7 +27,7 @@ import javax.xml.rpc.security.SecurityConfiguration;
  */
 public class ServiceImpl implements javax.xml.rpc.Service {
 	
-	private HandlerRegistry handlerRegistry;
+	private HandlerRegistryImpl handlerRegistry = new HandlerRegistryImpl();
 	
 	private TypeMappingRegistry typeMappingRegistry;
 
@@ -39,6 +45,89 @@ public class ServiceImpl implements javax.xml.rpc.Service {
 	public Call createCall() throws ServiceException {
 		Call call = new CallImpl();
 		return call;
+	}
+	
+	protected class HandlerRegistryImpl implements HandlerRegistry{
+		
+		//Adding as an inner class to ServiceImpl.
+		// Might need to revisit later, if it needs to be an independent one.
+		
+		private List<HandlerInfo> serviceHandlerChain;
+		private Map<URI, List> bindingHandlerChain;
+		private Map<QName, List> portHandlerChain;
+		
+		private void confirmPort(javax.xml.namespace.QName portName){
+			Iterator<QName> ports = null;
+			try{
+				ports = getPorts();
+				while(ports.hasNext()){
+					if(ports.next()== portName)
+						return;
+				}
+			}catch(ServiceException se){
+				
+			}
+			throw new java.lang.IllegalArgumentException("Invalid portName");
+		}
+		
+		private void confirmBindingId(java.net.URI bindingId){
+			
+			if(bindingId.toString().equalsIgnoreCase("http://schemas.xmlsoap.org/wsdl/soap/http"))
+				return;
+			
+			throw new java.lang.IllegalArgumentException("Invalid bindingId");
+		}
+		
+		public java.util.List getHandlerChain(javax.xml.namespace.QName portName) throws java.lang.IllegalArgumentException{
+			
+			confirmPort(portName);
+			if(portHandlerChain == null)
+				portHandlerChain = new HashMap<QName, List>();
+			if(portHandlerChain.get(portName) == null){
+				setHandlerChain(portName, new ArrayList());
+			}
+			return portHandlerChain.get(portName);
+		}
+		
+		public void setHandlerChain(javax.xml.namespace.QName portName,
+				java.util.List chain) throws JAXRPCException, java.lang.UnsupportedOperationException,
+				java.lang.IllegalArgumentException{
+			
+			confirmPort(portName);
+			if(portHandlerChain == null)
+				portHandlerChain = new HashMap<QName, List>();
+			portHandlerChain.put(portName, chain);
+		}
+		
+		public java.util.List<HandlerInfo> getHandlerChain(){
+			if(serviceHandlerChain == null)
+				serviceHandlerChain = new ArrayList<HandlerInfo>();
+			return serviceHandlerChain;
+		}
+		
+		public void setHandlerChain(java.util.List<HandlerInfo> chain) throws java.lang.UnsupportedOperationException, JAXRPCException{
+			serviceHandlerChain = chain;
+		}
+		
+		public java.util.List<HandlerInfo> getHandlerChain(java.net.URI bindingId) throws java.lang.IllegalArgumentException{
+			confirmBindingId(bindingId);
+			if(bindingHandlerChain == null)
+				bindingHandlerChain = new HashMap<URI, List>();
+			if(bindingHandlerChain.get(bindingId) == null){
+				setHandlerChain(bindingId, new ArrayList());
+			}
+			return bindingHandlerChain.get(bindingId);
+		}
+		
+		public void setHandlerChain(java.net.URI bindingId,
+				java.util.List<HandlerInfo> chain) throws JAXRPCException,
+				java.lang.UnsupportedOperationException, java.lang.IllegalArgumentException{
+			
+			confirmBindingId(bindingId);
+			if(bindingHandlerChain == null)
+				bindingHandlerChain = new HashMap<URI, List>();
+			bindingHandlerChain.put(bindingId, chain);
+		}
 	}
 
 	/**
