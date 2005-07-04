@@ -41,7 +41,7 @@ $Id$
     
     <xsl:comment>================= start Banner ==================</xsl:comment>
       <div id="banner">
-        <table border="0" summary="banner" cellspacing="0" cellpadding="8" width="100%">
+        <table border="0" summary="banner" cellspacing="0" cellpadding="0" width="100%">
          <tbody>        
           <tr>
             <xsl:comment>================= start Group Logo ==================</xsl:comment>
@@ -58,6 +58,17 @@ $Id$
             </td>
             </xsl:if>
             <xsl:comment>================= end Group Logo ==================</xsl:comment>
+            <xsl:comment>================= start Project Title ==================</xsl:comment>
+            <td align="left" width="100%" nowrap="1">
+              <div class="projectTitleImg"><br/>
+                <xsl:call-template name="renderlogo">
+                  <xsl:with-param name="name" select="$config/project-title-name"/>
+                  <xsl:with-param name="logo" select="$config/project-title-img"/>
+                  <xsl:with-param name="root" select="$root"/>
+                </xsl:call-template>
+              </div>
+            </td>
+            <xsl:comment>================= end Project Title ==================</xsl:comment>
             <xsl:comment>================= start Project Logo ==================</xsl:comment>
             <td align="right">
               <div class="projectLogo">
@@ -70,6 +81,7 @@ $Id$
               </div>
             </td>
             <xsl:comment>================= end Project Logo ==================</xsl:comment>
+<!--
             <xsl:comment>================= start Search ==================</xsl:comment>
             <td class="search" align="right" rowspan="2" valign="top">
               <xsl:if test="not($config/disable-search) or
@@ -92,10 +104,12 @@ $Id$
                         <input type="submit" value="Go" name="Search"/>
                         <br />
                           Search <xsl:value-of select="$config/searchsite-name"/>
+-->
                           <!-- setting search options off for the moment -->
                           <!--
                           <input type="radio" name="web" value="web"/>web site&#160;&#160;<input type="radio" name="mail" value="mail"/>mail lists
                           -->
+<!--   
                       </td>
                       <td><img class="spacer" src="{$spacer}" alt="" width="1" height="1" /></td>
                     </tr>
@@ -114,6 +128,7 @@ $Id$
               </xsl:if>
             </td>
             <xsl:comment>================= end Search ==================</xsl:comment>
+-->
           </tr>
          </tbody>          
         </table>
@@ -125,7 +140,7 @@ $Id$
      <tbody>    
       <xsl:comment>================= start Status ==================</xsl:comment>
       <tr class="status">
-        <td>
+        <td width="100%">
           <xsl:comment>================= start BreadCrumb ==================</xsl:comment>
             <a href="{$config/trail/link1/@href}"><xsl:value-of select="$config/trail/link1/@name" /></a> 
             <xsl:if test = "($config/trail/link2/@name)and(normalize-space($config/trail/link2/@name)!='')"><xsl:text> | </xsl:text></xsl:if>                                 
@@ -140,11 +155,17 @@ $Id$
           -->
           <xsl:comment>================= end BreadCrumb ==================</xsl:comment>
         </td>
+		<td align="right" nowrap="1">
+			<form target="_blank" action="http://www.google.com/search" method="get">Search <input value="ws.apache.org" name="sitesearch" type="hidden"/><input size="10" name="q" id="query" type="text"/><img height="1" width="5" alt="" src="skin/images/spacer.gif" class="spacer"/><input name="Search" value="Go" type="submit"/>
+			</form>
+		</td>
+<!--        
         <td id="tabs">
           <xsl:comment>================= start Tabs ==================</xsl:comment>
           <xsl:apply-templates select="div[@class='tab']"/>
           <xsl:comment>================= end Tabs ==================</xsl:comment>
         </td>
+-->
       </tr>
      </tbody>      
     </table>      
@@ -166,12 +187,14 @@ $Id$
         <td>
           <div id="bodycol">
             <div class="app">
+<!--            
               <div align="center">
                 <h1><xsl:value-of select="/site/document/title" /></h1>
                 <xsl:if test="/site/document/subtitle">
                   <h2><xsl:value-of select="/site/document/subtitle" /></h2>
                 </xsl:if>
                </div>
+-->
                 <div class="h3">
                    <xsl:copy-of select="/site/document/body/node()|@*" />
                 </div>

@@ -18,11 +18,8 @@ body {
 #navcolumn div div.heading  {
  background-image: none;
  }
-.app h3, .app h4 {
- color: #fff;
- }
 .app h3 {
- background-color: #036;
+ background-color: #e8e8e8;
  }
 .app h4 {
  background-color: #888;
@@ -69,11 +66,13 @@ div#helptext td {
  border-bottom: 1px solid #aaa;
  }
 #breadcrumbs {
- border-bottom: 1px solid #aaa;
- background-color: #ddd;
+ border-bottom: 0px solid #000;
+ border-top: 0px solid #fff;
+ background-color: #036;
+ color:#fff;
  }
-#navcolumn, #breadcrumbs {
- border-top: 1px solid #fff;
+#navcolumn  {
+  border-top: 1px solid #fff;
  }
 #rightcol div.www, #rightcol div.help {
  border: 1px solid #ddd;
@@ -212,7 +211,7 @@ html body, body th, body td, textarea, h2 small, .app h3, .app h4, #rightcol h3,
  voice-family: inherit;
  font-size: small
  }
-html>body, html>body th, html>body td, html>body input, html>body select, html>body textarea, html>body h2 small, html>body .app h3, html>body .app h4, html>body #rightcol h3, html>body #bodycol pre, html>body #bodycol code {
+html>body, html>body th, html>body td, html>body input, html>body select, html>body textarea, html>body h2 small, html>body .app h4, html>body #rightcol h3, html>body #bodycol pre, html>body #bodycol code {
  font-size: small
  }
 small, div#footer td, div#login, div.tabs th, div.tabs td, input, select, .paginate, .functnbar, .functnbar2, .functnbar3, #breadcrumbs td, .courtesylinks, #rightcol div.help, .colbar, .tasknav, body.docs div#toc, #leftcol {
@@ -282,9 +281,7 @@ html>body #bodycol {
  line-height: 1.4;
  }
 .app h3, .app h4 {
- padding: 5px;
- margin-right: 2px;
- margin-left: 2px;
+ padding-left:10px;
  }
 .h3 p, .h4 p, .h3 dt, .h4 dt {
  margin-right: 7px;
@@ -307,7 +304,7 @@ div.colbar {
  }
 #breadcrumbs td {
  vertical-align: middle;
- padding: 2px 8px;
+/* padding: 2px 8px; */
  } 
 #rightcol div.www, #rightcol div.help {
  padding: 0 .5em
@@ -432,3 +429,14 @@ dd {
 body.docs, body.nonav {
  margin: 1em
  }
+ .app h3, .app h4 {
+  color: #008;
+  font-size:large;
+  }
+ .app h1{
+  font-size:x-large;
+  }
+#breadcrumbs a{
+ color:#ff4;
+ }
+ 

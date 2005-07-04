@@ -14,8 +14,8 @@
     If @id's are present, site.xml entries with a matching @tab will be in that tab.
   -->
 
-  <tab id="" label="WebServices-Axis" dir="" indexfile="index.html"/>
   <!-- Add new tabs here, eg:
+  <tab id="" label="WebServices-Axis" dir="" indexfile="index.html"/>
   <tab label="How-Tos" dir="community/howto/"/>
   <tab label="XML Site" dir="xml-site/"/>
   -->

@@ -6,9 +6,9 @@
   </header>
   <body>
 
-<a name="Introduction"/>
+<a name="News"/>
 <section>
-<title>Introduction</title>
+<title>News</title>
 
 <p>NEWS (June 15, 2005) : Axis <a href="http://www.apache.org/dyn/closer.cgi/ws/axis/1_2_1">1.2.1 Final </a> is now available!</p>
 <p>NEWS (May 04, 2005) : Axis <a href="http://www.apache.org/dyn/closer.cgi/ws/axis/1_2">1.2 Final </a> is now available!</p>
@@ -31,7 +31,10 @@ Other news at the Apache Software Foundation is here:
 Web Services related news on the Apache News Blog Online</a></LI>
 </UL>
 
-<hr/>
+</section>
+<a name="Introduction"/>
+<section>
+<title>Introduction</title>
 
 <p>Apache Axis is an implementation of the SOAP ("Simple Object Access Protocol") <a href="http://www.w3.org/TR/SOAP">submission</a>
 to W3C.</p>
