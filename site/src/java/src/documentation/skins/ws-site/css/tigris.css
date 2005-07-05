@@ -37,8 +37,10 @@ div.colbar {
  background: #bbb;
  }
 div#banner {
+/*
  border-top: 1px solid #369;
  border-bottom: 1px solid #003;
+*/
  }
 div#helptext th {
  border-bottom: 1px solid #996;
@@ -184,10 +186,6 @@ h2 .lastchild {
  }
 #navcolumn div strong {
  color: #000;
- }
-#banner, #banner td { 
- background: #036;
- color: #fff;
  }
 body #banner #login a { 
  color: #fff;

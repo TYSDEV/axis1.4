@@ -1,4 +1,4 @@
-﻿<?xml version="1.0"?>
+<?xml version="1.0"?>
 <!--
 site2xhtml.xsl is the final stage in HTML page production.  It merges HTML from
 document2html.xsl, tab2menu.xsl and book2menu.xsl, and adds the site header,
