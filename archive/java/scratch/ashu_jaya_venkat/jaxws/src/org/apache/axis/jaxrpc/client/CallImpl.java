@@ -7,6 +7,7 @@ import java.rmi.RemoteException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.HashMap;
 
 import javax.xml.namespace.QName;
 import javax.xml.rpc.Binding;
@@ -21,6 +22,59 @@ import javax.xml.rpc.soap.SOAPFaultException;
  */
 public class CallImpl extends BindingProviderImpl implements javax.xml.rpc.Call {
 
+	/**
+	 * Field targetEndpointAddress
+	 * The location where the webservice should be found
+	 */
+	private static String targetEndpointAddress;
+	
+	/**
+	 * Field operationName 
+	 * The name of the operation to invoke at the service endpoint
+	 */
+	private static QName operationName;
+	
+	/**
+	 * Field portTypeName
+	 * The name of the corresponding port type in the wsdl 
+	 */
+	private static QName portTypeName;
+	
+	/**
+	 * Field returnType
+	 * The xml return type to expect from the method invocation
+	 */
+	private static QName returnType;
+	
+	/**
+	 * Field paramAndReturnSpecRequired
+	 * A boolean flag that should be populated from the wsdl info, if
+	 * the operation corresponding to this Call object has to have the
+	 * parameters added explicitly and return type specified explicitly
+	 */
+	protected static boolean paramAndReturnSpecRequired;
+	
+	/**
+	 * Field isWSDLParsed
+	 * A boolean flag to keep track of status of wsdl parsing.
+	 */
+	protected static boolean isWSDLParsed = false;
+	
+	/**
+	 * Field propertyBag
+	 * A hashmap that contains the configured values of standard properties
+	 * allowed in the setProperty method.
+	 */
+	private static HashMap propertyBag = new HashMap();
+	
+	/**
+	 * Field outputParams
+	 * A hashmap of {name, value} for the output parameters of the last 
+	 * invoked operation. The parameter names in the returned Map are of type 
+	 * java.lang.String.
+	 */
+	private static HashMap outputParams = new HashMap();
+	
 	/**
 	 * 
 	 */
@@ -43,8 +97,17 @@ public class CallImpl extends BindingProviderImpl implements javax.xml.rpc.Call 
 	 */
 	public boolean isParameterAndReturnSpecRequired(QName operationName)
 			throws IllegalArgumentException {
-		// TODO Auto-generated method stub
-		return false;
+		
+		// check if wsdl info is read about this requirement
+		if(isWSDLParsed) //paramAndReturnSpecRequired flag will be set aptly
+			return paramAndReturnSpecRequired;
+		else //WSDL parsing didn't happen
+			//I have a few choices here. Either go ahead and parse the wsdl
+			//fully OR return a default value logging a warning or debug stmt
+			
+			//log.debug("WSDL isn't parsed. Returning default value for
+			//	paramAndReturnSpecRequired");
+			return false;			
 	}
 
 	/**
@@ -176,19 +239,17 @@ public class CallImpl extends BindingProviderImpl implements javax.xml.rpc.Call 
 	 * @return Qualified name of the operation
 	 */
 	public QName getOperationName() {
-		// TODO Auto-generated method stub
-		return null;
+		return operationName;
 	}
 
 	/**
 	 * Method setOperationName
 	 * Sets the name of the operation to be invoked using this Call instance. 
-	 * @param operationName QName of the operation to be invoked using the 
+	 * @param opName QName of the operation to be invoked using the 
 	 * Call instance
 	 */
-	public void setOperationName(QName operationName) {
-		// TODO Auto-generated method stub
-
+	public void setOperationName(QName opName) {
+		operationName = opName;
 	}
 
 	/**
@@ -197,8 +258,7 @@ public class CallImpl extends BindingProviderImpl implements javax.xml.rpc.Call 
 	 * @return Qualified name of the port type
 	 */
 	public QName getPortTypeName() {
-		// TODO Auto-generated method stub
-		return null;
+		return portTypeName;
 	}
 
 	/**
@@ -207,8 +267,7 @@ public class CallImpl extends BindingProviderImpl implements javax.xml.rpc.Call 
 	 * @param portType Qualified name of the port type
 	 */
 	public void setPortTypeName(QName portType) {
-		// TODO Auto-generated method stub
-
+		portTypeName = portType;
 	}
 
 	/**
@@ -220,8 +279,7 @@ public class CallImpl extends BindingProviderImpl implements javax.xml.rpc.Call 
 	 * URI
 	 */
 	public void setTargetEndpointAddress(String address) {
-		// TODO Auto-generated method stub
-
+		targetEndpointAddress = address;
 	}
 
 	/**
@@ -230,8 +288,7 @@ public class CallImpl extends BindingProviderImpl implements javax.xml.rpc.Call 
 	 * @return Address of the target service endpoint as an URI
 	 */
 	public String getTargetEndpointAddress() {
-		// TODO Auto-generated method stub
-		return null;
+		return targetEndpointAddress;
 	}
 
 	/**
@@ -251,6 +308,11 @@ public class CallImpl extends BindingProviderImpl implements javax.xml.rpc.Call 
 	 */
 	public void setProperty(String name, Object value) throws JAXRPCException {
 		// TODO Auto-generated method stub
+		
+		//Here a long if-elseif...-else list of construct will come, checking
+		//the name of the key with the standard property names acceptable
+		//and putting the value of the property wherever there is a match or
+		//else throwing a JAXRPCException
 
 	}
 
@@ -263,8 +325,7 @@ public class CallImpl extends BindingProviderImpl implements javax.xml.rpc.Call 
 	 * property name is passed.
 	 */
 	public Object getProperty(String name) {
-		// TODO Auto-generated method stub
-		return null;
+		return propertyBag.get(name);
 	}
 
 	/**
@@ -275,8 +336,10 @@ public class CallImpl extends BindingProviderImpl implements javax.xml.rpc.Call 
 	 * property name is passed.
 	 */
 	public void removeProperty(String name) {
-		// TODO Auto-generated method stub
-
+		//do the error check of invalid or unsupported property name
+		
+		//if error check passed delete the property from the bag
+		propertyBag.remove(name);
 	}
 
 	/**
@@ -285,8 +348,7 @@ public class CallImpl extends BindingProviderImpl implements javax.xml.rpc.Call 
 	 * @return Iterator for the property names
 	 */
 	public Iterator getPropertyNames() {
-		// TODO Auto-generated method stub
-		return null;
+		return propertyBag.values().iterator();
 	}
 
 	/**
@@ -307,8 +369,24 @@ public class CallImpl extends BindingProviderImpl implements javax.xml.rpc.Call 
 	 */
 	public Object invoke(Object[] inputParams) throws RemoteException,
 			SOAPFaultException, JAXRPCException {
+
+		// ---
+		// some solid code will have to go here
+		// ---
+		
+		//I can't comment about the implementation of this method at this 
+		//point, but from what the outputParams hashMap should contain I
+		//think after the successful(?) invocation we should clear the 
+		//outputParams hashMap and fill it with latest operation output
+		//parameters.
+		
+		outputParams.clear();
+		//populateOutputParams(operationName); // a private method to be coded
+		
 		// TODO Auto-generated method stub
 		return null;
+		
+		
 	}
 
 	/**
@@ -330,8 +408,23 @@ public class CallImpl extends BindingProviderImpl implements javax.xml.rpc.Call 
 	 */
 	public Object invoke(QName operationName, Object[] inputParams)
 			throws RemoteException {
+		
+		//---
+		// some solid code will have to go here
+		// ---
+		
+		//I can't comment about the implementation of this method at this 
+		//point, but from what the outputParams hashMap should contain I
+		//think after the successful(?) invocation we should clear the 
+		//outputParams hashMap and fill it with latest operation output
+		//parameters.
+		
+		outputParams.clear();
+		//populateOutputParams(operationName); // a private method to be coded
+		
 		// TODO Auto-generated method stub
 		return null;
+		
 	}
 
 	/**
@@ -359,8 +452,7 @@ public class CallImpl extends BindingProviderImpl implements javax.xml.rpc.Call 
 	 * operation or is invoked before any invoke method has been called.
 	 */
 	public Map getOutputParams() throws JAXRPCException {
-		// TODO Auto-generated method stub
-		return null;
+		return (Map)outputParams;
 	}
 
 	/**
@@ -373,8 +465,7 @@ public class CallImpl extends BindingProviderImpl implements javax.xml.rpc.Call 
 	 * operation or is invoked before any invoke method has been called.
 	 */
 	public List getOutputValues() throws JAXRPCException {
-		// TODO Auto-generated method stub
-		return null;
+		return (List)outputParams.values();
 	}
 
 }
