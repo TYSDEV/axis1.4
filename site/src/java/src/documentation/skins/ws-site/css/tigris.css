@@ -18,11 +18,8 @@ body {
 #navcolumn div div.heading  {
  background-image: none;
  }
-.app h3 {
+.app h3, .app h4 {
  background-color: #e8e8e8;
- }
-.app h4 {
- background-color: #888;
  }
 .a td {
  background: #ddd;
@@ -211,7 +208,7 @@ html body, body th, body td, textarea, h2 small, .app h3, .app h4, #rightcol h3,
  voice-family: inherit;
  font-size: small
  }
-html>body, html>body th, html>body td, html>body input, html>body select, html>body textarea, html>body h2 small, html>body .app h4, html>body #rightcol h3, html>body #bodycol pre, html>body #bodycol code {
+html>body, html>body th, html>body td, html>body input, html>body select, html>body textarea, html>body h2 small, html>body #rightcol h3, html>body #bodycol pre, html>body #bodycol code {
  font-size: small
  }
 small, div#footer td, div#login, div.tabs th, div.tabs td, input, select, .paginate, .functnbar, .functnbar2, .functnbar3, #breadcrumbs td, .courtesylinks, #rightcol div.help, .colbar, .tasknav, body.docs div#toc, #leftcol {
@@ -237,9 +234,6 @@ dt {
  }
 #login .username {
  font-weight: bold;
- }
-h4 {
- font-size: 1em;
  }
 #breadcrumbs td {
  font-weight: bold;
@@ -431,6 +425,8 @@ body.docs, body.nonav {
  }
  .app h3, .app h4 {
   color: #008;
+  }
+ .app h3{
   font-size:large;
   }
  .app h1{
