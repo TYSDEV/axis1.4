@@ -142,6 +142,7 @@ $Id$
       <tr class="status">
         <td width="100%">
           <xsl:comment>================= start BreadCrumb ==================</xsl:comment>
+            <xsl:text>&#160;&#160;&#160;&#160;</xsl:text>
             <a href="{$config/trail/link1/@href}"><xsl:value-of select="$config/trail/link1/@name" /></a> 
             <xsl:if test = "($config/trail/link2/@name)and(normalize-space($config/trail/link2/@name)!='')"><xsl:text> | </xsl:text></xsl:if>                                 
             <a href="{$config/trail/link2/@href}"><xsl:value-of select="$config/trail/link2/@name" /></a>

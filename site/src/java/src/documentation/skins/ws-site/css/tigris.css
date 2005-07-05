@@ -435,4 +435,7 @@ body.docs, body.nonav {
 #breadcrumbs a{
  color:#ff4;
  }
- 
+ td #query {
+ 	font-size:x-small;
+ 	font-weight:normal;
+ }

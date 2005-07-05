@@ -79,7 +79,7 @@ be used to configure the chosen Forrest skin.
        skin: forrest-site renders it at the top-left corner -->
   <group-name>The Apache WebServices Project</group-name>
   <group-url>http://ws.apache.org/</group-url>
-  <group-logo>images/project-logo2.jpg</group-logo>
+  <group-logo>images/project-logo.png</group-logo>
   <!-- Alternative static image:
   <group-logo>images/group-logo.gif</group-logo> -->
 
