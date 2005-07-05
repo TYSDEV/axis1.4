@@ -27,8 +27,9 @@ package javax.xml.rpc.handler;
  */
 public interface MessageContext {
 	
-	static class Scope {
-		
+	public static enum Scope {
+		APPLICATION,
+		HANDLER;
 	}
 	
 	/**
@@ -36,14 +37,14 @@ public interface MessageContext {
 	 * <p>
 	 * Type: boolean
 	 */
-	static final java.lang.String MESSAGE_OUTBOUND_PROPERTY = null;
+	static final java.lang.String MESSAGE_OUTBOUND_PROPERTY = "javax.xml.rpc.handler.message.outbound";
 	
 	/**
 	 * Standard property: security configuration.
 	 * <p>
 	 * Type: javax.xml.rpc.security.SecurityConfiguration
 	 */
-	static final java.lang.String MESSAGE_SECURITY_CONFIGURATION = null;
+	static final java.lang.String MESSAGE_SECURITY_CONFIGURATION = "javax.xml.rpc.security.configuration";
 	
 	/**
 	 * Sets the scope of a property.
