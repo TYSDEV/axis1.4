@@ -8,9 +8,14 @@ import javax.xml.rpc.Service;
 import javax.xml.rpc.ServiceException;
 import javax.xml.rpc.ServiceFactory;
 
+import org.apache.axis.jaxrpc.JAXRPCWSDLInterface;
+import org.apache.axis.jaxrpc.factory.WSDLFactoryImpl;
+
 public class ServiceFactoryImpl extends ServiceFactory {
 
-	private Service serviceClass = null;
+	private Service service;
+	
+	private static JAXRPCWSDLInterface parserWrapper=null;
 	
 	public ServiceFactoryImpl() {
 		super();
@@ -28,13 +33,16 @@ public class ServiceFactoryImpl extends ServiceFactory {
 	public Service createService(URL wsdlDocumentLocation, QName serviceName)
 			throws ServiceException {
 		
-		if(serviceClass == null) {
-			//As of now properties isn't finalized. So send null
-			//TODO Revisit this after finalizing how property resources
-			//		would be fed to our implementation.
-			serviceClass = loadService(wsdlDocumentLocation, serviceName, null);
+		if(parserWrapper==null) {
+			//Here am hard coding the parser choice. Should think of better
+			//flexible implementation
+			parserWrapper = WSDLFactoryImpl.getParser(0, wsdlDocumentLocation);
+			
 		}
-		return serviceClass;
+		javax.wsdl.Service wsdlService = parserWrapper.getService(wsdlDocumentLocation, serviceName);
+		service = (Service) new ServiceImpl(parserWrapper, wsdlService);
+		
+		return service;
 	}
 
 	/**

@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 
+import javax.wsdl.Operation;
 import javax.xml.namespace.QName;
 import javax.xml.rpc.Binding;
 import javax.xml.rpc.JAXRPCContext;
@@ -67,12 +68,6 @@ public class CallImpl extends BindingProviderImpl implements javax.xml.rpc.Call 
 	protected static boolean paramAndReturnSpecRequired;
 	
 	/**
-	 * Field isWSDLParsed
-	 * A boolean flag to keep track of status of wsdl parsing.
-	 */
-	protected static boolean isWSDLParsed = false;
-	
-	/**
 	 * Field propertyBag
 	 * A hashmap that contains the configured values of standard properties
 	 * allowed in the setProperty method.
@@ -109,17 +104,15 @@ public class CallImpl extends BindingProviderImpl implements javax.xml.rpc.Call 
 	 */
 	public boolean isParameterAndReturnSpecRequired(QName operationName)
 			throws IllegalArgumentException {
+		//Who is going to set this requirement. Will it be specified in the
+		//wsdl? I need clarification on the use case of this flag.
 		
-		// check if wsdl info is read about this requirement
-		if(isWSDLParsed) //paramAndReturnSpecRequired flag will be set aptly
-			return paramAndReturnSpecRequired;
-		else //WSDL parsing didn't happen
-			//I have a few choices here. Either go ahead and parse the wsdl
-			//fully OR return a default value logging a warning or debug stmt
-			
-			//log.debug("WSDL isn't parsed. Returning default value for
-			//	paramAndReturnSpecRequired");
-			return false;			
+		//Since operationName is specifically being provided to us
+		//I don't think we should hold a single boolean datamember with this
+		//call object. We should either check on the fly some datastructure 
+		//and return the decision, I guess OR better would be to have a map
+		//that can return the decision taking operationName as the key.
+		return paramAndReturnSpecRequired;			
 	}
 
 	/**

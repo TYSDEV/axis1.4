@@ -27,8 +27,6 @@ public interface JAXRPCWSDL11Interface extends JAXRPCWSDLInterface {
 	
 	public Service getService(URL wsdlLocation, QName serviceName);
 	
-	public Port getPort(URL wsdlLocation, QName portName);
-	
 	public Port getPort(Service service, QName portName);
 	
 	public Port[] getPorts(URL wsdlLocation, QName serviceName);
@@ -38,6 +36,8 @@ public interface JAXRPCWSDL11Interface extends JAXRPCWSDLInterface {
 	public String[] getPortNames(URL wsdlLocation, QName serviceName);
 	
 	public Binding getBinding(URL wsdlLocation, QName portName);
+	
+	public Binding getBinding(Port port);
 	
 	public QName getPortTypeName(Binding binding);
 	

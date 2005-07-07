@@ -1,3 +1,18 @@
+/*
+ * Copyright 2004,2005 The Apache Software Foundation.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.apache.axis.jaxrpc.client;
 
 import java.net.URI;
@@ -15,15 +30,25 @@ import javax.xml.rpc.Call;
 import javax.xml.rpc.Dispatch;
 import javax.xml.rpc.JAXRPCException;
 import javax.xml.rpc.ServiceException;
+import javax.xml.rpc.Stub;
 import javax.xml.rpc.Service.Mode;
 import javax.xml.rpc.encoding.TypeMappingRegistry;
 import javax.xml.rpc.handler.HandlerInfo;
 import javax.xml.rpc.handler.HandlerRegistry;
 import javax.xml.rpc.security.SecurityConfiguration;
 
+import javax.wsdl.*;
+import javax.wsdl.extensions.ExtensibilityElement;
+import javax.wsdl.extensions.soap.SOAPAddress;
+import javax.wsdl.extensions.soap.SOAPBinding;
+
+import org.apache.axis.jaxrpc.JAXRPCWSDLInterface;
+import org.apache.axis.jaxrpc.JAXRPCWSDL11Interface;
+import org.apache.axis.jaxrpc.factory.WSDLFactoryImpl;
+
 /**
  * @author sunja07
- *
+ * Class ServiceImpl
  */
 public class ServiceImpl implements javax.xml.rpc.Service {
 	
@@ -34,6 +59,11 @@ public class ServiceImpl implements javax.xml.rpc.Service {
 	public static boolean JAXB_USAGE = true;
 	
 	public String wsdlLoc = null;
+	
+	private JAXRPCWSDLInterface parserWrapper=null;
+	
+	private javax.wsdl.Service wsdlService = null;
+	
 	/**
 	 * Method createCall
 	 * Creates a Call object not associated with specific operation or target 
@@ -141,9 +171,15 @@ public class ServiceImpl implements javax.xml.rpc.Service {
 	 */
 	public Call createCall(QName portName, QName operationName) throws 
 	ServiceException {
-		Call call = createCall(portName);
-		call.setOperationName(operationName);
 		
+		Call call = createCall(portName);
+		// Question: Should we not prefill more information from operationName
+		// something like input params and return type.
+		// Answer: Spec allows for overloaded operation names, so lets wait
+		// till user configures if he wants to configure any params and we
+		// will do the check and default operation pickup (in case params are
+		// not configured etc. things in Call.invoke
+		call.setOperationName(operationName);
 		return call;
 	}
 
@@ -173,37 +209,58 @@ public class ServiceImpl implements javax.xml.rpc.Service {
 	 */
 	public Call createCall(QName portName) throws ServiceException {
 		
+		if(wsdlService == null)
+			throw new ServiceException("A service wasn't yet created from wsdl");
+		
 		Call call = new CallImpl();
 
-		//portName and portType name needn't be matching. So...
-		QName portTypeName = getPortTypeNameForPort(portName); 
-		call.setPortTypeName(portTypeName);
+		URL wsdlLocationURL;
+		try {
+			wsdlLocationURL = new URL(wsdlLoc);
+		} catch (Exception e) {
+			throw new ServiceException(e);
+		}
 		
+		if(parserWrapper==null) {
+			//Here am hard coding the parser choice. Should think of better
+			//flexible implementation
+			parserWrapper = WSDLFactoryImpl.getParser(0, wsdlLocationURL);
+		}
 		
-		prefillPortFromWSDL(portName);
-		return null;
+		if (parserWrapper.getWSDLVersion().equals("1.1")) {
+			JAXRPCWSDL11Interface parser = (JAXRPCWSDL11Interface)parserWrapper;
+			
+			Port port = wsdlService.getPort(portName.getLocalPart());
+			/* Is there someway we can populate the targetEndpointAddress?
+			 * 
+			 * soap:address extensibility element can give that for us
+			 */ 
+			List extElList = port.getExtensibilityElements();
+			if (extElList!=null) {
+				for(int i=0; i<extElList.size(); i++) {
+					ExtensibilityElement extElement = (ExtensibilityElement)extElList.get(i);
+					//We will just do SOAP for now. For HTTP, MIME support we
+					//can always revisit.
+					if (extElement instanceof SOAPAddress) {
+						String tgtEndptAddr = ((SOAPAddress)extElement).getLocationURI();
+						call.setTargetEndpointAddress(tgtEndptAddr);
+						//spec says only one address should be mentioned
+						//So its a waste to iterate over other ext elems,if any
+						break; 
+					}
+				}
+			}
+			
+			Binding binding = parser.getBinding(port);
+			QName portTypeName = parser.getPortTypeName(binding);
+			call.setPortTypeName(portTypeName);
+			// looks like beyond setting the portTypeName and targetEndpointAddress 
+			// I can't do more configuring of Call object
+		}
+		
+		return call;
 	}
 	
-	public QName getPortTypeNameForPort(QName portName) {
-		//TODO Corresponding to a portName we can avail a binding linkage and 
-		//from the binding we can get the unique portType it binds
-		
-		//but for now. Lets assume our portName is exactly our portTypeName
-		//Will revisit once WSDL handling mechanism is in place.
-		return portName;
-	}
-	
-	public void prefillPortFromWSDL(QName portName) { 
-		//TODO Actually there is lot amount of info that can be prefetched
-		//from wsdl for a given port. But WSDL handling is yet to be thought
-		//over and finalized. Once that done, we will prefill as much info
-		//from wsdl as we can in this method.
-		//From port, we can get targetEndPointAddress, binding and from 
-		//binding the portType information. Using which may be the call
-		//object can be better configured with parameters and returnType
-		//info.
-	}
-
 	// This involves generics, needs a revisit
 	/**
 	 * Method createDispatch
@@ -338,8 +395,16 @@ public class ServiceImpl implements javax.xml.rpc.Service {
 	 */
 	public Remote getPort(Class serviceEndpointInterface) throws 
 	ServiceException {
-		// TODO Auto-generated method stub
-		return null;
+		//will return a generated stub if exists. else since binding
+		//choice is left to the implementation we will create a SOAPBinding
+		//proxy and return that.
+		Stub generatedStub = getGeneratedStub(serviceEndpointInterface);
+		if (generatedStub != null)
+			return (Remote)generatedStub;
+		else {
+			Stub dynamicProxy = createSOAPBindingProxy(serviceEndpointInterface);
+			return (Remote)dynamicProxy;
+		}
 	}
 
 	/**
@@ -366,10 +431,98 @@ public class ServiceImpl implements javax.xml.rpc.Service {
 	 */
 	public Remote getPort(QName portName, Class serviceEndpointInterface) 
 	throws ServiceException {
-		// TODO Auto-generated method stub
-		return null;
+		//Given SEI is the java interface corresponding to a portType and that
+		//which should be supported by the returned Stub instance
+		
+		//We will first try to return a generated stub instance. If that fails
+		//we will create a dynamic proxy and return that
+		Stub generatedStub = getGeneratedStub(serviceEndpointInterface);
+		if(generatedStub != null)
+			return (Remote)generatedStub;
+		else {
+			//should create a dynamic proxy and return instance of that.
+			
+			/*(i) A dynamic proxy that we create should have to implement the
+			 * provided serviceEndpointInterface
+			 *(ii) The sei given ofcourse should be checked to extend Remote
+			 * and that it is an interface.
+			 *(iii) Should we make it to extend our StubImpl.java(?). We should I guess
+			 *(iv) Before creating the stub, we should look at the kind of
+			 * binding that we should use for the Stub and appropriately call
+			 * either createSOAPBindingStub or createHTTPBindingStub etc.
+			 */ 
+			
+			Port port = wsdlService.getPort(portName.getLocalPart());
+			if(port==null)
+				throw new ServiceException("No port exists with given portName");
+			Binding binding = port.getBinding();
+			List extElList = binding.getExtensibilityElements();
+			if(extElList!=null) {
+				for(int i=0; extElList.size()> i; i++) {
+					ExtensibilityElement extEl = (ExtensibilityElement)extElList.get(i);
+					//we will only worry of SOAPBinding
+					if(extEl instanceof SOAPBinding) {
+						//identified binding linkage is SOAPBinding
+						Stub dynamicProxy = createSOAPBindingProxy(serviceEndpointInterface);
+						//Since only one protocl MUST be specified, we needn't
+						//iterate over other extensible elements.
+						return (Remote)dynamicProxy;
+					}
+				}
+				throw new ServiceException("Binding protocol not supported. Failed to create dynamic proxy");
+			}
+			throw new ServiceException("No binding protocol identified. Try giving SOAP binding.");
+		}
+		
 	}
 
+	/**
+	 * 
+	 */
+	private Stub getGeneratedStub(Class serviceEndpointInterface) throws ServiceException{
+		
+		//first, error checking plz!
+		if(!serviceEndpointInterface.isInterface()) {
+			throw new ServiceException("To create a dynamic proxy, provided SEI should be an interface");
+		}
+		if(!(java.rmi.Remote.class.isAssignableFrom(serviceEndpointInterface))) {
+			throw new ServiceException("Provided SEI MUST extend java.rmi.Remote");
+		}
+		
+		//The logic here is to interpet a name with which a Stub might
+		//have been created, if at all generated. And try to instantiate it
+		//and return the instance.
+		//If not a bingo. We MUST return null.
+		//During class loading and instantiation should an exception arise, they
+		//would be wrapped as ServiceException and thrown
+		
+		//TODO method incomplete
+		return null;
+	}
+	
+	/**
+	 * 
+	 */
+	private Stub createSOAPBindingProxy(Class serviceEndpointInterface) throws ServiceException {
+		/*
+		 * (i) A dynamic proxy that we create should have to implement the
+		 * provided serviceEndpointInterface
+		 *(ii) The sei given ofcourse should be checked to extend Remote
+		 * and that it is an interface.
+		 *(iii) Should we make it to extend our StubImpl.java(?). We should I guess
+		 *(iv) Lot more to do...yet to decide what all I should do here
+		 */
+		if(!serviceEndpointInterface.isInterface()) {
+			throw new ServiceException("To create a dynamic proxy, provided SEI should be an interface");
+		}
+		if(!(java.rmi.Remote.class.isAssignableFrom(serviceEndpointInterface))) {
+			throw new ServiceException("Provided SEI MUST extend java.rmi.Remote");
+		}
+		
+		//TODO method incomplete
+		return null;
+	}
+	
 	/**
 	 * Method getPorts
 	 * Returns an Iterator for the list of QNames of service endpoints grouped 
@@ -380,8 +533,17 @@ public class ServiceImpl implements javax.xml.rpc.Service {
 	 * the required WSDL metadata
 	 */
 	public Iterator getPorts() throws ServiceException {
-		// TODO Auto-generated method stub
-		return null;
+		if(wsdlService==null)
+			throw new ServiceException("No wsdl service. Check WSDL once");
+		
+		Map portsMap = wsdlService.getPorts();
+		Object[] portNames = portsMap.keySet().toArray();
+		ArrayList<QName> portQNames = new ArrayList<QName>();
+		for(int i=0; portNames[i]!=null; i++) {
+			QName qNameOfPort = new QName(portNames[i].toString());
+			portQNames.add(qNameOfPort);
+		}
+		return portQNames.iterator();
 	}
 
 	/**
@@ -406,8 +568,9 @@ public class ServiceImpl implements javax.xml.rpc.Service {
 	 * @return Qualified name of this service
 	 */
 	public QName getServiceName() {
-		// TODO Auto-generated method stub
-		return null;
+		if (wsdlService!=null)
+			return null;
+		return wsdlService.getQName();
 	}
 
 	/**
@@ -443,12 +606,36 @@ public class ServiceImpl implements javax.xml.rpc.Service {
 	 * @return URL for the location of the WSDL document for this service
 	 */
 	public URL getWSDLDocumentLocation() {
-		return null;
+		try {
+			URL returnValue = new URL(wsdlLoc);
+			return returnValue;
+		} catch (Exception e) {
+			return null;
+		}
 	}
 
 	public ServiceImpl() {
 		super();
-		// TODO Auto-generated constructor stub
+	}
+	
+	public ServiceImpl(JAXRPCWSDLInterface parserWrap, Service wsdlSvc) {
+		super();
+		this.parserWrapper = parserWrap;
+		this.wsdlService = wsdlSvc;
+	}
+
+	/**
+	 * @return Returns the JAXB_USAGE.
+	 */
+	public static boolean isJAXB_USAGE() {
+		return JAXB_USAGE;
+	}
+
+	/**
+	 * @param jaxb_usage The JAXB_USAGE to set.
+	 */
+	public static void setJAXB_USAGE(boolean jaxb_usage) {
+		JAXB_USAGE = jaxb_usage;
 	}
 
 }

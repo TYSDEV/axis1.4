@@ -15,6 +15,10 @@
  */
 package org.apache.axis.jaxrpc;
 
+import javax.wsdl.Service;
+import javax.xml.namespace.QName;
+import java.net.URL;
+
 public interface JAXRPCWSDLInterface {
 	
 	static final String WSDL2_VERSION = "2.0";
@@ -23,4 +27,5 @@ public interface JAXRPCWSDLInterface {
 	
 	public String getWSDLVersion();
 
+	public Service getService(URL wsdlLocation, QName serviceName);
 }
