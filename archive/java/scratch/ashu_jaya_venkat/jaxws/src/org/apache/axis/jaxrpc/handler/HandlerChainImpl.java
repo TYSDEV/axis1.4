@@ -19,18 +19,20 @@ import javax.xml.soap.SOAPMessage;
 import org.apache.axis.jaxrpc.handler.soap.SOAPMessageContextImpl;
 import org.apache.axis.jaxrpc.handler.MessageContextImpl;
 
+import org.apache.axis.jaxrpc.utils.ClassUtils;
+
 public class HandlerChainImpl extends ArrayList implements HandlerChain {
 
 	private String[] roles;
 	
 	private int falseIndex = -1;
 	
-	protected List handlerInfos = new ArrayList();
+	protected List<HandlerInfo> handlerInfos = new ArrayList<HandlerInfo>();
 	
 	public static final String JAXRPC_METHOD_INFO = "jaxrpc.method.info";
 	
 	private HandlerInfo getHandlerInfo(int index){
-		return (HandlerInfo)handlerInfos.get(index);
+		return handlerInfos.get(index);
 	}
 	
 	private Handler getHandlerInstance(int index) {
@@ -47,6 +49,10 @@ public class HandlerChainImpl extends ArrayList implements HandlerChain {
 		}
 	}
 	
+	private void preInvoke(SOAPMessageContext msgContext){
+		// EMPTY FUNCTION FOR NOW, MAY USE LATER
+	}
+	
 	private void postInvoke(SOAPMessageContext msgContext) {
 		SOAPMessage message = msgContext.getMessage();
 		ArrayList oldList =  (ArrayList)msgContext.getProperty(JAXRPC_METHOD_INFO);
@@ -61,7 +67,7 @@ public class HandlerChainImpl extends ArrayList implements HandlerChain {
 		
 	}
 	
-	public HandlerChainImpl(List handlerInfos){
+	public HandlerChainImpl(List<HandlerInfo> handlerInfos){
 		this.handlerInfos = handlerInfos;
 		for(int i = 0; i < handlerInfos.size(); i++){
 			add(newHandler(getHandlerInfo(i)));
@@ -98,9 +104,11 @@ public class HandlerChainImpl extends ArrayList implements HandlerChain {
 		return list;
 	}
 	
-	public boolean handleRequest(MessageContext context) throws JAXRPCException {
-		SOAPMessageContextImpl actx = (SOAPMessageContextImpl)context;
+	public boolean handleRequest(MessageContext _context) throws JAXRPCException {
+		SOAPMessageContextImpl actx = (SOAPMessageContextImpl)_context;
 		actx.setRoles(getRoles());
+		SOAPMessageContext context = (SOAPMessageContext)_context;
+		preInvoke(context);
 		try {
 			for (int i = 0; i < size(); i++) {
 				Handler currentHandler = getHandlerInstance(i);
@@ -116,13 +124,14 @@ public class HandlerChainImpl extends ArrayList implements HandlerChain {
 			}
 			return true;
 		}finally {
-			postInvoke(actx);
+			postInvoke(context);
 		}
 	}
 
 	public boolean handleResponse(MessageContext context)
 			throws JAXRPCException {
 		SOAPMessageContextImpl scontext = (SOAPMessageContextImpl)context;
+		preInvoke(scontext);
 		try {
 			int endIdx = size() - 1;
 			if (falseIndex != -1) {
@@ -141,6 +150,7 @@ public class HandlerChainImpl extends ArrayList implements HandlerChain {
 
 	public boolean handleFault(MessageContext _context) throws JAXRPCException {
 		SOAPMessageContextImpl context = (SOAPMessageContextImpl)_context;
+		preInvoke(context);
 		try {
 			int endIdx = size() - 1;
 			if (falseIndex != -1) {
