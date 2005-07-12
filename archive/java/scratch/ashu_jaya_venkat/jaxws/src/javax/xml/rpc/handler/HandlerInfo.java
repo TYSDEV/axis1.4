@@ -45,7 +45,7 @@ public class HandlerInfo implements Serializable {
 	/**
 	 * Default constructor
 	 */
-	HandlerInfo(){
+	public HandlerInfo(){
 		handlerClass = null;
 		config = new HashMap();
 		headers = new ArrayList<QName>();
@@ -58,7 +58,7 @@ public class HandlerInfo implements Serializable {
 	 * @param headers -  - QNames for the header blocks processed by this Handler. QName is the qualified name of the
 	 * outermost element of a header block
 	 */
-	HandlerInfo(java.lang.Class handlerClass, java.util.Map config,
+	public HandlerInfo(java.lang.Class handlerClass, java.util.Map config,
 			javax.xml.namespace.QName[] headers){
 		this.handlerClass = handlerClass;
 		this.config = config;
@@ -68,7 +68,8 @@ public class HandlerInfo implements Serializable {
 					this.headers.add(headers[i]);
 				}
 			}
-		}
+		} else
+			this.headers = new ArrayList<QName>();
 	}
 	
 	/**

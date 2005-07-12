@@ -10,6 +10,9 @@ import javax.xml.soap.SOAPMessage;
 
 import org.apache.axis.jaxrpc.handler.MessageContextImpl;
 
+/*
+ * Need to do something more in this class for faults and error messages?
+ */
 public class SOAPMessageContextImpl extends MessageContextImpl implements SOAPMessageContext {
 
 	private SOAPMessage message;
