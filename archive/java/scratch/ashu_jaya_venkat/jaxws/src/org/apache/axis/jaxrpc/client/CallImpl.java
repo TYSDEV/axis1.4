@@ -20,6 +20,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
+import java.io.BufferedOutputStream;
+import java.net.URI;
 
 import javax.wsdl.Operation;
 import javax.xml.namespace.QName;
@@ -29,9 +33,21 @@ import javax.xml.rpc.JAXRPCException;
 import javax.xml.rpc.ParameterMode;
 import javax.xml.rpc.soap.SOAPFaultException;
 
+import org.apache.axis2.om.OMAbstractFactory;
+import org.apache.axis2.om.OMElement;
+import org.apache.axis2.om.OMFactory;
+import org.apache.axis2.om.OMNamespace;
+import org.apache.axis2.om.OMOutput;
+import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.addressing.AddressingConstants;
+
 /**
  * @author sunja07
- *
+ * Class CallImpl
+ * <documentation> to be completed </documentation>
+ * 
+ * Forget not that Call instance is MUTABLE. i.e. the configuration of call
+ * instance can be changed and it can be re-used for some other need.
  */
 public class CallImpl extends BindingProviderImpl implements javax.xml.rpc.Call {
 
@@ -57,7 +73,13 @@ public class CallImpl extends BindingProviderImpl implements javax.xml.rpc.Call 
 	 * Field returnType
 	 * The xml return type to expect from the method invocation
 	 */
-	private static QName returnType;
+	private QName returnType;
+	
+	/**
+	 * Field returnTypeClass
+	 * The java class into which return value will be stuffed.
+	 */
+	private Class returnTypeClass;
 	
 	/**
 	 * Field paramAndReturnSpecRequired
@@ -65,7 +87,7 @@ public class CallImpl extends BindingProviderImpl implements javax.xml.rpc.Call 
 	 * the operation corresponding to this Call object has to have the
 	 * parameters added explicitly and return type specified explicitly
 	 */
-	protected static boolean paramAndReturnSpecRequired;
+	protected static boolean paramAndReturnSpecRequired=false;
 	
 	/**
 	 * Field propertyBag
@@ -82,6 +104,10 @@ public class CallImpl extends BindingProviderImpl implements javax.xml.rpc.Call 
 	 */
 	private static HashMap outputParams = new HashMap();
 	
+	/**
+	 * Field service object from which this call instance is created.
+	 */
+	private transient ServiceImpl service;
 	/**
 	 * 
 	 */
@@ -163,6 +189,10 @@ public class CallImpl extends BindingProviderImpl implements javax.xml.rpc.Call 
 			UnsupportedOperationException, JAXRPCException {
 		// TODO Auto-generated method stub
 
+		//don't know about rest of the impl. But at least, adding parameter
+		//would override the default false value of paramAndSpecRequired to true
+		paramAndReturnSpecRequired = true;
+
 	}
 
 	/**
@@ -188,8 +218,38 @@ public class CallImpl extends BindingProviderImpl implements javax.xml.rpc.Call 
 	 */
 	public void setReturnType(QName xmlType) throws JAXRPCException,
 			IllegalArgumentException, UnsupportedOperationException {
-		// TODO Auto-generated method stub
+		if(operationName==null) {
+			throw new JAXRPCException("Can't set returnType. Try setting the " +
+					"operationName prior to calling setReturnType");
+		}
+		if(isParameterAndReturnSpecRequired(operationName)==false) {
+			throw new JAXRPCException("Call instance is configured not to " +
+					"specify Parameter and ReturnType");
+		}
+		
+		//TODO identify if the QName is valid, if not, throw IllegalArgumentException
+		this.returnType = xmlType;
+		if(service.isJAXB_USAGE()){
+			Class jaxbBindedObjectClass = getJAXBObjectClassForQName(xmlType);
+			returnTypeClass = jaxbBindedObjectClass;
+		}
+		else { //no JAXB_USAGE, so try getting things from registered TypeMapping
+		//TODO get the java type mapped to this xmlType QName and set it as the 
+		//returnTypeClass
+		
+		//come to think of this, we don't need to identify the mapped javaType
+		//and set the returnTypeClass with it. Actually in the invoke method itself
+		//we will get hold of the corresponding deserializer and ask it to
+		//prepare the object out of the response OMElement. How does that sound!?!
+		
+		}
 
+	}
+	
+	//This can be a utils class method
+	public Class getJAXBObjectClassForQName(QName xmlType) {
+		//This is a black box for now
+		return Object.class;
 	}
 
 	/**
@@ -210,8 +270,39 @@ public class CallImpl extends BindingProviderImpl implements javax.xml.rpc.Call 
 	public void setReturnType(QName xmlType, Class javaType)
 			throws UnsupportedOperationException, IllegalArgumentException,
 			JAXRPCException {
-		// TODO Auto-generated method stub
-
+		if(operationName==null) {
+			throw new JAXRPCException("Can't set returnType. Try setting the " +
+					"operationName prior to calling setReturnType");
+		}
+		if(isParameterAndReturnSpecRequired(operationName)==false) {
+			throw new JAXRPCException("Call instance is configured not to " +
+					"specify Parameter and ReturnType");
+		}
+		
+		//TODO identify if the QName is valid, if not, throw IllegalArgumentException
+		
+		this.returnType = xmlType;
+		
+		if(service.isJAXB_USAGE()) { //JAXB is used
+			//check if the JAXB bound class is compatible with the javaType
+			//class mentioned here. If not throw JAXRPCException
+			Class jaxbBindedJavaClass = getJAXBObjectClassForQName(xmlType);
+			if(javaType.isAssignableFrom(jaxbBindedJavaClass)) {
+				this.returnTypeClass = javaType;
+			}
+			else
+				throw new JAXRPCException("Set return type java class can't be cast " +
+						"from underlying JAXB databinding object");
+		}
+		else {//no JAXB.
+			//check if the typeMapping has a registration for this xmlType
+			//and javaType pair. If not, throw JAXRPCException
+			if(!service.getTypeMappingRegistry().
+					getTypeMapping(ENCODINGSTYLE_URI_PROPERTY).
+					isRegistered(javaType,xmlType))
+				throw new JAXRPCException("Invalid javaType for xmlType. " +
+						"Underlying type mapping has no corresponding pair registered");
+		}
 	}
 
 	/**
@@ -375,6 +466,39 @@ public class CallImpl extends BindingProviderImpl implements javax.xml.rpc.Call 
 	public Object invoke(Object[] inputParams) throws RemoteException,
 			SOAPFaultException, JAXRPCException {
 
+		//check if the call instance is properly configured. If not throw
+		//a JAXRPCException.
+		
+		//I'll try to create an OMElement that would wrap the input params
+		//and use that to invoke the invokeBlocking() method of Axis2's call
+		//implementation.
+		//I'm not sure if the way I wrap the contents into an OMElement should
+		//keep track of any properties set on the call object viz. style and
+		//use. For now am just wrapping each element as a child in the method
+		//element
+		OMFactory fac = OMAbstractFactory.getOMFactory();
+		String operationNS = operationName.getNamespaceURI();
+		OMNamespace omNS = (operationNS == null || operationNS == "")? fac.createOMNamespace("http://jaxwsforaxis2.org","ns1"): fac.createOMNamespace(operationNS, "ns1");
+		OMElement methodElement = fac.createOMElement(operationName.getLocalPart(),omNS);
+		for(int i=0; i<inputParams.length;i++) {
+			OMElement paramElement = fac.createOMElement("param"+String.valueOf(i),omNS);
+			paramElement.addChild(fac.createText(inputParams[i].toString()));
+			methodElement.addChild(paramElement);
+		}
+		
+		org.apache.axis2.clientapi.Call axis2Call = new org.apache.axis2.clientapi.Call();
+		axis2Call.setTo(new EndpointReference(AddressingConstants.WSA_TO,"http://localhost:9090/axis/services/Echo"));
+		OMElement response = axis2Call.invokeBlocking(operationName.getLocalPart(),methodElement);
+		
+		//Now the job of extracting the return value out of the OMElement and
+		//populating it into the ReturnType.
+		//As 'response' we already get the contents of soap body.
+		OMElement returnValue = response.getFirstElement();
+		//corresponding to the returnType set, we should get a java object
+		//instantiated and fill in the contents into the datamembers and return 
+		//that object
+		Object returnObject = getReturnObject(returnType);
+		
 		// ---
 		// some solid code will have to go here
 		// ---
@@ -388,10 +512,20 @@ public class CallImpl extends BindingProviderImpl implements javax.xml.rpc.Call 
 		outputParams.clear();
 		//populateOutputParams(operationName); // a private method to be coded
 		
-		// TODO Auto-generated method stub
+		//Returning the request OMElement only for testing purposes
+		return response;
+		
+	}
+	
+	public Object getReturnObject(QName returnType) {
+		
+		//if there has been a class registered associated with this QName
+		//return that class
+		if (returnTypeClass != null) {
+			//Object returnObject = 
+		}
+		
 		return null;
-		
-		
 	}
 
 	/**
@@ -413,6 +547,9 @@ public class CallImpl extends BindingProviderImpl implements javax.xml.rpc.Call 
 	 */
 	public Object invoke(QName operationName, Object[] inputParams)
 			throws RemoteException {
+		
+		//check if the call instance is properly configured. If not throw
+		//a JAXRPCException.
 		
 		//---
 		// some solid code will have to go here
@@ -471,6 +608,20 @@ public class CallImpl extends BindingProviderImpl implements javax.xml.rpc.Call 
 	 */
 	public List getOutputValues() throws JAXRPCException {
 		return (List)outputParams.values();
+	}
+
+	/**
+	 * @return Returns the service.
+	 */
+	public ServiceImpl getService() {
+		return service;
+	}
+
+	/**
+	 * @param service The service to set.
+	 */
+	public void setService(ServiceImpl service) {
+		this.service = service;
 	}
 
 }

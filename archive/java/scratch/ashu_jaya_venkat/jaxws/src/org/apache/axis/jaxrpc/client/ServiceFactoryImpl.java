@@ -32,7 +32,11 @@ public class ServiceFactoryImpl extends ServiceFactory {
 	@Override
 	public Service createService(URL wsdlDocumentLocation, QName serviceName)
 			throws ServiceException {
-		
+		return createService(wsdlDocumentLocation, serviceName, true);
+	}
+	
+	public Service createService(URL wsdlDocumentLocation, QName serviceName, boolean jaxbUsage)
+		throws ServiceException {
 		if(parserWrapper==null) {
 			//Here am hard coding the parser choice. Should think of better
 			//flexible implementation
@@ -40,7 +44,7 @@ public class ServiceFactoryImpl extends ServiceFactory {
 			
 		}
 		javax.wsdl.Service wsdlService = parserWrapper.getService(wsdlDocumentLocation, serviceName);
-		service = (Service) new ServiceImpl(parserWrapper, wsdlService);
+		service = (Service) new ServiceImpl(parserWrapper, wsdlService, jaxbUsage);
 		
 		return service;
 	}

@@ -56,7 +56,7 @@ public class ServiceImpl implements javax.xml.rpc.Service {
 	
 	private TypeMappingRegistry typeMappingRegistry;
 
-	public static boolean JAXB_USAGE = true;
+	public boolean JAXB_USAGE = true;
 	
 	public String wsdlLoc = null;
 	
@@ -74,6 +74,7 @@ public class ServiceImpl implements javax.xml.rpc.Service {
 	 */
 	public Call createCall() throws ServiceException {
 		Call call = new CallImpl();
+		((CallImpl)call).setService(this);
 		return call;
 	}
 	
@@ -558,8 +559,7 @@ public class ServiceImpl implements javax.xml.rpc.Service {
 	 */
 	public SecurityConfiguration getSecurityConfiguration() throws 
 	UnsupportedOperationException {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException();
 	}
 
 	/**
@@ -623,19 +623,26 @@ public class ServiceImpl implements javax.xml.rpc.Service {
 		this.parserWrapper = parserWrap;
 		this.wsdlService = wsdlSvc;
 	}
+	
+	public ServiceImpl(JAXRPCWSDLInterface parserWrap, Service wsdlSvc, boolean jaxbUsage) {
+		super();
+		this.parserWrapper = parserWrap;
+		this.wsdlService = wsdlSvc;
+		this.JAXB_USAGE = jaxbUsage;
+	}
 
 	/**
 	 * @return Returns the JAXB_USAGE.
 	 */
-	public static boolean isJAXB_USAGE() {
-		return JAXB_USAGE;
+	public boolean isJAXB_USAGE() {
+		return this.JAXB_USAGE;
 	}
 
 	/**
 	 * @param jaxb_usage The JAXB_USAGE to set.
 	 */
-	public static void setJAXB_USAGE(boolean jaxb_usage) {
-		JAXB_USAGE = jaxb_usage;
+	public void setJAXB_USAGE(boolean jaxb_usage) {
+		this.JAXB_USAGE = jaxb_usage;
 	}
 
 }
