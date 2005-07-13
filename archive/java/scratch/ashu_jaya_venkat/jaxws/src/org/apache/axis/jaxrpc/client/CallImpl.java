@@ -33,6 +33,8 @@ import javax.xml.rpc.JAXRPCException;
 import javax.xml.rpc.ParameterMode;
 import javax.xml.rpc.soap.SOAPFaultException;
 
+import org.apache.axis.jaxrpc.description.ParameterDesc;
+
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMFactory;
@@ -61,7 +63,7 @@ public class CallImpl extends BindingProviderImpl implements javax.xml.rpc.Call 
 	 * Field operationName 
 	 * The name of the operation to invoke at the service endpoint
 	 */
-	private static QName operationName;
+	private QName operationName;
 	
 	/**
 	 * Field portTypeName
@@ -73,7 +75,7 @@ public class CallImpl extends BindingProviderImpl implements javax.xml.rpc.Call 
 	 * Field returnType
 	 * The xml return type to expect from the method invocation
 	 */
-	private QName returnType;
+	private QName returnType=null;
 	
 	/**
 	 * Field returnTypeClass
@@ -86,15 +88,19 @@ public class CallImpl extends BindingProviderImpl implements javax.xml.rpc.Call 
 	 * A boolean flag that should be populated from the wsdl info, if
 	 * the operation corresponding to this Call object has to have the
 	 * parameters added explicitly and return type specified explicitly
+	 * 
+	 * This might change to become a hashmap with key being the operation
+	 * name.
 	 */
 	protected static boolean paramAndReturnSpecRequired=false;
+	protected static HashMap<QName,Boolean> paramAndRetReqMap = new HashMap<QName,Boolean>();
 	
 	/**
 	 * Field propertyBag
 	 * A hashmap that contains the configured values of standard properties
 	 * allowed in the setProperty method.
 	 */
-	private static HashMap propertyBag = new HashMap();
+	private static HashMap<String,Object> propertyBag = new HashMap<String,Object>();
 	
 	/**
 	 * Field outputParams
@@ -102,7 +108,15 @@ public class CallImpl extends BindingProviderImpl implements javax.xml.rpc.Call 
 	 * invoked operation. The parameter names in the returned Map are of type 
 	 * java.lang.String.
 	 */
-	private static HashMap outputParams = new HashMap();
+	private static HashMap<String,ParameterDesc> outputParams = new HashMap<String,ParameterDesc>();
+	
+	/**
+	 * Field inputParams
+	 * A hashmap of {name, value} pairs of the input parameters of the
+	 * current operation. Value would be a parameter description object.
+	 * Name would be of type String
+	 */
+	private HashMap<String,ParameterDesc> inputParams = new HashMap<String,ParameterDesc>();
 	
 	/**
 	 * Field service object from which this call instance is created.
@@ -138,7 +152,7 @@ public class CallImpl extends BindingProviderImpl implements javax.xml.rpc.Call 
 		//call object. We should either check on the fly some datastructure 
 		//and return the decision, I guess OR better would be to have a map
 		//that can return the decision taking operationName as the key.
-		return paramAndReturnSpecRequired;			
+		return paramAndRetReqMap.get(operationName);	
 	}
 
 	/**
@@ -161,8 +175,40 @@ public class CallImpl extends BindingProviderImpl implements javax.xml.rpc.Call 
 	public void addParameter(String paramName, QName xmlType,
 			ParameterMode parameterMode) throws JAXRPCException,
 			IllegalArgumentException {
-		// TODO Auto-generated method stub
-
+		
+		if(isParameterAndReturnSpecRequired(this.operationName)==false) {
+			throw new JAXRPCException("This operation is configured not to " +
+					"specify parameter and return type information ");
+		}
+		
+		ParameterDesc param = new ParameterDesc();
+		//ideally namespace of param should ideally be the namespace of the 
+		//method i.e. operationName namespace. But for now, lets create a
+		//dummy QName
+		param.setName(new QName(paramName));
+		param.setMode(parameterMode);
+		param.setXmlType(xmlType);
+		
+		Class javaType;
+		if(service.isJAXB_USAGE()) {
+			javaType = getJAXBObjectClassForQName(xmlType);
+		} else {
+			javaType = getTypeMappingClassForQName(xmlType);
+		}
+		param.setJavaType(javaType);
+		
+		if(parameterMode.equals(ParameterMode.IN)) {
+			inputParams.put(paramName,param);
+		} else if (parameterMode.equals(ParameterMode.INOUT)) {
+			inputParams.put(paramName,param);
+			outputParams.put(paramName,param);
+		} else {
+			outputParams.put(paramName,param);
+		}
+		
+		//Since addParameter is called we would mandate returnType to be set,
+		//even if it isn't set otherwise
+		paramAndRetReqMap.put(this.operationName, Boolean.TRUE);
 	}
 
 	/**
@@ -187,12 +233,34 @@ public class CallImpl extends BindingProviderImpl implements javax.xml.rpc.Call 
 	public void addParameter(String paramName, QName xmlType, Class javaType,
 			ParameterMode parameterMode) throws IllegalArgumentException,
 			UnsupportedOperationException, JAXRPCException {
-		// TODO Auto-generated method stub
 
-		//don't know about rest of the impl. But at least, adding parameter
-		//would override the default false value of paramAndSpecRequired to true
-		paramAndReturnSpecRequired = true;
-
+		if(isParameterAndReturnSpecRequired(this.operationName)==false) {
+			throw new JAXRPCException("This operation is configured not to " +
+					"specify parameter and return type information ");
+		}
+		
+		ParameterDesc param = new ParameterDesc();
+		//actually namespace of param should ideally be the namespace of the 
+		//method i.e. operationName namespace. But for now, lets create a
+		//dummy QName
+		param.setName(new QName(paramName));
+		param.setMode(parameterMode);
+		param.setXmlType(xmlType);
+		param.setJavaType(javaType);
+		//should there be a check above if the xmlType, javaType pair is valid?
+		
+		if(parameterMode.equals(ParameterMode.IN)) {
+			inputParams.put(paramName,param);
+		} else if (parameterMode.equals(ParameterMode.INOUT)) {
+			inputParams.put(paramName,param);
+			outputParams.put(paramName,param);
+		} else {
+			outputParams.put(paramName,param);
+		}
+		
+		//Since addParameter is called we would mandate returnType to be set,
+		//even if it isn't set otherwise
+		paramAndRetReqMap.put(this.operationName, Boolean.TRUE);
 	}
 
 	/**
@@ -202,7 +270,15 @@ public class CallImpl extends BindingProviderImpl implements javax.xml.rpc.Call 
 	 * @return Returns XML type for the specified parameter
 	 */
 	public QName getParameterTypeByName(String paramName) {
-		// TODO Auto-generated method stub
+		//A parameter added would either be put into inputParams
+		//or outputParams or both. Lets check with inputParams first
+		//and if futile move to look in outputParams
+		if(inputParams.containsKey(paramName)) {
+			return inputParams.get(paramName).getXmlType();
+		} else if(outputParams.containsKey(paramName)) {
+			return outputParams.get(paramName).getXmlType();
+		}
+		//if not found in both, return 
 		return null;
 	}
 
@@ -249,6 +325,11 @@ public class CallImpl extends BindingProviderImpl implements javax.xml.rpc.Call 
 	//This can be a utils class method
 	public Class getJAXBObjectClassForQName(QName xmlType) {
 		//This is a black box for now
+		return Object.class;
+	}
+	
+	public Class getTypeMappingClassForQName(QName xmlType) {
+		//This is also small black box for now
 		return Object.class;
 	}
 
@@ -325,8 +406,8 @@ public class CallImpl extends BindingProviderImpl implements javax.xml.rpc.Call 
 	 * returns false for this Call's operation.
 	 */
 	public void removeAllParameters() throws JAXRPCException {
-		// TODO Auto-generated method stub
-
+		inputParams.clear();
+		outputParams.clear();
 	}
 
 	/**
@@ -345,6 +426,9 @@ public class CallImpl extends BindingProviderImpl implements javax.xml.rpc.Call 
 	 * Call instance
 	 */
 	public void setOperationName(QName opName) {
+		//All datastructures referring to existing operation may be cleared
+		//Or else it could be a unnecessary memory hold up.
+		inputParams.clear();
 		operationName = opName;
 	}
 
@@ -409,6 +493,31 @@ public class CallImpl extends BindingProviderImpl implements javax.xml.rpc.Call 
 		//the name of the key with the standard property names acceptable
 		//and putting the value of the property wherever there is a match or
 		//else throwing a JAXRPCException
+		if(name.equals(ENDPOINT_ADDRESS_PROPERTY)) {
+			propertyBag.put(name,value);
+		}else if(name.equals(SESSION_MAINTAIN_PROPERTY)) {
+			propertyBag.put(name,value);
+		}else if(name.equals(SOAPACTION_URI_PROPERTY)) {
+			propertyBag.put(name,value);
+		}else if(name.equals(SOAPACTION_USE_PROPERTY)) {
+			propertyBag.put(name,value);
+		}else if(name.equals(PASSWORD_PROPERTY)) {
+			propertyBag.put(name,value);
+		}else if(name.equals(USERNAME_PROPERTY)) {
+			propertyBag.put(name,value);
+		}else if(name.equals(JAXB_CONTEXT_PROPERTY)) {
+			propertyBag.put(name,value);
+		}else if(name.equals("javax.xml.rpc.soap.operation.style")) {
+			//This is an optional property
+			//If we don't support this we may throw a JAXRPCException
+		}else if(name.equals("javax.xml.rpc.encodingstyle.namespace.uri")) {
+			//This is an optional property
+			//If we don't support this we may throw a JAXRPCException
+		}else {
+			//we may chose to ignore and add that into the bag or throw
+			//a JAXRPCException. I'm good at the later choice :-)
+			throw new JAXRPCException("Property " + name +" not supported");
+		}
 
 	}
 
@@ -463,11 +572,34 @@ public class CallImpl extends BindingProviderImpl implements javax.xml.rpc.Call 
 	 *    through the addParameter invocations or in the corresponding WSDL)
 	 * 3. If parameters and return type are incorrectly specified 
 	 */
-	public Object invoke(Object[] inputParams) throws RemoteException,
+	public Object invoke(Object[] inputParameters) throws RemoteException,
 			SOAPFaultException, JAXRPCException {
 
 		//check if the call instance is properly configured. If not throw
 		//a JAXRPCException.
+		boolean throwJAXRPCException=false;
+		if(operationName==null) {
+			throwJAXRPCException=true;
+		} else if(targetEndpointAddress==null) { 
+			throwJAXRPCException=true;
+		}else if(isParameterAndReturnSpecRequired(operationName) &&
+					(inputParams == null && outputParams == null) && 
+					returnType==null) {
+			throwJAXRPCException=true;
+			
+			//TODO Here (in a seperate else) check if paramandreturnspecrequired is 
+			//not set or is false for this
+			//operation, then we should reflect upon the parameters using wsdl
+			//information and typemapping registry configuration
+		} else if (inputParameters.length != inputParams.size()){
+			throwJAXRPCException=true;
+		} else {
+			//any other checks???
+		}
+		
+		if(throwJAXRPCException) {
+			throw new JAXRPCException("Call instance not fully configured");
+		}
 		
 		//I'll try to create an OMElement that would wrap the input params
 		//and use that to invoke the invokeBlocking() method of Axis2's call
@@ -478,16 +610,18 @@ public class CallImpl extends BindingProviderImpl implements javax.xml.rpc.Call 
 		//element
 		OMFactory fac = OMAbstractFactory.getOMFactory();
 		String operationNS = operationName.getNamespaceURI();
-		OMNamespace omNS = (operationNS == null || operationNS == "")? fac.createOMNamespace("http://jaxwsforaxis2.org","ns1"): fac.createOMNamespace(operationNS, "ns1");
+		OMNamespace omNS = (operationNS == null || operationNS == "")
+					? fac.createOMNamespace("http://jaxwsforaxis2.org","ns1")
+					: fac.createOMNamespace(operationNS, "ns1");
 		OMElement methodElement = fac.createOMElement(operationName.getLocalPart(),omNS);
-		for(int i=0; i<inputParams.length;i++) {
+		for(int i=0; i<inputParameters.length;i++) {
 			OMElement paramElement = fac.createOMElement("param"+String.valueOf(i),omNS);
-			paramElement.addChild(fac.createText(inputParams[i].toString()));
+			paramElement.addChild(fac.createText(inputParameters[i].toString()));
 			methodElement.addChild(paramElement);
 		}
 		
 		org.apache.axis2.clientapi.Call axis2Call = new org.apache.axis2.clientapi.Call();
-		axis2Call.setTo(new EndpointReference(AddressingConstants.WSA_TO,"http://localhost:9090/axis/services/Echo"));
+		axis2Call.setTo(new EndpointReference(AddressingConstants.WSA_TO,targetEndpointAddress));
 		OMElement response = axis2Call.invokeBlocking(operationName.getLocalPart(),methodElement);
 		
 		//Now the job of extracting the return value out of the OMElement and
