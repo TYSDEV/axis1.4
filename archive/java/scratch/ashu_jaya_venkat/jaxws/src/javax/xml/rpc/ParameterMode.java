@@ -28,19 +28,31 @@ package javax.xml.rpc;
 public class ParameterMode {
 
 	/**
+	 * Field mode
+	 */
+	private final String mode;
+	/**
 	 * IN mode for parameter passing 
 	 */
-	public static final ParameterMode IN = null;
+	public static final ParameterMode IN = new ParameterMode("in");
 	
 	/**
 	 * OUT mode for parameter passing 
 	 */
-	public static final ParameterMode OUT = null;
+	public static final ParameterMode OUT = new ParameterMode("out");
 	
 	/**
 	 * INOUT mode for parameter passing 
 	 */
-	public static final ParameterMode INOUT = null;
+	public static final ParameterMode INOUT = new ParameterMode("inOut");
+	
+	/**
+	 * Constructor
+	 * @param mode
+	 */
+	public ParameterMode(String mode) {
+		this.mode = mode;
+	}
 	
 	/** 
 	 * Method toString
@@ -49,6 +61,6 @@ public class ParameterMode {
 	 * @return A string representation of the object.
 	 */
 	public java.lang.String toString() {
-		return null;
+		return mode;
 	}
 }
