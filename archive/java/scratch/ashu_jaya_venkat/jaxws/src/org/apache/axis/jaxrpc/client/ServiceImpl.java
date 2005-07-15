@@ -75,6 +75,10 @@ public class ServiceImpl implements javax.xml.rpc.Service {
 	public Call createCall() throws ServiceException {
 		Call call = new CallImpl();
 		((CallImpl)call).setService(this);
+		((CallImpl)call).serviceHandlerChain = this.handlerRegistry.serviceHandlerChain;
+		((CallImpl)call).portHandlerChain = this.handlerRegistry.portHandlerChain;
+		((CallImpl)call).bindingHandlerChain = this.handlerRegistry.bindingHandlerChain;
+		((CallImpl)call).setBinding(new BindingImpl());
 		return call;
 	}
 	
@@ -213,7 +217,7 @@ public class ServiceImpl implements javax.xml.rpc.Service {
 		if(wsdlService == null)
 			throw new ServiceException("A service wasn't yet created from wsdl");
 		
-		Call call = new CallImpl();
+		Call call = createCall();
 
 		URL wsdlLocationURL;
 		try {

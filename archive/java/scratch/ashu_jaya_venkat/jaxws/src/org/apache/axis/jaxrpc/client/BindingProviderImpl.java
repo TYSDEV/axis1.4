@@ -16,14 +16,29 @@
 
 package org.apache.axis.jaxrpc.client;
 
+import java.net.URI;
+import java.util.List;
+import java.util.Map;
+
+import javax.xml.namespace.QName;
 import javax.xml.rpc.Binding;
 import javax.xml.rpc.BindingProvider;
 import javax.xml.rpc.JAXRPCContext;
+import javax.xml.rpc.handler.HandlerInfo;
 
 public class BindingProviderImpl implements BindingProvider {
 
 	protected JAXRPCRequestContext requestContext;
 	protected JAXRPCResponseContext responseContext;
+	protected BindingImpl binding;
+	
+	protected List<HandlerInfo> serviceHandlerChain;
+	protected Map<URI, List> bindingHandlerChain;
+	protected Map<QName, List> portHandlerChain;
+	
+	public BindingProviderImpl(){
+		//default constructor
+	}
 	
 	public JAXRPCContext getRequestContext() {
 		if(requestContext == null)
@@ -39,7 +54,11 @@ public class BindingProviderImpl implements BindingProvider {
 
 	public Binding getBinding() {
 		
-		return null;
+		return binding;
+	}
+	
+	public void setBinding(BindingImpl binding) {
+		this.binding = binding;
 	}
 
 }

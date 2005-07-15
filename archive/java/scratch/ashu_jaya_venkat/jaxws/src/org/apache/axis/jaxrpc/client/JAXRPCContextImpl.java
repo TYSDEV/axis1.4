@@ -26,6 +26,11 @@ import javax.xml.rpc.BindingProvider;
 import javax.xml.rpc.JAXRPCContext;
 import javax.xml.rpc.JAXRPCException;
 
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.engine.AxisConfiguration;
+import org.apache.axis2.engine.AxisConfigurationImpl;
+import org.apache.axis2.engine.AxisEngine;
+
 public class JAXRPCContextImpl implements JAXRPCContext {
 
 	protected static List<String> standardProperties;
@@ -76,6 +81,15 @@ public class JAXRPCContextImpl implements JAXRPCContext {
 		if(standardProperties.indexOf(name) == -1 && name.startsWith("javax.xml.rpc"))
 			throw new JAXRPCException("User-Defined property can not start with javax.ml.rpc");
 
+	}
+	/*
+	 * Get an instance of Axis2 Engine, to be used by service, call etc
+	 */
+	public AxisEngine getAxis2Engine(){
+		AxisConfiguration axisConfig = new AxisConfigurationImpl();
+		ConfigurationContext configContext = new ConfigurationContext(axisConfig);
+		AxisEngine engine = new AxisEngine(configContext);
+		return engine;
 	}
 
 }
