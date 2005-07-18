@@ -8,11 +8,34 @@ import javax.xml.rpc.JAXRPCException;
 import javax.xml.rpc.handler.MessageContext;
 import javax.xml.rpc.server.ServletEndpointContext;
 
+
+/**
+ * Class ServletEndpointContextImpl
+ * 
+ * Endpoint service implementation classes optionally implement ServiceLifecycle
+ * interface to be notified of the lifecycle changes. When they do implement that
+ * interface, the <code>init</code> method that is to be supported takes a parameter
+ * context of type <code>Object</code>. Since the type of container into which the
+ * service implementation class is deployed is variable, the input param type is
+ * set as <code>Object</code>. But if the container is a servlet engine then the spec
+ * mentions that the context should certainly be of the type ServletEndpointContext.
+ * Hence this class.
+ * @author sunja07
+ */
 public class ServletEndpointContextImpl implements ServletEndpointContext {
 
-	public ServletEndpointContextImpl() {
-		super();
-		// TODO Auto-generated constructor stub
+	private HttpSession  httpSession=null;
+	private ServletContext servletContext=null;
+	private MessageContext msgContext=null;
+	
+	//To support several getters I've increased the inputParams of the constructor
+	//So be cautious in the underlying JAX-WS implementation as to how you would
+	//instantiate an object of this type, before passing it as the input argument
+	//to the service implementation class's init() method.
+	public ServletEndpointContextImpl(HttpSession hs, ServletContext sc, MessageContext mc) {
+		this.httpSession = hs;
+		this.servletContext = sc;
+		this.msgContext = mc;
 	}
 
 	/**
@@ -26,8 +49,7 @@ public class ServletEndpointContextImpl implements ServletEndpointContext {
 	 * @throws java.lang.IllegalStateException - if this method is invoked outside a remote method implementation by a service endpoint instance.
 	 */
 	public MessageContext getMessageContext() throws IllegalStateException {
-		// TODO Auto-generated method stub
-		return null;
+		return msgContext;
 	}
 
 	/**
@@ -39,6 +61,9 @@ public class ServletEndpointContextImpl implements ServletEndpointContext {
 	 * @return A java.security.Principal for the authenticated principal associated with the current invocation on the servlet  endpoint instance; Returns null if there no authenticated user associated with a method invocation.
 	 */
 	public Principal getUserPrincipal() {
+		//This is a functionality that comes handy when implementing security.
+		//I'm deferring this for now.
+		
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -53,8 +78,7 @@ public class ServletEndpointContextImpl implements ServletEndpointContext {
 	 * @throws JAXRPCException - If this method invoked by any non-HTTP bound endpoint
 	 */
 	public HttpSession getHttpSession() throws JAXRPCException {
-		// TODO Auto-generated method stub
-		return null;
+		return httpSession;
 	}
 
 	/**
@@ -65,8 +89,7 @@ public class ServletEndpointContextImpl implements ServletEndpointContext {
 	 * @return ServletContext
 	 */
 	public ServletContext getServletContext() {
-		// TODO Auto-generated method stub
-		return null;
+		return servletContext;
 	}
 
 	/**
@@ -76,6 +99,21 @@ public class ServletEndpointContextImpl implements ServletEndpointContext {
 	 */
 	public boolean isUserInRole(String role) {
 		// TODO Auto-generated method stub
+		
+		//We shold check for authentication of user, and if that isn't valid we would
+		//straight away return false.
+		//----------
+		//code block
+		//----------
+		
+		//Next we should check if the user associated with the current method incocation
+		//belongs to the specified role
+		//----------
+		//code block
+		//----------
+		
+		//This is also a functionality that comes handy when implementing security.
+		//I'm deferring this for now.
 		return false;
 	}
 
