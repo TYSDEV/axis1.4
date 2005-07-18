@@ -8,11 +8,27 @@ import javax.xml.rpc.Dispatch;
 import javax.xml.rpc.JAXRPCException;
 import javax.xml.rpc.Response;
 
+import org.apache.axis2.addressing.AddressingConstants;
+import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.om.OMAbstractFactory;
+import org.apache.axis2.om.OMElement;
+import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
+import org.apache.axis2.om.impl.llom.factory.OMXMLBuilderFactory;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
+import javax.xml.transform.Source;
+import javax.xml.namespace.QName;
+
 public class DispatchImpl extends BindingProviderImpl implements Dispatch {
 
-	
-	public DispatchImpl() {
+	private String targetEndpointAddress;
+	private QName operationName;
+	public DispatchImpl(String tgtEndptAddr, QName opName) {
 		super();
+		this.targetEndpointAddress=tgtEndptAddr;
+		this.operationName=opName;
 		// TODO Auto-generated constructor stub
 	}
 
@@ -32,8 +48,35 @@ public class DispatchImpl extends BindingProviderImpl implements Dispatch {
 	 * of the Dispatch instance. 
 	 */
 	public Object invoke(Object msg) throws RemoteException {
-		// TODO Auto-generated method stub
-		return null;
+		OMElement response;
+		try {
+			//This try-catch is exclusively for the 'Message Payload' kind of Mode.
+		//Assuming SOAP protocol, I'll take it that the <code>Object</code> that
+		//I received as input param is a piece of XML text that can represent 
+		//soap:body element
+		
+		//We shall build an OMElement out of the input param and use it to
+		//invoke the service.
+			Source src = null; //TODO actually sould create a source object
+						//out of the input msg we got.
+			StAXOMBuilder staxOMBuilder = OMXMLBuilderFactory.
+            createStAXOMBuilder(OMAbstractFactory.getOMFactory(),
+                    XMLInputFactory.newInstance().createXMLStreamReader(src));
+			OMElement inputElement = staxOMBuilder.getDocumentElement();
+			//use this inputElement to invoke the underlying Axis2 call's
+			//invokeBlocking(...) method.
+			org.apache.axis2.clientapi.Call axis2Call = new org.apache.axis2.clientapi.Call();
+			axis2Call.setTo(new EndpointReference(AddressingConstants.WSA_TO,targetEndpointAddress));
+			response = axis2Call.invokeBlocking(operationName.getLocalPart(),inputElement);
+			//TODO actually the response message better be transformed to a Source object
+			//and returned.
+		} catch(Exception e) {
+			throw new JAXRPCException(e);
+		}
+		
+		//Implementation (at least a makeshift as above) should happen for the other
+		//mode also i.e., the Message mode.
+		return response;
 	}
 
 	/**
