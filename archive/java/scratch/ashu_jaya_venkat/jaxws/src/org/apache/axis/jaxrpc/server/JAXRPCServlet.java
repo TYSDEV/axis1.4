@@ -15,6 +15,10 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * @author sunja07
  *
+ * since our current target is a quick skeleton implementation and have something
+ * working. We will just target on the doPost() method.
+ * And this class methods will be called from AxisServlet class once the service 
+ * to invoke is identified to be a JAX-WS service than the normal Axis service.
  */
 public class JAXRPCServlet extends HttpServlet {
 
@@ -61,6 +65,18 @@ public class JAXRPCServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest arg0, HttpServletResponse arg1) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		super.doPost(arg0, arg1);
+		
+		//To the extent I've gone through the service APIs chapter of the spec.
+		//What I understand I should *also* (because much other implementation too
+		//will exist) do in this method is that...
+		//(i) identify the service implementation class, if one is being used
+		//    and if that is implementing ServiceLifecycle interface, then before 
+		//    the invocation of the actual operation, invoke the <code>init</code>
+		//    method first and then do what all you want to do with the SEI method
+		//    invocation and finally in the end call <code>destroy</code> method
+		//    on the service implementation class. Only after <code>destroy</code>
+		//    is called the class must be made available to garbage collection. 
+		
 	}
 
 	/* (non-Javadoc)
