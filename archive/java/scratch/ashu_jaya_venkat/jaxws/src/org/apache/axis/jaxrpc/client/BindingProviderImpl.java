@@ -60,5 +60,11 @@ public class BindingProviderImpl implements BindingProvider {
 	public void setBinding(BindingImpl binding) {
 		this.binding = binding;
 	}
+	
+	public List getHandlerChain(){
+		// For now just returning ServiceHandlerChain. Later may decide
+		// on what basis should take handlers from bindingHandlerChain and portHandlerChain
+		return serviceHandlerChain;
+	}
 
 }

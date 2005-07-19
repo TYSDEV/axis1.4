@@ -33,6 +33,7 @@ import javax.xml.rpc.ServiceException;
 import javax.xml.rpc.Stub;
 import javax.xml.rpc.Service.Mode;
 import javax.xml.rpc.encoding.TypeMappingRegistry;
+import javax.xml.rpc.handler.AbstractHandler;
 import javax.xml.rpc.handler.HandlerInfo;
 import javax.xml.rpc.handler.HandlerRegistry;
 import javax.xml.rpc.security.SecurityConfiguration;
@@ -45,6 +46,8 @@ import javax.wsdl.extensions.soap.SOAPBinding;
 import org.apache.axis.jaxrpc.JAXRPCWSDLInterface;
 import org.apache.axis.jaxrpc.JAXRPCWSDL11Interface;
 import org.apache.axis.jaxrpc.factory.WSDLFactoryImpl;
+import org.apache.axis.jaxrpc.handler.Axis2Handler;
+import org.apache.axis2.engine.Phase;
 
 /**
  * @author sunja07
@@ -64,6 +67,25 @@ public class ServiceImpl implements javax.xml.rpc.Service {
 	
 	private javax.wsdl.Service wsdlService = null;
 	
+	private Phase createAxis2Phase(BindingProviderImpl bp){
+		Phase jaxRpcPhase = new Phase("JAXRPCPhase");
+		List jaxRpcHandlerList = new ArrayList();
+		jaxRpcHandlerList.addAll(bp.getHandlerChain());
+		Iterator handlerIter = jaxRpcHandlerList.iterator();
+		while(handlerIter.hasNext()){
+			Object handlerObject = handlerIter.next();
+			Axis2Handler axisHandler = null;
+			if(handlerObject instanceof AbstractHandler){
+				axisHandler = new Axis2Handler((AbstractHandler)handlerObject);
+			}
+			if(axisHandler != null){
+				jaxRpcPhase.addHandler(axisHandler);
+			}
+		}
+		
+		return jaxRpcPhase;
+	}
+	
 	/**
 	 * Method createCall
 	 * Creates a Call object not associated with specific operation or target 
@@ -79,6 +101,9 @@ public class ServiceImpl implements javax.xml.rpc.Service {
 		((CallImpl)call).portHandlerChain = this.handlerRegistry.portHandlerChain;
 		((CallImpl)call).bindingHandlerChain = this.handlerRegistry.bindingHandlerChain;
 		((CallImpl)call).setBinding(new BindingImpl());
+		//CREATE SOME WRAPPER FUNCTION HERE TO CONVERT ALL THE JAX-RPC
+		//INFORMATION TO AXIS2 INFORMATION(SPECIFICALLY HANDLER INFO) 
+		Phase jaxRpcPhase = createAxis2Phase((CallImpl)call);
 		return call;
 	}
 	

@@ -8,12 +8,14 @@ import javax.xml.rpc.handler.MessageContext;
 public class MessageContextImpl implements MessageContext {
 	
 	/**
-	 * HashMap to hold peroperties, key is the propertyName, and value is a
-	 * class with keyValue and scopeValue
+	 * No scope information is present in Axis2, so am just adding it in
+	 * a separate HashMap
 	 */
-	protected HashMap<String, PropVals> properties;
+	protected HashMap<String, Scope> propertyScopes = new HashMap<String, Scope>();
 	
-	protected class PropVals{
+	protected org.apache.axis2.context.MessageContext axisMC;
+	
+	/*protected class PropVals{
 		Object value;
 		Scope propScope;
 		
@@ -21,78 +23,68 @@ public class MessageContextImpl implements MessageContext {
 			this.value = value;
 			this.propScope = scope;
 		}
-	}
+	}*/
 	
-	public MessageContextImpl(){
-		properties = new HashMap<String, PropVals>();
+	
+	/**
+	 * The JAX-RPC MessageContext is prepared from Axis2 MessageContext, we
+	 * delegate all the setters and getters methods to Axis2 MC whenever
+	 * possible
+	 */
+	public MessageContextImpl(org.apache.axis2.context.MessageContext amc){
+		axisMC = amc;
 	}
 
 	public void setPropertyScope(String name, Scope scope)
 			throws IllegalArgumentException {
-		
-		PropVals property = properties.get(name);
-		if(property != null)
-			property.propScope = scope;
+		//No scope information is present in Axis2, so am just adding it in
+		// a separate HashMap
+		propertyScopes.put(name, scope);
 
 	}
 
 	public Scope getPropertyScope(String name) throws IllegalArgumentException {
-		
-		PropVals property = properties.get(name);
-		if(property != null)
-			return property.propScope;
-		return null;
+		return propertyScopes.get(name);
 	}
 
 	public void setProperty(String name, Object value)
 			throws IllegalArgumentException, UnsupportedOperationException {
 		
-		PropVals property = properties.get(name);
-		if(property != null)
-			property.value = value;
-		else
-			properties.put(name, new PropVals(value, Scope.HANDLER)); //Using HANDLER as the default scope
-										// not sure which one should be default or if scope can be null
-
+		axisMC.setProperty(name, value);
+		propertyScopes.put(name, Scope.HANDLER); //Using HANDLER as the default scope
+			//	  not sure which one should be default or if scope can be null
 	}
 
 	public void setProperty(String name, Object value, Scope scope)
 			throws IllegalArgumentException, UnsupportedOperationException {
 		
-		PropVals property = properties.get(name);
-		if(property != null){
-			property.value = value;
-			property.propScope = scope;
-		} else
-			properties.put(name, new PropVals(value, scope));
-
+		axisMC.setProperty(name, value);
+		propertyScopes.put(name, scope);
 	}
 
 	public Object getProperty(String name) throws IllegalArgumentException {
 		
-		PropVals property = properties.get(name);
-		if(property != null)
-			return property.value;
-		return null;
+		return axisMC.getProperty(name);
 	}
 
 	public void removeProperty(String name) throws IllegalArgumentException {
 		
-		properties.remove(name);
+		throw new UnsupportedOperationException("removing a property not supported" +
+		" in underlying Axis2 MessageContext");
 	}
 
 	public boolean containsProperty(String name) {
 		
-		PropVals property = properties.get(name);
-		if(property != null)
+		Object value = axisMC.getProperty(name);
+		if(value != null)
 			return true;
 		else
 			return false;
 	}
 
 	public Iterator getPropertyNames() {
-		
-		return properties.keySet().iterator();
+		// Returning by reading values from the propertyScope for now, may not be correct
+		return propertyScopes.keySet().iterator();
 	}
 
 }
