@@ -47,7 +47,18 @@ import org.apache.axis.jaxrpc.JAXRPCWSDLInterface;
 import org.apache.axis.jaxrpc.JAXRPCWSDL11Interface;
 import org.apache.axis.jaxrpc.factory.WSDLFactoryImpl;
 import org.apache.axis.jaxrpc.handler.Axis2Handler;
+import org.apache.axis2.clientapi.ListenerManager;
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.ConfigurationContextFactory;
+import org.apache.axis2.context.ServiceContext;
+import org.apache.axis2.description.OperationDescription;
+import org.apache.axis2.description.ServiceDescription;
+import org.apache.axis2.engine.AxisConfiguration;
+import org.apache.axis2.engine.AxisConfigurationImpl;
+import org.apache.axis2.engine.AxisEngine;
+import org.apache.axis2.engine.AxisFault;
 import org.apache.axis2.engine.Phase;
+import org.apache.axis2.phaseresolver.PhaseResolver;
 
 /**
  * @author sunja07
@@ -68,22 +79,58 @@ public class ServiceImpl implements javax.xml.rpc.Service {
 	private javax.wsdl.Service wsdlService = null;
 	
 	private Phase createAxis2Phase(BindingProviderImpl bp){
-		Phase jaxRpcPhase = new Phase("JAXRPCPhase");
-		List jaxRpcHandlerList = new ArrayList();
-		jaxRpcHandlerList.addAll(bp.getHandlerChain());
-		Iterator handlerIter = jaxRpcHandlerList.iterator();
-		while(handlerIter.hasNext()){
-			Object handlerObject = handlerIter.next();
-			Axis2Handler axisHandler = null;
-			if(handlerObject instanceof AbstractHandler){
-				axisHandler = new Axis2Handler((AbstractHandler)handlerObject);
+		Phase jaxRpcPhase = null;
+		List jaxRpcHandlerList = null;
+		List list = bp.getHandlerChain();
+		if(list != null){
+			jaxRpcPhase = new Phase("JAXRPCPhase");
+			jaxRpcHandlerList = new ArrayList();
+			jaxRpcHandlerList.addAll(list);
+			Iterator handlerIter = jaxRpcHandlerList.iterator();
+			while(handlerIter.hasNext()){
+				Object handlerObject = handlerIter.next();
+				Axis2Handler axisHandler = null;
+				if(handlerObject instanceof AbstractHandler){
+					axisHandler = new Axis2Handler((AbstractHandler)handlerObject);
+				}
+				if(axisHandler != null){
+					jaxRpcPhase.addHandler(axisHandler);
+				}
 			}
-			if(axisHandler != null){
-				jaxRpcPhase.addHandler(axisHandler);
-			}
+			return jaxRpcPhase;
 		}
-		
-		return jaxRpcPhase;
+		return null;
+	}
+	
+	private ServiceContext getAxis2Service(Phase p)throws AxisFault{
+		/*AxisConfiguration axisConfig = new AxisConfigurationImpl();
+		ConfigurationContext configContext = new ConfigurationContext(axisConfig);
+		AxisEngine engine = new AxisEngine(configContext);
+		return engine;*/
+		ServiceDescription description = new ServiceDescription();
+
+	    ConfigurationContext sysContext = null;
+	    try{
+		    if (ListenerManager.configurationContext == null) {
+		            ConfigurationContextFactory efac = new ConfigurationContextFactory();
+		            sysContext = efac.buildClientConfigurationContext(null);
+		    } else {
+		            sysContext = ListenerManager.configurationContext;
+		    }
+	    } catch(Exception e){
+	    	e.printStackTrace();
+	    }
+		/*OperationDescription od = new OperationDescription(new QName("TemplateOperatin")
+				);
+		if(p != null){
+		od.setRemainingPhasesInFlow(p.getHandlers());
+		od.setPhasesOutFlow(p.getHandlers());
+		}
+		description.addOperation(od);*/
+		sysContext.getAxisConfiguration().addService(description);
+	    
+		ServiceContext sContext = new ServiceContext(description, sysContext);
+		return sContext;
 	}
 	
 	/**
@@ -103,7 +150,12 @@ public class ServiceImpl implements javax.xml.rpc.Service {
 		((CallImpl)call).setBinding(new BindingImpl());
 		//CREATE SOME WRAPPER FUNCTION HERE TO CONVERT ALL THE JAX-RPC
 		//INFORMATION TO AXIS2 INFORMATION(SPECIFICALLY HANDLER INFO) 
-		Phase jaxRpcPhase = createAxis2Phase((CallImpl)call);
+		try{
+			((CallImpl)call).jaxRpcPhase = createAxis2Phase((CallImpl)call);
+			((CallImpl)call).sContext = getAxis2Service(((CallImpl)call).jaxRpcPhase);
+		} catch (Exception e){
+			e.printStackTrace();
+		}
 		return call;
 	}
 	

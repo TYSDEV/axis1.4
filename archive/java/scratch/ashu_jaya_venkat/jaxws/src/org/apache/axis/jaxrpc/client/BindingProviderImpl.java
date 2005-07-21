@@ -26,6 +26,9 @@ import javax.xml.rpc.BindingProvider;
 import javax.xml.rpc.JAXRPCContext;
 import javax.xml.rpc.handler.HandlerInfo;
 
+import org.apache.axis2.context.ServiceContext;
+import org.apache.axis2.engine.Phase;
+
 public class BindingProviderImpl implements BindingProvider {
 
 	protected JAXRPCRequestContext requestContext;
@@ -35,6 +38,9 @@ public class BindingProviderImpl implements BindingProvider {
 	protected List<HandlerInfo> serviceHandlerChain;
 	protected Map<URI, List> bindingHandlerChain;
 	protected Map<QName, List> portHandlerChain;
+	
+	protected Phase jaxRpcPhase;
+	ServiceContext sContext;
 	
 	public BindingProviderImpl(){
 		//default constructor

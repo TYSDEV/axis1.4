@@ -39,9 +39,9 @@ import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMFactory;
 import org.apache.axis2.om.OMNamespace;
-import org.apache.axis2.om.OMOutput;
 import org.apache.axis2.clientapi.Callback;
 import org.apache.axis2.clientapi.AsyncResult;
+import org.apache.axis2.description.OperationDescription;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.addressing.AddressingConstants;
 
@@ -435,6 +435,13 @@ public class CallImpl extends BindingProviderImpl implements javax.xml.rpc.Call 
 		//Or else it could be a unnecessary memory hold up.
 		inputParams.clear();
 		operationName = opName;
+		
+		OperationDescription od = new OperationDescription(opName);
+		if(jaxRpcPhase != null){
+			od.setRemainingPhasesInFlow(jaxRpcPhase.getHandlers());
+			od.setPhasesOutFlow(jaxRpcPhase.getHandlers());
+		}
+		sContext.getServiceConfig().addOperation(od);
 	}
 
 	/**
@@ -627,7 +634,7 @@ public class CallImpl extends BindingProviderImpl implements javax.xml.rpc.Call 
 		
 		//TODO axis2Call object should actually be gotten somehow from underlying Axis2 engine
 		// may have to change the following line
-		org.apache.axis2.clientapi.Call axis2Call = new org.apache.axis2.clientapi.Call();
+		org.apache.axis2.clientapi.Call axis2Call = new org.apache.axis2.clientapi.Call(sContext);
 		axis2Call.setTo(new EndpointReference(AddressingConstants.WSA_TO,targetEndpointAddress));
 		OMElement response = axis2Call.invokeBlocking(operationName.getLocalPart(),methodElement);
 		
