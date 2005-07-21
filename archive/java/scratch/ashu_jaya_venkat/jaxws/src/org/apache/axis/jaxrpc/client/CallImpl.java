@@ -40,6 +40,8 @@ import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMFactory;
 import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.om.OMOutput;
+import org.apache.axis2.clientapi.Callback;
+import org.apache.axis2.clientapi.AsyncResult;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.addressing.AddressingConstants;
 
@@ -152,7 +154,10 @@ public class CallImpl extends BindingProviderImpl implements javax.xml.rpc.Call 
 		//call object. We should either check on the fly some datastructure 
 		//and return the decision, I guess OR better would be to have a map
 		//that can return the decision taking operationName as the key.
-		return paramAndRetReqMap.get(operationName);	
+		return (paramAndRetReqMap.get(operationName)!=null)
+				? paramAndRetReqMap.get(operationName)
+				: true; //if not specifically mentioned we would give 
+						//benifit of doubt in favour.
 	}
 
 	/**
@@ -278,7 +283,7 @@ public class CallImpl extends BindingProviderImpl implements javax.xml.rpc.Call 
 		} else if(outputParams.containsKey(paramName)) {
 			return outputParams.get(paramName).getXmlType();
 		}
-		//if not found in both, return 
+		//if not found in both, return null
 		return null;
 	}
 
@@ -620,6 +625,8 @@ public class CallImpl extends BindingProviderImpl implements javax.xml.rpc.Call 
 			methodElement.addChild(paramElement);
 		}
 		
+		//TODO axis2Call object should actually be gotten somehow from underlying Axis2 engine
+		// may have to change the following line
 		org.apache.axis2.clientapi.Call axis2Call = new org.apache.axis2.clientapi.Call();
 		axis2Call.setTo(new EndpointReference(AddressingConstants.WSA_TO,targetEndpointAddress));
 		OMElement response = axis2Call.invokeBlocking(operationName.getLocalPart(),methodElement);
@@ -646,7 +653,6 @@ public class CallImpl extends BindingProviderImpl implements javax.xml.rpc.Call 
 		outputParams.clear();
 		//populateOutputParams(operationName); // a private method to be coded
 		
-		//Returning the request OMElement only for testing purposes
 		return response;
 		
 	}
@@ -712,9 +718,39 @@ public class CallImpl extends BindingProviderImpl implements javax.xml.rpc.Call 
 	 * been incorrectly specified for the one-way call) or if there is any 
 	 * error during the invocation of the one-way remote call
 	 */
-	public void invokeOneWay(Object[] inputParams) throws JAXRPCException {
-		// TODO Auto-generated method stub
-
+	public void invokeOneWay(Object[] inputParameters) throws JAXRPCException {
+		if(returnType!=null && !returnType.getLocalPart().equals("void")) {
+			throw new JAXRPCException("invokeOneWay should not have a non-void" +
+					" return type set.");
+		}
+		try {
+			OMFactory fac = OMAbstractFactory.getOMFactory();
+			String operationNS = operationName.getNamespaceURI();
+			OMNamespace omNS = (operationNS == null || operationNS == "")
+						? fac.createOMNamespace("http://jaxwsforaxis2.org","ns1")
+						: fac.createOMNamespace(operationNS, "ns1");
+			OMElement methodElement = fac.createOMElement(operationName.getLocalPart(),omNS);
+			for(int i=0; i<inputParameters.length;i++) {
+				OMElement paramElement = fac.createOMElement("param"+String.valueOf(i),omNS);
+				paramElement.addChild(fac.createText(inputParameters[i].toString()));
+				methodElement.addChild(paramElement);
+			}
+			//TODO axis2Call object should actually be gotten somehow from underlying Axis2 engine
+			// may have to change the following line
+			org.apache.axis2.clientapi.Call axis2Call = new org.apache.axis2.clientapi.Call();
+			axis2Call.setTo(new EndpointReference(AddressingConstants.WSA_TO,targetEndpointAddress));
+			
+			//a callback object that does nothing. We know we don't have anything
+			//on response cycle for this fire-n-forget kind of invokeOneWay method.
+			Callback callback = new Callback() {
+				public void onComplete(AsyncResult async) {};
+				public void reportError(Exception e) {};
+			};
+			axis2Call.invokeNonBlocking(operationName.getLocalPart(),methodElement,callback);
+			
+		}catch(Exception e) {
+			throw new JAXRPCException(e);
+		}
 	}
 
 	/**
