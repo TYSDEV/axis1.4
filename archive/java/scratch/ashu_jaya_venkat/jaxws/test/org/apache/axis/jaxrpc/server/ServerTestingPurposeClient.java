@@ -1,4 +1,4 @@
-package org.apache.axis.jaxrpc.client;
+package org.apache.axis.jaxrpc.server;
 
 //import java.net.URL;
 
@@ -20,12 +20,12 @@ import org.apache.axis2.om.impl.OMOutputImpl;
 
 import junit.framework.TestCase;
 
-public class CallTesting extends TestCase {
+public class ServerTestingPurposeClient extends TestCase {
 
 	public static void main(String[] args) {
 	}
 
-	public CallTesting(String name) {
+	public ServerTestingPurposeClient(String name) {
 		super(name);
 	}
 
@@ -34,8 +34,8 @@ public class CallTesting extends TestCase {
 
 			Service s = new ServiceImpl();
 			Call call = s.createCall();
-			call.setOperationName(new QName("http://testingURL.org/","EchoString"));
-			call.setTargetEndpointAddress("http://localhost:9090/axis/services/Echo");
+			call.setOperationName(new QName("http://testingURL.org/","getVersion"));
+			call.setTargetEndpointAddress("http://localhost:9090/axis2/services/Version");
 			call.addParameter("param1", new QName("http://www.w3.org/2001/XMLSchema","any"), java.lang.Object.class, ParameterMode.IN);
 			call.setReturnType(new QName("http://www.w3.org/2001/XMLSchema","any"), Object.class);
 			Object[] inParams = new Object[]{"hello World!"};
@@ -48,7 +48,11 @@ public class CallTesting extends TestCase {
 				fos.flush();
 				otpt.flush();
 				} catch (Exception e){}
-
+				
+			String resultString = response.getText();
+			assertEquals("This is just to show that on " +
+					"the server side the JAXRPCInOutMessageReceiver is chosen by " +
+					"Axis!" , resultString);
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 			fail(e.getMessage());
