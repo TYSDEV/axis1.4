@@ -33,6 +33,19 @@ public class MessageContextImpl implements MessageContext {
 	 */
 	public MessageContextImpl(org.apache.axis2.context.MessageContext amc){
 		axisMC = amc;
+		//Set of check conditions to find out is the message is out/in bound message
+		//at server or client
+		if(axisMC.isResponseWritten() == false && axisMC.isServerSide() == false)
+			setProperty(MessageContext.MESSAGE_OUTBOUND_PROPERTY, true);
+		else if(axisMC.isResponseWritten() == true && axisMC.isServerSide() == false)
+			setProperty(MessageContext.MESSAGE_OUTBOUND_PROPERTY, false);
+		else if(axisMC.isResponseWritten() == false && axisMC.isServerSide() == true)
+			setProperty(MessageContext.MESSAGE_OUTBOUND_PROPERTY, false);
+		else
+			setProperty(MessageContext.MESSAGE_OUTBOUND_PROPERTY, true);
+			
+		// Security Configuration not dealt with yet
+		setProperty(MessageContext.MESSAGE_SECURITY_CONFIGURATION, null);
 	}
 
 	public void setPropertyScope(String name, Scope scope)

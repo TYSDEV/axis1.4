@@ -51,6 +51,7 @@ import org.apache.axis2.clientapi.ListenerManager;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.ServiceContext;
+import org.apache.axis2.description.HandlerDescription;
 import org.apache.axis2.description.OperationDescription;
 import org.apache.axis2.description.ServiceDescription;
 import org.apache.axis2.engine.AxisConfiguration;
@@ -88,10 +89,21 @@ public class ServiceImpl implements javax.xml.rpc.Service {
 			jaxRpcHandlerList.addAll(list);
 			Iterator handlerIter = jaxRpcHandlerList.iterator();
 			while(handlerIter.hasNext()){
-				Object handlerObject = handlerIter.next();
+				HandlerInfo handlerInfoObject = (HandlerInfo)handlerIter.next();
+				Object handlerObject = null;
+				try{
+				handlerObject = handlerInfoObject.getHandlerClass().newInstance();
+				} catch(Exception e){
+					e.printStackTrace();
+				}
 				Axis2Handler axisHandler = null;
 				if(handlerObject instanceof AbstractHandler){
 					axisHandler = new Axis2Handler((AbstractHandler)handlerObject);
+					//Pass as much information as possible from HandlerInfo to HandlerDescription:
+					//Don't see a way to pass the configuration or headers to HandlerDescription
+					//directly
+					HandlerDescription axisHandlerDesc = new HandlerDescription(new QName("Jax-Rpc Handler"));
+					axisHandler.init(axisHandlerDesc);
 				}
 				if(axisHandler != null){
 					jaxRpcPhase.addHandler(axisHandler);
@@ -102,7 +114,7 @@ public class ServiceImpl implements javax.xml.rpc.Service {
 		return null;
 	}
 	
-	private ServiceContext getAxis2Service(Phase p)throws AxisFault{
+	private ServiceContext getAxis2Service()throws AxisFault{
 		/*AxisConfiguration axisConfig = new AxisConfigurationImpl();
 		ConfigurationContext configContext = new ConfigurationContext(axisConfig);
 		AxisEngine engine = new AxisEngine(configContext);
@@ -120,13 +132,7 @@ public class ServiceImpl implements javax.xml.rpc.Service {
 	    } catch(Exception e){
 	    	e.printStackTrace();
 	    }
-		/*OperationDescription od = new OperationDescription(new QName("TemplateOperatin")
-				);
-		if(p != null){
-		od.setRemainingPhasesInFlow(p.getHandlers());
-		od.setPhasesOutFlow(p.getHandlers());
-		}
-		description.addOperation(od);*/
+	
 		sysContext.getAxisConfiguration().addService(description);
 	    
 		ServiceContext sContext = new ServiceContext(description, sysContext);
@@ -152,7 +158,7 @@ public class ServiceImpl implements javax.xml.rpc.Service {
 		//INFORMATION TO AXIS2 INFORMATION(SPECIFICALLY HANDLER INFO) 
 		try{
 			((CallImpl)call).jaxRpcPhase = createAxis2Phase((CallImpl)call);
-			((CallImpl)call).sContext = getAxis2Service(((CallImpl)call).jaxRpcPhase);
+			((CallImpl)call).sContext = getAxis2Service();
 		} catch (Exception e){
 			e.printStackTrace();
 		}

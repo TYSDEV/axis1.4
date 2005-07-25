@@ -438,8 +438,12 @@ public class CallImpl extends BindingProviderImpl implements javax.xml.rpc.Call 
 		
 		OperationDescription od = new OperationDescription(opName);
 		if(jaxRpcPhase != null){
-			od.setRemainingPhasesInFlow(jaxRpcPhase.getHandlers());
-			od.setPhasesOutFlow(jaxRpcPhase.getHandlers());
+			//od.setRemainingPhasesInFlow(jaxRpcPhase.getHandlers());
+			//od.setPhasesOutFlow(jaxRpcPhase.getHandlers());
+			java.util.ArrayList phaseList = new java.util.ArrayList();
+			phaseList.add(jaxRpcPhase);
+			od.setRemainingPhasesInFlow(phaseList);
+			od.setPhasesOutFlow(phaseList);
 		}
 		sContext.getServiceConfig().addOperation(od);
 	}
