@@ -1,0 +1,20 @@
+<!--Auto generated Axis Service XML-->
+<service name="WSDLInteropTestDocLitPortType">
+<parameter locked="xsd:false" name="ServiceClass">org.soapinterop.WSDLInteropTestDocLitPortTypeSkeleton</parameter>
+<!--Mounting the method echoVoid-->
+<operation name="echoVoid">
+<messageReceiver class="org.soapinterop.WSDLInteropTestDocLitPortTypeMessageReceiver"/>
+</operation>
+<!--Mounting the method echoStringArray-->
+<operation name="echoStringArray">
+<messageReceiver class="org.soapinterop.WSDLInteropTestDocLitPortTypeMessageReceiver"/>
+</operation>
+<!--Mounting the method echoStruct-->
+<operation name="echoStruct">
+<messageReceiver class="org.soapinterop.WSDLInteropTestDocLitPortTypeMessageReceiver"/>
+</operation>
+<!--Mounting the method echoString-->
+<operation name="echoString">
+<messageReceiver class="org.soapinterop.WSDLInteropTestDocLitPortTypeMessageReceiver"/>
+</operation>
+</service>

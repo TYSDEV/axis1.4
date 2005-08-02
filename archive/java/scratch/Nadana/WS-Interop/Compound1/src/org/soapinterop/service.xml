@@ -1,0 +1,12 @@
+<!--Auto generated Axis Service XML-->
+<service name="SoapInteropCompound1PortType">
+<parameter locked="xsd:false" name="ServiceClass">org.soapinterop.SoapInteropCompound1PortTypeSkeleton</parameter>
+<!--Mounting the method echoPerson-->
+<operation name="echoPerson">
+<messageReceiver class="org.soapinterop.SoapInteropCompound1PortTypeMessageReceiver"/>
+</operation>
+<!--Mounting the method echoDocument-->
+<operation name="echoDocument">
+<messageReceiver class="org.soapinterop.SoapInteropCompound1PortTypeMessageReceiver"/>
+</operation>
+</service>

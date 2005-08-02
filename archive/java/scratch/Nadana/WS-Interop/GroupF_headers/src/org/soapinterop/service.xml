@@ -1,0 +1,8 @@
+<!--Auto generated Axis Service XML-->
+<service name="RetHeaderPortType">
+<parameter locked="xsd:false" name="ServiceClass">org.soapinterop.RetHeaderPortTypeSkeleton</parameter>
+<!--Mounting the method echoString-->
+<operation name="echoString">
+<messageReceiver class="org.soapinterop.RetHeaderPortTypeMessageReceiver"/>
+</operation>
+</service>
