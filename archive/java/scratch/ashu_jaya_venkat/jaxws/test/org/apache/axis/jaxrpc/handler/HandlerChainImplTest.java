@@ -1,18 +1,18 @@
-package org.apache.axis.jaxrpc.handler;
+package org.apache.axis2.jaxws.handler;
 
 import junit.framework.TestCase;
-import org.apache.axis.jaxrpc.handler.HandlerChainImpl;
+import org.apache.axis2.jaxws.handler.HandlerChainImpl;
 
 public class HandlerChainImplTest extends TestCase
 {
-  org.apache.axis.jaxrpc.handler.HandlerChainImpl handlerchainimpl = null;
+  org.apache.axis2.jaxws.handler.HandlerChainImpl handlerchainimpl = null;
   
   public HandlerChainImplTest(String name) {
     super(name);
   }
   
-  public org.apache.axis.jaxrpc.handler.HandlerChainImpl createInstance() throws Exception {
-    return new org.apache.axis.jaxrpc.handler.HandlerChainImpl();
+  public org.apache.axis2.jaxws.handler.HandlerChainImpl createInstance() throws Exception {
+    return new org.apache.axis2.jaxws.handler.HandlerChainImpl();
   }
   
   protected void setUp() throws Exception {

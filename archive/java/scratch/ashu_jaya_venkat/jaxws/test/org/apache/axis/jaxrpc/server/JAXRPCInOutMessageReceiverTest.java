@@ -1,18 +1,18 @@
-package org.apache.axis.jaxrpc.server;
+package org.apache.axis2.jaxws.server;
 
 import junit.framework.TestCase;
-import org.apache.axis.jaxrpc.server.JAXRPCInOutMessageReceiver;
+import org.apache.axis2.jaxws.server.JAXRPCInOutMessageReceiver;
 
 public class JAXRPCInOutMessageReceiverTest extends TestCase
 {
-  org.apache.axis.jaxrpc.server.JAXRPCInOutMessageReceiver jaxrpcinoutmessagereceiver = null;
+  org.apache.axis2.jaxws.server.JAXRPCInOutMessageReceiver jaxrpcinoutmessagereceiver = null;
   
   public JAXRPCInOutMessageReceiverTest(String name) {
     super(name);
   }
   
-  public org.apache.axis.jaxrpc.server.JAXRPCInOutMessageReceiver createInstance() throws Exception {
-    return new org.apache.axis.jaxrpc.server.JAXRPCInOutMessageReceiver();
+  public org.apache.axis2.jaxws.server.JAXRPCInOutMessageReceiver createInstance() throws Exception {
+    return new org.apache.axis2.jaxws.server.JAXRPCInOutMessageReceiver();
   }
   
   protected void setUp() throws Exception {

@@ -1,18 +1,18 @@
-package org.apache.axis.jaxrpc.server;
+package org.apache.axis2.jaxws.server;
 
 import junit.framework.TestCase;
-import org.apache.axis.jaxrpc.server.ServletEndpointContextImpl;
+import org.apache.axis2.jaxws.server.ServletEndpointContextImpl;
 
 public class ServletEndpointContextImplTest extends TestCase
 {
-  org.apache.axis.jaxrpc.server.ServletEndpointContextImpl servletendpointcontextimpl = null;
+  org.apache.axis2.jaxws.server.ServletEndpointContextImpl servletendpointcontextimpl = null;
   
   public ServletEndpointContextImplTest(String name) {
     super(name);
   }
   
-  public org.apache.axis.jaxrpc.server.ServletEndpointContextImpl createInstance() throws Exception {
-    return new org.apache.axis.jaxrpc.server.ServletEndpointContextImpl(null, null, null);
+  public org.apache.axis2.jaxws.server.ServletEndpointContextImpl createInstance() throws Exception {
+    return new org.apache.axis2.jaxws.server.ServletEndpointContextImpl(null, null, null);
   }
   
   protected void setUp() throws Exception {

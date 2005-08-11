@@ -1,4 +1,4 @@
-package org.apache.axis.jaxrpc.server;
+package org.apache.axis2.jaxws.server;
 
 //import java.net.URL;
 
@@ -13,7 +13,7 @@ import javax.xml.rpc.Service;
 import javax.xml.rpc.ParameterMode;
 //import javax.xml.rpc.ServiceFactory;
 
-import org.apache.axis.jaxrpc.client.ServiceImpl;
+import org.apache.axis2.jaxws.client.ServiceImpl;
 
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.impl.OMOutputImpl;

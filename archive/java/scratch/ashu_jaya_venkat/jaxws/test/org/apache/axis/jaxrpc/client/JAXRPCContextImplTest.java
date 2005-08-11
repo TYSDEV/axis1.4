@@ -1,18 +1,18 @@
-package org.apache.axis.jaxrpc.client;
+package org.apache.axis2.jaxws.client;
 
 import junit.framework.TestCase;
-import org.apache.axis.jaxrpc.client.JAXRPCContextImpl;
+import org.apache.axis2.jaxws.client.JAXRPCContextImpl;
 
 public class JAXRPCContextImplTest extends TestCase
 {
-  org.apache.axis.jaxrpc.client.JAXRPCContextImpl jaxrpccontextimpl = null;
+  org.apache.axis2.jaxws.client.JAXRPCContextImpl jaxrpccontextimpl = null;
   
   public JAXRPCContextImplTest(String name) {
     super(name);
   }
   
-  public org.apache.axis.jaxrpc.client.JAXRPCContextImpl createInstance() throws Exception {
-    return new org.apache.axis.jaxrpc.client.JAXRPCContextImpl(null);
+  public org.apache.axis2.jaxws.client.JAXRPCContextImpl createInstance() throws Exception {
+    return new org.apache.axis2.jaxws.client.JAXRPCContextImpl(null);
   }
   
   protected void setUp() throws Exception {

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.axis.jaxrpc;
+package org.apache.axis2.jaxws;
 
 import javax.wsdl.*;
 import java.net.URL;

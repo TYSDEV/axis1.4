@@ -1,18 +1,18 @@
-package org.apache.axis.jaxrpc.client;
+package org.apache.axis2.jaxws.client;
 
 import junit.framework.TestCase;
-import org.apache.axis.jaxrpc.client.CallImpl;
+import org.apache.axis2.jaxws.client.CallImpl;
 
 public class CallImplTest extends TestCase
 {
-  org.apache.axis.jaxrpc.client.CallImpl callimpl = null;
+  org.apache.axis2.jaxws.client.CallImpl callimpl = null;
   
   public CallImplTest(String name) {
     super(name);
   }
   
-  public org.apache.axis.jaxrpc.client.CallImpl createInstance() throws Exception {
-    return new org.apache.axis.jaxrpc.client.CallImpl();
+  public org.apache.axis2.jaxws.client.CallImpl createInstance() throws Exception {
+    return new org.apache.axis2.jaxws.client.CallImpl();
   }
   
   protected void setUp() throws Exception {

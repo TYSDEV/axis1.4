@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.apache.axis.jaxrpc.server;
+package org.apache.axis2.jaxws.server;
 
 import org.apache.axis2.receivers.*;
 import org.apache.axis2.om.OMAbstractFactory;

@@ -73,7 +73,7 @@ public abstract class ServiceFactory {
 			// Since we didn't finalize the hash map for config information 
 			// we will use the default impl class
 			//</TBR>
-			serviceFactoryImplName = "org.apache.axis.jaxrpc.ServiceFactoryImpl";
+			serviceFactoryImplName = "org.apache.axis2.jaxws.ServiceFactoryImpl";
 			Class loadedClass;
 			
 			loadedClass = Thread.currentThread().getContextClassLoader().loadClass(serviceFactoryImplName);

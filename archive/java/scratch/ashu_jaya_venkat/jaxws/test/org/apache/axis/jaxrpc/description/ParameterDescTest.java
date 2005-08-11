@@ -1,18 +1,18 @@
-package org.apache.axis.jaxrpc.description;
+package org.apache.axis2.jaxws.description;
 
 import junit.framework.TestCase;
-import org.apache.axis.jaxrpc.description.ParameterDesc;
+import org.apache.axis2.jaxws.description.ParameterDesc;
 
 public class ParameterDescTest extends TestCase
 {
-  org.apache.axis.jaxrpc.description.ParameterDesc parameterdesc = null;
+  org.apache.axis2.jaxws.description.ParameterDesc parameterdesc = null;
   
   public ParameterDescTest(String name) {
     super(name);
   }
   
-  public org.apache.axis.jaxrpc.description.ParameterDesc createInstance() throws Exception {
-    return new org.apache.axis.jaxrpc.description.ParameterDesc();
+  public org.apache.axis2.jaxws.description.ParameterDesc createInstance() throws Exception {
+    return new org.apache.axis2.jaxws.description.ParameterDesc();
   }
   
   protected void setUp() throws Exception {

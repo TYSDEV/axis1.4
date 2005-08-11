@@ -1,7 +1,7 @@
-package org.apache.axis.jaxrpc.utils;
+package org.apache.axis2.jaxws.utils;
 
 import junit.framework.TestCase;
-import org.apache.axis.jaxrpc.utils.StringUtils;
+import org.apache.axis2.jaxws.utils.StringUtils;
 
 public class StringUtilsTest extends TestCase
 {

@@ -1,4 +1,4 @@
-package org.apache.axis.jaxrpc.handler.soap;
+package org.apache.axis2.jaxws.handler.soap;
 
 import java.util.Iterator;
 
@@ -8,7 +8,7 @@ import javax.xml.rpc.JAXRPCException;
 import javax.xml.rpc.handler.soap.SOAPMessageContext;
 import javax.xml.soap.SOAPMessage;
 
-import org.apache.axis.jaxrpc.handler.MessageContextImpl;
+import org.apache.axis2.jaxws.handler.MessageContextImpl;
 
 /*
  * Need to do something more in this class for faults and error messages?

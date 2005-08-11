@@ -1,18 +1,18 @@
-package org.apache.axis.jaxrpc.server;
+package org.apache.axis2.jaxws.server;
 
 import junit.framework.TestCase;
-import org.apache.axis.jaxrpc.server.JAXRPCServlet;
+import org.apache.axis2.jaxws.server.JAXRPCServlet;
 
 public class JAXRPCServletTest extends TestCase
 {
-  org.apache.axis.jaxrpc.server.JAXRPCServlet jaxrpcservlet = null;
+  org.apache.axis2.jaxws.server.JAXRPCServlet jaxrpcservlet = null;
   
   public JAXRPCServletTest(String name) {
     super(name);
   }
   
-  public org.apache.axis.jaxrpc.server.JAXRPCServlet createInstance() throws Exception {
-    return new org.apache.axis.jaxrpc.server.JAXRPCServlet();
+  public org.apache.axis2.jaxws.server.JAXRPCServlet createInstance() throws Exception {
+    return new org.apache.axis2.jaxws.server.JAXRPCServlet();
   }
   
   protected void setUp() throws Exception {

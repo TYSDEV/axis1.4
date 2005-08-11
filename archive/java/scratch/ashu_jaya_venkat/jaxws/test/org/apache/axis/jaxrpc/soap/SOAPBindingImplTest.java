@@ -1,18 +1,18 @@
-package org.apache.axis.jaxrpc.soap;
+package org.apache.axis2.jaxws.soap;
 
 import junit.framework.TestCase;
-import org.apache.axis.jaxrpc.soap.SOAPBindingImpl;
+import org.apache.axis2.jaxws.soap.SOAPBindingImpl;
 
 public class SOAPBindingImplTest extends TestCase
 {
-  org.apache.axis.jaxrpc.soap.SOAPBindingImpl soapbindingimpl = null;
+  org.apache.axis2.jaxws.soap.SOAPBindingImpl soapbindingimpl = null;
   
   public SOAPBindingImplTest(String name) {
     super(name);
   }
   
-  public org.apache.axis.jaxrpc.soap.SOAPBindingImpl createInstance() throws Exception {
-    return new org.apache.axis.jaxrpc.soap.SOAPBindingImpl(null);
+  public org.apache.axis2.jaxws.soap.SOAPBindingImpl createInstance() throws Exception {
+    return new org.apache.axis2.jaxws.soap.SOAPBindingImpl(null);
   }
   
   protected void setUp() throws Exception {

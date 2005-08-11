@@ -1,4 +1,4 @@
-package org.apache.axis.jaxrpc.handler;
+package org.apache.axis2.jaxws.handler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,10 +16,10 @@ import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPEnvelope;
 import javax.xml.soap.SOAPMessage;
 
-import org.apache.axis.jaxrpc.handler.soap.SOAPMessageContextImpl;
-import org.apache.axis.jaxrpc.handler.MessageContextImpl;
+import org.apache.axis2.jaxws.handler.soap.SOAPMessageContextImpl;
+import org.apache.axis2.jaxws.handler.MessageContextImpl;
 
-import org.apache.axis.jaxrpc.utils.ClassUtils;
+import org.apache.axis2.jaxws.utils.ClassUtils;
 
 public class HandlerChainImpl extends ArrayList implements HandlerChain {
 

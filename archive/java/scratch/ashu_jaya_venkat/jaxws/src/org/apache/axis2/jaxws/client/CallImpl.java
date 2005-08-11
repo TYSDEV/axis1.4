@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.axis.jaxrpc.client;
+package org.apache.axis2.jaxws.client;
 
 import java.rmi.RemoteException;
 import java.util.Iterator;
@@ -33,7 +33,7 @@ import javax.xml.rpc.JAXRPCException;
 import javax.xml.rpc.ParameterMode;
 import javax.xml.rpc.soap.SOAPFaultException;
 
-import org.apache.axis.jaxrpc.description.ParameterDesc;
+import org.apache.axis2.jaxws.description.ParameterDesc;
 
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;

@@ -1,4 +1,4 @@
-package org.apache.axis.jaxrpc.handler;
+package org.apache.axis2.jaxws.handler;
 
 import java.util.HashMap;
 import java.util.Iterator;

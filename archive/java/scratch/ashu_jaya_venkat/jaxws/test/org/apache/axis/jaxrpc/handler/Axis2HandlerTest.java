@@ -1,18 +1,18 @@
-package org.apache.axis.jaxrpc.handler;
+package org.apache.axis2.jaxws.handler;
 
 import junit.framework.TestCase;
-import org.apache.axis.jaxrpc.handler.Axis2Handler;
+import org.apache.axis2.jaxws.handler.Axis2Handler;
 
 public class Axis2HandlerTest extends TestCase
 {
-  org.apache.axis.jaxrpc.handler.Axis2Handler axis2handler = null;
+  org.apache.axis2.jaxws.handler.Axis2Handler axis2handler = null;
   
   public Axis2HandlerTest(String name) {
     super(name);
   }
   
-  public org.apache.axis.jaxrpc.handler.Axis2Handler createInstance() throws Exception {
-    return new org.apache.axis.jaxrpc.handler.Axis2Handler();
+  public org.apache.axis2.jaxws.handler.Axis2Handler createInstance() throws Exception {
+    return new org.apache.axis2.jaxws.handler.Axis2Handler();
   }
   
   protected void setUp() throws Exception {

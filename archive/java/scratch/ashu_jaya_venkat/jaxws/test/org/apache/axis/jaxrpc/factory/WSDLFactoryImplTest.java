@@ -1,18 +1,18 @@
-package org.apache.axis.jaxrpc.factory;
+package org.apache.axis2.jaxws.factory;
 
 import junit.framework.TestCase;
-import org.apache.axis.jaxrpc.factory.WSDLFactoryImpl;
+import org.apache.axis2.jaxws.factory.WSDLFactoryImpl;
 
 public class WSDLFactoryImplTest extends TestCase
 {
-  org.apache.axis.jaxrpc.factory.WSDLFactoryImpl wsdlfactoryimpl = null;
+  org.apache.axis2.jaxws.factory.WSDLFactoryImpl wsdlfactoryimpl = null;
   
   public WSDLFactoryImplTest(String name) {
     super(name);
   }
   
-  public org.apache.axis.jaxrpc.factory.WSDLFactoryImpl createInstance() throws Exception {
-    return new org.apache.axis.jaxrpc.factory.WSDLFactoryImpl();
+  public org.apache.axis2.jaxws.factory.WSDLFactoryImpl createInstance() throws Exception {
+    return new org.apache.axis2.jaxws.factory.WSDLFactoryImpl();
   }
   
   protected void setUp() throws Exception {

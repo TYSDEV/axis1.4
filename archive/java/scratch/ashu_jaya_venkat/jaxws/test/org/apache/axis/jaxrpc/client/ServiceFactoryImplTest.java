@@ -1,18 +1,18 @@
-package org.apache.axis.jaxrpc.client;
+package org.apache.axis2.jaxws.client;
 
 import junit.framework.TestCase;
-import org.apache.axis.jaxrpc.client.ServiceFactoryImpl;
+import org.apache.axis2.jaxws.client.ServiceFactoryImpl;
 
 public class ServiceFactoryImplTest extends TestCase
 {
-  org.apache.axis.jaxrpc.client.ServiceFactoryImpl servicefactoryimpl = null;
+  org.apache.axis2.jaxws.client.ServiceFactoryImpl servicefactoryimpl = null;
   
   public ServiceFactoryImplTest(String name) {
     super(name);
   }
   
-  public org.apache.axis.jaxrpc.client.ServiceFactoryImpl createInstance() throws Exception {
-    return new org.apache.axis.jaxrpc.client.ServiceFactoryImpl();
+  public org.apache.axis2.jaxws.client.ServiceFactoryImpl createInstance() throws Exception {
+    return new org.apache.axis2.jaxws.client.ServiceFactoryImpl();
   }
   
   protected void setUp() throws Exception {

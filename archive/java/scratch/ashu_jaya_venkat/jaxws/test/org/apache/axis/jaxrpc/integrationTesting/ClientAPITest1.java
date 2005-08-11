@@ -1,4 +1,4 @@
-package org.apache.axis.jaxrpc.integrationTesting;
+package org.apache.axis2.jaxws.integrationTesting;
 
 import junit.framework.TestCase;
 

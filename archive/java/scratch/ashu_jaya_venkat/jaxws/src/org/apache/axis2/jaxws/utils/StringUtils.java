@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.apache.axis.jaxrpc.utils;
+package org.apache.axis2.jaxws.utils;
 
 import java.util.ArrayList;
 import java.util.List;

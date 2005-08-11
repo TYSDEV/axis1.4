@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.axis.jaxrpc.factory;
+package org.apache.axis2.jaxws.factory;
 
 import java.net.URL;
-import org.apache.axis.jaxrpc.JAXRPCWSDLInterface;
+import org.apache.axis2.jaxws.JAXRPCWSDLInterface;
 
 /**
  * @author sunja07

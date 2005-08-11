@@ -1,18 +1,18 @@
-package org.apache.axis.jaxrpc.handler;
+package org.apache.axis2.jaxws.handler;
 
 import junit.framework.TestCase;
-import org.apache.axis.jaxrpc.handler.MessageContextImpl;
+import org.apache.axis2.jaxws.handler.MessageContextImpl;
 
 public class MessageContextImplTest extends TestCase
 {
-  org.apache.axis.jaxrpc.handler.MessageContextImpl messagecontextimpl = null;
+  org.apache.axis2.jaxws.handler.MessageContextImpl messagecontextimpl = null;
   
   public MessageContextImplTest(String name) {
     super(name);
   }
   
-  public org.apache.axis.jaxrpc.handler.MessageContextImpl createInstance() throws Exception {
-    return new org.apache.axis.jaxrpc.handler.MessageContextImpl(null);
+  public org.apache.axis2.jaxws.handler.MessageContextImpl createInstance() throws Exception {
+    return new org.apache.axis2.jaxws.handler.MessageContextImpl(null);
   }
   
   protected void setUp() throws Exception {

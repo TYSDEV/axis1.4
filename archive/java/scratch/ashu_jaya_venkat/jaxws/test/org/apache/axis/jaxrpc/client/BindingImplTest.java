@@ -1,18 +1,18 @@
-package org.apache.axis.jaxrpc.client;
+package org.apache.axis2.jaxws.client;
 
 import junit.framework.TestCase;
-import org.apache.axis.jaxrpc.client.BindingImpl;
+import org.apache.axis2.jaxws.client.BindingImpl;
 
 public class BindingImplTest extends TestCase
 {
-  org.apache.axis.jaxrpc.client.BindingImpl bindingimpl = null;
+  org.apache.axis2.jaxws.client.BindingImpl bindingimpl = null;
   
   public BindingImplTest(String name) {
     super(name);
   }
   
-  public org.apache.axis.jaxrpc.client.BindingImpl createInstance() throws Exception {
-    return new org.apache.axis.jaxrpc.client.BindingImpl();
+  public org.apache.axis2.jaxws.client.BindingImpl createInstance() throws Exception {
+    return new org.apache.axis2.jaxws.client.BindingImpl();
   }
   
   protected void setUp() throws Exception {

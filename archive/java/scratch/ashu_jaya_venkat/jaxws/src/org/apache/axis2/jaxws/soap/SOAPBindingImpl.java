@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.apache.axis.jaxrpc.soap;
+package org.apache.axis2.jaxws.soap;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -11,7 +11,7 @@ import java.util.HashSet;
 import javax.xml.rpc.JAXRPCException;
 import javax.xml.rpc.soap.SOAPBinding;
 
-import org.apache.axis.jaxrpc.client.BindingImpl;
+import org.apache.axis2.jaxws.client.BindingImpl;
 /**
  * @author sunja07
  *

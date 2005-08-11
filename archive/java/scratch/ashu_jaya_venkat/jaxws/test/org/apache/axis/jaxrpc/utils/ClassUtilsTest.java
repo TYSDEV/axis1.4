@@ -1,18 +1,18 @@
-package org.apache.axis.jaxrpc.utils;
+package org.apache.axis2.jaxws.utils;
 
 import junit.framework.TestCase;
-import org.apache.axis.jaxrpc.utils.ClassUtils;
+import org.apache.axis2.jaxws.utils.ClassUtils;
 
 public class ClassUtilsTest extends TestCase
 {
-  org.apache.axis.jaxrpc.utils.ClassUtils classutils = null;
+  org.apache.axis2.jaxws.utils.ClassUtils classutils = null;
   
   public ClassUtilsTest(String name) {
     super(name);
   }
   
-  public org.apache.axis.jaxrpc.utils.ClassUtils createInstance() throws Exception {
-    return new org.apache.axis.jaxrpc.utils.ClassUtils();
+  public org.apache.axis2.jaxws.utils.ClassUtils createInstance() throws Exception {
+    return new org.apache.axis2.jaxws.utils.ClassUtils();
   }
   
   protected void setUp() throws Exception {

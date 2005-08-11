@@ -1,4 +1,4 @@
-package org.apache.axis.jaxrpc;
+package org.apache.axis2.jaxws;
 
 import junit.framework.TestCase;
 

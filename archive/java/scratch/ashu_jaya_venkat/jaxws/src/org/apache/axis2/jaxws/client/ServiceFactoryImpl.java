@@ -1,4 +1,4 @@
-package org.apache.axis.jaxrpc.client;
+package org.apache.axis2.jaxws.client;
 
 import java.net.URL;
 import java.util.Properties;
@@ -8,8 +8,8 @@ import javax.xml.rpc.Service;
 import javax.xml.rpc.ServiceException;
 import javax.xml.rpc.ServiceFactory;
 
-import org.apache.axis.jaxrpc.JAXRPCWSDLInterface;
-import org.apache.axis.jaxrpc.factory.WSDLFactoryImpl;
+import org.apache.axis2.jaxws.JAXRPCWSDLInterface;
+import org.apache.axis2.jaxws.factory.WSDLFactoryImpl;
 
 public class ServiceFactoryImpl extends ServiceFactory {
 

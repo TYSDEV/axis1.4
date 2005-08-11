@@ -1,4 +1,4 @@
-package org.apache.axis.jaxrpc.description;
+package org.apache.axis2.jaxws.description;
 
 import javax.xml.rpc.ParameterMode;
 import javax.xml.namespace.QName;

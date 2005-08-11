@@ -1,4 +1,4 @@
-package org.apache.axis.jaxrpc.handler.soap;
+package org.apache.axis2.jaxws.handler.soap;
 
 //import java.net.URL;
 
@@ -17,9 +17,9 @@ import javax.xml.rpc.handler.HandlerInfo;
 import javax.xml.rpc.handler.HandlerRegistry;
 //import javax.xml.rpc.ServiceFactory;
 
-import org.apache.axis.jaxrpc.client.BindingProviderImpl;
-import org.apache.axis.jaxrpc.client.ServiceImpl;
-import org.apache.axis.jaxrpc.handler.soap.LoggingHandler;
+import org.apache.axis2.jaxws.client.BindingProviderImpl;
+import org.apache.axis2.jaxws.client.ServiceImpl;
+import org.apache.axis2.jaxws.handler.soap.LoggingHandler;
 
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.impl.OMOutputImpl;

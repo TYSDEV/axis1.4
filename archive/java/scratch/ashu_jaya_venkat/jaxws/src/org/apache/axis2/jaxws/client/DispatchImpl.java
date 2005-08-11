@@ -1,4 +1,4 @@
-package org.apache.axis.jaxrpc.client;
+package org.apache.axis2.jaxws.client;
 
 import java.rmi.RemoteException;
 import java.util.concurrent.Future;

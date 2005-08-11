@@ -1,18 +1,18 @@
-package org.apache.axis.jaxrpc.client;
+package org.apache.axis2.jaxws.client;
 
 import junit.framework.TestCase;
-import org.apache.axis.jaxrpc.client.JAXRPCResponseContext;
+import org.apache.axis2.jaxws.client.JAXRPCResponseContext;
 
 public class JAXRPCResponseContextTest extends TestCase
 {
-  org.apache.axis.jaxrpc.client.JAXRPCResponseContext jaxrpcresponsecontext = null;
+  org.apache.axis2.jaxws.client.JAXRPCResponseContext jaxrpcresponsecontext = null;
   
   public JAXRPCResponseContextTest(String name) {
     super(name);
   }
   
-  public org.apache.axis.jaxrpc.client.JAXRPCResponseContext createInstance() throws Exception {
-    return new org.apache.axis.jaxrpc.client.JAXRPCResponseContext(null);
+  public org.apache.axis2.jaxws.client.JAXRPCResponseContext createInstance() throws Exception {
+    return new org.apache.axis2.jaxws.client.JAXRPCResponseContext(null);
   }
   
   protected void setUp() throws Exception {

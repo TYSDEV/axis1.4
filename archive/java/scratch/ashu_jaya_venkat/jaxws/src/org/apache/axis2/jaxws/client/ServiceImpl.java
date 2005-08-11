@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.axis.jaxrpc.client;
+package org.apache.axis2.jaxws.client;
 
 import java.net.URI;
 import java.net.URL;
@@ -43,10 +43,10 @@ import javax.wsdl.extensions.ExtensibilityElement;
 import javax.wsdl.extensions.soap.SOAPAddress;
 import javax.wsdl.extensions.soap.SOAPBinding;
 
-import org.apache.axis.jaxrpc.JAXRPCWSDLInterface;
-import org.apache.axis.jaxrpc.JAXRPCWSDL11Interface;
-import org.apache.axis.jaxrpc.factory.WSDLFactoryImpl;
-import org.apache.axis.jaxrpc.handler.Axis2Handler;
+import org.apache.axis2.jaxws.JAXRPCWSDLInterface;
+import org.apache.axis2.jaxws.JAXRPCWSDL11Interface;
+import org.apache.axis2.jaxws.factory.WSDLFactoryImpl;
+import org.apache.axis2.jaxws.handler.Axis2Handler;
 import org.apache.axis2.clientapi.ListenerManager;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;

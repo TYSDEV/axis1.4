@@ -1,4 +1,4 @@
-package org.apache.axis.jaxrpc.handler.soap;
+package org.apache.axis2.jaxws.handler.soap;
 
 import java.io.PrintStream;
 import java.util.Map;

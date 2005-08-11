@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.apache.axis.jaxrpc.client;
+package org.apache.axis2.jaxws.client;
 
 import java.net.URI;
 import java.util.List;
