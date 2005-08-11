@@ -57,7 +57,7 @@ import org.apache.axis2.description.ServiceDescription;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisConfigurationImpl;
 import org.apache.axis2.engine.AxisEngine;
-import org.apache.axis2.engine.AxisFault;
+import org.apache.axis2.AxisFault;
 import org.apache.axis2.engine.Phase;
 import org.apache.axis2.phaseresolver.PhaseResolver;
 
@@ -158,7 +158,8 @@ public class ServiceImpl implements javax.xml.rpc.Service {
 		//INFORMATION TO AXIS2 INFORMATION(SPECIFICALLY HANDLER INFO) 
 		try{
 			((CallImpl)call).jaxRpcPhase = createAxis2Phase((CallImpl)call);
-			((CallImpl)call).sContext = getAxis2Service();
+			if(((CallImpl)call).jaxRpcPhase != null)
+				((CallImpl)call).sContext = getAxis2Service();
 		} catch (Exception e){
 			e.printStackTrace();
 		}

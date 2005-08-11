@@ -41,6 +41,8 @@ public class SOAPMessageContextImpl extends MessageContextImpl implements SOAPMe
 			axisMC.setEnvelope(((org.apache.axis2.saaj.SOAPEnvelopeImpl)(message.getSOAPPart().getEnvelope())).getOMEnvelope());
 		} catch(javax.xml.soap.SOAPException e){
 			throw new JAXRPCException(e);
+		} catch(org.apache.axis2.AxisFault af){
+			throw new JAXRPCException(af);
 		}
 	}
 

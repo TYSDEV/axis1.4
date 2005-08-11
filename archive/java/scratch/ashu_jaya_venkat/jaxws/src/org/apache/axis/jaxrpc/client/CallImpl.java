@@ -436,16 +436,14 @@ public class CallImpl extends BindingProviderImpl implements javax.xml.rpc.Call 
 		inputParams.clear();
 		operationName = opName;
 		
-		OperationDescription od = new OperationDescription(opName);
 		if(jaxRpcPhase != null){
-			//od.setRemainingPhasesInFlow(jaxRpcPhase.getHandlers());
-			//od.setPhasesOutFlow(jaxRpcPhase.getHandlers());
+			OperationDescription od = new OperationDescription(opName);
 			java.util.ArrayList phaseList = new java.util.ArrayList();
 			phaseList.add(jaxRpcPhase);
 			od.setRemainingPhasesInFlow(phaseList);
 			od.setPhasesOutFlow(phaseList);
+			sContext.getServiceConfig().addOperation(od);
 		}
-		sContext.getServiceConfig().addOperation(od);
 	}
 
 	/**
@@ -638,8 +636,17 @@ public class CallImpl extends BindingProviderImpl implements javax.xml.rpc.Call 
 		
 		//TODO axis2Call object should actually be gotten somehow from underlying Axis2 engine
 		// may have to change the following line
-		org.apache.axis2.clientapi.Call axis2Call = new org.apache.axis2.clientapi.Call(sContext);
-		axis2Call.setTo(new EndpointReference(AddressingConstants.WSA_TO,targetEndpointAddress));
+		org.apache.axis2.clientapi.Call axis2Call = null;
+		if(clientHome != null){
+			axis2Call = new org.apache.axis2.clientapi.Call(clientHome);
+			axis2Call.engageModule(new QName("logging"));
+		}
+		else if(sContext != null){
+			axis2Call = new org.apache.axis2.clientapi.Call(sContext);
+		}else{
+			axis2Call = new org.apache.axis2.clientapi.Call();
+		}
+		axis2Call.setTo(new EndpointReference(targetEndpointAddress));
 		OMElement response = axis2Call.invokeBlocking(operationName.getLocalPart(),methodElement);
 		
 		//Now the job of extracting the return value out of the OMElement and
@@ -749,7 +756,7 @@ public class CallImpl extends BindingProviderImpl implements javax.xml.rpc.Call 
 			//TODO axis2Call object should actually be gotten somehow from underlying Axis2 engine
 			// may have to change the following line
 			org.apache.axis2.clientapi.Call axis2Call = new org.apache.axis2.clientapi.Call();
-			axis2Call.setTo(new EndpointReference(AddressingConstants.WSA_TO,targetEndpointAddress));
+			axis2Call.setTo(new EndpointReference(targetEndpointAddress));
 			
 			//a callback object that does nothing. We know we don't have anything
 			//on response cycle for this fire-n-forget kind of invokeOneWay method.

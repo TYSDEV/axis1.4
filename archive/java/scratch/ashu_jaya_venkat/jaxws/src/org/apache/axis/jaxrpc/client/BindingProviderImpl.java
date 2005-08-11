@@ -40,7 +40,11 @@ public class BindingProviderImpl implements BindingProvider {
 	protected Map<QName, List> portHandlerChain;
 	
 	protected Phase jaxRpcPhase;
-	ServiceContext sContext;
+	
+	//Only one of sContext or clientHome needs to be set, if clientHome is set
+	// it takes the priority
+	protected ServiceContext sContext;
+	protected String clientHome;
 	
 	public BindingProviderImpl(){
 		//default constructor
@@ -71,6 +75,14 @@ public class BindingProviderImpl implements BindingProvider {
 		// For now just returning ServiceHandlerChain. Later may decide
 		// on what basis should take handlers from bindingHandlerChain and portHandlerChain
 		return serviceHandlerChain;
+	}
+	
+	public void setClientHome(String clientHome){
+		this.clientHome = clientHome;
+	}
+	
+	public String getClientHome(){
+		return clientHome;
 	}
 
 }

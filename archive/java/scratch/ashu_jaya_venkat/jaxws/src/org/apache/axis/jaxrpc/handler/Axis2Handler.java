@@ -2,7 +2,7 @@ package org.apache.axis.jaxrpc.handler;
 
 import org.apache.axis.jaxrpc.handler.soap.SOAPMessageContextImpl;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.engine.AxisFault;
+import org.apache.axis2.AxisFault;
 import org.apache.axis2.handlers.AbstractHandler;
 
 public class Axis2Handler extends AbstractHandler {

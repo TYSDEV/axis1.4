@@ -6,14 +6,19 @@ package org.apache.axis.jaxrpc.client;
 import java.io.BufferedOutputStream;
 import java.io.OutputStream;
 import java.io.FileOutputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.namespace.QName;
 import javax.xml.rpc.Call;
 import javax.xml.rpc.Service;
 import javax.xml.rpc.ParameterMode;
+import javax.xml.rpc.handler.HandlerInfo;
+import javax.xml.rpc.handler.HandlerRegistry;
 //import javax.xml.rpc.ServiceFactory;
 
 import org.apache.axis.jaxrpc.client.ServiceImpl;
+import org.apache.axis.jaxrpc.handler.soap.LoggingHandler;
 
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.impl.OMOutputImpl;
@@ -33,9 +38,18 @@ public class CallTesting extends TestCase {
 		try {
 
 			Service s = new ServiceImpl();
+			
+			HandlerRegistry registry = s.getHandlerRegistry();
+			List<HandlerInfo> handlerList = new ArrayList<HandlerInfo>();
+			HandlerInfo hInfo = new HandlerInfo();
+			hInfo.setHandlerClass(LoggingHandler.class);
+			handlerList.add(hInfo);
+			registry.setHandlerChain(handlerList);
+			
 			Call call = s.createCall();
+			((BindingProviderImpl)call).setClientHome("C:\\Apache\\Axis 2 scratch\\ashu_jaya_venkat\\jaxws\\test\\org\\apache\\axis\\jaxrpc\\handler\\soap\\dd");
 			call.setOperationName(new QName("http://testingURL.org/","EchoString"));
-			call.setTargetEndpointAddress("http://localhost:9090/axis/services/Echo");
+			call.setTargetEndpointAddress("http://localhost:8080/axis/services/Echo");
 			call.addParameter("param1", new QName("http://www.w3.org/2001/XMLSchema","any"), java.lang.Object.class, ParameterMode.IN);
 			call.setReturnType(new QName("http://www.w3.org/2001/XMLSchema","any"), Object.class);
 			Object[] inParams = new Object[]{"hello World!"};
@@ -50,7 +64,7 @@ public class CallTesting extends TestCase {
 				} catch (Exception e){}
 
 		} catch (Exception e) {
-			System.out.println(e.getMessage());
+			e.printStackTrace();
 			fail(e.getMessage());
 		}
 	}

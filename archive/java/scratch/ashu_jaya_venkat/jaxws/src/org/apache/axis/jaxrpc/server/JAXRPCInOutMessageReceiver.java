@@ -10,7 +10,7 @@ import org.apache.axis2.om.OMText;
 import org.apache.axis2.om.impl.llom.OMTextImpl;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.engine.AxisFault;
+import org.apache.axis2.AxisFault;
 import org.apache.axis2.engine.MessageReceiver;
 /**
  * @author sunja07

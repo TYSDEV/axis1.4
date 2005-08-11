@@ -1,25 +1,30 @@
 package org.apache.axis.jaxrpc.handler.soap;
 
-import junit.framework.TestCase;
+//import java.net.URL;
 
-import javax.xml.namespace.QName;
 
 import java.io.BufferedOutputStream;
 import java.io.OutputStream;
-import java.net.URL;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.rpc.ServiceFactory;
-import javax.xml.rpc.Service;
+import javax.xml.namespace.QName;
 import javax.xml.rpc.Call;
+import javax.xml.rpc.Service;
 import javax.xml.rpc.ParameterMode;
 import javax.xml.rpc.handler.HandlerInfo;
 import javax.xml.rpc.handler.HandlerRegistry;
+//import javax.xml.rpc.ServiceFactory;
 
+import org.apache.axis.jaxrpc.client.BindingProviderImpl;
 import org.apache.axis.jaxrpc.client.ServiceImpl;
+import org.apache.axis.jaxrpc.handler.soap.LoggingHandler;
+
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.impl.OMOutputImpl;
+
+import junit.framework.TestCase;
 
 public class ClientWithLoggingHandler extends TestCase {
 
@@ -29,9 +34,10 @@ public class ClientWithLoggingHandler extends TestCase {
 	public ClientWithLoggingHandler(String name) {
 		super(name);
 	}
-	
-	public void testDII() {
+
+	public void testInvoke1() {
 		try {
+
 			Service s = new ServiceImpl();
 			
 			HandlerRegistry registry = s.getHandlerRegistry();
@@ -42,12 +48,14 @@ public class ClientWithLoggingHandler extends TestCase {
 			registry.setHandlerChain(handlerList);
 			
 			Call call = s.createCall();
+			((BindingProviderImpl)call).setClientHome("C:\\Apache\\Axis 2 scratch\\ashu_jaya_venkat\\jaxws\\test\\org\\apache\\axis\\jaxrpc\\handler\\soap\\dd");
 			call.setOperationName(new QName("http://testingURL.org/","EchoString"));
 			call.setTargetEndpointAddress("http://localhost:8080/axis/services/Echo");
 			call.addParameter("param1", new QName("http://www.w3.org/2001/XMLSchema","any"), java.lang.Object.class, ParameterMode.IN);
 			call.setReturnType(new QName("http://www.w3.org/2001/XMLSchema","any"), Object.class);
 			Object[] inParams = new Object[]{"hello World!"};
 			OMElement response = (OMElement)call.invoke(inParams);
+
 			try {
 				OutputStream fos = new BufferedOutputStream(System.out);
 				OMOutputImpl otpt = new OMOutputImpl(fos, false);
@@ -61,6 +69,4 @@ public class ClientWithLoggingHandler extends TestCase {
 			fail(e.getMessage());
 		}
 	}
-	
-
 }

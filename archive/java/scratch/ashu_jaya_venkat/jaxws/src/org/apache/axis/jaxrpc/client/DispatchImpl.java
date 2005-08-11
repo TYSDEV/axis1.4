@@ -66,7 +66,7 @@ public class DispatchImpl extends BindingProviderImpl implements Dispatch {
 			//use this inputElement to invoke the underlying Axis2 call's
 			//invokeBlocking(...) method.
 			org.apache.axis2.clientapi.Call axis2Call = new org.apache.axis2.clientapi.Call();
-			axis2Call.setTo(new EndpointReference(AddressingConstants.WSA_TO,targetEndpointAddress));
+			axis2Call.setTo(new EndpointReference(targetEndpointAddress));
 			response = axis2Call.invokeBlocking(operationName.getLocalPart(),inputElement);
 			//TODO actually the response message better be transformed to a Source object
 			//and returned.
