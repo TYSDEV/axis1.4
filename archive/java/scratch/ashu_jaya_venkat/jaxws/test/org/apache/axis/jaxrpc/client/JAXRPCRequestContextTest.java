@@ -12,7 +12,7 @@ public class JAXRPCRequestContextTest extends TestCase
   }
   
   public org.apache.axis.jaxrpc.client.JAXRPCRequestContext createInstance() throws Exception {
-    return new org.apache.axis.jaxrpc.client.JAXRPCRequestContext();
+    return new org.apache.axis.jaxrpc.client.JAXRPCRequestContext(null);
   }
   
   protected void setUp() throws Exception {

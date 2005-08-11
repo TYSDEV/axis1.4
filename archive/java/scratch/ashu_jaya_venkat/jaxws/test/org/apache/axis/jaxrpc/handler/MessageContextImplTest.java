@@ -12,7 +12,7 @@ public class MessageContextImplTest extends TestCase
   }
   
   public org.apache.axis.jaxrpc.handler.MessageContextImpl createInstance() throws Exception {
-    return new org.apache.axis.jaxrpc.handler.MessageContextImpl();
+    return new org.apache.axis.jaxrpc.handler.MessageContextImpl(null);
   }
   
   protected void setUp() throws Exception {

@@ -5,23 +5,15 @@ import org.apache.axis.jaxrpc.utils.StringUtils;
 
 public class StringUtilsTest extends TestCase
 {
-  org.apache.axis.jaxrpc.utils.StringUtils stringutils = null;
-  
   public StringUtilsTest(String name) {
     super(name);
   }
   
-  public org.apache.axis.jaxrpc.utils.StringUtils createInstance() throws Exception {
-    return new org.apache.axis.jaxrpc.utils.StringUtils();
-  }
-  
   protected void setUp() throws Exception {
     super.setUp();
-    stringutils = createInstance();
   }
   
   protected void tearDown() throws Exception {
-    stringutils = null;
     super.tearDown();
   }
   

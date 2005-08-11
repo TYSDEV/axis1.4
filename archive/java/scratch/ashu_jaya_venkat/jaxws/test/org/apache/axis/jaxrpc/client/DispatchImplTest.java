@@ -2,6 +2,7 @@ package org.apache.axis.jaxrpc.client;
 
 import junit.framework.TestCase;
 import org.apache.axis.jaxrpc.client.DispatchImpl;
+import javax.xml.namespace.QName;
 
 public class DispatchImplTest extends TestCase
 {
@@ -12,7 +13,10 @@ public class DispatchImplTest extends TestCase
   }
   
   public org.apache.axis.jaxrpc.client.DispatchImpl createInstance() throws Exception {
-    return new org.apache.axis.jaxrpc.client.DispatchImpl();
+	  String tgtEndptAddr = "TempValue";
+	  QName opName = new QName("TempValue", "TempValue");
+	 
+	  return new org.apache.axis.jaxrpc.client.DispatchImpl(tgtEndptAddr, opName);
   }
   
   protected void setUp() throws Exception {

@@ -12,7 +12,7 @@ public class ServletEndpointContextImplTest extends TestCase
   }
   
   public org.apache.axis.jaxrpc.server.ServletEndpointContextImpl createInstance() throws Exception {
-    return new org.apache.axis.jaxrpc.server.ServletEndpointContextImpl();
+    return new org.apache.axis.jaxrpc.server.ServletEndpointContextImpl(null, null, null);
   }
   
   protected void setUp() throws Exception {

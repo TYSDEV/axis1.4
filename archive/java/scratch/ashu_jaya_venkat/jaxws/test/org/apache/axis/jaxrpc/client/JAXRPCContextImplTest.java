@@ -12,7 +12,7 @@ public class JAXRPCContextImplTest extends TestCase
   }
   
   public org.apache.axis.jaxrpc.client.JAXRPCContextImpl createInstance() throws Exception {
-    return new org.apache.axis.jaxrpc.client.JAXRPCContextImpl();
+    return new org.apache.axis.jaxrpc.client.JAXRPCContextImpl(null);
   }
   
   protected void setUp() throws Exception {
