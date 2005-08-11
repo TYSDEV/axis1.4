@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<project name="MasterBuild" default="replace">
+	<target name="replace">
+		<replace dir="${basedir}">
+			<include name="**/*.java"/>
+			<replacetoken><![CDATA[;nnpublic class]]></replacetoken>
+			<replacevalue><![CDATA[;
+
+public class]]></replacevalue>
+		</replace>
+<!--
+	<replaceregexp match="^.*JUnitDoclet .*$$" replace="" flags="g">
+			<fileset dir="${basedir}" includes="**/*.java"/>
+	</replaceregexp>
+-->
+	</target>
+</project>
