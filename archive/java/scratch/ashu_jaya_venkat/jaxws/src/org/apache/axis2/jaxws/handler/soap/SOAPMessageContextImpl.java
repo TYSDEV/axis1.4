@@ -4,9 +4,9 @@ import java.util.Iterator;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.namespace.QName;
-import javax.xml.rpc.JAXRPCException;
-import javax.xml.rpc.handler.soap.SOAPMessageContext;
 import javax.xml.soap.SOAPMessage;
+import javax.xml.ws.WebServiceException;
+import javax.xml.ws.handler.soap.SOAPMessageContext;
 
 import org.apache.axis2.jaxws.handler.MessageContextImpl;
 
@@ -35,19 +35,19 @@ public class SOAPMessageContextImpl extends MessageContextImpl implements SOAPMe
 		return new org.apache.axis2.saaj.SOAPMessageImpl(env);
 	}
 
-	public void setMessage(SOAPMessage message) throws JAXRPCException,
+	public void setMessage(SOAPMessage message) throws WebServiceException,
 			UnsupportedOperationException {
 		try{
 			axisMC.setEnvelope(((org.apache.axis2.saaj.SOAPEnvelopeImpl)(message.getSOAPPart().getEnvelope())).getOMEnvelope());
 		} catch(javax.xml.soap.SOAPException e){
-			throw new JAXRPCException(e);
+			throw new WebServiceException(e);
 		} catch(org.apache.axis2.AxisFault af){
-			throw new JAXRPCException(af);
+			throw new WebServiceException(af);
 		}
 	}
 
 	public Object[] getHeaders(QName header, JAXBContext context,
-			boolean allRoles) throws JAXRPCException {
+			boolean allRoles) throws WebServiceException {
 		// TODO 
 		return null;
 	}

@@ -26,17 +26,17 @@ import java.util.Map;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.namespace.QName;
-import javax.xml.rpc.Call;
-import javax.xml.rpc.Dispatch;
-import javax.xml.rpc.JAXRPCException;
-import javax.xml.rpc.ServiceException;
-import javax.xml.rpc.Stub;
-import javax.xml.rpc.Service.Mode;
 import javax.xml.rpc.encoding.TypeMappingRegistry;
-import javax.xml.rpc.handler.AbstractHandler;
-import javax.xml.rpc.handler.HandlerInfo;
-import javax.xml.rpc.handler.HandlerRegistry;
-import javax.xml.rpc.security.SecurityConfiguration;
+import javax.xml.ws.Call;
+import javax.xml.ws.Dispatch;
+import javax.xml.ws.WebServiceException;
+import javax.xml.ws.ServiceException;
+import javax.xml.ws.Stub;
+import javax.xml.ws.Service.Mode;
+import javax.xml.ws.handler.AbstractHandler;
+import javax.xml.ws.handler.HandlerInfo;
+import javax.xml.ws.handler.HandlerRegistry;
+import javax.xml.ws.security.SecurityConfiguration;
 
 import javax.wsdl.*;
 import javax.wsdl.extensions.ExtensibilityElement;
@@ -65,7 +65,7 @@ import org.apache.axis2.phaseresolver.PhaseResolver;
  * @author sunja07
  * Class ServiceImpl
  */
-public class ServiceImpl implements javax.xml.rpc.Service {
+public class ServiceImpl implements javax.xml.ws.Service {
 	
 	private HandlerRegistryImpl handlerRegistry = new HandlerRegistryImpl();
 	
@@ -209,7 +209,7 @@ public class ServiceImpl implements javax.xml.rpc.Service {
 		}
 		
 		public void setHandlerChain(javax.xml.namespace.QName portName,
-				java.util.List chain) throws JAXRPCException, java.lang.UnsupportedOperationException,
+				java.util.List chain) throws WebServiceException, java.lang.UnsupportedOperationException,
 				java.lang.IllegalArgumentException{
 			
 			confirmPort(portName);
@@ -224,7 +224,7 @@ public class ServiceImpl implements javax.xml.rpc.Service {
 			return serviceHandlerChain;
 		}
 		
-		public void setHandlerChain(java.util.List<HandlerInfo> chain) throws java.lang.UnsupportedOperationException, JAXRPCException{
+		public void setHandlerChain(java.util.List<HandlerInfo> chain) throws java.lang.UnsupportedOperationException, WebServiceException{
 			serviceHandlerChain = chain;
 		}
 		
@@ -239,7 +239,7 @@ public class ServiceImpl implements javax.xml.rpc.Service {
 		}
 		
 		public void setHandlerChain(java.net.URI bindingId,
-				java.util.List<HandlerInfo> chain) throws JAXRPCException,
+				java.util.List<HandlerInfo> chain) throws WebServiceException,
 				java.lang.UnsupportedOperationException, java.lang.IllegalArgumentException{
 			
 			confirmBindingId(bindingId);
@@ -408,7 +408,7 @@ public class ServiceImpl implements javax.xml.rpc.Service {
 	 * @param bindingId A URI identifier of a binding.
 	 * @param endpointAddress Address of the target service endpoint as a URI 
 	 * @throws ServiceException If any error in the creation of the port
-	 * @see javax.xml.rpc.soap.SOAPBinding.SOAP11HTTP_BINDING
+	 * @see javax.xml.ws.soap.SOAPBinding.SOAP11HTTP_BINDING
 	 */
 	public void createPort(QName portName, URI bindingId, 
 			String endpointAddress) throws ServiceException {

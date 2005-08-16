@@ -27,11 +27,11 @@ import java.net.URI;
 
 import javax.wsdl.Operation;
 import javax.xml.namespace.QName;
-import javax.xml.rpc.Binding;
-import javax.xml.rpc.JAXRPCContext;
-import javax.xml.rpc.JAXRPCException;
-import javax.xml.rpc.ParameterMode;
-import javax.xml.rpc.soap.SOAPFaultException;
+import javax.xml.ws.Binding;
+import javax.xml.ws.JAXRPCContext;
+import javax.xml.ws.WebServiceException;
+import javax.xml.ws.ParameterMode;
+import javax.xml.ws.soap.SOAPFaultException;
 
 import org.apache.axis2.jaxws.description.ParameterDesc;
 
@@ -53,7 +53,7 @@ import org.apache.axis2.addressing.AddressingConstants;
  * Forget not that Call instance is MUTABLE. i.e. the configuration of call
  * instance can be changed and it can be re-used for some other need.
  */
-public class CallImpl extends BindingProviderImpl implements javax.xml.rpc.Call {
+public class CallImpl extends BindingProviderImpl implements javax.xml.ws.Call {
 
 	/**
 	 * Field targetEndpointAddress
@@ -171,18 +171,18 @@ public class CallImpl extends BindingProviderImpl implements javax.xml.rpc.Call 
 	 * @param xmlType XML type of the parameter
 	 * @param parameterMode Mode of the parameter-whether ParameterMode.IN, 
 	 * ParameterMode.OUT, or ParameterMode.INOUT
-	 * @throws javax.xml.rpc.JAXRPCException This exception may be thrown if 
+	 * @throws javax.xml.ws.WebServiceException This exception may be thrown if 
 	 * the method isParameterAndReturnSpecRequired returns false for this 
 	 * operation.
 	 * @throws java.lang.IllegalArgumentException If any illegal parameter 
 	 * name or XML type is specified
 	 */
 	public void addParameter(String paramName, QName xmlType,
-			ParameterMode parameterMode) throws JAXRPCException,
+			ParameterMode parameterMode) throws WebServiceException,
 			IllegalArgumentException {
 		
 		if(isParameterAndReturnSpecRequired(this.operationName)==false) {
-			throw new JAXRPCException("This operation is configured not to " +
+			throw new WebServiceException("This operation is configured not to " +
 					"specify parameter and return type information ");
 		}
 		
@@ -229,7 +229,7 @@ public class CallImpl extends BindingProviderImpl implements javax.xml.rpc.Call 
 	 * name or XML type is specified 
 	 * @throws java.lang.UnsupportedOperationException If this method is not 
 	 * supported
-	 * @throws javax.xml.rpc.JAXRPCException 
+	 * @throws javax.xml.ws.WebServiceException 
 	 * 1.This exception may be thrown if this method is invoked when the 
 	 * method isParameterAndReturnSpecRequired returns false.
 	 * 2.If specified XML type and Java type mapping is not valid. For 
@@ -237,10 +237,10 @@ public class CallImpl extends BindingProviderImpl implements javax.xml.rpc.Call 
 	 */
 	public void addParameter(String paramName, QName xmlType, Class javaType,
 			ParameterMode parameterMode) throws IllegalArgumentException,
-			UnsupportedOperationException, JAXRPCException {
+			UnsupportedOperationException, WebServiceException {
 
 		if(isParameterAndReturnSpecRequired(this.operationName)==false) {
-			throw new JAXRPCException("This operation is configured not to " +
+			throw new WebServiceException("This operation is configured not to " +
 					"specify parameter and return type information ");
 		}
 		
@@ -292,19 +292,19 @@ public class CallImpl extends BindingProviderImpl implements javax.xml.rpc.Call 
 	 * Sets the return type for a specific operation. Invoking 
 	 * setReturnType(null) removes the return type for this Call object. 
 	 * @param xmlType XML data type of the return value
-	 * @throws javax.xml.rpc.JAXRPCException This exception may be thrown when 
+	 * @throws javax.xml.ws.WebServiceException This exception may be thrown when 
 	 * the method isParameterAndReturnSpecRequired returns false. 
 	 * @throws java.lang.IllegalArgumentException If an illegal XML type is 
 	 * specified 
 	 */
-	public void setReturnType(QName xmlType) throws JAXRPCException,
+	public void setReturnType(QName xmlType) throws WebServiceException,
 			IllegalArgumentException, UnsupportedOperationException {
 		if(operationName==null) {
-			throw new JAXRPCException("Can't set returnType. Try setting the " +
+			throw new WebServiceException("Can't set returnType. Try setting the " +
 					"operationName prior to calling setReturnType");
 		}
 		if(isParameterAndReturnSpecRequired(operationName)==false) {
-			throw new JAXRPCException("Call instance is configured not to " +
+			throw new WebServiceException("Call instance is configured not to " +
 					"specify Parameter and ReturnType");
 		}
 		
@@ -347,7 +347,7 @@ public class CallImpl extends BindingProviderImpl implements javax.xml.rpc.Call 
 	 * supported 
 	 * @throws java.lang.IllegalArgumentException If an illegal XML type is 
 	 * specified
-	 * @throws javax.xml.rpc.JAXRPCException
+	 * @throws javax.xml.ws.WebServiceException
 	 * 1. This exception may be thrown if this method is invoked when the 
 	 * method isParameterAndReturnSpecRequired returns false.
 	 * 2. If XML type and Java type cannot be mapped using the standard type 
@@ -355,13 +355,13 @@ public class CallImpl extends BindingProviderImpl implements javax.xml.rpc.Call 
 	 */
 	public void setReturnType(QName xmlType, Class javaType)
 			throws UnsupportedOperationException, IllegalArgumentException,
-			JAXRPCException {
+			WebServiceException {
 		if(operationName==null) {
-			throw new JAXRPCException("Can't set returnType. Try setting the " +
+			throw new WebServiceException("Can't set returnType. Try setting the " +
 					"operationName prior to calling setReturnType");
 		}
 		if(isParameterAndReturnSpecRequired(operationName)==false) {
-			throw new JAXRPCException("Call instance is configured not to " +
+			throw new WebServiceException("Call instance is configured not to " +
 					"specify Parameter and ReturnType");
 		}
 		
@@ -377,7 +377,7 @@ public class CallImpl extends BindingProviderImpl implements javax.xml.rpc.Call 
 				this.returnTypeClass = javaType;
 			}
 			else
-				throw new JAXRPCException("Set return type java class can't be cast " +
+				throw new WebServiceException("Set return type java class can't be cast " +
 						"from underlying JAXB databinding object");
 		}
 		else {//no JAXB.
@@ -386,7 +386,7 @@ public class CallImpl extends BindingProviderImpl implements javax.xml.rpc.Call 
 			if(!service.getTypeMappingRegistry().
 					getTypeMapping(ENCODINGSTYLE_URI_PROPERTY).
 					isRegistered(javaType,xmlType))
-				throw new JAXRPCException("Invalid javaType for xmlType. " +
+				throw new WebServiceException("Invalid javaType for xmlType. " +
 						"Underlying type mapping has no corresponding pair registered");
 		}
 	}
@@ -406,11 +406,11 @@ public class CallImpl extends BindingProviderImpl implements javax.xml.rpc.Call 
 	 * Removes all specified parameters from this Call instance. Note that 
 	 * this method removes only the parameters and not the return type. The 
 	 * setReturnType(null) is used to remove the return type.
-	 * @throws javax.xml.rpc.JAXRPCException This exception may be thrown If 
+	 * @throws javax.xml.ws.WebServiceException This exception may be thrown If 
 	 * this method is called when the method isParameterAndReturnSpecRequired 
 	 * returns false for this Call's operation.
 	 */
-	public void removeAllParameters() throws JAXRPCException {
+	public void removeAllParameters() throws WebServiceException {
 		inputParams.clear();
 		outputParams.clear();
 	}
@@ -492,7 +492,7 @@ public class CallImpl extends BindingProviderImpl implements javax.xml.rpc.Call 
 	 * method.
 	 * @param name Name of the property
 	 * @param value Value of the property
-	 * @throws javax.xml.rpc.JAXRPCException
+	 * @throws javax.xml.ws.WebServiceException
 	 * 1. If an optional standard property name is specified, however this 
 	 * Call implementation class does not support the configuration of this 
 	 * property.
@@ -500,7 +500,7 @@ public class CallImpl extends BindingProviderImpl implements javax.xml.rpc.Call 
 	 * value of mismatched property type is passed.
 	 * 3. If there is any error in the configuration of a valid property.
 	 */
-	public void setProperty(String name, Object value) throws JAXRPCException {
+	public void setProperty(String name, Object value) throws WebServiceException {
 		// TODO Auto-generated method stub
 		
 		//Here a long if-elseif...-else list of construct will come, checking
@@ -530,7 +530,7 @@ public class CallImpl extends BindingProviderImpl implements javax.xml.rpc.Call 
 		}else {
 			//we may chose to ignore and add that into the bag or throw
 			//a JAXRPCException. I'm good at the later choice :-)
-			throw new JAXRPCException("Property " + name +" not supported");
+			throw new WebServiceException("Property " + name +" not supported");
 		}
 
 	}
@@ -540,7 +540,7 @@ public class CallImpl extends BindingProviderImpl implements javax.xml.rpc.Call 
 	 * Gets the value of a named property. 
 	 * @param name Name of the property
 	 * @return Value of the named property
-	 * @throws javax.xml.rpc.JAXRPCException if an invalid or unsupported 
+	 * @throws javax.xml.ws.WebServiceException if an invalid or unsupported 
 	 * property name is passed.
 	 */
 	public Object getProperty(String name) {
@@ -551,7 +551,7 @@ public class CallImpl extends BindingProviderImpl implements javax.xml.rpc.Call 
 	 * Method removeProperty
 	 * Removes a named property.
 	 * @param name Name of the property
-	 * @throws javax.xml.rpc.JAXRPCException if an invalid or unsupported 
+	 * @throws javax.xml.ws.WebServiceException if an invalid or unsupported 
 	 * property name is passed.
 	 */
 	public void removeProperty(String name) {
@@ -579,15 +579,15 @@ public class CallImpl extends BindingProviderImpl implements javax.xml.rpc.Call 
 	 * @return Returns the return value or null
 	 * @throws java.rmi.RemoteException if there is any error in the remote 
 	 * method invocation
-	 * @throws javax.xml.rpc.soap.SOAPFaultException Indicates a SOAP fault
-	 * @throws javax.xml.rpc.JAXRPCException 
+	 * @throws javax.xml.ws.soap.SOAPFaultException Indicates a SOAP fault
+	 * @throws javax.xml.ws.WebServiceException 
 	 * 1. If there is an error in the configuration of the Call object
 	 * 2. If inputParams do not match the required parameter set (as specified
 	 *    through the addParameter invocations or in the corresponding WSDL)
 	 * 3. If parameters and return type are incorrectly specified 
 	 */
 	public Object invoke(Object[] inputParameters) throws RemoteException,
-			SOAPFaultException, JAXRPCException {
+			SOAPFaultException, WebServiceException {
 
 		//check if the call instance is properly configured. If not throw
 		//a JAXRPCException.
@@ -612,7 +612,7 @@ public class CallImpl extends BindingProviderImpl implements javax.xml.rpc.Call 
 		}
 		
 		if(throwJAXRPCException) {
-			throw new JAXRPCException("Call instance not fully configured");
+			throw new WebServiceException("Call instance not fully configured");
 		}
 		
 		//I'll try to create an OMElement that would wrap the input params
@@ -696,8 +696,8 @@ public class CallImpl extends BindingProviderImpl implements javax.xml.rpc.Call 
 	 * @return Returns the return value or null
 	 * @throws java.rmi.RemoteException if there is any error in the remote 
 	 * method invocation
-	 * @throws javax.xml.rpc.soap.SOAPFaultException Indicates a SOAP fault
-	 * @throws javax.xml.rpc.JAXRPCException 
+	 * @throws javax.xml.ws.soap.SOAPFaultException Indicates a SOAP fault
+	 * @throws javax.xml.ws.WebServiceException 
 	 * 1. If there is an error in the configuration of the Call object
 	 * 2. If inputParams do not match the required parameter set (as specified 
 	 *    through the addParameter invocations or in the corresponding WSDL)
@@ -731,14 +731,14 @@ public class CallImpl extends BindingProviderImpl implements javax.xml.rpc.Call 
 	 * Method invokeOneWay
 	 * @param inputParams Object[]--Parameters for this invocation. This 
 	 * includes only the input params.
-	 * @throws javax.xml.rpc.JAXRPCException if there is an error in the 
+	 * @throws javax.xml.ws.WebServiceException if there is an error in the 
 	 * configuration of the Call object (example: a non-void return type has 
 	 * been incorrectly specified for the one-way call) or if there is any 
 	 * error during the invocation of the one-way remote call
 	 */
-	public void invokeOneWay(Object[] inputParameters) throws JAXRPCException {
+	public void invokeOneWay(Object[] inputParameters) throws WebServiceException {
 		if(returnType!=null && !returnType.getLocalPart().equals("void")) {
-			throw new JAXRPCException("invokeOneWay should not have a non-void" +
+			throw new WebServiceException("invokeOneWay should not have a non-void" +
 					" return type set.");
 		}
 		try {
@@ -767,7 +767,7 @@ public class CallImpl extends BindingProviderImpl implements javax.xml.rpc.Call 
 			axis2Call.invokeNonBlocking(operationName.getLocalPart(),methodElement,callback);
 			
 		}catch(Exception e) {
-			throw new JAXRPCException(e);
+			throw new WebServiceException(e);
 		}
 	}
 
@@ -778,10 +778,10 @@ public class CallImpl extends BindingProviderImpl implements javax.xml.rpc.Call 
 	 * java.lang.String.
 	 * @return Map Output parameters for the last Call.invoke(). Empty Map is 
 	 * returned if there are no output parameters.
-	 * @throws JAXRPCException If this method is invoked for a one-way 
+	 * @throws WebServiceException If this method is invoked for a one-way 
 	 * operation or is invoked before any invoke method has been called.
 	 */
-	public Map getOutputParams() throws JAXRPCException {
+	public Map getOutputParams() throws WebServiceException {
 		return (Map)outputParams;
 	}
 
@@ -791,10 +791,10 @@ public class CallImpl extends BindingProviderImpl implements javax.xml.rpc.Call 
 	 * operation.
 	 * @return java.util.List Values for the output parameters. An empty List 
 	 * is returned if there are no output values.
-	 * @throws JAXRPCException If this method is invoked for a one-way 
+	 * @throws WebServiceException If this method is invoked for a one-way 
 	 * operation or is invoked before any invoke method has been called.
 	 */
-	public List getOutputValues() throws JAXRPCException {
+	public List getOutputValues() throws WebServiceException {
 		return (List)outputParams.values();
 	}
 

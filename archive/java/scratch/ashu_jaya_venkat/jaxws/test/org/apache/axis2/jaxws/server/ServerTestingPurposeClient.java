@@ -8,9 +8,9 @@ import java.io.OutputStream;
 import java.io.FileOutputStream;
 
 import javax.xml.namespace.QName;
-import javax.xml.rpc.Call;
-import javax.xml.rpc.Service;
-import javax.xml.rpc.ParameterMode;
+import javax.xml.ws.Call;
+import javax.xml.ws.ParameterMode;
+import javax.xml.ws.Service;
 //import javax.xml.rpc.ServiceFactory;
 
 import org.apache.axis2.jaxws.client.ServiceImpl;

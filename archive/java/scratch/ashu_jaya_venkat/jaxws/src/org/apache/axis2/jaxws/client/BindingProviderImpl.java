@@ -21,10 +21,10 @@ import java.util.List;
 import java.util.Map;
 
 import javax.xml.namespace.QName;
-import javax.xml.rpc.Binding;
-import javax.xml.rpc.BindingProvider;
-import javax.xml.rpc.JAXRPCContext;
-import javax.xml.rpc.handler.HandlerInfo;
+import javax.xml.ws.Binding;
+import javax.xml.ws.BindingProvider;
+import javax.xml.ws.JAXRPCContext;
+import javax.xml.ws.handler.HandlerInfo;
 
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.engine.Phase;

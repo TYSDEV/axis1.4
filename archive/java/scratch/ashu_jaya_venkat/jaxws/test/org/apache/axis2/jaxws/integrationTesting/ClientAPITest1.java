@@ -4,10 +4,11 @@ import junit.framework.TestCase;
 
 import javax.xml.namespace.QName;
 import java.net.URL;
-import javax.xml.rpc.ServiceFactory;
-import javax.xml.rpc.Service;
-import javax.xml.rpc.Call;
-import javax.xml.rpc.ParameterMode;
+
+import javax.xml.ws.Call;
+import javax.xml.ws.ParameterMode;
+import javax.xml.ws.Service;
+import javax.xml.ws.ServiceFactory;
 
 public class ClientAPITest1 extends TestCase {
 

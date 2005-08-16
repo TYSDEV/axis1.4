@@ -7,21 +7,21 @@ import org.apache.axis2.handlers.AbstractHandler;
 
 public class Axis2Handler extends AbstractHandler {
 	
-	private javax.xml.rpc.handler.AbstractHandler jaxRpcHandler;
+	private javax.xml.ws.handler.AbstractHandler jaxRpcHandler;
 	
 	public Axis2Handler(){
 		//Default constructor, jaxRpcHandler will be set through setter method
 	}
 	
-	public Axis2Handler(javax.xml.rpc.handler.AbstractHandler jaxRpcHandler){
+	public Axis2Handler(javax.xml.ws.handler.AbstractHandler jaxRpcHandler){
 		this.jaxRpcHandler = jaxRpcHandler;
 	}
 	
-	public void setJaxRpcHandler(javax.xml.rpc.handler.AbstractHandler handler){
+	public void setJaxRpcHandler(javax.xml.ws.handler.AbstractHandler handler){
 		jaxRpcHandler = handler;
 	}
 	
-	public javax.xml.rpc.handler.AbstractHandler getJaxRpcHandler(){
+	public javax.xml.ws.handler.AbstractHandler getJaxRpcHandler(){
 		return jaxRpcHandler;
 	}
 

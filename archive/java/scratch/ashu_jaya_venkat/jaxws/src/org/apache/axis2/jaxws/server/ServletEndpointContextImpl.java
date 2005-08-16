@@ -4,9 +4,9 @@ import java.security.Principal;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
-import javax.xml.rpc.JAXRPCException;
-import javax.xml.rpc.handler.MessageContext;
 import javax.xml.rpc.server.ServletEndpointContext;
+import javax.xml.ws.WebServiceException;
+import javax.xml.ws.handler.MessageContext;
 
 
 /**
@@ -75,9 +75,9 @@ public class ServletEndpointContextImpl implements ServletEndpointContext {
 	 * the underlying JAX-RPC runtime system is responsible for managing whether or not there is an active HTTP session.
 	 * 
 	 * @return The HTTP session associated with the current invocation or null if there is no active session.
-	 * @throws JAXRPCException - If this method invoked by any non-HTTP bound endpoint
+	 * @throws WebServiceException - If this method invoked by any non-HTTP bound endpoint
 	 */
-	public HttpSession getHttpSession() throws JAXRPCException {
+	public HttpSession getHttpSession() throws WebServiceException {
 		return httpSession;
 	}
 

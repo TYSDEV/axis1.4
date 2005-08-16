@@ -10,11 +10,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.namespace.QName;
-import javax.xml.rpc.Call;
-import javax.xml.rpc.Service;
-import javax.xml.rpc.ParameterMode;
-import javax.xml.rpc.handler.HandlerInfo;
-import javax.xml.rpc.handler.HandlerRegistry;
+import javax.xml.ws.Call;
+import javax.xml.ws.ParameterMode;
+import javax.xml.ws.Service;
+import javax.xml.ws.handler.HandlerInfo;
+import javax.xml.ws.handler.HandlerRegistry;
 //import javax.xml.rpc.ServiceFactory;
 
 import org.apache.axis2.jaxws.client.BindingProviderImpl;

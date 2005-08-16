@@ -8,8 +8,8 @@ import java.net.URISyntaxException;
 import java.util.Set;
 import java.util.HashSet;
 
-import javax.xml.rpc.JAXRPCException;
-import javax.xml.rpc.soap.SOAPBinding;
+import javax.xml.ws.WebServiceException;
+import javax.xml.ws.soap.SOAPBinding;
 
 import org.apache.axis2.jaxws.client.BindingImpl;
 /**
@@ -25,7 +25,7 @@ public class SOAPBindingImpl extends BindingImpl implements SOAPBinding {
 	/**
 	 * Empty Costructor
 	 */
-	public SOAPBindingImpl(String thisBinding) throws JAXRPCException{
+	public SOAPBindingImpl(String thisBinding) throws WebServiceException{
 		super();
 		setBinding(thisBinding);
 		try {
@@ -44,10 +44,10 @@ public class SOAPBindingImpl extends BindingImpl implements SOAPBinding {
 				//setting the 'ultimate receiver' role
 				roles.add(new URI("http://www.w3.org/2003/05/soap-envelope/role/ultimateReceiver"));
 			} else
-				throw new JAXRPCException("Unsupported Binding URI!");
+				throw new WebServiceException("Unsupported Binding URI!");
 			
 		} catch (Exception e) {
-			throw new JAXRPCException(e);
+			throw new WebServiceException(e);
 		}
 	}
 
@@ -67,21 +67,21 @@ public class SOAPBindingImpl extends BindingImpl implements SOAPBinding {
      * Sets the roles played by the SOAP binding instance.
      *
      * @param roles - The set of roles played by the binding instance.
-     * @throws JAXRPCException - On an error in the configuration of the 
+     * @throws WebServiceException - On an error in the configuration of the 
      * list of roles.
      */
-	public void setRoles(Set<URI> inputRoles) throws JAXRPCException {
+	public void setRoles(Set<URI> inputRoles) throws WebServiceException {
 		//iterate to see if any of the listed roles in 'none' role.
 		//if so, JAXRPC doesn't allow it.
 		try {
 			boolean isNone = inputRoles.contains(
 					new URI("http://www.w3.org/2003/05/soap-envelope/role/none"));
 			if(isNone) {
-				throw new JAXRPCException("none role not allowed!");
+				throw new WebServiceException("none role not allowed!");
 			}
 			roles.add(inputRoles);
 		} catch (URISyntaxException e) {
-			throw new JAXRPCException(e);
+			throw new WebServiceException(e);
 		}
 	}
 	

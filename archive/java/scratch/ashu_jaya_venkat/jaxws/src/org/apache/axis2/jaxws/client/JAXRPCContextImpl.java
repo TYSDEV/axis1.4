@@ -22,9 +22,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.rpc.BindingProvider;
-import javax.xml.rpc.JAXRPCContext;
-import javax.xml.rpc.JAXRPCException;
+import javax.xml.ws.BindingProvider;
+import javax.xml.ws.JAXRPCContext;
+import javax.xml.ws.WebServiceException;
 
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.engine.AxisConfiguration;
@@ -77,9 +77,9 @@ public class JAXRPCContextImpl implements JAXRPCContext {
 	
 	private void validateProperty(String name, Object value){
 		if(name == null)
-			throw new JAXRPCException("User-defined property name can not be null");
+			throw new WebServiceException("User-defined property name can not be null");
 		if(standardProperties.indexOf(name) == -1 && name.startsWith("javax.xml.rpc"))
-			throw new JAXRPCException("User-Defined property can not start with javax.ml.rpc");
+			throw new WebServiceException("User-Defined property can not start with javax.ml.rpc");
 
 	}
 	/*

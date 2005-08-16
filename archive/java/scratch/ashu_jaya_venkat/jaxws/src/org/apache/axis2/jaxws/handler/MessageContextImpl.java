@@ -3,7 +3,7 @@ package org.apache.axis2.jaxws.handler;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import javax.xml.rpc.handler.MessageContext;
+import javax.xml.ws.handler.MessageContext;
 
 public class MessageContextImpl implements MessageContext {
 	

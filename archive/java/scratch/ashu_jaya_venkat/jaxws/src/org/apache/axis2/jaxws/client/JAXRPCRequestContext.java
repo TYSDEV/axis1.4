@@ -16,7 +16,7 @@
 
 package org.apache.axis2.jaxws.client;
 
-import javax.xml.rpc.BindingProvider;
+import javax.xml.ws.BindingProvider;
 
 public class JAXRPCRequestContext extends JAXRPCContextImpl {
 	

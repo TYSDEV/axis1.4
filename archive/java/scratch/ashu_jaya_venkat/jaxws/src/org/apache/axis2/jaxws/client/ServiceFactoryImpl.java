@@ -4,9 +4,9 @@ import java.net.URL;
 import java.util.Properties;
 
 import javax.xml.namespace.QName;
-import javax.xml.rpc.Service;
-import javax.xml.rpc.ServiceException;
-import javax.xml.rpc.ServiceFactory;
+import javax.xml.ws.Service;
+import javax.xml.ws.ServiceException;
+import javax.xml.ws.ServiceFactory;
 
 import org.apache.axis2.jaxws.JAXRPCWSDLInterface;
 import org.apache.axis2.jaxws.factory.WSDLFactoryImpl;

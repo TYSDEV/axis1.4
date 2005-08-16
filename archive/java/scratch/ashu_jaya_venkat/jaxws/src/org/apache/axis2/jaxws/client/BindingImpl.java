@@ -2,10 +2,10 @@ package org.apache.axis2.jaxws.client;
 
 import java.util.List;
 
-import javax.xml.rpc.Binding;
-import javax.xml.rpc.JAXRPCException;
-import javax.xml.rpc.handler.HandlerInfo;
-import javax.xml.rpc.security.SecurityConfiguration;
+import javax.xml.ws.Binding;
+import javax.xml.ws.WebServiceException;
+import javax.xml.ws.handler.HandlerInfo;
+import javax.xml.ws.security.SecurityConfiguration;
 
 public class BindingImpl implements Binding {
 
@@ -14,7 +14,7 @@ public class BindingImpl implements Binding {
 		return null;
 	}
 
-	public void setHandlerChain(List<HandlerInfo> chain) throws JAXRPCException {
+	public void setHandlerChain(List<HandlerInfo> chain) throws WebServiceException {
 		// TODO Auto-generated method stub
 
 	}

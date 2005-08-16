@@ -5,13 +5,13 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.xml.namespace.QName;
-import javax.xml.rpc.JAXRPCException;
-import javax.xml.rpc.ProtocolException;
-import javax.xml.rpc.handler.HandlerInfo;
-import javax.xml.rpc.handler.MessageContext;
-import javax.xml.rpc.handler.soap.SOAPHandler;
-import javax.xml.rpc.handler.soap.SOAPMessageContext;
 import javax.xml.soap.SOAPMessage;
+import javax.xml.ws.WebServiceException;
+import javax.xml.ws.ProtocolException;
+import javax.xml.ws.handler.HandlerInfo;
+import javax.xml.ws.handler.MessageContext;
+import javax.xml.ws.handler.soap.SOAPHandler;
+import javax.xml.ws.handler.soap.SOAPMessageContext;
 
 public class LoggingHandler implements SOAPHandler<SOAPMessageContext> {
 
@@ -41,11 +41,11 @@ public class LoggingHandler implements SOAPHandler<SOAPMessageContext> {
 		//Nothing to clean up
 	}
 
-	public void init(HandlerInfo config) throws JAXRPCException {
+	public void init(HandlerInfo config) throws WebServiceException {
 		this.config = config.getHandlerConfig();
 	}
 
-	public void destroy() throws JAXRPCException {
+	public void destroy() throws WebServiceException {
 		//nothing to clean up
 	}
 	

@@ -5,16 +5,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Arrays;
 
-import javax.xml.rpc.JAXRPCException;
-import javax.xml.rpc.handler.Handler;
-import javax.xml.rpc.handler.HandlerChain;
-import javax.xml.rpc.handler.HandlerInfo;
-import javax.xml.rpc.handler.MessageContext;
-import javax.xml.rpc.handler.soap.SOAPMessageContext;
 import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPEnvelope;
 import javax.xml.soap.SOAPMessage;
+import javax.xml.ws.WebServiceException;
+import javax.xml.ws.handler.Handler;
+import javax.xml.ws.handler.HandlerChain;
+import javax.xml.ws.handler.HandlerInfo;
+import javax.xml.ws.handler.MessageContext;
+import javax.xml.ws.handler.soap.SOAPMessageContext;
 
 import org.apache.axis2.jaxws.handler.soap.SOAPMessageContextImpl;
 import org.apache.axis2.jaxws.handler.MessageContextImpl;
@@ -45,7 +45,7 @@ public class HandlerChainImpl extends ArrayList implements HandlerChain {
 			handler.init(handlerInfo);
 			return handler;
 		} catch (Exception ex){
-			throw new JAXRPCException("No Jax-RPC handler" + handlerInfo.getHandlerClass().toString(), ex);
+			throw new WebServiceException("No Jax-RPC handler" + handlerInfo.getHandlerClass().toString(), ex);
 		}
 	}
 	
@@ -80,7 +80,7 @@ public class HandlerChainImpl extends ArrayList implements HandlerChain {
 			handlerInfos.add(handlerInfo);
 			add(newHandler(handlerInfo));
 		} catch(Exception ex){
-			throw new JAXRPCException("No Jax-RPC handler"+className, ex);
+			throw new WebServiceException("No Jax-RPC handler"+className, ex);
 		}
 	}
 	
@@ -104,7 +104,7 @@ public class HandlerChainImpl extends ArrayList implements HandlerChain {
 		return list;
 	}
 	
-	public boolean handleRequest(MessageContext _context) throws JAXRPCException {
+	public boolean handleRequest(MessageContext _context) throws WebServiceException {
 		SOAPMessageContextImpl actx = (SOAPMessageContextImpl)_context;
 		actx.setRoles(getRoles());
 		SOAPMessageContext context = (SOAPMessageContext)_context;
@@ -117,7 +117,7 @@ public class HandlerChainImpl extends ArrayList implements HandlerChain {
 						falseIndex = i;
 						return false;
 					}
-				}catch (javax.xml.rpc.soap.SOAPFaultException sfe) {
+				}catch (javax.xml.ws.soap.SOAPFaultException sfe) {
 					falseIndex = i;
 					throw sfe;
 				}
@@ -129,7 +129,7 @@ public class HandlerChainImpl extends ArrayList implements HandlerChain {
 	}
 
 	public boolean handleResponse(MessageContext context)
-			throws JAXRPCException {
+			throws WebServiceException {
 		SOAPMessageContextImpl scontext = (SOAPMessageContextImpl)context;
 		preInvoke(scontext);
 		try {
@@ -148,7 +148,7 @@ public class HandlerChainImpl extends ArrayList implements HandlerChain {
 		}
 	}
 
-	public boolean handleFault(MessageContext _context) throws JAXRPCException {
+	public boolean handleFault(MessageContext _context) throws WebServiceException {
 		SOAPMessageContextImpl context = (SOAPMessageContextImpl)_context;
 		preInvoke(context);
 		try {
@@ -167,11 +167,11 @@ public class HandlerChainImpl extends ArrayList implements HandlerChain {
 		}
 	}
 
-	public void init(Map config) throws JAXRPCException {
+	public void init(Map config) throws WebServiceException {
 		// DO SOMETHING WITH THIS
 	}
 
-	public void destroy() throws JAXRPCException {
+	public void destroy() throws WebServiceException {
 		int endIdx = size() - 1;
 		if (falseIndex != -1) {
 			endIdx = falseIndex;

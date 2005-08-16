@@ -3,10 +3,6 @@ package org.apache.axis2.jaxws.client;
 import java.rmi.RemoteException;
 import java.util.concurrent.Future;
 
-import javax.xml.rpc.AsyncHandler;
-import javax.xml.rpc.Dispatch;
-import javax.xml.rpc.JAXRPCException;
-import javax.xml.rpc.Response;
 
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.EndpointReference;
@@ -19,6 +15,10 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import javax.xml.transform.Source;
+import javax.xml.ws.AsyncHandler;
+import javax.xml.ws.Dispatch;
+import javax.xml.ws.WebServiceException;
+import javax.xml.ws.Response;
 import javax.xml.namespace.QName;
 
 public class DispatchImpl extends BindingProviderImpl implements Dispatch {
@@ -44,7 +44,7 @@ public class DispatchImpl extends BindingProviderImpl implements Dispatch {
 	 * invocation.
 	 * @throws java.rmi.RemoteException - If a fault occurs during 
 	 * communication with the service
-	 * @throws JAXRPCException - If there is any error in the configuration 
+	 * @throws WebServiceException - If there is any error in the configuration 
 	 * of the Dispatch instance. 
 	 */
 	public Object invoke(Object msg) throws RemoteException {
@@ -71,7 +71,7 @@ public class DispatchImpl extends BindingProviderImpl implements Dispatch {
 			//TODO actually the response message better be transformed to a Source object
 			//and returned.
 		} catch(Exception e) {
-			throw new JAXRPCException(e);
+			throw new WebServiceException(e);
 		}
 		
 		//Implementation (at least a makeshift as above) should happen for the other
@@ -91,10 +91,10 @@ public class DispatchImpl extends BindingProviderImpl implements Dispatch {
 	 * message used to invoke the operation.
 	 * @return The response message or message payload to the operation 
 	 * invocation.
-	 * @throws JAXRPCException - If there is any error in the configuration 
+	 * @throws WebServiceException - If there is any error in the configuration 
 	 * of the Dispatch instance.
 	 */
-	public Response invokeAsync(Object msg) throws JAXRPCException {
+	public Response invokeAsync(Object msg) throws WebServiceException {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -117,11 +117,11 @@ public class DispatchImpl extends BindingProviderImpl implements Dispatch {
 	 * the results of the operation - the object returned from Future.get() 
 	 * is implementation dependent and any use of it will result in 
 	 * non-portable behaviour.
-	 * @throws JAXRPCException - If there is any error in the configuration 
+	 * @throws WebServiceException - If there is any error in the configuration 
 	 * of the Dispatch instance
 	 */
 	public Future invokeAsync(Object msg, AsyncHandler handler)
-			throws JAXRPCException {
+			throws WebServiceException {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -138,10 +138,10 @@ public class DispatchImpl extends BindingProviderImpl implements Dispatch {
 	 * 
 	 * @param msg - An object that will form the message or payload of the 
 	 * message used to invoke the operation.
-	 * @throws JAXRPCException - If there is any error in the configuration 
+	 * @throws WebServiceException - If there is any error in the configuration 
 	 * of the Dispatch instance or if an error occurs during the invocation.
 	 */
-	public void invokeOneWay(Object msg) throws JAXRPCException {
+	public void invokeOneWay(Object msg) throws WebServiceException {
 		// TODO Auto-generated method stub
 
 	}

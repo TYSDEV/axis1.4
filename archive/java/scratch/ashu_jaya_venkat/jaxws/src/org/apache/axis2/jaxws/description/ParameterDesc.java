@@ -1,6 +1,6 @@
 package org.apache.axis2.jaxws.description;
 
-import javax.xml.rpc.ParameterMode;
+import javax.xml.ws.ParameterMode;
 import javax.xml.namespace.QName;
 
 public class ParameterDesc {

@@ -2,8 +2,8 @@ package org.apache.axis2.jaxws;
 
 import junit.framework.TestCase;
 
-import javax.xml.rpc.ServiceFactory;
-import javax.xml.rpc.Service;
+import javax.xml.ws.Service;
+import javax.xml.ws.ServiceFactory;
 import javax.xml.namespace.QName;
 
 public class ServiceFactoryTest extends TestCase {
