@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package javax.xml.rpc;
+package javax.xml.ws;
 
 /**
  * Interface Stub
@@ -45,7 +45,7 @@ public interface Stub extends BindingProvider{
 	 * 
 	 * @param name - Name of the configuration property
 	 * @param value - Value of the property 
-	 * @throws JAXRPCException - 
+	 * @throws WebServiceException - 
 	 * 1. If an optional standard property name is specified, however this Stub
 	 *  implementation class does not support the configuration of this 
 	 *  property. 
@@ -54,7 +54,7 @@ public interface Stub extends BindingProvider{
 	 * 3. If there is any error in the configuration of a valid property.
 	 */
 	void _setProperty(java.lang.String name, java.lang.Object value) throws 
-	JAXRPCException;
+	WebServiceException;
 	
 	/**
 	 * Method _getProperty
@@ -64,11 +64,11 @@ public interface Stub extends BindingProvider{
 	 * 
 	 * @param name - Name of the property whose value is to be retrieved 
 	 * @return Value of the configuration property 
-	 * @throws JAXRPCException - if an invalid or unsupported property name 
+	 * @throws WebServiceException - if an invalid or unsupported property name 
 	 * is passed.
 	 */
 	java.lang.Object _getProperty(java.lang.String name) throws 
-	JAXRPCException;
+	WebServiceException;
 	
 	/**
 	 * Method _getPropertyNames

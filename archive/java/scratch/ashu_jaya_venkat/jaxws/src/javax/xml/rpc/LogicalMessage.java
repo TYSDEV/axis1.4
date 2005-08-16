@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package javax.xml.rpc;
+package javax.xml.ws;
 
 /**
  * Interface LogicalMessage
  * The LogicalMessage interface represents a protocol agnostic XML message 
  * and contains methods that provide access to the payload of the message.
  * 
- * @version 1.0
+ * @since JAX-WS 2.0
  * @author sunja07
  */
 public interface LogicalMessage {
@@ -49,22 +49,22 @@ public interface LogicalMessage {
 	 * message payload
 	 * @return The contained message payload; returns null if no payload is 
 	 * present in this message
-	 * @throws JAXRPCException If an error occurs when using a supplied 
+	 * @throws WebServiceException If an error occurs when using a supplied 
 	 * JAXBContext to unmarshall the payload. The cause of the JAXRPCException
 	 * is the original JAXBException.
 	 */
 	java.lang.Object getPayload(javax.xml.bind.JAXBContext context) throws 
-	JAXRPCException;
+	WebServiceException;
 	
 	/**
 	 * Method setPayload
 	 * Sets the message payload
 	 * @param payload message payload 
-	 * @throws JAXRPCException If any error during the setting of the payload
+	 * @throws WebServiceException If any error during the setting of the payload
 	 *  in this message java.lang.UnsupportedOperationException - If this 
 	 *  operation is not supported.
 	 */
-	void setPayload(javax.xml.transform.Source payload) throws JAXRPCException;	
+	void setPayload(javax.xml.transform.Source payload) throws WebServiceException;	
 	
 	/**
 	 * Method setPayload
@@ -74,10 +74,10 @@ public interface LogicalMessage {
 	 * payload 
 	 * @throws java.lang.UnsupportedOperationException If this operation is 
 	 * not supported
-	 * @throws JAXRPCException If an error occurs when using the supplied 
+	 * @throws WebServiceException If an error occurs when using the supplied 
 	 * JAXBContext to marshall the payload. The cause of the JAXRPCException 
 	 * is the original JAXBException.
 	 */
 	void setPayload(java.lang.Object payload,
-            javax.xml.bind.JAXBContext context) throws JAXRPCException;
+            javax.xml.bind.JAXBContext context) throws WebServiceException;
 }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package javax.xml.rpc;
+package javax.xml.ws;
 
 /**
  * Interface Provider<T>
@@ -24,7 +24,7 @@ package javax.xml.rpc;
  * be used to control whether the Provider instance will receive entire 
  * protocol messages or just message payloads.
  * 
- * @version 1.0
+ * @since JAX-WS 2.0
  * @author sunja07
  */
 public interface Provider<T> {
@@ -45,7 +45,7 @@ public interface Provider<T> {
 	 * ProtocolException to control the protocol level representation of the 
 	 * exception.
 	 */
-	T invoke(T request, JAXRPCContext context)
+	T invoke(T request, java.util.Map<java.lang.String,java.lang.Object> context)
 	         throws java.rmi.RemoteException;
 
 }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package javax.xml.rpc.handler;
+package javax.xml.ws.handler;
 
 /**
  * public interface LogicalHandler<C extends <code>LogicalMessageContext</code>>
@@ -22,10 +22,10 @@ package javax.xml.rpc.handler;
  * <p>
  * The javax.xml.rpc.handler.LogicalHandler extends AbstractHandler to provide typesafety for the message context
  * parameter.
- * @version 1.0
+ * @since JAX-WS 2.0
  * @author shaas02
  *
  */
-public interface LogicalHandler<C extends LogicalMessageContext> extends AbstractHandler {
+public interface LogicalHandler<C extends LogicalMessageContext> extends Handler<C> {
 
 }

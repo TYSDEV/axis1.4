@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package javax.xml.rpc.soap;
+package javax.xml.ws.soap;
 
-import javax.xml.rpc.Binding;
+import javax.xml.ws.Binding;
+import javax.xml.ws.WebServiceException;
 
 /**
  * Interface SOAPBinding
@@ -53,9 +54,38 @@ public interface SOAPBinding extends Binding {
      * Sets the roles played by the SOAP binding instance.
      *
      * @param roles - The set of roles played by the binding instance.
-     * @throws JAXRPCException - On an error in the configuration of the 
+     * @throws WebServiceException - On an error in the configuration of the 
      * list of roles.
      */
     void setRoles(java.util.Set<java.net.URI> roles);
+    
+    /**
+     * Returns true if the use of MTOM is enabled.
+     * <p>
+     * @return true if and only if the use of MTOM is enabled.
+     */
+    boolean isMTOMEnabled();
+    
+    /**
+     * Enables or disables use of MTOM.
+     * <p>
+     * @param flag - A boolean specifying whether the use of MTOM should be enabled or disabled.
+     * @throws WebServiceException - If the specified setting is not supported by this binding instance.
+     */
+    void setMTOMEnabled(boolean flag) throws WebServiceException;
+    
+    /**
+     * Gets the SAAJ SOAPFactory instance used by this SOAP binding.
+     * <p>
+     * @return SOAPFactory instance used by this SOAP binding.
+     */
+    javax.xml.soap.SOAPFactory getSOAPFactory();
+    
+    /**
+     * Gets the SAAJ MessageFactory instance used by this SOAP binding.
+     * <p>
+     * @return MessageFactory instance used by this SOAP binding.
+     */
+    javax.xml.soap.MessageFactory getMessageFactory();
 
 }

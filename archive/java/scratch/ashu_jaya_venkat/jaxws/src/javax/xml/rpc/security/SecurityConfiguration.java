@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package javax.xml.rpc.security;
+package javax.xml.ws.security;
 
 /**
  * Interface SecurityConfiguration
  * The interface SecurityConfiguration abstracts the message security 
  * configuration.
  * 
- * @version 1.0
+ * @since JAX-WS 2.0
  * @author sunja07
  */
 public interface SecurityConfiguration {
@@ -39,7 +39,7 @@ public interface SecurityConfiguration {
 	 * 		Establish or constrain the identity of the source and/or recipient
 	 * 		of a message 
 	 */
-	public static enum SecurityFeature { 
+	public static enum SecurityFeature{ 
 		//extends java.lang.Enum <SecurityConfiguration.SecurityFeature> {
 		
 		CONFIDENTIALITY , INTEGRITY , AUTHENTICATION ;
@@ -74,8 +74,8 @@ public interface SecurityConfiguration {
 		 */
 /*		public static SecurityConfiguration.SecurityFeature valueOf(java.lang.String name) throws java.lang.IllegalArgumentException {
 			
-		}
-*/
+		}*/
+
 	}
 	
 	/**

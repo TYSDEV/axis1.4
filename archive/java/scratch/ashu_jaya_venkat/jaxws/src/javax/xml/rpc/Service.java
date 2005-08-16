@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package javax.xml.rpc;
+package javax.xml.ws;
 
-import javax.xml.rpc.encoding.TypeMappingRegistry;
-import javax.xml.rpc.security.SecurityConfiguration;
-import javax.xml.rpc.handler.HandlerRegistry;
+import javax.xml.ws.handler.HandlerRegistry;
+import javax.xml.ws.security.SecurityConfiguration;
 
 /**
  * Interface Service
@@ -91,7 +90,7 @@ public interface Service {
 	 * the dynamic proxy or stub instance 
 	 * @return java.rmi.Remote Stub instance or dynamic proxy that supports the 
 	 * specified service endpoint interface 
-	 * @throws ServiceException This exception is thrown in the following 
+	 * @throws WebServiceException This exception is thrown in the following 
 	 * cases:
 	 * 1. If there is an error in creation of the dynamic proxy or stub 
 	 * instance
@@ -100,9 +99,9 @@ public interface Service {
 	 * specified
 	 * @see java.lang.reflect.Proxy, java.lang.reflect.InvocationHandler 
 	 */
-	java.rmi.Remote getPort(javax.xml.namespace.QName portName,
-            java.lang.Class serviceEndpointInterface)
-            throws ServiceException;
+	<T> T getPort(javax.xml.namespace.QName portName,
+            java.lang.Class<T> serviceEndpointInterface)
+            throws WebServiceException;
 	
 	/**
 	 * Method getPort
@@ -124,24 +123,22 @@ public interface Service {
 	 * 2. If there is any missing WSDL metadata as required by this method
 	 * 3. Optionally, if an illegal serviceEndpointInterface is specified 
 	 */
-	java.rmi.Remote getPort(java.lang.Class serviceEndpointInterface)
+	<T> T getPort(java.lang.Class<T> serviceEndpointInterface)
     throws ServiceException;
 	
 	/**
-	 * Method createPort
-	 * Creates a new port for the service. Ports created in this way contain 
-	 * no WSDL port type information and can only be used for creating Dispatch
-	 *  and Call instances.
-	 * @param portName Qualified name for the target service endpoint
-	 * @param bindingId A URI identifier of a binding.
-	 * @param endpointAddress Address of the target service endpoint as a URI 
-	 * @throws ServiceException If any error in the creation of the port
-	 * @see javax.xml.rpc.soap.SOAPBinding.SOAP11HTTP_BINDING
+	 * Creates a new port for the service. Ports created in this way contain no WSDL port type information and can only
+	 * be used for creating Dispatchinstances.
+	 * <p>
+	 * @param portName - Qualified name for the target service endpoint
+	 * @param bindingId - A URI identifier of a binding.
+	 * @param endpointAddress - Address of the target service endpoint as a URI
+	 * @throws WebServiceException - If any error in the creation of the port
 	 */
-	void createPort(javax.xml.namespace.QName portName,
-            java.net.URI bindingId,
-            java.lang.String endpointAddress)
-            throws ServiceException;
+	void addPort(javax.xml.namespace.QName portName,
+			java.net.URI bindingId,
+			java.lang.String endpointAddress) throws
+			WebServiceException;
 	
 	// This involves generics, needs a revisit
 	/**
@@ -158,14 +155,14 @@ public interface Service {
 	 *  parameter controls whether the user will work with SOAP messages or the
 	 *  contents of a SOAP body. Mode must be MESSAGE when type is SOAPMessage.
 	 * @return Dispatch instance 
-	 * @throws ServiceException - If any error in the creation of the Dispatch
+	 * @throws WebServiceException - If any error in the creation of the Dispatch
 	 *  object
 	 * @see javax.xml.transform.Source, javax.xml.soap.SOAPMessage
 	 */
 	<T> Dispatch<T> createDispatch(javax.xml.namespace.QName portName,
             java.lang.Class<T> type,
             Service.Mode mode)
-        throws ServiceException;
+        throws WebServiceException;
       
 	// This involves generics, needs a revisit
 	/**
@@ -181,7 +178,7 @@ public interface Service {
 	 *  protocol, this parameter controls whether the user will work with 
 	 *  SOAP messages or the contents of a SOAP body.
 	 * @return Dispatch instance 
-	 * @throws ServiceException - If any error in the creation of the Dispatch
+	 * @throws WebServiceException - If any error in the creation of the Dispatch
 	 *  object
 	 * @see JAXBContext
 	 */
@@ -189,73 +186,7 @@ public interface Service {
 			javax.xml.namespace.QName portName,
             javax.xml.bind.JAXBContext context,
             Service.Mode mode)
-            throws ServiceException;
-     
-	/**
-	 * Method getCalls
-	 * Gets an array of preconfigured Call objects for invoking operations on 
-	 * the specified port. There is one Call object per operation that can be 
-	 * invoked on the specified port. Each Call object is pre-configured and 
-	 * does not need to be configured using the setter methods on Call 
-	 * interface.
-	 * Each invocation of the getCalls method returns a new array of 
-	 * preconfigured Call objects 
-	 * This method requires the Service implementation class to have access to
-	 * the WSDL related metadata.
-	 * @param portName Qualified name for the target service endpoint 
-	 * @return Call[] Array of pre-configured Call objects 
-	 * @throws ServiceException If this Service class does not have access to 
-	 * the required WSDL metadata or if an illegal portName is specified.
-	 */
-	Call[] getCalls(javax.xml.namespace.QName portName)
-    throws ServiceException;
-	
-	/**
-	 * Method createCall
-	 * Creates a Call instance.
-	 * @param portName Qualified name for the target service endpoint 
-	 * @return Call instance 
-	 * @throws ServiceException If any error in the creation of the Call object
-	 */
-	Call createCall(javax.xml.namespace.QName portName)
-    throws ServiceException;
-	
-	/**
-	 * Method createCall
-	 * Creates a Call instance. 
-	 * @param portName Qualified name for the target service endpoint
-	 * @param operationName Qualified Name of the operation for which this 
-	 * Call object is to be created.
-	 * @return Call instance 
-	 * @throws ServiceException If any error in the creation of the Call object
-	 */
-	Call createCall(javax.xml.namespace.QName portName,
-            javax.xml.namespace.QName operationName)
-            throws ServiceException;
-	
-	/**
-	 * Method createCall
-	 * Creates a Call instance. 
-	 * @param portName Qualified name for the target service endpoint
-	 * @param operationName Name of the operation for which this Call object 
-	 * is to be created.
-	 * @return Call instance
-	 * @throws ServiceException If any error in the creation of the Call 
-	 * object
-	 */
-	Call createCall(javax.xml.namespace.QName portName,
-            java.lang.String operationName)
-            throws ServiceException;
-	
-	/**
-	 * Method createCall
-	 * Creates a Call object not associated with specific operation or target 
-	 * service endpoint. This Call object needs to be configured using the 
-	 * setter methods on the Call interface.
-	 * @return Call object
-	 * @throws ServiceException If any error in the creation of the Call object
-	 */
-	Call createCall() throws ServiceException;
+            throws WebServiceException;
 	
 	/**
 	 * Method getServiceName
@@ -270,10 +201,10 @@ public interface Service {
 	 * by this service
 	 * @return Returns java.util.Iterator with elements of type 
 	 * javax.xml.namespace.QName 
-	 * @throws ServiceException If this Service class does not have access to 
+	 * @throws WebServiceException If this Service class does not have access to 
 	 * the required WSDL metadata
 	 */
-	java.util.Iterator getPorts() throws ServiceException;
+	java.util.Iterator getPorts() throws WebServiceException;
 	
 	/**
 	 * Method getWSDLDocumentLocation
@@ -281,19 +212,6 @@ public interface Service {
 	 * @return URL for the location of the WSDL document for this service
 	 */
 	java.net.URL getWSDLDocumentLocation();
-	
-	/**
-	 * Method getTypeMappingRegistry
-	 * Gets the TypeMappingRegistry for this Service object. The returned 
-	 * TypeMappingRegistry instance is pre-configured to support the standard 
-	 * type mapping between XML and Java types types as required by the 
-	 * JAX-RPC specification.
-	 * @return The TypeMappingRegistry for this Service object.
-	 * @throws java.lang.UnsupportedOperationException if the Service class 
-	 * does not support the configuration of TypeMappingRegistry.
-	 */
-	TypeMappingRegistry getTypeMappingRegistry() throws 
-	java.lang.UnsupportedOperationException;
 	
 	/**
 	 * Method getSecurityConfiguration
@@ -318,5 +236,22 @@ public interface Service {
 	 */
 	HandlerRegistry getHandlerRegistry() throws 
 	java.lang.UnsupportedOperationException;
+	
+	/**
+	 * Returns the executor for this Serviceinstance. The executor is used for all asynchronous invocations that require
+	 * callbacks.
+	 * @return The java.util.concurrent.Executor to be used to invoke a callback.
+	 * @see Executor
+	 */
+	java.util.concurrent.Executor getExecutor();
+	
+	/**
+	 * Sets the executor for this Service instance. The executor is used for all asynchronous invocations that require callbacks.
+	 * @param executor  - The java.util.concurrent.Executor  to be used to invoke a callback.
+	 * @throws java.lang.SecurityException - If the instance does not support setting an executor for security
+	 * reasons (e.g. the necessary permissions are missing).
+	 * @see Executor
+	 */
+	void setExecutor(java.util.concurrent.Executor executor) throws java.lang.SecurityException;
 
 }

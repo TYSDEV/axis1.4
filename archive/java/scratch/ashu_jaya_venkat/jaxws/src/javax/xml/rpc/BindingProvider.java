@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package javax.xml.rpc;
+package javax.xml.ws;
 
 /**
  * Interface BindingProvider
@@ -22,7 +22,7 @@ package javax.xml.rpc;
  * binding and associated JAXRPCContext objects for request and response 
  * message processing.
  * 
- * @version 1.0
+ * @since JAX-WS 2.0
  * @author sunja07
  */
 public interface BindingProvider {
@@ -33,7 +33,7 @@ public interface BindingProvider {
 	 * protocol/transport binding for the binding in use. 
 	 */
 	static final java.lang.String ENDPOINT_ADDRESS_PROPERTY = 
-		"javax.xml.rpc.service.endpoint.address";
+		"javax.xml.ws.service.endpoint.address";
 	
 	/**
 	 * Standard property: This boolean property is used by a service client to 
@@ -44,7 +44,7 @@ public interface BindingProvider {
 	 * false.
 	 */
 	static final java.lang.String SESSION_MAINTAIN_PROPERTY = 
-		"javax.xml.rpc.session.maintain";
+		"javax.xml.ws.session.maintain";
 	
 	/**
 	 * Standard property for SOAPAction. This boolean property indicates 
@@ -52,55 +52,47 @@ public interface BindingProvider {
 	 * property is false indicating that the SOAPAction is not used.
 	 */
 	static final java.lang.String SOAPACTION_USE_PROPERTY = 
-		"javax.xml.rpc.soap.http.soapaction.use";
+		"javax.xml.ws.soap.http.soapaction.use";
 	
 	/**
 	 * Standard property for SOAPAction. Indicates the SOAPAction URI if the 
 	 * javax.xml.rpc.soap.http.soapaction.use property is set to true.
 	 */
 	static final java.lang.String SOAPACTION_URI_PROPERTY = 
-		"javax.xml.rpc.soap.http.soapaction.uri";
+		"javax.xml.ws.soap.http.soapaction.uri";
 	
 	/**
 	 * Standard property: Password for authentication.
 	 */
 	static final java.lang.String PASSWORD_PROPERTY = 
-		"javax.xml.rpc.security.auth.password";
+		"javax.xml.ws.security.auth.password";
 	
 	/**
 	 * Standard property: User name for authentication.
 	 */
 	static final java.lang.String USERNAME_PROPERTY = 
-		"javax.xml.rpc.security.auth.username";
-	
-	/**
-	 * Standard property: JAXB context to use for marshalling arguments in 
-	 * dynamic APIs.
-	 */
-	static final java.lang.String JAXB_CONTEXT_PROPERTY = 
-		"javax.xml.rpc.binding.context";
+		"javax.xml.ws.security.auth.username";
 	
 	/**
 	 * Method getRequestContext
-	 * Get the JAXRPCContext that is used to initialize the message context 
+	 * Get the Context that is used to initialize the message context 
 	 * for request messages. Modifications to the request context do not 
 	 * affect the message context of either synchronous or asynchronous 
 	 * operations that have already been started.
-	 * @return The JAXRPCContext that is used in processing request messages.
+	 * @return The context that is used in processing request messages.
 	 */
-	JAXRPCContext getRequestContext();
+	java.util.Map<java.lang.String,java.lang.Object> getRequestContext();
 	
 	/**
 	 * Method getResponseContext
-	 * Get the JAXRPCContext that resulted from processing a response message. 
+	 * Get the Context that resulted from processing a response message. 
 	 * The returned context is for the most recently completed synchronous 
 	 * operation. Subsequent synchronous operation invocations overwrite the 
 	 * response context. Asynchronous operations return their response context 
 	 * via the Response interface.
-	 * @return The JAXRPCContext that resulted from processing the latest 
-	 * response messages.
+	 * @return The context that resulted from processing the latest response messages.
 	 */
-	JAXRPCContext getResponseContext();
+	java.util.Map<java.lang.String,java.lang.Object> getResponseContext();
 	
 	/**
 	 * Method getBinding

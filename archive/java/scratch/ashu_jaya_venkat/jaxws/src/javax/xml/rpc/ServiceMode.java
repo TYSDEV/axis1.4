@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package javax.xml.rpc;
+package javax.xml.ws;
 
 import java.lang.annotation.*;
-import javax.xml.rpc.Service.Mode;
+
+import javax.xml.ws.Service.Mode;
 
 /**
  * Annotation Type ServiceMode

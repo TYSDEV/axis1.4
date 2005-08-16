@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package javax.xml.rpc;
+package javax.xml.ws;
 
 /**
  * class JAXRPCException
@@ -24,14 +24,14 @@ package javax.xml.rpc;
  * @version 1.1
  * @author sunja07
  */
-public class JAXRPCException extends RuntimeException implements 
+public class WebServiceException extends RuntimeException implements 
 java.io.Serializable {
 
 	/**
 	 * Empty Constructor
 	 * Constructs a new exception with null as its detail message.
 	 */
-	public JAXRPCException() {
+	public WebServiceException() {
 		super();
 	}
 	
@@ -41,7 +41,7 @@ java.io.Serializable {
 	 * @param message - The detail message which is later retrieved using the 
 	 * getMessage method
 	 */
-	public JAXRPCException(java.lang.String message) {
+	public WebServiceException(java.lang.String message) {
 		super(message);
 	}
 	
@@ -53,7 +53,7 @@ java.io.Serializable {
 	 * @param cause - The cause which is saved for the later retrieval throw 
 	 * by the getCause method
 	 */
-	public JAXRPCException(java.lang.String message,
+	public WebServiceException(java.lang.String message,
             java.lang.Throwable cause) {
 		super(message, cause);
 	}
@@ -67,19 +67,8 @@ java.io.Serializable {
 	 * by the getCause method. (A null value is permitted, and indicates that 
 	 * the cause is nonexistent or unknown.)
 	 */
-	public JAXRPCException(java.lang.Throwable cause){
+	public WebServiceException(java.lang.Throwable cause){
 		super(cause==null ? null : cause.toString(),cause);
 	}
 	
-	/**
-	 * Method getLinkedCause
-	 * Gets the Linked cause
-	 * @deprecated Retained for backwards compatility, new applications should
-	 * use the standard cause mechanism.
-	 * @return The cause of this Exception or null if the cause is noexistent 
-	 * or unknown
-	 */
-	public java.lang.Throwable getLinkedCause() {
-		return getCause();
-	}
 }

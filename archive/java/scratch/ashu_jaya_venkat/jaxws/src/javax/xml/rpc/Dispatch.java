@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package javax.xml.rpc;
+package javax.xml.ws;
 
 /**
  * Interface Dispatch<T>
@@ -22,10 +22,10 @@ package javax.xml.rpc;
  * invocation of a service endpoint operations. The javax.xml.rpc.Service 
  * interface acts as a factory for the creation of Dispatch instances.
  * 
- * @version 1.0
+ * @since JAX-WS 2.0
  * @author sunja07
  */
-public interface Dispatch<T> {
+public interface Dispatch<T> extends BindingProvider{
 	
 	/**
 	 * Method invoke
@@ -39,10 +39,10 @@ public interface Dispatch<T> {
 	 * invocation.
 	 * @throws java.rmi.RemoteException - If a fault occurs during 
 	 * communication with the service
-	 * @throws JAXRPCException - If there is any error in the configuration 
+	 * @throws WebServiceException - If there is any error in the configuration 
 	 * of the Dispatch instance. 
 	 */
-	T invoke(T msg) throws java.rmi.RemoteException;
+	T invoke(T msg) throws java.rmi.RemoteException, WebServiceException;
 	
 	/**
 	 * Method invokeAsync
@@ -56,10 +56,11 @@ public interface Dispatch<T> {
 	 * message used to invoke the operation.
 	 * @return The response message or message payload to the operation 
 	 * invocation.
-	 * @throws JAXRPCException - If there is any error in the configuration 
+	 * @throws WebServiceException - If there is any error in the configuration 
 	 * of the Dispatch instance.
+	 * @throws java.rmi.RemoteException
 	 */
-	Response<T> invokeAsync(T msg) throws JAXRPCException;
+	Response<T> invokeAsync(T msg) throws java.rmi.RemoteException, WebServiceException;
 	
 	/**
 	 * Method invokeAsync
@@ -79,11 +80,11 @@ public interface Dispatch<T> {
 	 * the results of the operation - the object returned from Future.get() 
 	 * is implementation dependent and any use of it will result in 
 	 * non-portable behaviour.
-	 * @throws JAXRPCException - If there is any error in the configuration 
+	 * @throws WebServiceException - If there is any error in the configuration 
 	 * of the Dispatch instance
 	 */
 	java.util.concurrent.Future<?> invokeAsync(T msg,
-            AsyncHandler<T> handler) throws JAXRPCException;
+            AsyncHandler<T> handler) throws WebServiceException;
 	
 	/**
 	 * Method invokeOneWay
@@ -97,9 +98,9 @@ public interface Dispatch<T> {
 	 * 
 	 * @param msg - An object that will form the message or payload of the 
 	 * message used to invoke the operation.
-	 * @throws JAXRPCException - If there is any error in the configuration 
+	 * @throws WebServiceException - If there is any error in the configuration 
 	 * of the Dispatch instance or if an error occurs during the invocation.
 	 */
-	void invokeOneWay(T msg) throws JAXRPCException;
+	void invokeOneWay(T msg) throws WebServiceException;
 
 }

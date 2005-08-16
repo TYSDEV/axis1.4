@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package javax.xml.rpc.handler;
+package javax.xml.ws.handler;
 
 /**
  * The interface MessageContext abstracts the message context that is processed by a handler in the handle  method.
  * <p>
  * The MessageContext interface provides methods to manage a property set. MessageContext properties enable handlers in a
  * handler chain to share processing related state.
- * @version 1.0
+ * @since JAX-WS 2.0
  * @author shaas02
- * @see <code>Handler</code>
  */
-public interface MessageContext {
+public interface MessageContext extends
+			java.util.Map<java.lang.String,java.lang.Object>{
 	
 	public static enum Scope {
 		APPLICATION,
@@ -37,14 +37,84 @@ public interface MessageContext {
 	 * <p>
 	 * Type: boolean
 	 */
-	static final java.lang.String MESSAGE_OUTBOUND_PROPERTY = "javax.xml.rpc.handler.message.outbound";
+	static final java.lang.String MESSAGE_OUTBOUND_PROPERTY = "javax.xml.ws.handler.message.outbound";
 	
 	/**
 	 * Standard property: security configuration.
 	 * <p>
 	 * Type: javax.xml.rpc.security.SecurityConfiguration
 	 */
-	static final java.lang.String MESSAGE_SECURITY_CONFIGURATION = "javax.xml.rpc.security.configuration";
+	static final java.lang.String MESSAGE_SECURITY_CONFIGURATION = "javax.xml.ws.security.configuration";
+	
+	/**
+	 * Standard property: Map of attachments to a message, key is the MIME Content-ID, value is a DataHandler.
+	 * <p>
+	 * Type:  java.util.Map
+	 */
+	static final java.lang.String MESSAGE_ATTACHMENTS = "javax.xml.ws.binding.attachments";
+	
+	/**
+	 * Standard property: input source for WSDL document.
+	 * <p>
+	 * Type: org.xml.sax.InputSource
+	 */
+	static final java.lang.String WSDL_DESCRIPTION = "javax.xml.ws.wsdl.description";
+	
+	/**
+	 * Standard property: name of WSDL service.
+	 * <p>
+	 * Type: javax.xml.namespace.QName
+	 */
+	static final java.lang.String WSDL_SERVICE = "javax.xml.ws.wsdl.service";
+	
+	/**
+	 * Standard property: name of WSDL port.
+	 * <p>
+	 * Type: javax.xml.namespace.QName
+	 */
+	static final java.lang.String WSDL_PORT = "javax.xml.ws.wsdl.port";
+	
+	/**
+	 * Standard property: name of wsdl interface (2.0) or port type (1.1).
+	 * <p>
+	 * Type: javax.xml.namespace.QName
+	 */
+	static final java.lang.String WSDL_INTERFACE = "javax.xml.ws.wsdl.interface";
+	
+	/**
+	 * Standard property: name of WSDL operation.
+	 * <p>
+	 * Type: javax.xml.namespace.QName
+	 */
+	static final java.lang.String WSDL_OPERATION = "javax.xml.ws.wsdl.operation";
+	
+	/**
+	 * Standard property: HTTP response status code.
+	 * <p>
+	 * Type: java.lang.Integer
+	 */
+	static final java.lang.String HTTP_RESPONSE_CODE = "javax.xml.ws.http.response.code";
+	
+	/**
+	 * Standard property: HTTP request headers.
+	 * <p>
+	 * Type: java.util.Map
+	 */
+	static final java.lang.String HTTP_REQUEST_HEADERS = "javax.xml.ws.http.request.headers";
+	
+	/**
+	 * Standard property: HTTP response headers.
+	 * <p>
+	 * Type: java.util.Map
+	 */
+	static final java.lang.String HTTP_RESPONSE_HEADERS = "javax.xml.ws.http.response.headers";
+	
+	/**
+	 * Standard property: HTTP request method.
+	 * <p>
+	 * Type: java.lang.String
+	 */
+	static final java.lang.String HTTP_REQUEST_METHOD = "javax.xml.ws.http.request.method";
 	
 	/**
 	 * Sets the scope of a property.
@@ -52,7 +122,7 @@ public interface MessageContext {
 	 * @param scope - Desired scope of the property
 	 * @throws java.lang.IllegalArgumentException - if an illegal property name is specified
 	 */
-	void setPropertyScope(java.lang.String name,
+	void setScope(java.lang.String name,
 			 MessageContext.Scope scope) throws java.lang.IllegalArgumentException;
 	
 	/**
@@ -61,61 +131,6 @@ public interface MessageContext {
 	 * @return Scope of the property
 	 * @throws java.lang.IllegalArgumentException - if a non-existant property name is specified
 	 */
-	MessageContext.Scope getPropertyScope(java.lang.String name)throws java.lang.IllegalArgumentException;
-	
-	/**
-	 * Sets the name and value of a property associated with the MessageContext. If the MessageContext  contains a value of
-	 * the same property, the old value is replaced but the properties scope is unchanged. The scope of the property defaults to
-	 * HANDLER.
-	 * @param name - Name of the property associated with the MessageContext
-	 * @param value - Value of the property
-	 * @throws java.lang.IllegalArgumentException - If some aspect of the property prevents it from being stored in the context
-	 * @throws java.lang.UnsupportedOperationException - If this method is not supported.
-	 */
-	void setProperty(java.lang.String name,
-			java.lang.Object value) throws java.lang.IllegalArgumentException,
-			java.lang.UnsupportedOperationException;
-	
-	/**
-	 * Sets the name, value and scope of a property associated with the MessageContext. If the MessageContext  contains a
-	 * value of the same property, the old value is replaced.
-	 * @param name - Name of the property associated with the MessageContext
-	 * @param value - Value of the property
-	 * @param scope - Desired scope of the property
-	 * @throws java.lang.IllegalArgumentException - If some aspect of the property prevents it from being stored in the context
-	 * @throws java.lang.UnsupportedOperationException - If this method is not supported.
-	 */
-	void setProperty(java.lang.String name,
-			java.lang.Object value,
-			MessageContext.Scope scope) throws java.lang.IllegalArgumentException,
-			java.lang.UnsupportedOperationException;
-	
-	/**
-	 * Gets the value of a specific property from the MessageContext
-	 * @param name - Name of the property whose value is to be retrieved
-	 * @return Value of the property.
-	 * @throws java.lang.IllegalArgumentException - if an illegal property name is specified
-	 */
-	java.lang.Object getProperty(java.lang.String name) throws java.lang.IllegalArgumentException;
-	
-	/**
-	 * Removes a property (name-value pair) from the MessageContext
-	 * @param name - Name of the property to be removed
-	 * @throws java.lang.IllegalArgumentException - if an illegal property name is specified
-	 */
-	void removeProperty(java.lang.String name) throws java.lang.IllegalArgumentException;
-	
-	/**
-	 * Returns true if the MessageContext contains a property with the specified name.
-	 * @param name  - Name of the property whose presense is to be tested
-	 * @return Returns true if the MessageContext contains the property; otherwise false
-	 */
-	boolean containsProperty(java.lang.String name);
-	
-	/**
-	 * Returns an Iterator view of the names of the properties in this MessageContext
-	 * @return Iterator for the property names
-	 */
-	java.util.Iterator getPropertyNames();
+	MessageContext.Scope getScope(java.lang.String name)throws java.lang.IllegalArgumentException;
 
 }

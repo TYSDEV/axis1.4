@@ -14,106 +14,46 @@
  * limitations under the License.
  */
 
-package javax.xml.rpc.soap;
+package javax.xml.ws.soap;
 
-import javax.xml.rpc.ProtocolException;
-import javax.xml.soap.Detail;
-import javax.xml.namespace.QName;
+import javax.xml.ws.ProtocolException;
 
 /**
- * The SOAPFaultException exception represents a SOAP fault. 
- * The message part in the SOAP fault maps to the contents of faultdetail 
- * element accessible through the getDetail method on the SOAPFaultException. 
- * The method createDetail on the javax.xml.soap.SOAPFactory creates an 
- * instance of the javax.xml.soap.Detail.
- * The faultstring provides a human-readable description of the SOAP fault. 
- * The faultcode element provides an algorithmic mapping of the SOAP fault.
- * Refer to SOAP 1.1 and WSDL 1.1 specifications for more details of the SOAP 
- * faults.
+ * The SOAPFaultException exception represents a SOAP 1.1 or 1.2 fault.
+ * <p>
+ * A SOAPFaultException wraps a SAAJ SOAPFault  that manages the SOAP-specific representation of faults. The
+ * createFault method of javax.xml.soap.SOAPFactory may be used to create an instance of
+ * javax.xml.soap.SOAPFault for use with the constructor. SOAPBinding contains an accessor for the SOAPFactory used by
+ *  the binding instance.
+ *  <p>
+ *  Note that the value of getFault is the only part of the exception used when searializing a SOAP fault.
+ *  <p>
+ *  Refer to the SOAP specification for a complete description of SOAP faults.
  * 
- * @version 1.0
+ * @since JAX-WS 2.0
  * @author sunja07
  */
 public class SOAPFaultException extends ProtocolException {
 	
 	/**
-	 * Constructor for the SOAPFaultException 
-	 * @param faultcode QName for the SOAP faultcode
-	 * @param faultstring faultstring element of SOAP fault
-	 * @param faultactor faultactor element of SOAP fault
-	 * @param faultdetail faultdetail element of SOAP fault
-	 * @see javax.xml.soap.SOAPFactory#createDetail
+	 * Constructor for SOAPFaultException
+	 * @param fault - SOAPFault representing the fault
+	 * @see javax.xml.soap.SOAPFactory#createFault
 	 */
-	public SOAPFaultException(javax.xml.namespace.QName faultcode,
-            java.lang.String faultstring,
-            java.lang.String faultactor,
-            javax.xml.soap.Detail faultdetail){
-		
-		super(faultstring);
-		
-		this.faultcode   = faultcode;
-		this.faultstring = faultstring;
-		this.faultactor  = faultactor;
-		this.detail      = faultdetail;
+	public SOAPFaultException(javax.xml.soap.SOAPFault fault){
+		soapFault = fault;
 	}
 	
 	/**
-	 * Method getFaultCode
-	 * Gets the faultcode element. The faultcode element provides an 
-	 * algorithmic mechanism for identifying the fault. SOAP defines a small 
-	 * set of SOAP fault codes covering basic SOAP faults.
-	 * 
-	 * @return QName of the faultcode element
+	 * Gets the embedded SOAPFault instance.
+	 * @return javax.xml.soap.SOAPFault SOAP fault element
 	 */
-	public javax.xml.namespace.QName getFaultCode() {
-		return faultcode;
+	public javax.xml.soap.SOAPFault getFault(){
+		return soapFault;
 	}
-	
-	/**
-	 * Method getFaultString
-	 * Gets the faultstring element. The faultstring provides a human-readable
-	 * description of the SOAP fault and is not intended for algorithmic 
-	 * processing.
-	 * 
-	 * @return faultstring element of the SOAP fault
-	 */
-	public java.lang.String getFaultString() {
-		return faultstring;
-	}
-	
-	/**
-	 * Method getFaultActor
-	 * Gets the faultactor element. The faultactor element provides 
-	 * information about which SOAP node on the SOAP message path caused the 
-	 * fault to happen. It indicates the source of the fault.
-	 * 
-	 * @return faultactor element of the SOAP fault
-	 */
-	public java.lang.String getFaultActor() {
-		return faultactor;
-	}
-	
-	/**
-	 * Method getDetail
-	 * Gets the detail element. The detail element is intended for carrying 
-	 * application specific error information related to the SOAP Body. 
-	 * 
-	 * @return detail element of the SOAP fault
-	 */
-	public Detail getDetail() {
-		return detail;
-	}
-	
-    /** Qualified name of the faultcode. */
-    private QName faultcode;
 
-    /** The faultstring element of the SOAP fault. */
-    private String faultstring;
-
-    /** Faultactor element of the SOAP fault. */
-    private String faultactor;
-    
-    /** Detail element of the SOAP fault. */
-    private Detail detail;
-
+	/**
+	 * embedded soap fault instance
+	 */
+	private javax.xml.soap.SOAPFault soapFault;
 }

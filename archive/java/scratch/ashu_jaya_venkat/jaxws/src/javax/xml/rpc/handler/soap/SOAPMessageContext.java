@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package javax.xml.rpc.handler.soap;
+package javax.xml.ws.handler.soap;
 
-import javax.xml.rpc.handler.MessageContext;
-import javax.xml.rpc.JAXRPCException;
+import javax.xml.ws.WebServiceException;
+import javax.xml.ws.handler.MessageContext;
 
 /**
  * public interface SOAPMessageContext
@@ -42,11 +42,11 @@ public interface SOAPMessageContext extends MessageContext {
 	/**
 	 * Sets the SOAPMessage in this message context
 	 * @param message - SOAP message
-	 * @throws JAXRPCException - If any error during the setting of the SOAPMessage in this message context
+	 * @throws WebServiceException - If any error during the setting of the SOAPMessage in this message context
 	 * @throws java.lang.UnsupportedOperationException - If this operation is not supported
 	 * 
 	 */
-	void setMessage(javax.xml.soap.SOAPMessage message) throws JAXRPCException, java.lang.UnsupportedOperationException;
+	void setMessage(javax.xml.soap.SOAPMessage message) throws WebServiceException, java.lang.UnsupportedOperationException;
 	
 	/**
 	 * Gets headers that have a particular qualified name from the message in the message context. Note that a SOAP message
@@ -57,20 +57,19 @@ public interface SOAPMessageContext extends MessageContext {
 	 * roles currently being played by this SOAP node, see getRoles.
 	 * @return An array of unmarshalled headers; returns an empty array if no message is present in this message context or no
 	 * headers match the supplied qualified name.
-	 * @throws JAXRPCException  - If an error occurs when using the supplied JAXBContext to unmarshall. The cause of the
+	 * @throws WebServiceException  - If an error occurs when using the supplied JAXBContext to unmarshall. The cause of the
 	 * JAXRPCException is the original JAXBException.
 	 */
 	java.lang.Object[] getHeaders(javax.xml.namespace.QName header,
 			javax.xml.bind.JAXBContext context,
-			boolean allRoles) throws JAXRPCException;
+			boolean allRoles) throws WebServiceException;
 	
 	/**
 	 * Gets the SOAP actor roles associated with an execution of the handler chain. Note that SOAP actor roles apply to the
 	 * SOAP node and are managed using SOAPBinding.setRoles and SOAPBinding.getRoles. Handler instances in the
 	 * handler chain use this information about the SOAP actor roles to process the SOAP header blocks. Note that the SOAP
 	 * actor roles are invariant during the processing of SOAP message through the handler chain.
-	 * @return Array of URIs for SOAP actor roles
-	 * @see  <code>SOAPBinding.setRoles(java.util.Set)</code> , <code>SOAPBinding.getRoles()</code>
+	 * @return Array of URIs for SOAP actor roles	 
 	 */
-	java.lang.String[] getRoles();
+	java.util.Set<java.net.URI> getRoles();
 }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package javax.xml.rpc;
+package javax.xml.ws;
 
 import java.util.concurrent.Future;
 
@@ -33,5 +33,5 @@ public interface Response<T> extends Future<T> {
 	 * @return The contained response context. May be null if a response is 
 	 * not yet available.
 	 */
-	JAXRPCContext getContext();
+	java.util.Map<java.lang.String,java.lang.Object> getContext();
 }

@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package javax.xml.rpc;
+package javax.xml.ws;
 
 import java.util.List;
-import javax.xml.rpc.handler.HandlerInfo;
-import javax.xml.rpc.security.SecurityConfiguration;
+import javax.xml.ws.handler.Handler;
+import javax.xml.ws.security.SecurityConfiguration;
 
 /**
  * @author sunja07
@@ -32,21 +32,21 @@ public interface Binding {
 	 * 
 	 * @return java.util.List Handler chain
 	 */
-	List<HandlerInfo> getHandlerChain();
+	List<Handler> getHandlerChain();
 	
 	/**
 	 * Method setHandlerChain
 	 * Sets the handler chain for the protocol binding instance.
 	 * 
 	 * @param chain - A List of handler configuration entries
-	 * @throws JAXRPCException - On an error in the configuration of the 
+	 * @throws WebServiceException - On an error in the configuration of the 
 	 * handler chain 
 	 java.lang.UnsupportedOperationException - If this operation is not 
 	 supported. This may be done to avoid any overriding of a pre-configured 
 	 handler chain.
 	 */
-	void setHandlerChain(java.util.List<HandlerInfo> chain) throws 
-	JAXRPCException;
+	void setHandlerChain(java.util.List<Handler> chain) throws 
+	WebServiceException, UnsupportedOperationException;
 	
 	/**
 	 * Method getSecurityConfiguration

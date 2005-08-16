@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package javax.xml.rpc.handler;
+package javax.xml.ws.handler;
 
-import javax.xml.rpc.LogicalMessage;
+import javax.xml.ws.LogicalMessage;
 
 /**
  * public interface LogicalMessageContext
@@ -24,7 +24,7 @@ import javax.xml.rpc.LogicalMessage;
  * <p>
  * The LogicalMessageContext interface extends MessageContext to provide access to a the contained message as a
  * protocol neutral LogicalMessage
- * @version 1.0
+ * @since JAX-WS 2.0
  * @author shaas02
  *
  */

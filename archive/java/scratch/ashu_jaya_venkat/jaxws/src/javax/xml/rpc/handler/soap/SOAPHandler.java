@@ -1,22 +1,21 @@
-package javax.xml.rpc.handler.soap;
+package javax.xml.ws.handler.soap;
 
-import javax.xml.rpc.handler.AbstractHandler;
+import javax.xml.ws.handler.Handler;
 
 /**
- * public interface SOAPHandler<C extends SOAPMessageContext>
- * extends AbstractHandler<C>
+ * public interface SOAPHandler<T extends SOAPMessageContext>
+ * extends Handler<T>
  * <p>
- * The javax.xml.rpc.handler.SOAPHandler extends AbstractHandler to provide 
- * typesafety for the message context parameter and add a method to obtain 
- * access to the headers that may be processed by the handler.
+ * The SOAPHandler class extends Handler  to provide typesafety for the message context parameter and add a method to obtain 
+ *  access to the headers that may be processed by the handler.
  * 
- * @version 1.0
+ * @since JAX-WS 2.0
  * @author shaas02
  *
- * @param <C>
+ * @param <T>
  */
-public interface SOAPHandler<C extends SOAPMessageContext>
-				extends AbstractHandler<C> {
+public interface SOAPHandler<T extends SOAPMessageContext>
+				extends Handler<T> {
 	
 	/**
 	 * Gets the header blocks that can be processed by this Handler instance.
