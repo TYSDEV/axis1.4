@@ -20,15 +20,15 @@ import java.io.Serializable;
 
 /**
  * Class ProtocolException
- * The javax.xml.rpc.ProtocolException interface is a marker base class for 
+ * The javax.xml.ws.ProtocolException interface is a marker base class for 
  * exceptions related to a specific protocol binding. Subclasses are used to 
  * communicate protocol level fault information to clients and may be used on 
  * the server to control the protocol specific fault representation.
  * 
- * @version 1.0
+ * @since JAX-WS 2.0
  * @author sunja07
  */
-public class ProtocolException extends RuntimeException implements 
+public class ProtocolException extends WebServiceException implements 
 Serializable {
 
 	/**

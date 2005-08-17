@@ -29,13 +29,13 @@ public @interface MessageSecurity {
 	 * messages.
 	 * default = "javax.xml.ws.security.default"
 	 */
-	public abstract java.lang.String inboundSecurityConfigId();
+	public abstract java.lang.String inboundSecurityConfigId() default "javax.xml.ws.security.default";
 	
 	/**
 	 * Logical identifier of the configuration entry that describes how to fulfil the requested security features for outbound
 	 * messages.
 	 * default = "javax.xml.ws.security.default"
 	 */
-	public abstract java.lang.String outboundSecurityConfigId();
+	public abstract java.lang.String outboundSecurityConfigId() default "javax.xml.ws.security.default";
 
 }
