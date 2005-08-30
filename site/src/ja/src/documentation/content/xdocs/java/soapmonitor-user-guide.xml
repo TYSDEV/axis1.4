@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="Shift_JIS"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.2//EN" "./dtd/document-v12.dtd">
+<document>
+  <header>
+    <title>WebServices - Axis</title>
+  </header>
+  <body>
+
+<a name="SOAPMonitorUsersGuide"/>
+<section>
+<title>SOAPMonitor ユーザガイド</title>
+
+<p><i>バージョン 1.0</i><br/>
+  <i>フィードバック:</i> <a href="mailto:axis-dev@ws.apache.org">axis-dev@ws.apache.org</a></p>
+
+<p>内容</p>
+<ul>
+  <li><a href="#Introduction">はじめに</a></li>
+  <ul>
+    <li><a href="#WhatIsSOAPMonitor">SOAPMonitor とは</a></li>
+    <li><a href="#WhenShouldIUseIt">いつ SOAPMonitor を利用するのか</a></li>
+  </ul>
+  <li><a href="#Usage">利用方法</a></li>
+  <ul>
+    <li><a href="#Preparation">準備</a></li>
+    <li><a href="#HowToUseIt">どのように SOAPMonitor を利用するのか</a></li>
+  </ul>
+  <li><a href="#Appendixes">付録</a></li>
+  <ul>
+    <li><a href="#VersionComparisonChart">バージョン比較チャート</a></li>
+    <li><a href="#ErrorMessages">エラーメッセージ</a></li>
+  </ul>
+</ul>
+
+<a name="Introduction"/>
+<section>
+<title>はじめに</title>
+
+<p>Webサービス開発者はしばしば、Webサービスを呼び出すために利用される SOAP メッセージと、それらのメッセージの結果を調べる必要性がでてきます。SOAP Monitor ユーティリティの目標は、特別な設定やサーバの再起動なしに、利用されている SOAP メッセージを監視する方法を、これらの開発者に提供することです。</p>
+
+<a name="WhatIsSOAPMonitor"/>
+<section>
+<title>SOAPMonitor とは</title>
+
+<p>SOAPMonitor は、org.apache.axis.utils パッケージにあるユーティリティです。Webサービス開発者に上記で説明した監視機能を提供します。</p>
+
+</section>
+
+<a name="WhenShouldIUseIt"/>
+<section>
+<title>いつ SOAPMonitor を利用するのか</title>
+<p>デバッグのために SOAP メッセージを監視したい時が、このユーティリティを利用する良い機会でしょう。追加的な開発、特別な設定、アプリケーションサーバの再起動なしに、監視したい全ての SOAP メッセージを監視することができます。</p>
+<p><b>SOAPMonitor は、HTTP プロトコルヘッダのようなプロトコル特有のデータを一切表示しないことに注意してください。これを行うには TCP Monitor (tcpmon) を利用すべきです。tcpmon の詳細については <a href="user-guide.html">Axis ユーザガイド</a>をご覧下さい。</b>.</p>
+
+</section>
+
+</section>
+
+<a name="Usage"/>
+<section>
+<title>利用方法</title>
+
+<a name="Preparation"/>
+<section>
+<title>準備</title>
+
+<ul>
+  <li><b>ステップ 1:</b> 管理者アカウントを作成する
+    <p>"webapps/axis/WEB-INF/users.lst" を開いて編集します。<br/>
+      管理者のデフォルトのアカウントは "admin" です。パスワードは好きなものを設定してください。</p>
+    <p>例) 以下の通りです。 - 例えば、"admin password" です。</p>
+    <source>user1 pass1
+user2
+user3 pass3
+admin password</source>
+  </li>
+
+  <li><b>ステップ 2:</b> CLASSPATH を設定する
+    <p>このユーティリティを実行する前に、CLASSPATH に以下のものが含まれていることを確かめる必要があります。</p>
+    <ul>
+      <li>axis.jar</li>
+      <li>jaxrpc.jar</li>
+      <li>saaj.jar</li>
+      <li>commons-logging.jar</li>
+      <li>commons-discovery.jar</li>
+      <li>activation.jar</li>
+      <li>mail.jar</li>
+      <li>Xerces や Crimson のような JAXP-1.1 準拠の XML パーサ</li>
+    </ul>
+  </li>
+  
+  <li><b>これで終わりです。</b></li>
+</ul>
+
+</section>
+
+<a name="HowToUseIt"/>
+<section>
+<title>どのように SOAPMonitor を利用するのか</title>
+
+<ul>
+  <li><b>ステップ 0:</b> <a href="#prepare">準備段階</a>が完了したことを確かめてください</li>
+
+  <li><b>ステップ 1:</b> SOAPMonitor アプリケーションを起動します
+    <p><code>% java org.apache.axis.utils.SOAPMonitor [-u admin] [-w password] [-l axisURL]</code></p>
+    <p>または</p>
+    <p><code>% javaw org.apache.axis.utils.SOAPMonitor [-u admin] [-w password] [-l axisURL]</code></p>
+  </li>
+
+  <li><b>ステップ 2:</b> ログインします
+    <p>管理者として指定したアカウントでログインしてください。</p>
+    <p><img src="images/LoginDialog.jpg"/></p>
+  </li>
+
+  <li><b>ステップ 3:</b> しばらくお待ちください
+    <p><img src="images/DataLoading.jpg" width="400"/></p>
+  </li>
+
+  <li><b>ステップ 4:</b> 管理者画面が表示されます
+    <p><img src="images/InitialScreen.jpg"/></p>
+  </li>
+
+  <li><b>ステップ 5-a:</b> 監視を有効にするには
+    <p>監視を有効にするサービスをクリックし、"Turn On" ボタンを押します。</p>
+    <p><img src="images/ToEnableMonitoring.jpg"/></p>
+    <p>以下の画面が表示されるはずです。</p>
+    <p><img src="images/AfterTurnOn.jpg"/></p>
+  </li>
+
+  <li><b>ステップ 5-b:</b> 監視を無効にするには
+    <p>監視を無効にするサービスをクリックし、"Turn Off" ボタンを押します。</p>
+    <p><img src="images/ToDisableMonitoring.jpg"/></p>
+    <p>以下の画面が表示されるはずです。</p>
+    <p><img src="images/AfterTurnOff.jpg"/></p>
+  </li>
+
+  <li><b>ステップ 6:</b> 変更を保存する
+    <p>現在の状態を保存するには "Save changes" ボタンを押します。</p>
+    <p>以下の画面が表示されるはずです。</p>
+    <p><img src="images/DeployStatus.jpg"/></p>
+  </li>
+
+  <li><b>ステップ 7:</b> 監視する
+    <p>現在の設定で監視を開始するには "Monitoring" タブを押します。</p>
+    <p>以下の画面が表示されるはずです。</p>
+    <p><img src="images/MonitoringScreen.jpg"/></p>
+  </li>
+</ul>
+
+</section>
+
+</section>
+
+<a name="Appendixes"/>
+<section>
+<title>付録</title>
+
+<a name="VersionComparisonChart"/>
+<section>
+<title>バージョン比較チャート</title>
+
+<table>
+  <tr>
+    <th>項目</th>
+    <th>SOAPMonitorApplet(古いバージョン)</th>
+    <th>SOAPMonitor(<a href="http://cvs.apache.org/viewcvs.cgi/ws-axis/java/src/org/apache/axis/utils/SOAPMonitor.java?view=markup">このバージョン</a>)</th>
+  </tr>
+  <tr>
+    <td>アプリケーション形式</td>
+    <td>アプレット</td>
+    <td>Swing アプリケーション</td>
+  </tr>
+  <tr>
+    <td>セキュリティ</td>
+    <td>N/A (認証なし)</td>
+    <td>OK (認証が追加されました)</td>
+  </tr>
+  <tr>
+    <td>インストール &amp; 利用</td>
+    <td>
+      <ol>
+        <li>まず最初にコンポーネントをコンパイルします。</li>
+        <li>soapmonitor ハンドラを "server-config.wsdd" にデプロイします。</li>
+        <li>soapmonitor ハンドラで監視するサービスをデプロイします。</li>
+        <li>"http://localhost:8080/axis/SOAPMonitor" にアクセスします。</li>
+        <li>監視を無効にするには soapmonitor なしでサービスを再デプロイします。</li>
+      </ol>
+      <ul>
+        <li>詳細については<a href="http://www.sosnoski.com/presents/java-xml/axis/axis-monitor.html">こちら</a>をご覧下さい。</li>
+        <li>全てのステップは非 GUI に基づいた操作で、これらのプロセスはユーザにとって複雑です。</li>
+      </ul>
+    </td>
+    <td>(axis.jar 内で) "java org.apache.axis.utils.SOAPMonitor" を実行するだけです。
+       <ul>
+         <li>全てのステップは GUI に基づいた操作です。</li>
+       </ul>
+    </td>
+  </tr>
+</table>
+
+</section>
+
+<a name="ErrorMessages"/>
+<section>
+<title>エラーメッセージ</title>
+
+<p>アクセス拒否の場合、以下の画面が出るでしょう。</p>
+
+<ul>
+  <li><b>"未知のホスト" の場合:</b>
+    <p><img src="images/UnknownHost.jpg"/></p>
+  </li>
+  <li><b>"ポート不一致" の場合:</b>
+    <p><img src="images/ConnectionRefused.jpg"/></p>
+  </li>
+  <li><b>"認証失敗" の場合:</b>
+    <p><img src="images/Unauthorized.jpg"/></p>
+  </li>
+</ul>
+
+</section>
+
+</section>
+
+</section>
+
+  </body>
+</document>

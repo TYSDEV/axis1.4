@@ -1,0 +1,218 @@
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html">
+  <title>Axis C++ 1.5 Final is Available!</title>
+</head>
+
+<body>
+<h1>Axis C++ 1.5 Final </h1>
+
+<p><a href="download.html">Download Axis C++</a></p>
+<br>
+
+<p>
+<h1>Key features of Axis C++ 1.5 Final </h1> </p>
+
+
+<p><b>New client side transport</b> <br> 
+This is called Axis3 transport.This is a cleaner and extensible Transport compared to  Axis2Transport.
+ <br> <br> <br> 
+WSDL tool fixes to handle nil types. <br> <br>
+Supports Broader XSD types.<br> <br>
+Supports Broader XSD Any types <br> <br>
+Comprehensive test framework which includes client & server side.<br> <br>
+</p>
+
+<h1>The Bug Fixes </h1>
+<p>
+
+AXISCPP-605 <br>
+AXISCPP-602<br>
+AXISCPP-600<br>
+AXISCPP-596<br>
+AXISCPP-594<br>
+AXISCPP-593<br>
+AXISCPP-592<br>
+AXISCPP-591<br>
+AXISCPP-590<br>
+AXISCPP-589<br>
+AXISCPP-587<br>
+AXISCPP-586<br>
+AXISCPP-585<br>
+AXISCPP-584<br>
+AXISCPP-583<br>
+AXISCPP-582<br>
+AXISCPP-581<br>
+AXISCPP-579<br>
+AXISCPP-576<br>
+AXISCPP-575<br>
+AXISCPP-569<br>
+AXISCPP-568<br>
+AXISCPP-567<br>
+AXISCPP-566<br>
+AXISCPP-564<br>
+AXISCPP-562<br>
+AXISCPP-561<br>
+AXISCPP-560<br>
+AXISCPP-556<br>
+AXISCPP-555<br>
+AXISCPP-553<br>
+AXISCPP-550<br>
+AXISCPP-549<br>
+AXISCPP-545<br>
+AXISCPP-534<br>
+AXISCPP-532<br>
+AXISCPP-531<br>
+AXISCPP-530<br>
+AXISCPP-528<br>
+AXISCPP-525<br>
+AXISCPP-524<br>
+AXISCPP-523<br>
+AXISCPP-521<br>
+AXISCPP-520<br>
+AXISCPP-518<br>
+AXISCPP-517<br>
+AXISCPP-516<br>
+AXISCPP-514<br>
+AXISCPP-513<br>
+AXISCPP-511<br>
+AXISCPP-510<br>
+AXISCPP-509<br>
+AXISCPP-508<br>
+AXISCPP-507<br>
+AXISCPP-504<br>
+AXISCPP-503<br>
+AXISCPP-502<br>
+AXISCPP-501<br>
+AXISCPP-500<br>
+AXISCPP-499<br>
+AXISCPP-498<br>
+AXISCPP-497<br>
+AXISCPP-496<br>
+AXISCPP-495<br>
+AXISCPP-494<br>
+AXISCPP-493<br>
+AXISCPP-492<br>
+AXISCPP-491<br>
+AXISCPP-490<br>
+AXISCPP-489<br>
+AXISCPP-488<br>
+AXISCPP-487<br>
+AXISCPP-486<br>
+AXISCPP-485<br>
+AXISCPP-484<br>
+AXISCPP-483<br>
+AXISCPP-482<br>
+AXISCPP-481<br>
+AXISCPP-480<br>
+AXISCPP-479<br>
+AXISCPP-478<br>
+AXISCPP-477<br>
+AXISCPP-475<br>
+AXISCPP-474<br>
+AXISCPP-472<br>
+AXISCPP-470<br>
+AXISCPP-469<br>
+AXISCPP-468<br>
+AXISCPP-466<br>
+AXISCPP-465<br>
+AXISCPP-464<br>
+AXISCPP-463<br>
+AXISCPP-462<br>
+AXISCPP-459<br>
+AXISCPP-457<br>
+AXISCPP-456<br>
+AXISCPP-454<br>
+AXISCPP-453<br>
+AXISCPP-451<br>
+AXISCPP-450<br>
+AXISCPP-447<br>
+AXISCPP-446<br>
+AXISCPP-444<br>
+AXISCPP-443<br>
+AXISCPP-442<br>
+AXISCPP-441<br>
+AXISCPP-437<br>
+AXISCPP-436<br>
+AXISCPP-433<br>
+AXISCPP-431<br>
+AXISCPP-430<br>
+AXISCPP-428<br>
+AXISCPP-425<br>
+AXISCPP-420<br>
+AXISCPP-419<br>
+AXISCPP-418<br>
+AXISCPP-417<br>
+AXISCPP-415<br>
+AXISCPP-414<br>
+AXISCPP-413<br>
+AXISCPP-410<br>
+AXISCPP-409<br>
+AXISCPP-408<br>
+AXISCPP-407<br>
+AXISCPP-403<br>
+AXISCPP-400<br>
+AXISCPP-398<br>
+AXISCPP-392<br>
+AXISCPP-390<br>
+AXISCPP-389<br>
+AXISCPP-385<br>
+AXISCPP-383<br>
+AXISCPP-376<br>
+AXISCPP-375<br>
+AXISCPP-371<br>
+AXISCPP-364<br>
+AXISCPP-355<br>
+AXISCPP-348<br>
+AXISCPP-346<br>
+AXISCPP-344<br>
+AXISCPP-341<br>
+AXISCPP-340<br>
+AXISCPP-335<br>
+AXISCPP-331<br>
+AXISCPP-310<br>
+AXISCPP-306<br>
+AXISCPP-305<br>
+AXISCPP-303<br>
+AXISCPP-300<br>
+AXISCPP-293<br>
+AXISCPP-288<br>
+AXISCPP-270<br>
+AXISCPP-268<br>
+AXISCPP-242<br>
+AXISCPP-216<br>
+AXISCPP-207<br>
+AXISCPP-164<br>
+</p>
+
+<h1>Known Issues</h1>
+<p>GNU make based build system is not working.<br> <br>
+Out of the two parsers Expat and Xerces, only Xerces is supported. <br> <br>
+ C support is not complete.<br> <br>
+ There are no vc projects for samples <br> <br>
+ Pending bugs in Jira.<br> <br>  
+
+</p>
+
+
+
+
+<br>
+ <p>We hope you will enjoy using Axis C++. <br> <br>
+ Numerous efforts are currently underway to improve Axis C++ as a whole. Please have a look at the <a href="http://wiki.apache.org/ws/FrontPage/AxisC_2b_2b">TODO page </a> to learn about 1.5 plans for Axis C++. <br> <br>
+We value your feed back very much. </p> <br> 
+<p>Please report any bugs in <a href="http://issues.apache.org/jira/secure/Dashboard.jspa">Jira</a> and feel free to let us know your thoughts and/or problems in <a href="mailto:axis-c-user@ws.apache.org">axis-c-user@ws.apache.org</a> <br> <br>
+We welcome you to contribute to Axis C++ and  please join the  discussions in <a href="mailto:axis-c-dev@ws.apache.org">axis-c-dev@ws.apache.org</a>
+</p>
+
+
+
+
+
+
+
+
+</body>
+</html>
+
+

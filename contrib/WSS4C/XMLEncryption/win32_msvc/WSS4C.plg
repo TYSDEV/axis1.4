@@ -1,0 +1,59 @@
+<html>
+<body>
+<pre>
+<h1>Build Log</h1>
+<h3>
+--------------------Configuration: WSS4C - Win32 Debug--------------------
+</h3>
+<h3>Command Lines</h3>
+Creating temporary file "G:\Sierra\Temp\RSP225.tmp" with contents
+[
+/nologo /MLd /W3 /Gm /GX /ZI /Od /I "../" /I "../include" /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /Fp"Debug/WSS4C.pch" /YX /Fo"Debug/" /Fd"Debug/" /FD /GZ /c 
+"G:\CodeWarrior\WSS\WssMav\wss4c\SOAP11Constants.cpp"
+"G:\CodeWarrior\WSS\WssMav\wss4c\SOAP12Constants.cpp"
+"G:\CodeWarrior\WSS\WssMav\wss4c\SOAPConstants.cpp"
+"G:\CodeWarrior\WSS\WssMav\wss4c\message\WSBaseMessage.cpp"
+"G:\CodeWarrior\WSS\WssMav\wss4c\message\WSEncryptBody.cpp"
+"G:\CodeWarrior\WSS\WssMav\wss4c\WSEncryptionPart.cpp"
+"G:\CodeWarrior\WSS\WssMav\wss4c\WSSConfig.cpp"
+"G:\CodeWarrior\WSS\WssMav\wss4c\util\WSSecurityUtil.cpp"
+"G:\CodeWarrior\WSS\WssMav\wss4c\wssenc.cpp"
+"G:\CodeWarrior\WSS\WssMav\wss4c\wss4c_utils\WssString.cpp"
+]
+Creating command line "cl.exe @G:\Sierra\Temp\RSP225.tmp" 
+Creating temporary file "G:\Sierra\Temp\RSP226.tmp" with contents
+[
+/nologo /out:"../bin/WSS4C_D.lib" 
+.\Debug\SOAP11Constants.obj
+.\Debug\SOAP12Constants.obj
+.\Debug\SOAPConstants.obj
+.\Debug\WSBaseMessage.obj
+.\Debug\WSEncryptBody.obj
+.\Debug\WSEncryptionPart.obj
+.\Debug\WSSConfig.obj
+.\Debug\WSSecurityUtil.obj
+.\Debug\wssenc.obj
+.\Debug\WssString.obj
+]
+Creating command line "link.exe -lib @G:\Sierra\Temp\RSP226.tmp"
+<h3>Output Window</h3>
+Compiling...
+SOAP11Constants.cpp
+SOAP12Constants.cpp
+SOAPConstants.cpp
+WSBaseMessage.cpp
+WSEncryptBody.cpp
+WSEncryptionPart.cpp
+WSSConfig.cpp
+WSSecurityUtil.cpp
+wssenc.cpp
+WssString.cpp
+Creating library...
+
+
+
+<h3>Results</h3>
+WSS4C_D.lib - 0 error(s), 0 warning(s)
+</pre>
+</body>
+</html>

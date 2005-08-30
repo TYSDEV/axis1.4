@@ -1,0 +1,1163 @@
+<?xml version="1.0" encoding="Shift_JIS"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.2//EN" "./dtd/document-v12.dtd">
+<document>
+  <header>
+    <title>WebServices - Axis</title>
+  </header>
+  <body>
+
+<a name="Requirements"/>
+<section>
+<title>要件</title>
+
+<p>このページの下の方に<a href="#Non-requirementsWontBeSupported">要件ではないもの</a>節があります。<br/> 
+<a href="#ReleasesAndTestCycles">リリースサイクル</a>はこのページの下の方で説明されています。</p>
+
+<table border="3" cellspacing="0" cellpadding="3" width="700">
+<tbody>
+<tr>
+  <th>項番</th>
+  <th>詳細 [優先順位]</th>
+  <th></th>
+  <td><b>状況</b> - 対応者</td>
+  <th>a1</th>
+  <th>a2</th>
+  <th>beta/<br/>3.0</th>
+  <th>それ以降</th>
+</tr>
+<tr>
+  <th></th>
+  <th colspan="7">XML プロトコル準拠</th>
+</tr>
+<tr>
+  <td>10</td>
+  <td>私達は XP プロトコルが進化するごとにそれを熱心に追跡し、準備が整ったらサポートします。</td>
+  <td></td>
+  <td>非適用</td>
+  <td></td>
+  <td></td>
+  <td>?</td>
+  <td>?</td>
+</tr>
+<tr>
+  <th></th>
+  <th colspan="7">エラーハンドリングとフォルトハンドリング</th>
+</tr>
+<tr>
+  <td>20</td>
+  <td>SOAP フォルトへの拡張可能な Java 例外マッピングの仕様を定める</td>
+  <td></td>
+  <td>?</td>
+  <td></td>
+  <td>X</td>
+  <td>X</td>
+  <td></td>
+</tr>
+<tr>
+  <td>21</td>
+  <td>Java 例外への拡張可能な SOAP フォルトマッピングの仕様を定める</td>
+  <td></td>
+  <td>?</td>
+  <td></td>
+  <td>X</td>
+  <td>X</td>
+  <td></td>
+</tr>
+<tr>
+  <th></th>
+  <th colspan="7">サービスと操作の識別</th>
+</tr>
+<tr>
+  <td>30</td>
+  <td>トランスポート URL によるディスパッチ</td>
+  <td></td>
+  <td>完了</td>
+  <td></td>
+  <td>X</td>
+  <td>X</td>
+  <td></td>
+</tr>
+<tr>
+  <td>31</td>
+  <td>SOAPAction によるディスパッチ</td>
+  <td></td>
+  <td>完了</td>
+  <td></td>
+  <td>X</td>
+  <td>X</td>
+  <td></td>
+</tr>
+<tr>
+  <td>32</td>
+  <td>最初のボディ項目の QName によるディスパッチ</td>
+  <td></td>
+  <td>完了</td>
+  <td></td>
+  <td></td>
+  <td>X</td>
+  <td></td>
+</tr>
+<tr>
+  <td>33</td>
+  <td><i>(手に入れられるいかなる情報も使用するための)</i>カスタマハンドラによるディスパッチ</td>
+  <td></td>
+  <td>完了 (すでに行えます)</td>
+  <td></td>
+  <td>X</td>
+  <td>X</td>
+  <td></td>
+</tr>
+<tr>
+  <th></th>
+  <th colspan="7">クライアント API レベルでのメッセージ交換パターンのサポート</th>
+</tr>
+<tr>
+  <td></td>
+  <td colspan="7"><i>動機: 私達は以下のメッセージ交換パターンが、一般的に使用され、実装する価値がある (例えば WSDL が使用します) と信じています。</i></td>
+</tr>
+<tr>
+  <td>40</td>
+  <td>同期的なリクエスト/レスポンス</td>
+  <td></td>
+  <td>完了</td>
+  <td>X</td>
+  <td>X</td>
+  <td>X</td>
+  <td></td>
+</tr>
+<tr>
+  <td>41</td>
+  <td>一方向メッセージング</td>
+  <td></td>
+  <td><b>未実装</b> - ?</td>
+  <td>X</td>
+  <td>X</td>
+  <td>X</td>
+  <td></td>
+</tr>
+<tr>
+  <td>42</td>
+  <td>[??] 非同期リクエスト/レスポンス (ノンブロッキング)<i>(クエッションマークは、これを提供するかどうかわからないことを意味しています</i></td>
+  <td></td>
+  <td><b>未実装 -</b> ?</td>
+  <td></td>
+  <td></td>
+  <td></td>
+  <td></td>
+</tr>
+<tr>
+  <th></th>
+  <th colspan="7">SOAP 1.1 準拠</th>
+</tr>
+<tr>
+  <td>50</td>
+  <td>SOAP 1.1 の全ての特徴は Apache SOAP 2.x でサポートされています</td>
+  <td></td>
+  <td>何が足りない?<br/>(actor, full sec-5)</td>
+  <td></td>
+  <td></td>
+  <td>X</td>
+  <td></td>
+</tr>
+<tr>
+  <td>51</td>
+  <td>中継のサポート</td>
+  <td></td>
+  <td><b>未実装</b> - RobJ</td>
+  <td></td>
+  <td></td>
+  <td>?</td>
+  <td>?</td>
+</tr>
+<tr>
+  <td>52</td>
+  <td>リクエスタとプロバイダの間に中継 (ホスト) を置いた際に、透明性を提供する必要があります (プロキシサーバの生成)</td>
+  <td></td>
+  <td><b>未実装</b> - RobJ</td>
+  <td></td>
+  <td></td>
+  <td>?</td>
+  <td>?</td>
+</tr>
+<tr>
+  <td>53</td>
+  <td>SOAP 概念の mustUnderstand ヘッダのサポート</td>
+  <td></td>
+  <td>完了</td>
+  <td></td>
+  <td>X</td>
+  <td>X</td>
+  <td></td>
+</tr>
+<tr>
+  <td>54</td>
+  <td>SOAP アクターヘッダ属性のサポート</td>
+  <td></td>
+  <td><b>未実装 - Glen</b></td>
+  <td></td>
+  <td>X</td>
+  <td>X</td>
+  <td></td>
+</tr>
+<tr>
+  <th></th>
+  <th colspan="7">パフォーマンス</th>
+</tr>
+<tr>
+  <td>60</td>
+  <td>アーキテクチャは、全てのメッセージが同時期にメモリにあることを必要としてはならない</td>
+  <td></td>
+  <td>1.0 では行いません。1.0 のパースに追加しません。アーキテクチャは依然としてこれを許可します。後ほど対応します。</td>
+  <td>X</td>
+  <td>X</td>
+  <td>X</td>
+  <td></td>
+</tr>
+<tr>
+  <td>61</td>
+  <td>拡張性</td>
+  <td></td>
+  <td>? - Sam</td>
+  <td></td>
+  <td></td>
+  <td>X</td>
+  <td></td>
+</tr>
+<tr>
+  <td>62</td>
+  <td>Apache SOAP 2.x より速い</td>
+  <td></td>
+  <td>完了!</td>
+  <td></td>
+  <td></td>
+  <td>X</td>
+  <td></td>
+</tr>
+<tr>
+  <td>63</td>
+  <td>他の類似の実装よりも著しく遅いということはないようにするべき</td>
+  <td></td>
+  <td>完了?</td>
+  <td></td>
+  <td></td>
+  <td>X</td>
+  <td></td>
+</tr>
+<tr>
+  <th></th>
+  <th colspan="7">管理とモニタリング</th>
+</tr>
+<tr>
+  <td>70</td>
+  <td>ロギング API</td>
+  <td></td>
+  <td><b>未実装 (全て)</b></td>
+  <td>X</td>
+  <td>X</td>
+  <td>X</td>
+  <td></td>
+</tr>
+<tr>
+  <td>71</td>
+  <td>Metrics API</td>
+  <td></td>
+  <td><b>未実装</b> - ?</td>
+  <td></td>
+  <td></td>
+  <td>X</td>
+  <td></td>
+</tr>
+<tr>
+  <td>72</td>
+  <td>Management (JMX) API</td>
+  <td></td>
+  <td><b>非適用?</b></td>
+  <td></td>
+  <td></td>
+  <td>?</td>
+  <td>?</td>
+</tr>
+<tr>
+  <td>73</td>
+  <td>実行時(アン)デプロイ API</td>
+  <td></td>
+  <td><b>未実装</b> - ?</td>
+  <td></td>
+  <td></td>
+  <td>X</td>
+  <td></td>
+</tr>
+<tr>
+  <th></th>
+  <th colspan="7">デプロイ</th>
+</tr>
+<tr>
+  <td>80</td>
+  <td>エンジン、コンポーネント、サービスの全てのインストールとデプロイは単純にすべき</td>
+  <td></td>
+  <td>完了! (他に何が必要ですか?)</td>
+  <td></td>
+  <td></td>
+  <td>X</td>
+  <td></td>
+</tr>
+<tr>
+  <td>81</td>
+  <td>実行ファイルとディスクリプションファイルに関連するWebサービスアーカイブフォーマットをサポートする</td>
+  <td></td>
+  <td>未実装 (JWS も含めますか?) - ?</td>
+  <td></td>
+  <td></td>
+  <td>X</td>
+  <td></td>
+</tr>
+<tr>
+  <td>82</td>
+  <td>.asmx のようなドロップインサービスデプロイのサポート</td>
+  <td></td>
+  <td>完了 - これが JWS です</td>
+  <td></td>
+  <td></td>
+  <td>?</td>
+  <td>?</td>
+</tr>
+<tr>
+  <td>83</td>
+  <td>SOAP を介してクライアントが通信するには単一で極小の .jar ファイルで十分でしょう</td>
+  <td></td>
+  <td><b>未実装</b> - これをビルドする最良の方法は何ですか?</td>
+  <td>X</td>
+  <td>X</td>
+  <td>X</td>
+  <td></td>
+</tr>
+<tr>
+  <td>84</td>
+  <td>クライアントとサーバの両方がデフォルトでパッケージ化されているのが、健全で、安全で、すぐに使えるでしょう</td>
+  <td></td>
+  <td><b>未実装</b> すぐに実装します!</td>
+  <td></td>
+  <td></td>
+  <td>X</td>
+  <td></td>
+</tr>
+<tr>
+  <td>85</td>
+  <td>中継 (ホスト) の設定は簡単にすべき</td>
+  <td></td>
+  <td><b>未実装</b> - RobJ</td>
+  <td></td>
+  <td></td>
+  <td>?</td>
+  <td>?</td>
+</tr>
+<tr>
+  <td>86</td>
+  <td>WSDD 実装</td>
+  <td></td>
+  <td><b>未実装</b> - Carl W / Glen</td>
+  <td></td>
+  <td></td>
+  <td>?</td>
+  <td></td>
+</tr>
+<tr>
+  <th></th>
+  <th colspan="7">プロバイダ</th>
+</tr>
+<tr>
+  <td>90</td>
+  <td>プラグ可能なプロバイダ API</td>
+  <td></td>
+  <td><b>完了? (ハンドラ API)</b></td>
+  <td>X</td>
+  <td>X</td>
+  <td>X</td>
+  <td></td>
+</tr>
+<tr>
+  <td>91</td>
+  <td>Java プロバイダ</td>
+  <td></td>
+  <td>完了?</td>
+  <td>X</td>
+  <td>X</td>
+  <td>X</td>
+  <td></td>
+</tr>
+<tr>
+  <td>92</td>
+  <td>BSF プロバイダ</td>
+  <td></td>
+  <td><b>未実装 -</b>?</td>
+  <td></td>
+  <td></td>
+  <td>X</td>
+  <td></td>
+</tr>
+<tr>
+  <td>93</td>
+  <td>EJB プロバイダ</td>
+  <td></td>
+  <td><b>未実装 -</b> ?</td>
+  <td></td>
+  <td></td>
+  <td>?</td>
+  <td>?</td>
+</tr>
+<tr>
+  <td>94</td>
+  <td>COM プロバイダ</td>
+  <td></td>
+  <td><b>未実装</b> - ?</td>
+  <td></td>
+  <td></td>
+  <td>?</td>
+  <td>?</td>
+</tr>
+<tr>
+  <td>95 新</td>
+  <td>アプリケーションサーバプロバイダ / 接続性レイヤ <b>[高]</b></td>
+  <td></td>
+  <td><b>未実装</b> - Glen?</td>
+  <td></td>
+  <td></td>
+  <td>X</td>
+  <td></td>
+</tr>
+<tr>
+  <th></th>
+  <th colspan="7">プラグ可能 XML プロトコルサポート</th>
+</tr>
+<tr>
+  <td>100</td>
+  <td>SOAP 1.1</td>
+  <td></td>
+  <td>完了</td>
+  <td>X</td>
+  <td>X</td>
+  <td>X</td>
+  <td></td>
+</tr>
+<tr>
+  <td>101</td>
+  <td>SOAP 1.2</td>
+  <td></td>
+  <td><b>一部 -</b> 未だにエンベロープバージョニングや名前空間を行いません</td>
+  <td></td>
+  <td></td>
+  <td>?</td>
+  <td>?</td>
+</tr>
+<tr>
+  <td>102</td>
+  <td>一般的なクラスを SOAPWhateverDoer と名付けてはいけません</td>
+  <td></td>
+  <td>完了</td>
+  <td>X</td>
+  <td>X</td>
+  <td>X</td>
+  <td></td>
+</tr>
+<tr>
+  <td>103</td>
+  <td>複数メッセージプロトコルの同時サポート</td>
+  <td></td>
+  <td>未実装</td>
+  <td></td>
+  <td></td>
+  <td></td>
+  <td>X</td>
+</tr>
+<tr>
+  <th></th>
+  <th colspan="7">メッセージ処理</th>
+</tr>
+<tr>
+  <td>110</td>
+  <td>メッセージハンドラ (の拡張、アプリケーション) がメッセージの直交断片をビルドするのを可能にする、柔軟性と拡張性があるシステムをサポートする</td>
+  <td></td>
+  <td>完了</td>
+  <td>X</td>
+  <td>X</td>
+  <td>X</td>
+  <td></td>
+</tr>
+<tr>
+  <td>111</td>
+  <td>与えられたサーバ設定とメッセージに対して、ハンドラ呼び出しの順番が必ず決定的</td>
+  <td></td>
+  <td>完了</td>
+  <td>X</td>
+  <td>X</td>
+  <td>X</td>
+  <td></td>
+</tr>
+<tr>
+  <td>112</td>
+  <td>一つのホスト上で、いくつかの情報は "chain" の中にある全てのハンドラから共有されるべき - MessageContext</td>
+  <td></td>
+  <td>完了</td>
+  <td>X</td>
+  <td>X</td>
+  <td>X</td>
+  <td></td>
+</tr>
+<tr>
+  <td>112a</td>
+  <td>コンテキストの中でアプリケーション固有のパラメータ (ユーザ名のようなもの) を特定する能力がある</td>
+  <td></td>
+  <td>完了</td>
+  <td>X</td>
+  <td>X</td>
+  <td>X</td>
+  <td></td>
+</tr>
+<tr>
+  <td>112b</td>
+  <td>トランスポート非依存な(http では HTTPRequest/HTTPResponse の中のクッキー)セッションの考え方のカプセル化</td>
+  <td></td>
+  <td>完了</td>
+  <td></td>
+  <td></td>
+  <td>X</td>
+  <td></td>
+</tr>
+<tr>
+  <td>112b.1</td>
+  <td>SOAP セッションヘッダ/ハンドラ/サプライヤの例/サンプル</td>
+  <td></td>
+  <td><b>未実装</b> - RobJ</td>
+  <td></td>
+  <td></td>
+  <td>?</td>
+  <td>?</td>
+</tr>
+<tr>
+  <td>112b.2</td>
+  <td>同様にクライアントコードもこれをサポートする必要があります - 必要であればセッションを送り返す必要があります</td>
+  <td></td>
+  <td><b>未実装</b> - RobJ</td>
+  <td></td>
+  <td></td>
+  <td>X</td>
+  <td></td>
+</tr>
+<tr>
+  <td>113</td>
+  <td>ハンドラは生のメッセージデータに触れるようにする必要があります</td>
+  <td></td>
+  <td>完了</td>
+  <td>X</td>
+  <td>X</td>
+  <td>X</td>
+  <td></td>
+</tr>
+<tr>
+  <th></th>
+  <th colspan="7">トランスポート</th>
+</tr>
+<tr>
+  <td>120</td>
+  <td>プラグ可能なトランスポート API</td>
+  <td></td>
+  <td>完了 - ドキュメントが必要!</td>
+  <td>X</td>
+  <td>X</td>
+  <td>X</td>
+  <td></td>
+</tr>
+<tr>
+  <td>121</td>
+  <td>HTTP リスナとセンダ</td>
+  <td></td>
+  <td>完了</td>
+  <td>X</td>
+  <td>X</td>
+  <td>X</td>
+  <td></td>
+</tr>
+<tr>
+  <td>122</td>
+  <td>HTTPS リスナとセンダ</td>
+  <td></td>
+  <td><b>未実装</b> - ?</td>
+  <td></td>
+  <td></td>
+  <td>X</td>
+  <td></td>
+</tr>
+<tr>
+  <td>123</td>
+  <td>SMTP センダ</td>
+  <td></td>
+  <td><b>未実装</b> - ?</td>
+  <td></td>
+  <td></td>
+  <td>X</td>
+  <td></td>
+</tr>
+<tr>
+  <td>124</td>
+  <td>POP3 ポラー</td>
+  <td></td>
+  <td><b>未実装</b> - ?</td>
+  <td></td>
+  <td></td>
+  <td>X</td>
+  <td></td>
+</tr>
+<tr>
+  <td>125</td>
+  <td>JMS リスナとセンダ</td>
+  <td></td>
+  <td><b>未実装</b> - ?</td>
+  <td></td>
+  <td></td>
+  <td>?</td>
+  <td>?</td>
+</tr>
+<tr>
+  <td>126</td>
+  <td>"SOAP messages with attachments" のサポート <b>[高]</b></td>
+  <td></td>
+  <td><b>未実装</b> - Glen / RobJ</td>
+  <td></td>
+  <td>X</td>
+  <td>X</td>
+  <td></td>
+</tr>
+<tr>
+  <td>127</td>
+  <td>トランスポートは、コンテキスト中に任意のトランスポート特有のものを挿入することができます</td>
+  <td></td>
+  <td>完了</td>
+  <td>X</td>
+  <td>X</td>
+  <td>X</td>
+  <td></td>
+</tr>
+<tr>
+  <td>128</td>
+  <td>トランスポート特有のものはカプセル化されるべきで、ほとんどのエンジンはそのメッセージの標準的な形式に対して機能するべきです。</td>
+  <td></td>
+  <td>完了</td>
+  <td>X</td>
+  <td>X</td>
+  <td>X</td>
+  <td></td>
+</tr>
+<tr>
+  <th></th>
+  <th colspan="7">セキュリティ</th>
+</tr>
+<tr>
+  <td>130</td>
+  <td>トランスポートレベルのセキュリティをサポート <b>[高]</b></td>
+  <td></td>
+  <td><b>未実装</b> - トランスポートごとの問題?</td>
+  <td></td>
+  <td></td>
+  <td>X</td>
+  <td></td>
+</tr>
+<tr>
+  <td>130b</td>
+  <td>SOAP レベルのセキュリティのサポート <b>[高]</b></td>
+  <td></td>
+  <td>具体的に言うと何? - Yuhichi?</td>
+  <td></td>
+  <td></td>
+  <td></td>
+  <td></td>
+</tr>
+<tr>
+  <td>131</td>
+  <td>HTTP 基本認証</td>
+  <td></td>
+  <td>完了?</td>
+  <td></td>
+  <td></td>
+  <td>X</td>
+  <td></td>
+</tr>
+<tr>
+  <td>132</td>
+  <td>現行の SOAP レベル標準のセキュリティのサポート</td>
+  <td></td>
+  <td>具体的に言うと何?</td>
+  <td></td>
+  <td></td>
+  <td>?</td>
+  <td>?</td>
+</tr>
+<tr>
+  <td>133</td>
+  <td>SOAP 基本認証ヘッダ/ハンドラの例/サンプル</td>
+  <td></td>
+  <td>完了?</td>
+  <td></td>
+  <td></td>
+  <td>?</td>
+  <td>?</td>
+</tr>
+<tr>
+  <th></th>
+  <th colspan="7">サービス記述と発見(例えば WSDL、DISCO)</th>
+</tr>
+<tr>
+  <td>140</td>
+  <td>実行時にサービス記述のクエリーを行える能力のサポート (例えば GET ...?wsdl)</td>
+  <td></td>
+  <td><b>未実装</b> - Jim の貢献? あるいはもっと簡単なもの?</td>
+  <td></td>
+  <td>X</td>
+  <td>X</td>
+  <td></td>
+</tr>
+<tr>
+  <td>140a</td>
+  <td>もしデプロイパラメータがサービス記述を変更したら、更新されたバージョンが返されるべき</td>
+  <td></td>
+  <td><b>未実装</b>?</td>
+  <td></td>
+  <td></td>
+  <td>X</td>
+  <td></td>
+</tr>
+<tr>
+  <td>141</td>
+  <td>サービスを記述している基本的な html ページのサポート (HTTP GET を介して)</td>
+  <td></td>
+  <td><b>未実装</b> - James? Doug?</td>
+  <td></td>
+  <td>X</td>
+  <td>X</td>
+  <td></td>
+</tr>
+<tr>
+  <td>142</td>
+  <td>サービスを記述している美しい html ページのサポート (HTTP GET を介して)</td>
+  <td></td>
+  <td><b>未実装 -</b> James? Doug?</td>
+  <td></td>
+  <td></td>
+  <td></td>
+  <td>X</td>
+</tr>
+<tr>
+  <td>143</td>
+  <td>サービス記述なしでサービスをデプロイして使用できる</td>
+  <td></td>
+  <td>完了</td>
+  <td>X</td>
+  <td>X</td>
+  <td>X</td>
+  <td></td>
+</tr>
+<tr>
+  <td>144</td>
+  <td>SD レイヤを抽象化する。少なくともインターフェースをきれいに保ちながら抽象化する <b>[高]</b></td>
+  <td></td>
+  <td>?</td>
+  <td></td>
+  <td></td>
+  <td>X</td>
+  <td></td>
+</tr>
+<tr>
+  <td>144a</td>
+  <td>抽象 SD レイヤはメッセージの一部の xsi:types の実行時決定をサポートする必要がある</td>
+  <td></td>
+  <td><b>未実装?</b> - Sam?</td>
+  <td></td>
+  <td>X</td>
+  <td>X</td>
+  <td></td>
+</tr>
+<tr>
+  <td>144b</td>
+  <td>SD レイヤの WSDL 実装を含める <b>[高]</b></td>
+  <td></td>
+  <td><b>未実装</b> - Lance &amp; HP の貢献?</td>
+  <td></td>
+  <td>X</td>
+  <td>X</td>
+  <td></td>
+</tr>
+<tr>
+  <td>144c</td>
+  <td>ものに対してコンポーネントを取得する場所の情報がある、拡張 WSDL</td>
+  <td></td>
+  <td><b>未実装</b> - James?</td>
+  <td></td>
+  <td></td>
+  <td></td>
+  <td>X</td>
+</tr>
+<tr>
+  <td>144d</td>
+  <td>WSDL と/または WSDD からのプロキシ生成の、ツールと/または実行時サポート</td>
+  <td></td>
+  <td><b>未実装</b> - Lance &amp; HP?</td>
+  <td></td>
+  <td></td>
+  <td></td>
+  <td>X</td>
+</tr>
+<tr>
+  <td>145</td>
+  <td>Axis ノードに対する HTTP GET が適切な DISCO ドキュメントを返す</td>
+  <td></td>
+  <td><b>未実装</b> - ?</td>
+  <td></td>
+  <td></td>
+  <td></td>
+  <td>X</td>
+</tr>
+<tr>
+  <th></th>
+  <th colspan="7">プラットフォーム</th>
+</tr>
+<tr>
+  <td>150</td>
+  <td>Java 実装</td>
+  <td></td>
+  <td>進行中</td>
+  <td>X</td>
+  <td>X</td>
+  <td>X</td>
+  <td></td>
+</tr>
+<tr>
+  <td>151</td>
+  <td>C++ 実装</td>
+  <td></td>
+  <td>1.0 では非適用</td>
+  <td></td>
+  <td></td>
+  <td></td>
+  <td>X</td>
+</tr>
+<tr>
+  <td>151a</td>
+  <td>C++ 実装のコアは (COM のような) プラットフォーム固有の拡張と共に、クロスプラットフォームであるべきです</td>
+  <td></td>
+  <td>1.0 では非適用</td>
+  <td></td>
+  <td></td>
+  <td></td>
+  <td>X</td>
+</tr>
+<tr>
+  <td>152</td>
+  <td>全ての実装はできるだけ多くの共通部分をもつべきです</td>
+  <td></td>
+  <td>1.0 では非適用</td>
+  <td>X</td>
+  <td>X</td>
+  <td>X</td>
+  <td></td>
+</tr>
+<tr>
+  <td>153</td>
+  <td>可能であればどこでも標準 API を使用する</td>
+  <td></td>
+  <td>完了</td>
+  <td>X</td>
+  <td>X</td>
+  <td>X</td>
+  <td></td>
+</tr>
+<tr>
+  <th></th>
+  <th colspan="7">データエンコーディング</th>
+</tr>
+<tr>
+  <td>160</td>
+  <td>エンコーディングの拡張サポート</td>
+  <td></td>
+  <td>未実装</td>
+  <td></td>
+  <td>X</td>
+  <td>X</td>
+  <td></td>
+</tr>
+<tr>
+  <td>161</td>
+  <td>基本 SOAP エンコーディング (現在の Apache SOAP 2.x レベル) を実装する</td>
+  <td></td>
+  <td>完了</td>
+  <td>X</td>
+  <td>X</td>
+  <td>X</td>
+  <td></td>
+</tr>
+<tr>
+  <td>162</td>
+  <td>スパース配列と部分的に転送した配列のサポート</td>
+  <td></td>
+  <td>未実装</td>
+  <td></td>
+  <td>X</td>
+  <td>X</td>
+  <td></td>
+</tr>
+<tr>
+  <td>163</td>
+  <td>多次元配列のサポート</td>
+  <td></td>
+  <td>未実装</td>
+  <td></td>
+  <td></td>
+  <td></td>
+  <td>X</td>
+</tr>
+<tr>
+  <td>164</td>
+  <td>文書型 XML エンコーディング</td>
+  <td></td>
+  <td>未実装</td>
+  <td></td>
+  <td>X</td>
+  <td>X</td>
+  <td></td>
+</tr>
+<tr>
+  <td>165</td>
+  <td>"シリアライザ" を比較的簡単に書けるようにするべき</td>
+  <td></td>
+  <td>完了 (ユーザからのフィードバックによります)</td>
+  <td></td>
+  <td>X</td>
+  <td>X</td>
+  <td></td>
+</tr>
+<tr>
+  <td>166</td>
+  <td>いくつかの一般的な (デ) シリアライザ (複数の型を扱える) を含める。そうすればインターネット上を飛び交うかもしれない、全ての型のための (デ) シリアライザが必要なくなる (さらに議論が必要 - 同型 (往復) 問題)</td>
+  <td></td>
+  <td>これは bean シリアライザ / 基本デシリアライザですか? それとも他のものですか?</td>
+  <td></td>
+  <td></td>
+  <td>?</td>
+  <td>?</td>
+</tr>
+<tr>
+  <td>167</td>
+  <td>(デ)シリアライズは要求に応じていつでも発生する</td>
+  <td></td>
+  <td>完了</td>
+  <td>X</td>
+  <td>X</td>
+  <td>X</td>
+  <td></td>
+</tr>
+<tr>
+  <td>168</td>
+  <td>(デ)シリアライズはアプリケーションから利用できるべき</td>
+  <td></td>
+  <td>完了</td>
+  <td></td>
+  <td></td>
+  <td>X</td>
+  <td></td>
+</tr>
+<tr>
+  <th></th>
+  <th colspan="7">リリース</th>
+</tr>
+<tr>
+  <td></td>
+  <td colspan="7"><i>これらは 1.0 の要件ですが、暫定リリースを通じてこれらの項目に対し著しい発展がなされる必要がある。</i></td>
+</tr>
+<tr>
+  <td>170</td>
+  <td>製品レベルのコード</td>
+  <td></td>
+  <td>着々と進んでいる</td>
+  <td></td>
+  <td></td>
+  <td>X</td>
+  <td></td>
+</tr>
+<tr>
+  <td>171</td>
+  <td>製品レベルのドキュメント <b>[高]</b></td>
+  <td></td>
+  <td><b>未実装</b> - ?</td>
+  <td></td>
+  <td></td>
+  <td>X</td>
+  <td></td>
+</tr>
+<tr>
+  <td>172</td>
+  <td>製品レベルの例</td>
+  <td></td>
+  <td><b>未実装</b> ですが着々と進んでいます - 全員</td>
+  <td></td>
+  <td></td>
+  <td>X</td>
+  <td></td>
+</tr>
+<tr>
+  <td>173</td>
+  <td>製品レベルのパフォーマンス</td>
+  <td></td>
+  <td><b>未実装</b> - Sam?</td>
+  <td></td>
+  <td></td>
+  <td>X</td>
+  <td></td>
+</tr>
+<tr>
+  <td>174</td>
+  <td>製品レベルのテスト</td>
+  <td></td>
+  <td>関数テストと単体テストと共に、着々と進んでいます</td>
+  <td></td>
+  <td></td>
+  <td>X</td>
+  <td></td>
+</tr>
+<tr>
+  <th></th>
+  <th colspan="7">Apache SOAP 2.x からの移植</th>
+</tr>
+<tr>
+  <td>180</td>
+  <td>ドキュメント</td>
+  <td></td>
+  <td><b>未実装 -</b> ?</td>
+  <td></td>
+  <td>X</td>
+  <td>X</td>
+  <td></td>
+</tr>
+<tr>
+  <td>181</td>
+  <td>レガシー Call オブジェクト</td>
+  <td></td>
+  <td><b>未実装</b> - ?</td>
+  <td></td>
+  <td></td>
+  <td>X</td>
+  <td></td>
+</tr>
+<tr>
+  <td>182</td>
+  <td>シリアライゼーション、カスタムシリアライザ - もしかしたら wrapper</td>
+  <td></td>
+  <td><b>未実装</b> - ?</td>
+  <td></td>
+  <td></td>
+  <td>?</td>
+  <td>?</td>
+</tr>
+<tr>
+  <td>183</td>
+  <td>レガシーメッセージングサービスのサポート</td>
+  <td></td>
+  <td><b>未実装</b> - 誰?<br/>
+  </td>
+  <td></td>
+  <td></td>
+  <td>X</td>
+  <td></td>
+</tr>
+<tr>
+  <td>184</td>
+  <td>レガシープロバイダのサポート <b>[中]</b></td>
+  <td></td>
+  <td><b>未実装</b> - ?</td>
+  <td></td>
+  <td></td>
+  <td></td>
+  <td>X</td>
+</tr>
+<tr>
+  <td>185new</td>
+  <td>レガシーデプロイのサポート</td>
+  <td></td>
+  <td><b>未実装</b> - James?</td>
+  <td></td>
+  <td></td>
+  <td>X<br/>
+  </td>
+  <td></td>
+</tr>
+<tr>
+  <th></th>
+  <th colspan="7">コーディング</th>
+</tr>
+<tr>
+  <td>190</td>
+  <td>タブ文字<b>なし</b>の <a href="http://java.sun.com/docs/codeconv/html/CodeConvTOC.doc.html">Java コーディング規約</a> [英語] に従ってください。</td>
+  <td></td>
+  <td>完了</td>
+  <td>X</td>
+  <td>X</td>
+  <td>X</td>
+  <td></td>
+</tr>
+<tr>
+  <td>191</td>
+  <td>コミットされている private ではないメソッド全てをドキュメント化するために javadoc を使用する</td>
+  <td></td>
+  <td>さらにある</td>
+  <td>X</td>
+  <td>X</td>
+  <td>X</td>
+  <td></td>
+</tr>
+<tr>
+  <td>192</td>
+  <td>ドキュメントパッケージ</td>
+  <td></td>
+  <td>もっとある</td>
+  <td></td>
+  <td></td>
+  <td>X</td>
+  <td></td>
+</tr>
+<tr>
+  <td>193</td>
+  <td>新しいパッケージをコミットする。少なくとも "これはやる必要がある" と書いてあるパッケージドキュメントをプレースホルダに置く。</td>
+  <td></td>
+  <td><b>未実装</b> - 全員!!!</td>
+  <td>X</td>
+  <td>X</td>
+  <td>X</td>
+  <td></td>
+</tr>
+</tbody>
+</table>
+
+</section>
+
+<a name="Non-requirementsWontBeSupported"/>
+<section>
+<title>要件ではないもの (サポートされません)</title>
+
+<p><i>私達は以下の問題について SOAP 仕様ではあいまいであると判断しましたので、サポートしないことに決定しました。</i></p>
+<ol>
+  <li>SOAP ヘッダでの RPC 呼び出し</li>
+  <li>単一 SOAP メッセージによる複数 RPC 呼び出し</li>
+</ol>
+
+</section>
+
+<a name="ReleasesAndTestCycles"/>
+<section>
+<title>リリースとテストサイクル</title>
+
+<p>私達は alpha1 (a1)、alpha2 (a2)、beta、3.0をリリースする計画を立てています。<br/>
+alpha はプレビューです。<br/>
+それに続く alpha は機能、ドキュメント、テストケースなどが発展していることを示すためものです。<br/>
+beta は機能的には完全です。</p>
+
+</section>
+
+  </body>
+</document>

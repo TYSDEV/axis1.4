@@ -1,0 +1,324 @@
+<project name="executeTest" default="executeTest" basedir="..">
+
+	<!--
+		Copy the expected output test files to the generated client directory
+		and convert these files to the OS specific format so the filesmatch
+		comparison later in this script works on all platforms.
+	-->
+	<target name="setExpectations"
+		depends="setResultExpectations, setRequestExpectations, copyattachment, setServerResponse" />
+
+	<target name="setResultExpectations" unless="buildOnly">
+		<basename file="${expected.file}"
+			property="expected.file.basename" />
+		<copy file="${dir.autotests}/output/${test.expected.output}"
+			tofile="${expected.file}" />
+		<!--
+			Convert to OS specific format
+		-->
+		<fixcrlf srcdir="${test.directory}"
+			includes="${expected.file.basename}" />
+	</target>
+
+    <!--
+		Copy the required files for attachment test from the attachment directory
+	-->
+
+
+    <target name="copyattachment" if="test.attachment" unless="buildOnly">
+		<copy file="${dir.autotests}/attachment/${test.attachment}"
+			todir="${test.directory}" failonerror="false" />
+	</target>
+
+
+	<!-- Only copy expected request file if it exists -->
+	<target name="setRequestExpectations" if="requestFileExists"
+		unless="buildOnly">
+		<basename file="${r_expected.file}"
+			property="r_expected.file.basename" />
+		<copy file="${dir.autotests}/output/${test.expected.request}"
+			tofile="${r_expected.file}" failonerror="false" />
+		<!--
+			Convert to OS specific format
+		-->
+		<fixcrlf srcdir="${test.directory}"
+			includes="${r_expected.file.basename}" />
+		<!--
+			change the destination host in the expected request file to match the monitor we are 
+			actually using
+		-->
+		<replaceregexp file="${r_expected.file}"
+			match="Host: localhost:[0-9]*"
+			replace="Host: localhost:${monitorPort}" byline="true" />
+
+	</target>
+	<!-- Only copy server response file if it exists and we are in unit test mode (mockServer mode)-->
+	<target name="setServerResponse" unless="buildOnly">
+		<if>
+			<equals arg1="${mockServer}" arg2="true" />
+			<then>
+				<basename file="${response_expected.file}"
+					property="response_expected.file.basename" />
+				<copy
+					file="${dir.autotests}/output/${test.expected.serverResponse}"
+					tofile="${response_expected.file}" failonerror="true" />
+			</then>
+		</if>
+	</target>
+
+
+
+	<target name="setTestArgs"
+		depends="setEndpoint, setForMonitor, setForNoMonitor, setProxyArgs" />
+
+	<target name="setEndpoint" unless="test.endpoint">
+		<property name="clientArgs" value="" />
+	</target>
+
+	<target name="setForMonitor" if="test.endpoint"
+		unless="test.nomonitor">
+		<propertyregex property="protocol" input="${test.endpoint}"
+			regexp="(.*)://" select="\1" />
+
+		<propertyregex property="restOfURL" input="${test.endpoint}"
+			regexp="://(.*)" select="\1" />
+
+		<propertyregex property="context" input="${restOfURL}"
+			regexp="/(.*)" select="\1" />
+
+		<property name="clientArgs"
+			value="${protocol}://localhost:${monitorPort}/${context}" />
+	</target>
+
+	<target name="setForNoMonitor" depends="checkIfEndpointSet"
+		if="endpoint.ok">
+
+		<propertyregex property="restOfURL" input="${test.endpoint}"
+			regexp="://(.*)" select="\1" />
+
+		<propertyregex property="protocol" input="${test.endpoint}"
+			regexp="(.*)://${restOfURL}" select="\1" />
+		<propertyregex property="context" input="${restOfURL}"
+			regexp="/(.*)" select="\1" />
+
+		<property name="clientArgs"
+			value="${protocol}://${testHost}:${testPort}/${context}" />
+	</target>
+	<target name="setProxyArgs">
+		<if>
+			<equals arg1="${test.proxyRequired}" arg2="true"/>
+			<then>
+				<propertyregex property="clientArgs" regexp="(${clientArgs})(.*)" replace="\1 ${proxy.host} ${proxy.port}" input="${clientArgs}" override="true"/>
+			</then>
+		</if>
+	</target>
+	
+	<target name="setVerbatim" if="test.verbatim">
+		<property name="clientArgs"
+			value="${testHost} ${testPort} ${test.endpoint}" />
+	</target>
+
+	<target name="checkIfEndpointSet" depends="setVerbatim">
+		<condition property="endpoint.ok">
+			<isset property="test.endpoint" />
+		</condition>
+		<fail message="Endpoint not specified" unless="endpoint.ok" />
+	</target>
+
+	<target name="startMonitor" unless="test.nomonitor">
+		<!--  if the mockserver is on then we want to forward to localhost -->
+
+		<if>
+			<equals arg1="${mockServer}" arg2="true" />
+			<then>
+				<property name="actualTestHost" value="localhost" />
+			</then>
+			<else>
+				<property name="actualTestHost" value="${testHost}" />
+			</else>
+		</if>
+
+		<echo
+			message="Starting monitor forwarding to ${actualTestHost}:${testPort}" />
+		<!-- Run Monitor utility to allow validation of message across the wire -->
+		<java classname="org.apache.test.TCPMonitor"
+			outputproperty="mon.out">
+			<arg line="-l ${monitorPort}" />
+			<arg line="-p ${testPort}" />
+			<arg line="-h ${actualTestHost}" />
+			<arg line="-o &quot;${test.directory}/tcpm.req&quot;" />
+			<arg line="-r &quot;${test.directory}/tcpm.res&quot;" />
+			<classpath>
+				<pathelement
+					location="${dir.obj}/test/monitor/monitor.jar" />
+			</classpath>
+		</java>
+		<echo message="MONITOR OUTPUT=${mon.out}" />
+	</target>
+
+	<target name="startMockServer">
+		<echo message="Starting mockserver" />
+		<echo message = "testport = ${testPort}"/>
+		<java classname="org.apache.test.MockServer"
+			outputproperty="mockServer.out">
+			<arg line="-p ${testPort}" /> 
+			<arg line="-r &quot;${response_expected.file}&quot;" />
+			<classpath>
+				<pathelement
+					location="${dir.obj}/test/monitor/monitor.jar" />
+			</classpath>
+		</java>
+		<echo message="MOCK-SERVER OUTPUT=${mockServer.out}" />
+	</target>
+
+
+	<target name="stopMonitor" unless="test.nomonitor">
+		<java classname="org.apache.test.StopTCPMonitor">
+			<arg line="-p ${monitorPort}" />
+			<arg line="-h localhost" />
+			<classpath>
+				<pathelement
+					location="${dir.obj}/test/monitor/monitor.jar" />
+			</classpath>
+		</java>
+	</target>
+
+	<target name="stopMockServer">
+		<java classname="org.apache.test.StopMockServer" outputproperty="stopMockServer.out">
+			<arg line="-p ${testPort}" />
+			<classpath>
+				<pathelement
+					location="${dir.obj}/test/monitor/monitor.jar" />
+			</classpath>
+		</java>
+		<echo message="StopMockServer output = ${stopMockServer.out}"/>
+	</target>
+
+
+
+
+
+	<!--
+		Execute the test
+	-->
+    <target name="executeTest" depends="setExpectations,setTestArgs, createConfigurationFile, updateConfigurationWithClientWSDDEntry"
+		if="successfulClientCompilation" unless="buildOnly">
+
+		<trycatch>
+			<try>
+				<!-- if we are running in mockserver mode then we need to start the MockServer -->
+				<if>
+					<equals arg1="${mockServer}" arg2="true" />
+					<then>
+						<antcall target="startMockServer"
+							inheritall="true" />
+<!--						<property name="mockServerLine"
+							value="-s &quot;${response_expected.file}&quot;" />
+-->
+					</then>
+				</if>
+
+				<antcall target="startMonitor" inheritall="true" />
+				<echo message="Running Test ${test.name} ${clientArgs}" />
+				<!-- Run the client test -->
+				<stopwatch name="${test.name}.timer" action="start" />
+				<exec dir="${test.directory}"
+					executable="${test.directory}/${test.name}"
+					output="${results.stdout}" error="${results.stderr}"
+					failifexecutionfails="false" vmlauncher="false">
+					<arg line="${clientArgs}" />
+					<env key="PATH"
+						path="${java.library.path}${path.separator}${dir.libraries}${path.separator}${dir.xmlParser}${path.separator}${HTTP.SSLChannel.eay.dir}${path.separator}${test.directory}" />
+					<env key="LD_LIBRARY_PATH"
+						path="${dir.libraries}${path.separator}${dir.xmlParser}${path.separator}${HTTP.SSLChannel.dir}/lib${path.separator}${test.directory}" />
+					<env key="LIBPATH"
+						path="${dir.libraries}${path.separator}${dir.xmlParser}${path.separator}${HTTP.SSLChannel.dir}/lib${path.separator}${HTTP.SSLChannel.dir}/lib64${path.separator}${test.directory}" />
+                    <env key="SHLIB_PATH"
+                        path="${dir.libraries}${path.separator}${dir.xmlParser}${path.separator}${HTTP.SSLChannel.dir}/lib${path.separator}${HTTP.SSLChannel.dir}/lib64${path.separator}${test.directory}" />
+					<env key="AXISCPP_DEPLOY" value="${axiscpp_deploy}" />
+				</exec>
+
+				<stopwatch name="${test.name}.timer" action="total" />
+				<propertycopy property="timer1"
+					from="${test.name}.timer" />
+				<echo file="${results.log}" append="true"
+					message="${test.name} - Execution Time - ${timer1}${line.separator}" />
+				<echo
+					message="${test.name} - Execution Time - ${timer1}" />
+
+				<antcall target="stopMonitor" inheritall="true" />
+				<!-- if we are running in mockserver mode then we need to stop the MockServer -->
+				<if>
+					<equals arg1="${mockServer}" arg2="true" />
+					<then>
+						<antcall target="stopMockServer"
+							inheritall="true" />
+					</then>
+				</if>
+
+			</try>
+			<catch>
+				<echo
+					message="Exception in monitor caught it in Ant try/catch block while trying to run test ${test.name}" />
+				<antcall target="stopMonitor" inheritall="true" />
+			</catch>
+			<finally>
+				<sleep seconds="1" />
+			</finally>
+		</trycatch>
+	</target>
+
+	<!--
+		Create configuration file to use when running test
+	-->
+	<target name="createConfigurationFile" depends="checkIfDebug" if="successfulClientCompilation">
+		<dirname file="${axiscpp.conf}" property="confFileDirectory"/>
+
+		<mkdir dir="${confFileDirectory}"/>
+
+		<!-- Select which parser library to use -->
+		<condition property="ClientParserLib" value="${libraryPrefix}${xml4c.xmlParserLibraryName}${librarySuffix}">
+			<istrue value="${testconf.client.parser.xml4c}"/>
+		</condition>
+		<condition property="ClientParserLib" value="${libraryPrefix}${xerces.xmlParserLibraryName}${librarySuffix}">
+			<istrue value="${testconf.client.parser.xerces}"/>
+		</condition>
+
+		<echo file="${axiscpp.conf}">#Available directives are as follows:
+#
+# ClientLogPath:	 The path to the client log
+# ClientWSDDFilePath:    The path to the client wsdd
+# Transport_http:	 The HTTP transport library
+# Transport_smtp:	 The SMTP transport library
+# XMLParser:		 The xml parser library
+# Channel_HTTP:          The HTTP transport channel library
+# Channel_HTTP_SSL:      The HTTP transport secure channel library
+#
+</echo>
+		<!-- Allow tracing to be turned off -->
+		<if>
+			<not>
+				<isset property="test.notrace"/>
+			</not>
+			<then>
+				<echo file="${axiscpp.conf}" append="true">
+ClientLogPath:${test.directory}/ClientLog.taw
+SecureInfo:${env.SSL_KEYS_HOME}/myKeyRing.kdb,axis4all,AXIS,NONE,05,NONE,false
+</echo>
+			</then>
+		</if>
+		<echo file="${axiscpp.conf}" append="true">
+Transport_http:${dir.libraries}/${libraryPrefix}${transportLibraryName}${librarySuffix}
+XMLParser:${dir.libraries}/${ClientParserLib}
+Channel_HTTP:${dir.libraries}/${libraryPrefix}${HTTP.ChannelLibraryName}${librarySuffix}
+</echo>
+        <if>
+            <istrue value="${test.ssl}" />
+            <then>
+                <echo file="${axiscpp.conf}" append="true">Channel_HTTP_SSL:${dir.libraries}/${libraryPrefix}${HTTP.SecureChannelLibraryName}${librarySuffix}
+</echo>	
+            </then>
+        </if>
+	</target>
+</project>
+

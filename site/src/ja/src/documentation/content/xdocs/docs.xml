@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="Shift_JIS"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.2//EN" "./dtd/document-v12.dtd">
+<document>
+  <header>
+    <title>WebServices - Axis</title>
+  </header>
+  <body>
+
+<a name="MiscNotes"/>
+<section>
+<title>メモ/ドキュメント</title>
+
+<p>興味を引くかもしれないその他のメモとドキュメント</p>
+
+<ul>
+  <li><a href="http://cvs.apache.org/viewcvs/~checkout~/ws-axis/java/docs/requirements.html?content-type=text/html">現在の要件リスト</a> [英語]</li>
+  <li>第一回 Face-2-Face のメモ</li>
+  <li><a href="docs/F2F-2.html">第二回 Face-2-Face のメモ</a> [英語]</li>
+  <li><a href="docs/ms-interop.html">Microsoft との Interop ミーティングのメモ</a> [英語]</li>
+  <li><a href="docs/SOAPVerse.html">SOAPVerse に関する Glen 氏のメモ</a> [英語]</li>
+  <li><a href="docs/CachingEarlDraft2.html">キャッシング機構に関する木村利幸氏のメモ</a> [英語]</li>
+  <li><a href="http://ws.apache.org/~toshi/jp/CacheProposal.pdf">キャッシング機構に関する木村利幸氏のメモ</a> [日本語PDF]</li>
+  <li><a href="java/soapmonitor-user-guide.html">SOAP モニタユーザガイド</a> [ナイトリービルド]</li>
+  <li><a href="http://ws.apache.org/axis/jp/index.html">日本語 Axis サイト</a> [翻訳]</li>
+</ul>
+
+</section>
+
+  </body>
+</document>

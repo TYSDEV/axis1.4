@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="Shift_JIS"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.2//EN" "./dtd/document-v12.dtd">
+<document>
+  <header>
+    <title>WebServices - Axis</title>
+  </header>
+  <body>
+
+<a name="AxisAntTasks"/>
+<section>
+<title>Axis Ant タスク</title>
+
+<p>Axis には ant 内のビルドプロセスの側面を自動化する Ant タスクが付いてきます。これらのタスクを利用するには以下のものが必要です。</p>
+
+<ol>
+  <li><a href="http://ant.apache.org/">Apache Ant 1.5.1 以降</a> [英語]</li>
+  <li>タスクを含んでいる <code>axis-ant.jar</code> ライブラリ</li>
+  <li>全ての主要な Axis ライブラリ</li>
+</ol>
+
+<a name="DeclaringTheTasks"/>
+<section>
+<title>タスクの宣言</title>
+
+<p>タスクを宣言するには、クラスパスに axis タスク JAR とそれに依存する全てのライブラリを含めるように設定します。全てを axis lib ディレクトリに含めれば十分です。</p>
+
+<source>&lt;path id="axis.classpath"&gt;
+  &lt;fileset dir="${axis.home}/build/lib"&gt;
+    &lt;include name="**/*.jar" /&gt;
+  &lt;/fileset&gt;
+&lt;/path&gt;</source>
+
+<p>次に <code>&lt;taskdef&gt;</code> 宣言を利用して <code>axis-ant.jar</code> ファイル内のプロパティファイルにリストアップされている全てのタスクを宣言します。</p>
+<source>&lt;taskdef resource="axis-tasks.properties"
+  classpathref="axis.classpath" /&gt;</source>
+
+</section>
+
+<a name="CreatingJavaFilesFromWSDL"/>
+<section>
+<title>WSDL から Java ファイルを生成</title>
+
+<p>これは <a href="axis-wsdl2java.html">&lt;axis-wsdl2java&gt;</a> [英語] タスクを利用します。</p>
+<source>&lt;axis-wsdl2java
+  output="${generated.dir}"
+  testcase="true"
+  verbose="true"
+  url="${local.wsdl}" &gt;
+    &lt;mapping
+      namespace="http://axis.apache.org/ns/interop"
+      package="interop" /&gt;
+  &lt;/axis-wsdl2java&gt;</source>
+
+<p>mapping 要素は XML 名前空間から Java パッケージへのマッピングをリストアップするのに利用され、必要なだけ含めることができます。</p>
+
+</section>
+
+<a name="CreatingWSDLFilesFromJava"/>
+<section>
+<title>Java から WSDL ファイルを生成</title>
+
+<p>これは <a href="axis-java2wsdl.html">&lt;axis-java2wsdl&gt;</a> [英語] タスクを利用します。</p>
+
+</section>
+
+<a name="TalkingToTheAdminService"/>
+<section>
+<title>admin サービスとの通信</title>
+
+<p>これは <a href="axis-admin.html">&lt;axis-admin&gt;</a> [英語] タスクによって行われます。</p>
+
+<source>&lt;axis-admin
+    port="${target.port}"
+    hostname="${target.server}"
+    failonerror="true"
+    servletpath="${target.appname}/services/AdminService"
+    debug="true"
+    xmlfile="${endpoint-stub.wsdd}"
+    /&gt;</source>
+
+<p>ここで target.* プロパティは、デプロイされているシステムのプロパティファイルから取り出されるので、単一のビルドファイルを異なるシステムに簡単にデプロイすることができます。</p>
+
+</section>
+
+<a name="ForeachTask"/>
+<section>
+<title>Foreach タスク</title>
+
+<p><a href="foreach.html">&lt;foreach&gt;</a> [英語]</p>
+
+</section>
+
+<a name="RunaxisfunctionaltestsTask"/>
+<section>
+<title>Runaxisfunctionaltests タスク</title>
+
+<p><a href="runaxisfunctionaltests.html">&lt;runaxisfunctionaltests&gt;</a> [英語]</p>
+
+</section>
+
+</section>
+
+  </body>
+</document>

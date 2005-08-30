@@ -1,0 +1,12 @@
+1. Documentation
+
+  Introduce samples
+  - Simple SAX parsing
+  - Memo viewer
+  - Employee DB client/service
+  
+2. TCK
+
+3. Sample applications
+
+  Mobile banking based on XML web services

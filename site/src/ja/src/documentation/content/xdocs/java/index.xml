@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="Shift_JIS"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.2//EN" "./dtd/document-v12.dtd">
+<document>
+  <header>
+    <title>WebServices - Axis</title>
+  </header>
+  <body>
+
+<a name="Documentation"/>
+<section>
+<title>ドキュメント</title>
+
+<p>これは <a href="http://ws.apache.org/axis/jp">Apache Axis 1.2</a> のドキュメントです。もし利用している Axis のバージョンがこのバージョンより古いか新しければ、これは利用するにはふさわしくないドキュメントです。利用している Axis 付属のドキュメントをご覧下さい。</p>
+
+<a name="DocumentationForAxisUsers"/>
+<section>
+<title>Axis ユーザのためのドキュメント</title>
+
+<ul>
+  <li><a href="install.html">インストール方法</a></li>
+  <li><a href="user-guide.html">ユーザガイド</a></li>
+  <li><a href="client-side-axis.html">クライアント側 Axis</a></li>
+  <li><a href="security.html">Axis 基盤のWebサービスのセキュリティ化</a></li>
+  <li><a href="ant/ant.html">Axis Ant タスク</a></li>
+  <li><a href="reference.html">リファレンスガイド</a></li>
+  <li><a href="reading.html">読書ガイド</a></li>
+</ul>
+
+</section>
+
+<a name="DocumentationForAxisDevelopers"/>
+<section>
+<title>Axis 開発者のためのドキュメント</title>
+
+<ul>
+  <li><a href="http://ws.apache.org/axis/java/apiDocs/index.html">API ドキュメント</a> [英語]</li>
+  <li><a href="building-axis.html">Axis のビルド</a> - オプションコンポーネント付き/なしで Axis をビルドする際のガイドライン</li>
+  <li><a href="developers-guide.html">開発者ガイド</a> - Axis でのコード開発ガイドライン集</li>
+  <li><a href="integration-guide.html">統合ガイド</a> - 既存のWebアプリケーションサーバに組み込むための API 解説と開発方針</li>
+  <li><a href="architecture-guide.html">アーキテクチャガイド</a> - Axis デザインコンセプトと原理</li>
+</ul>
+
+</section>
+
+</section>
+
+  </body>
+</document>

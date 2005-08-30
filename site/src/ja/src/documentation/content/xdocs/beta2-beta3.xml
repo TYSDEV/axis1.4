@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="Shift_JIS"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.2//EN" "./dtd/document-v12.dtd">
+<document>
+  <header>
+    <title>WebServices - Axis</title>
+  </header>
+  <body>
+
+<a name="ChangesFromBeta2ToBeta3"/>
+<section>
+<title>beta2 から beta3 への変更点</title>
+
+<p>
+<ul>
+  <li>JAX-RPC/SAAJ は JAX-RPC 最終バージョンと完全に互換性を持つようになりました。またこの実装はこれらのインターフェースをほとんどサポートしています。</li>
+
+  <li>添付の DIME 仕様の新しいバージョンをサポートしています。</li>
+
+  <li>複数 QName クラスではなく、新しい javax.xml.namespace.QName をサポートしています。</li>
+
+  <li>ホルダは "holders" パッケージ内に生成されるようになりました。</li>
+
+  <li>JAX-RPC の制限のせいで、Call オブジェクトに任意のプロパティを設定することができなくなりました。私達はこれを解決するために Sun と話し合っています。</li>
+
+  <li>WSDL から/に マップされた名前において下線がサポートされ、もはや取り除かれません。</li>
+
+  <li>様々なバグが直され、改良されました。</li>
+</ul>
+</p>
+
+</section>
+
+
+  </body>
+</document>

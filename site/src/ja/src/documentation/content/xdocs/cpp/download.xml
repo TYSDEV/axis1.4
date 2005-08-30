@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="Shift_JIS"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.2//EN" "./dtd/document-v12.dtd">
+<document>
+  <header>
+    <title>WebServices - Axis</title>
+  </header>
+  <body>
+
+<a name="DownloadAxisC++"/>
+<section>
+<title>Axis C++ のダウンロード</title>
+
+<p><a href="http://www.apache.org/dist/ws/axis-c/">直接リンク</a> [英語]</p>
+
+<p>(Axis C++ 配布フォルダへの直接リンク)</p>
+
+<p><a href="http://www.apache.org/dyn/closer.cgi">ミラーサイト</a> [英語]</p>
+
+<p>(ミラーのアドレスをクリックしてください。dis フォルダが表示されたら、"ws" フォルダをクリックしてください。
+そして "axis-c" をクリックして配布を探してください。)</p>
+
+</section>
+
+  </body>
+</document>

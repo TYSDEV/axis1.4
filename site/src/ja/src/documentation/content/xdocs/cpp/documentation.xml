@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="Shift_JIS"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.2//EN" "./dtd/document-v12.dtd">
+<document>
+  <header>
+    <title>WebServices - Axis</title>
+  </header>
+  <body>
+
+<a name="Documentation"/>
+<section>
+<title>ドキュメント</title>
+<p><a href="index.html">Apache Axis C++ 1.4 最終版</a></p>
+
+<a name="InstallationGuides"/>
+<section>
+<title>インストールガイド</title>
+
+<ul>
+  <li><a href="lininstall-guide.html">Linux インストールガイド</a> [英語]</li>
+  <li><a href="wininstall-guide.html">Windows インストールガイド</a> [英語]</li>
+</ul>
+
+</section>
+
+<a name="UserGuides"/>
+<section>
+<title>ユーザガイド</title>
+
+<ul>
+  <li><a href="linuser-guide.html">Linux ユーザガイド</a> [英語]</li>
+  <li><a href="winuser-guide.html">Windows ユーザガイド</a> [英語]</li>
+</ul>
+
+</section>
+
+<a name="DeveloperGuides"/>
+<section>
+<title>開発者ガイド</title>
+
+<ul>
+  <li><a href="windev-guide.html">Windows 開発者ガイド</a> [英語]</li>
+  <li><a href="antbuild-guide.html">ANT ビルドガイド</a> [英語]</li>
+</ul>
+
+</section>
+
+<a name="ReferenceMaterial"/>
+<section>
+<title>参考資料</title>
+
+<ul>
+  <li><a href="arch/handler.html">ハンドラチュートリアル</a> [英語]</li>
+  <li><a href="arch/ArchitectureGuide.html">アーキテクチャガイド</a> [英語]</li>
+  <li><a href="arch/WSDL2Ws.html">WSDL2Ws ツール</a> [英語]</li>
+  <li><a href="arch/mem-management.html">メモリ管理ガイド</a> [英語]</li>
+</ul>
+
+</section>
+
+</section>
+
+  </body>
+</document>
