@@ -10,6 +10,7 @@
 <section>
 <title>News</title>
 
+<p>NEWS (October 5, 2005) : Axis <a href="http://www.apache.org/dyn/closer.cgi/ws/axis/1_3">1.3 Final </a> is now available!</p>
 <p>NEWS (June 15, 2005) : Axis <a href="http://www.apache.org/dyn/closer.cgi/ws/axis/1_2_1">1.2.1 Final </a> is now available!</p>
 <p>NEWS (May 04, 2005) : Axis <a href="http://www.apache.org/dyn/closer.cgi/ws/axis/1_2">1.2 Final </a> is now available!</p>
 <p>NEWS (April 09, 2005) : Axis C++<a href="http://ws.apache.org/axis/cpp/download.html">1.5 Final </a> is now available!</p>
@@ -40,7 +41,8 @@ Web Services related news on the Apache News Blog Online</a></LI>
 to W3C.</p>
 
 <p>From the draft W3C specification:
-  <blockquote>SOAP is a lightweight protocol for exchange of information in a decentralized, distributed environment. It is an XML based protocol that consists of three parts: an envelope that defines a framework for describing what is in a message and how to process it, a set of encoding rules for expressing instances of application-defined datatypes, and a convention for representing remote procedure calls and responses.</blockquote>
+  <blockquote>SOAP is a lightweight protocol for exchanging structured information in a decentralized, distributed environment. 
+              It is an XML based protocol that consists of three parts: an envelope that defines a framework for describing what is in a message and how to process it, a set of encoding rules for expressing instances of application-defined datatypes, and a convention for representing remote procedure calls and responses.</blockquote>
 </p>
 
 <p>This project is a follow-on to the <a href="http://ws.apache.org/soap">Apache SOAP project</a>.</p>
@@ -53,15 +55,17 @@ to W3C.</p>
 <section>
 <title>Axis 1.2 and beyond</title>
 
-<p>Axis 1.1 has proven itself to be a reliable and stable base on which to implement Java Web Services.  There is a very active <a href="http://ws.apache.org/axis/mail.html">user community</a> and there a many companies who use Axis for Web Service support in their products.</p>
+<p>Axis 1.1 has proven itself to be a reliable and stable base on which to implement Java Web services.  
+   There is a very active <a href="http://ws.apache.org/axis/mail.html">user community</a> and there are
+   many companies who use Axis for Web services support in their products.</p>
 
 <p>For Axis 1.2, we are focusing on our document/literal support to better address the <a href="http://www.ws-i.org/Profiles/BasicProfile-1.0.html">WS-I Basic Profile 1.0</a> and <a href="http://java.sun.com/xml/downloads/jaxrpc.html">JAX-RPC 1.1</a> specifications. And we are fixing as many bug as possible.</p>
 
-<p>We can always use <b>your</b> help.  Here are some links to help you help us:
+<p>We can always use <b>your</b> help. Here are some links to help you help us:
   <ul>
     <li><a href="http://ws.apache.org/axis/bugs.html">How do I report bugs?</a></li>
     <li><a href="http://wiki.apache.org/ws/SubmitPatches">How do I submit patches to Axis?</a></li>
-    <li><a href="http://cvs.apache.org/snapshots/ws-axis/">Where can i get snapshots of latest CVS?</a></li> 
+    <li><a href="http://cvs.apache.org/snapshots/ws-axis/">Where can I get snapshots of latest CVS?</a></li> 
   </ul>
 </p>
 
