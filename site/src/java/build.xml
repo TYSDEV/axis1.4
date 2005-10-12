@@ -95,6 +95,10 @@
       <arg line="/c forrest"/>
     </exec>
     <echo message="=> DONE !!"/>
+    <echo>
+      => Fixing line endings in generated files ...
+    </echo>    
+    <fixcrlf srcdir="build/site" eol="lf" includes="**/*.css, **/*.html, **/*.js, **/*.xsl*" />
   </target>
 
 <!-- ***************************************************************** -->
