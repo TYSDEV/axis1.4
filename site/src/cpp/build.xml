@@ -17,6 +17,9 @@
 
   <property name="version" value="0.1"/>
   <property name="IEPath" location="C:\Program Files\Internet Explorer"/>
+  <!-- use the environment -->
+  <property environment="env"/>
+
 
   <description>
     *=======================================================*
@@ -40,9 +43,9 @@
       <ant target="run-browser"/>
       <ant target="run-forrest"/>
     </parallel>
-    <ant target="forrest"/>
+    <antcall target="forrest"/>
     <ant target="replace"/>
-    <ant target="putmessage"/>
+    <antcall target="putmessage"/>
   </target>
 
 <!-- ***************************************************************** -->
@@ -86,13 +89,14 @@
 <!-- **                  TARGET: forrest                            ** -->
 <!-- **                                                             ** -->
 <!-- ***************************************************************** -->
-  <target name="forrest">
+  <target name="forrest" depends="checkEnvVariables">
     <echo>
-      => Creating static contents with the latest updates ...
+      => Creating web-site static contents with the latest updates ...
     </echo>
     <exec executable="cmd">
-      <env key="PATH" path="${path}"/>
-      <arg line="/c forrest"/>
+	    <env key="PATH" path="${path}"/>
+    	<env key="JAVA_HOME" path="${JAVA_HOME}"/>
+      	<arg line="/c ${FORREST_HOME}/bin/forrest"/>
     </exec>
     <echo message="=> DONE !!"/>
   </target>
@@ -103,10 +107,9 @@
 <!-- **                                                             ** -->
 <!-- ***************************************************************** -->
   <target name="replace">
-    <echo message="=> Copying the updated (static) contents ..."/>
-    <copy todir="../../../../ws-site/targets/axis/">
+    <copy todir="${dir.root.ws-site}/targets/axis/">
       <fileset dir="./build/site">
-        <different targetdir="../../../../ws-site/targets/axis"
+        <different targetdir="${dir.root.ws-site}/targets/axis"
          ignoreFileTimes="true"/>
       </fileset>
     </copy>
@@ -124,5 +127,15 @@
       'ws-axis/site/src/cpp' and 'ws-site/target/axis/cpp' !!
     </echo>
   </target>
+	
+	<target name="checkEnvVariables">
+		<description>
+			Checks that all the correct environment variables are set. Does not check that
+			the relevant directories are available though.
+		</description>
+		<fail unless="FORREST_HOME" message="FORREST_HOME is not set. Must point to where you have installed Forrest"/>
+		<fail unless="JAVA_HOME" message="JAVA_HOME must be set"/>
+		<fail unless="dir.root.ws-site" message="dir.root.ws-site must be set to the root directory of ws-site"/>
+	</target>
 
 </project>
