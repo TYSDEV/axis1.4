@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <html>
 <head>
-  <title>ANT Build Guide</title>
+  <title>Axis CPP - ANT Build Guide</title>
   <meta name="Author" content="Adrian Dick">
   <meta name="Keywords" content="">
   <meta name="Description" content="">
@@ -11,14 +11,21 @@
 <p>
 This document provides instructions for using and extending the ANT
 based build for the AXIS C++ project.</p>
-<p><a href="#prepareSystem">Preparing system</a><br>
-<a href="#thirdPartySoftware">Getting necessary third party software</a><BR>
-<A href="#PropertyFiles">Property Files</A><br>
-<a href="#cvsExtract">Getting a CVS checkout</a><br>
-<a href="#SettingTheEnvironment">Setting the Environment</a><br>
-<a href="#runningTheBuild">Running the ANT build </a><BR>
-<A href="#EnablingTraceAndDebug">Enabling Trace and Debug</A><br>
-<a href="#addingExtraPlatform">Adding an extra platform </a></p>
+<UL><H2>Contents</H2>
+<UL>
+	<LI><A href="#prepareSystem">Preparing system</A></LI>
+	<LI><A href="#thirdPartySoftware">Getting necessary third party
+	software</A></LI>
+	<LI><A href="#PropertyFiles">Property Files</A></LI>
+	<LI><A href="#cvsExtract">Getting the source code</A></LI>
+	<LI><A href="#SettingTheEnvironment">Setting the Environment</A></LI>
+	<LI><A href="#runningTheBuild">Running the ANT build </A></LI>
+	<LI><A href="#EnablingTraceAndDebug">Enabling Trace and Debug</A></LI>
+	<LI><A href="#addingExtraPlatform"><A href="#addingExtraPlatform">Adding
+	an extra platform </A></A></LI>
+</UL>
+
+	<A href="#addingExtraPlatform"></A>
 <h2><a name="prepareSystem"></a>Preparing system</h2>
 <p>
 To use the ANT based build you will need to install the following:</p>
@@ -41,10 +48,10 @@ compilation of C/C++.
     <ul>
       <li>Available from <a href="http://ant-contrib.sourceforge.net">http://ant-contrib.sourceforge.net</a></li>
       <li>Place JARs into <code>[ANT INSTALL DIR]/lib</code>.</li>
-      <li>Require both ant-contrib and cpptasks</li>
+      <li>Require both ant-contrib (v0.6) and cpptasks (v1.0b3)</li>
     </ul>
   </li>
-  <li>Doxygen - Used for generating API documentation
+  <li>(Optional) Doxygen - Used for generating API documentation
     <ul>
       <li>Available from <a href="http://www.doxygen.org">http://www.doxygen.org</a></li>
     </ul>
@@ -54,49 +61,34 @@ compilation of C/C++.
       <li>For Windows - Microsoft Visual C++ v6</li>
       <li>For Linux - gcc / g++</li>
       <li>For AIX - IBM Visual Age for C++</li>
-    </ul>
+			<LI>For Solaris - cc</LI>
+			<LI>For HP-UX - aC++</LI>
+			<LI>For OS400 - icc</LI>
+		</ul>
   </li>
 </ul>
 
 <h2><a name="thirdPartySoftware"></a>Getting necessary third party
 software</h2>
-<p>Axis Cpp Developers can use either Xerces-c or the Expat XML Parsers
+<p>Axis Cpp Developers use the Xerces-cXML Parsers
 to build the Axis Cpp. Additionally, you can opt to build Apache mod files for Apache 1.3 or 2.0.</p>
-<p><b>Expat XML Parser</b></p>
-<p>You can get expat binaries from <a
- href="http://sourceforge.net/projects/expat/">http://sourceforge.net/projects/expat/</a>.</p>
-<p><b>Xerces-C XML Parser</b></p>
-<p>You can get Xerces-C binaries from <a
+<p><B>Xerces-C XML Parser</B></p><p>You can get Xerces-C binaries from <a
  href="http://xerces.apache.org">http://xerces.apache.org</a>.</p>
 <P><B>Apache</B></P><P>You can get Apache 1.3 or 2.0 from <A
 	href="http://httpd.apache.org/">http://httpd.apache.org/</A></P>
 <H2><A name="PropertyFiles"></A>Property Files</H2>
-<P>To aid in the portability of the ANT scripts, a number of property
-files are used. The script will decide which to use based on the
+<P>The behaviour of the ANT scripts is controlled by the values specified in <CODE>build.common.properies</CODE>. To aid in the portability of the ANT scripts, there are also a number of platform specific property
+files which override properties as required. The ANT scripts will automatically determine the correct file to be used based on the
 platform in which it is currently running. The property files are found
-in <CODE>ws-axis/c</CODE> with the following naming convention:</P>
-<BLOCKQUOTE><CODE>build.<I>[platform]</I>.properties</CODE></BLOCKQUOTE>
+in <CODE>ws-axis/c/build</CODE> with the following naming convention:</P>
+<BLOCKQUOTE><CODE>build.common.properties<BR>
+	build.<I>[platform]</I>.properties</CODE></BLOCKQUOTE>
 <P>A number of example property files are provided for Windows, Linux,
-AIX and Solaris, it is intended that you update these files to suit your
-development and buid environment. This includes location of third party
+AIX and Solaris. It is intended you update these files to suit your
+development and build environment, including location of third party
 software dependencies and target packaging structure.</P>
 <P>These property files also allow you to make some selection on which artefacts will be produced by the build:</P>
 <UL>
-	<LI>Select which XML Parsers to use:
-	<UL>
-		<LI>For each one to be built, set the following to true:<BR>
-		<CODE>xmlParser.xml4c</CODE><BR>
-		<CODE>xmlParser.xerces</CODE><BR>
-		<CODE>xmlParser.expat</CODE></LI>
-		</UL>
-	</LI>
-	<LI>Select which transport implementation to use:<UL>
-		<LI>For each one to be built, set the following to true:<BR>
-		<CODE>transport.axis</CODE><BR>
-		<CODE>transport.axis2</CODE><BR>
-		<CODE>transport.libwww</CODE></LI>
-	</UL>
-	</LI>
 	<LI>Select which Apache module to produce:
 	<UL>
 		<LI>For each one to be built, set the following to true:<BR>
@@ -112,7 +104,7 @@ software dependencies and target packaging structure.</P>
 	</LI>
 </UL>
 
-<P>The default selections are Xerces as XML parser, axis2 transport implementation and both the Apache 1.3 and Apache 2.0 modules.</P>
+<P>The default selections are for both the Apache 1.3 and Apache 2.0 modules.</P>
 <h2><A name="SettingTheEnvironment"></A>Setting the Environment</h2>
 <P>Before running ANT the following environment variables must be
 set:</P>
@@ -130,38 +122,18 @@ set:</P>
 <P>The default property files make use of the following environment variables to locate the various third party software dependencies.</P>
 <UL>
 	<LI><CODE>AXISJAVA_LIB</CODE> - location of Axis Java JAR files, as required for WSDL2Ws tool</LI>
-	<LI><CODE>EXPAT_HOME</CODE> - location of Expat installation <I>(if
-	using Expat</I>)</LI>
-	<LI><CODE>XERCES_HOME</CODE> - location of Xerces installation (<I>if
-	using Xerces</I>)</LI>
-	<LI><CODE>XML4C_HOME</CODE> - location of XML4C installation (<I>if
-	using XML4C</I>)</LI>
+	<LI><CODE>XERCES_HOME</CODE> - location of Xerces installation</LI>
 	<LI><CODE>APACHE_HOME</CODE> - location of Apache 1.3 installation (<I>if
-	building Apache 1.3 module</I>)</LI>
+		building Apache 1.3 module</I>)</LI>
 	<LI><CODE>APACHE2_HOME</CODE> - location of Apache 2.0 installation (<I>if
 	building Apache 2.0 module</I>)</LI>
 </UL>
 
-<h2><a name="cvsExtract"></a>Getting a CVS checkout</h2>
-<p>Visit <a href="windows/cpp/">http://ws.apache.org/</a> Click on
-&#8220;axis&#8221; and then on &#8220;CVS Repository&#8221; to find details on how to access
-the
-CVS Repository. <br>
-In short summary:<br>
-Anyone can checkout the source code from our anonymous CVS server. To
-do so, simply use the following commands (if you are using a GUI CVS
-client, configure it appropriately): </p>
-<blockquote><code>cvs -d
-:pserver:anoncvs@cvs.apache.org:/home/cvspublic
-login<br>
-password: anoncvs<br>
-  <br>
-cvs -d :pserver:anoncvs@cvs.apache.org:/home/cvspublic checkout ws-axis</code></blockquote>
-<p>The checkout of the repository will be created in the current
-directory
-in a folder named &#8220;<code>ws-axis</code>&#8221;<br>
-<br>
-The checked out folder ws-axis/c will be referred to as <code>[CHECKOUT_HOME]</code>
+<h2><a name="cvsExtract"></a>Getting   the source code</h2>
+<p>See <A href="developers-guide.html#checkingOut">here</A> for more detail
+	on gaining access to the code in SVN.</p>
+	<P>Note: The ANT scripts were written based on the previous CVS structure and have not been updated to the SVN structure, so you will need to ensure your checkout is into the following structure:</P><BLOCKQUOTE><CODE>[build root]\ws-axis\c</CODE></BLOCKQUOTE>
+	<p>The checked out folder <CODE>ws-axis\c</CODE> will be referred to as <code>[CHECKOUT_HOME]</code>
 from this point on.</p>
 
 <h2><a name="runningTheBuild"></a>Running the ANT build</h2>
@@ -169,57 +141,40 @@ from this point on.</p>
 <P>Once you have configured your environment and property files the build is a simple two step process. The first step is to build all the generated artefacts. At the comment prompt change to <CODE>[CHECKOUT_HOME]</CODE> and run:</P>
 
 <blockquote><code>ant</code></blockquote>
-<p>This will carry out the following:</p><ul>
-  <li>Build Axis C Client library</li>
-  <li>Build Axis C Transport library
-	<UL>
-		<LI>Axis, axis2, libwww configurable through the property files</LI>
-	</UL>
-	</li>
-  <li>Build Axis C XML Parser library
-    <ul>
-      <li>Expat, Xerces-C, etc configurable through the property files</li>
-    </ul>
-  </li>
-  <li>Build Axis C Server library</li>
-	<LI>Build Axis C Apache module<UL>
+<p>This will build the following:</p><ul>
+  <li>Client library</li>
+  <li>Transport libraries</li>
+  <li>XML Parser library
+    </li>
+  <li>Server library</li>
+	<LI>Apache modules<UL>
 		<LI>Apache 1.3 or Apache 2.0 configurable through the property files</LI>
 	</UL>
 	</LI>
-	<LI>Build Axis C Simple Server Executable<UL>
+	<LI>Simple Server Executable<UL>
 		<LI>Configurable through the property files</LI>
 	</UL>
 	</LI>
-	<LI>Build and package WSDL2Ws tool</LI>
-	<li>Generate API Documentation</li>
-	<li>Package artefacts into a distributable structure
-    <ul>
-      <li>This structure is configurable through the property files</li>
-    </ul>
-  </li>
-  <li>Validate all artefacts have been correctly generated</li>
+	<LI>WSDL2Ws tool</LI>
+	<li>API Documentation</li>
 </ul>
 <P>The second step is to package the generated artefacts. From <CODE>[CHECKOUT_HOME]</CODE> run:</P>
 <blockquote><CODE>ant -f package.xml</CODE></blockquote>
-<P>This will carry out the following:</P>
+<P>This will package into two distributables:</P>
 <UL>
-	<LI>Package artefacts in to a binary release distributable</LI>
-	<LI>Package artefacts in to a source release distributable</LI>
-</UL>
-<p>To remove artefacts from a previous build use the following command:
-</p>
-<BLOCKQUOTE><CODE>ant clean</CODE></BLOCKQUOTE>
-<h2><A name="EnablingTraceAndDebug"></A>Enabling Trace and Debug</h2>
+	<LI>binary</LI>
+	<LI>source<CODE></CODE></LI>
+</UL><h2><A name="EnablingTraceAndDebug"></A>Enabling Trace and Debug</h2>
 <p>By default, the ANT build scripts do not produce libraries with trace or debug symbols. To include these make use of one of the following to build:</p>
 <BLOCKQUOTE><CODE>ant buildWithTrace</CODE></BLOCKQUOTE>
 <BLOCKQUOTE><CODE>ant buildWithDebug</CODE></BLOCKQUOTE>
 <BLOCKQUOTE><CODE>ant buildWithTraceAndDebug</CODE></BLOCKQUOTE>
-<P>The packaging step remains the same. Although it the source release package will automatically select the trace instrumented source code.</P>
+<P>The packaging step remains the same, but when packaging the source distributable it will automatically select the trace instrumented source code if available.</P>
 <P>When trace is selected, the ant build adds in trace entry and exit
 statements into many of the methods in Axis C++. Then at runtime, in
-axiscpp.conf, set ClientLogPath to a file in a directory somewhere and
-Axis C++ will write out trace to that file. Omitting ClientLogPath from
-axiscpp.conf switches trace off.</P>
+<CODE>axiscpp.conf</CODE>, set <CODE>ClientLogPath</CODE> to a file and
+Axis C++ will write out trace to that file. Omitting <CODE>ClientLogPath</CODE> from
+<CODE>axiscpp.conf</CODE> switches trace off.</P>
 <h2><a name="addingExtraPlatform"></a>Adding an extra platform</h2>
 <p>The AXIS community would greatly appreciate your input, if you're
 working on a platform not currently supported by the ANT scripts.<br>
@@ -246,8 +201,8 @@ variations in the parameters.</li>
 condition check for the correct platform and any debug flags should be conditional on the debug property being set, eg:
     <pre>&lt;linker id="LinuxLinker" name="g++" libtool="true" if="linux"&gt;<br>  &lt;linkerarg value="-g" if=&quot;debug&quot;/&gt;<br>  &lt;libset libs="stdc++"/&gt;<br>&lt;/linker&gt;</pre>
 Note: As for compilers, linkers may extend one another.</li>
-  <li>Add new <code>compiler</code> and <code>linker</code> to the <code>cc</code>
-task within each of <code>compileAxisClient</code>, <code>compileAxisTransport</code>, <code>compileAxisXMLParser</code>, <code>compileSimpleAxisServer</code>, <code>compileAxisServerEngine</code>, <code>compileApache13Module</code> and <code>compileApache20Module</code> targets, eg:
+  <li>Add new <code>compiler</code> and <code>linker</code> to the various <code>cc</code>
+tasks used within the ANT scripts, eg:
     <pre>&lt;cc outfile="${dir.bin}/${transportLibraryName}" objdir="${dir.objects}"<br> exceptions="true" failonerror="false" outtype="shared" multithreaded="true"&gt;<br>  &lt;!-- Compilers --&gt;<br><FONT
 		color="green">  &lt;compiler refid="Linuxgcc"/&gt;</FONT><br>  &lt;compiler refid="AIXxlc"/&gt;
   ...<br>  &lt;!-- Linkers --&gt;<br>  <FONT

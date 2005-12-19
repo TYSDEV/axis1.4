@@ -9,48 +9,40 @@
 <body>  
 <center> 
 <h1> <img SRC="images/axis.jpg" height=96 width=176></h1>
-</center> 
-<h1>Documentation</h1> <br>
-This is the documentation for <a href="index.html">Apache Axis C++ 1.5 Final</a>  
-<h2>Installation Guides</h2> 
+</center>Welcome to the documentation section for Axis CPP. In here you should find all the documents you need to install and run your own client and services. If you want to contribute code back to the project you will also find out developers instructions.<H1>Installation Guides</H1> 
 <ul> 
 <li>
-<a href="lininstall-guide.html">Linux Installation Instructions</a>
-</li> 
-<li> 
-<a href="wininstall-guide.html">Windows Installation Instructions</a>
-</li>
+<a href="install-guide.html">Installation Instructions</a></li>
 </ul> 
-<h2>User Guides</h2> 
+<H1>User Guides</H1>
+<P>Please read these if you intend to use the product.</P>
 <ul> 
 <li>
-<a href="linuser-guide.html">Linux User Guide</a>
+<a href="clientuser-guide.html">Client User Guide</a>
 </li>
 <li>
-<a href="winuser-guide.html">Windows User Guide</a>
+<a href="serveruser-guide.html">Server User Guide</a>
 </li>
+	<LI><A href="arch/handler.html">Handler Tutorial</A></LI>
 </ul>
-<h2>Developer Guides</h2>
+<P></P>
+<H1>Developer Guides</H1>
+<P>Please read these if you intend to contribute code to the project.</P>
 <ul> 
 <li> 
-<a href="windev-guide.html">Windows Developer's Guide</a>
-</li> 
+<a href="developers-guide.html"> Developer's Guide</a></li> 
 <li><a href="antbuild-guide.html">ANT Build Guide</a></li></ul>
 </ul> 
-<h2>Reference Material</h2>
-<ul>
+<H1>Reference Material</H1>
+<ul> 
 <li>
-<a href="arch/handler.html">Handler Tutorial</a>
-</li> 
-<li>
-<a href="arch/ArchitectureGuide.html">Architecture Guide</a>
-</li> 
-<li> 
-<a href="arch/WSDL2Ws.html">WSDL2Ws Tool</a>
-</li> 
-<li>
-<a href="arch/mem-management.html">Memory Management Guide</a>
-</li> 
+<a href="arch/ArchitectureGuide.html"><A href="arch/WSDL2Ws.html">WSDL2Ws
+	Tool</A>
+</a></li>
+	<LI><A href="arch/ArchitectureGuide.html"><A
+		href="arch/mem-management.html">Memory Management Guide</A>
+</A></LI>
+	<LI><A href="arch/ArchitectureGuide.html">Architecture Guide</A></LI> 
 </ul>
 </body>
 </html> 

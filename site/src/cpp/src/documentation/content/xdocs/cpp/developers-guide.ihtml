@@ -7,10 +7,143 @@
 
 <BODY>
 
-  <H1>Axis C++ Developer's Guide</H1>
-<b>Under construction.....</b>
+<H1>Contents</H1>
+<P>This guide is meant to be read by those of you who would like to check out the code and create either a new transport layer or new parser layer.  If you just want to check out the code and build it yourself e.g. because you want to port it to a new new platform then please see the
+<A href="antbuild-guide.html">build guide.</A>
+<UL>
+	<LI><A href="#checkingOut">Checking out source code</A></LI>
+	<LI><A href="#transport">Build your own transport layer</A></LI>
+	<LI><A href="#parser">Build your own parser layer</A></LI>
+	<LI><A href="#extraPlatforms">Adding support for extra platforms</A></LI>
+</UL>
 
+ <B>Before going through this guide, please go through the <A
+	href="winuser-guide.html">Windows User Guide</A> and also be
+familiar with how to use binaries.</B>
+</P>
 
-</body>
+<H1>Checking out source code</H1>
+<P><A name="checkingOut"></A>The source code for Axis C++ is held in SVN. Instructions for using the Apache SVN system can be found <A
+	href="http://www.apache.org/dev/version-control.html#anon-svn">here</A>. The Axis C++ repository is <A
+	href="http://svn.apache.org/repos/asf/webservices/axis/trunk/c">http://svn.apache.org/repos/asf/webservices/axis/trunk/c</A>.<B></B></P>
+<H1>Creating and Building your own
+transport layer</H1>
+<P><A name="transport"></A>In very extreme cicumstances you might need to implement your own transport layer. If this is the case then you need to read thie following section.</P>
+<P><IMG border="0" src="images/c/parserd/transport.jpg"></P>
+<P>When creating your own transport layer refer SoapTransport.h header
+file for API.To see an example implementation refer AxisTransport.h and
+AxisTransport.cpp</P>
+<P>Implement SoapTransport.h interface according to rules described in
+the header file. <BR>
+Transport layer is built separately from Axis. Then Axis loads transport
+dynamic library through following export functions which you also have
+to implement.</P>
+<P>CreateInstance (SoapTransport *pOut)- Used by Axis to create an
+instance of your transport class<BR>
+DestroyInstance (SoapTransport *pIn) - Used by Axis to destroy the
+created transport class instance</P>
+<P>Compile your transport code and build a dynamic library. Add the name
+of your transport library to axis configuration file (axiscpp.conf) so
+that Axis can find your library at runtime.</P>
+
+<H1>Debugging client problems using the MockServer</H1>
+<P><a name="mockserver"/></a>Within the ant test framework we have what we call a 'MockServer'. This is a 100 percent Java
+tool that allows you to send back any response that you wish to the client. This tool
+can be particularly useful for debugging problems in the client that come from the mailing list.
+You need the users WSDL (to create the stubs) and ask them to capture the response from the server (or you can make this
+by-hand if you wish it's just a bit harder).
+</P>
+<P>
+Here are some simple instruction on using the MockServer utility we use for
+testing Axis c++ client without a server outside of the mockserver.
+   Compile mock server java code (found within <B>&lt;Axis extract root
+&gt;/tests/utils/monitor </B>)
+   <P>
+   Run the mock server:
+<B>   java org.apache.test.MockServer -p &lt;port&gt; -r &lt;server response file</B>&gt;</P>
+<P>
+The server response file is a text file containing the full HTTP response,
+it will look something like this:<BR>
+<BR/>
+   HTTP/1.1 200 OK
+   <BR>
+Server: WebSphere Application Server/5.1
+   <BR>
+Content-Type: text/xml; charset=utf-8
+   <BR>
+Content-Language: en-GB
+   <BR>
+Transfer-Encoding: chunked
+
+   <BR>
+<BR>
+1ad
+   <BR>
+&lt;?xml version="1.0" encoding="utf-8"?&gt;
+   <BR>
+&lt;soapenv:Envelope
+   xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+   xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
+   xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"&gt;<BR>
+&lt;soapenv:Header/&gt;<BR>
+&lt;soapenv:Body&gt;<BR>
+&lt;addResponse
+ xmlns="http://localhost/axis/Calculator"&gt;<BR>
+&lt;addReturn&gt;5&lt;/addReturn&gt;<BR>
+&lt;/addResponse&gt;<BR>
+&lt;/soapenv:Body&gt;<BR>
+&lt;/soapenv:Envelope&gt;
+   0
+</P>
+<P>
+The easiest way to generate this file is to capture the communication from
+a real server but if that isn't possible you will need to generate by hand
+(plenty of examples within &lt;extract root&gt;/test/auto_build/testcases/output
+)
+Rather than providing the specific chunk size (1ad, on the line ahead of
+the payload) you can provide ### and the MockServer will calculate the
+correct size.
+</P>
+<P>
+If your testcase makes multiple calls to the web service, you can simply
+append all the requests (in the correct order!) within the server response
+file.
+</P>
+<P>
+Once the test has been completed you need to run the following to stop the server:
+   <BR>
+<B>java org.apache.test.StopMockServer -p &lt;port&gt; -h &lt;host&gt;</B>
+</P>
+
+<H1>Creating and Building your own parser</H1>
+<P><A name="parser"></A>In very extreme cirumstances you may want to write your own parser layer. If you do then you need to read this section.</P>
+<P><IMG border="0" src="images/c/parserd/parser.jpg"></P>
+<P><B>Note:Implement XMLParser.h interface according to the rules
+described in the header file.</B><BR>
+</P>
+<P>When creating your own parser refer XMLParser.h header file for API.
+To see an example implementation refer SoapParserXerces.h and
+SoapParserXerces.cpp.</P>
+<P>Axis loads the parser dynamic library through following export
+functions which you also have to implement.</P>
+<P>CreateInstance() - Used by Axis to create an instance of your parser
+class<BR>
+DestroyInstance() - Used by Axis to destroy the created parser class
+instance</P>
+<P>Compile your parser code and build a dynamic library. Add the name of
+your parser library to Axis configuration file (axiscpp.conf) so that
+Axis can find your library at runtime</P>
+
+<H1>Adding support for extra platforms</H1>
+<P><A name="extraPlatforms"></A>If you are working on a platform not currently supported by Axis C++ the community would be very grateful for your assistance in providing support for that platform.</P>
+<P>Instructions for adding an extra platform to the ANT build scripts can found <A
+	href="antbuild-guide.html#addingExtraPlatform">here</A>.</P>
+<P>If you need to make any modifications to the code specific to your platform we ask that you make the appropriate updates in the platform abstraction layer, by doing the following:</P>
+<UL>
+	<LI>Create new <CODE>platforms\[<I>platform</I>]\PlatformSpecific[<I>platform</I>].hpp</CODE> file (and possibly also <CODE>.cpp</CODE> file), ensuring all macros and methods already in platform abstraction layer a copied across and updated as required.</LI>
+	<LI>Update <CODE>platforms\PlatformAutoSense.hpp</CODE> to correctly detect platform and include correct header file.</LI>
+</UL>
+<P>If you need to change something that has not been previously abstracted please ensure you update the other platforms to contain the existing code.</P></body>
 
 </html>

@@ -1,217 +1,253 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
-  <meta http-equiv="Content-Type" content="text/html">
-  <title>Axis C++ 1.5 Final is Available!</title>
+  <title>Axis C++</title>
 </head>
 
 <body>
-<h1>Axis C++ 1.5 Final </h1>
+<H1>Welcome to Axis CPP</H1>
+<P>Axis C/C++ (Axis CPP) is a non-Java implementation of Axis. At its core Axis CPP has a C++ runtime engine. The provided tooling allows you to create C++ client-side stubs and
+server-side skeletons. The server skeletons can be deployed to either a full Apache web server using the supplied apache module or a &quot;simple_axis_server&quot; - which is a simple HTTP listener (designed to help you test your services).<BR/>
+<BR/>
+There is also limited support for C wrappers around the generated Server and client objects. However, at the current time it is not recommended that these be used in a production environment.</P>
 
-<p><a href="download.html">Download Axis C++</a></p>
-<br>
+<p>The implementation has concentrated on being ws-i profile compliant.
+The implementation does not have support for ws-* specifications and it is envisaged that this will be provided by Axis2. However, at the current time, Axis CPP is still being actively developed and improved until such times 
+as Axis2 C implementation has progressed far enough to take over its role.</p>
+<H2>Contents</H2>
+<UL>
+	<LI><A href="#Features">Features</A></LI>
+	<LI><A href="#QualityAssurance">Quality Assurance</A></LI>
+	<LI><A href="#Schedules"> Schedules</A></LI>
+	<LI><A href="#LatestRelease">Axis C++ 1.5 release</A></LI>
+	
+	<UL>
+		<LI><A href="#Key Features">Key Features</A></LI>
+		<LI><A href="#BugFixList">Fix List</A></LI>
+		<LI><A href="#Known issues">Known issues</A></LI>
+	</UL>
+	
+</UL>
+<p><A name="Features"></A></p>
+<H2>Features</H2>
+<ul>
+<LI>Soap engine with both client and server support</LI>
+<LI>WSDD based deployment with dynamic deployment tools.</LI>
+<LI>Support for all basic types, Complex types and Arrays</LI>
+<LI>WSDL2WS tool for building C/C++ components</LI>
+<LI>Server side - Skeletons and Wrappers</LI>
+<LI>Client side - Stubs</LI>
+<LI>Standalone server (with HTTP support)</LI>
+<LI>Web server modules for Apache 1.3 &amp; Apache2 (Linux/Windows)</LI>
+<LI>Web interface to the deployed services and their WSDL s.</LI>
+<LI>Sample web services and client applications.</LI>
+</ul>
 
-<p>
-<h1>Key features of Axis C++ 1.5 Final </h1> </p>
+<H2>Quality Assurance</H2>
+<P><A name="QualityAssurance"></A>In the past year and a half, the comprehensive test-suite has been created and maintained to a high-level.
+The suite is run over all the nightly builds. If bugs are found then tests are added to ensure that the code does not regress - this is your assurance of quality.
+</P>
 
 
-<p><b>New client side transport</b> <br> 
-This is called Axis3 transport.This is a cleaner and extensible Transport compared to  Axis2Transport.
- <br> <br> <br> 
-WSDL tool fixes to handle nil types. <br> <br>
-Supports Broader XSD types.<br> <br>
-Supports Broader XSD Any types <br> <br>
-Comprehensive test framework which includes client & server side.<br> <br>
+<H2>Schedules</H2>
+<p><A name="Schedules"></A> At any time you can get a copy of the latest <a href="http://cvs.apache.org/dist/axis/nightly/">overnight build</a> and we try to produce a full release at least every 6 months.</p>
+<p>The current level of Axis CPP that we recommend is 1.5.</p>
+<p>At the moment we envisage 1.6 being released in late December. This will have many bug fixes in it for the more complex scenarios that we see Axis CPP being used in over recent months.</p>
+
+
+<h1><P><A name="LatestRelease">Axis C++ 1.5 Final</A></P> </h1>
+Axis C++ is currently at release 1.5. This implementation is a lot more stable than previous releases and has much better support for XSD types.
+
+<p><a href="download.html">Download the latest release of Axis C++</a></p>
+<h2><P><A name="Key Features">Key features of Axis C++ 1.5</A></P></h2> 
+
+
+<UL>
+	<LI><B>New client side transport</B></BR>
+	This is called Axis3 transport.This is a cleaner, more extensible
+	and vastily more reliable transport compared to previous versions. It
+	has better support for proxies, cookies and more.</LI>
+	<LI>WSDL tool fixes to handle nillable types.</LI>
+	<LI>Supports Broader XSD types.</LI>
+	<LI>Supports Broader XSD Any types</LI>
+</UL>
+<p></p>
+
+<H2><P><A name="BugFixList">The Bug Fixes</A></P> </H2>
+<p><FONT size="-1"> AXISCPP-605 <BR/>
+AXISCPP-602<BR/>
+AXISCPP-600<BR/>
+AXISCPP-596<BR/>
+AXISCPP-594<BR/>
+AXISCPP-593<BR/>
+AXISCPP-592<BR/>
+AXISCPP-591<BR/>
+AXISCPP-590<BR/>
+AXISCPP-589<BR/>
+AXISCPP-587<BR/>
+AXISCPP-586<BR/>
+AXISCPP-585<BR/>
+AXISCPP-584<BR/>
+AXISCPP-583<BR/>
+AXISCPP-582<BR/>
+AXISCPP-581<BR/>
+AXISCPP-579<BR/>
+AXISCPP-576<BR/>
+AXISCPP-575<BR/>
+AXISCPP-569<BR/>
+AXISCPP-568<BR/>
+AXISCPP-567<BR/>
+AXISCPP-566<BR/>
+AXISCPP-564<BR/>
+AXISCPP-562<BR/>
+AXISCPP-561<BR/>
+AXISCPP-560<BR/>
+AXISCPP-556<BR/>
+AXISCPP-555<BR/>
+AXISCPP-553<BR/>
+AXISCPP-550<BR/>
+AXISCPP-549<BR/>
+AXISCPP-545<BR/>
+AXISCPP-534<BR/>
+AXISCPP-532<BR/>
+AXISCPP-531<BR/>
+AXISCPP-530<BR/>
+AXISCPP-528<BR/>
+AXISCPP-525<BR/>
+AXISCPP-524<BR/>
+AXISCPP-523<BR/>
+AXISCPP-521<BR/>
+AXISCPP-520<BR/>
+AXISCPP-518<BR/>
+AXISCPP-517<BR/>
+AXISCPP-516<BR/>
+AXISCPP-514<BR/>
+AXISCPP-513<BR/>
+AXISCPP-511<BR/>
+AXISCPP-510<BR/>
+AXISCPP-509<BR/>
+AXISCPP-508<BR/>
+AXISCPP-507<BR/>
+AXISCPP-504<BR/>
+AXISCPP-503<BR/>
+AXISCPP-502<BR/>
+AXISCPP-501<BR/>
+AXISCPP-500<BR/>
+AXISCPP-499<BR/>
+AXISCPP-498<BR/>
+AXISCPP-497<BR/>
+AXISCPP-496<BR/>
+AXISCPP-495<BR/>
+AXISCPP-494<BR/>
+AXISCPP-493<BR/>
+AXISCPP-492<BR/>
+AXISCPP-491<BR/>
+AXISCPP-490<BR/>
+AXISCPP-489<BR/>
+AXISCPP-488<BR/>
+AXISCPP-487<BR/>
+AXISCPP-486<BR/>
+AXISCPP-485<BR/>
+AXISCPP-484<BR/>
+AXISCPP-483<BR/>
+AXISCPP-482<BR/>
+AXISCPP-481<BR/>
+AXISCPP-480<BR/>
+AXISCPP-479<BR/>
+AXISCPP-478<BR/>
+AXISCPP-477<BR/>
+AXISCPP-475<BR/>
+AXISCPP-474<BR/>
+AXISCPP-472<BR/>
+AXISCPP-470<BR/>
+AXISCPP-469<BR/>
+AXISCPP-468<BR/>
+AXISCPP-466<BR/>
+AXISCPP-465<BR/>
+AXISCPP-464<BR/>
+AXISCPP-463<BR/>
+AXISCPP-462<BR/>
+AXISCPP-459<BR/>
+AXISCPP-457<BR/>
+AXISCPP-456<BR/>
+AXISCPP-454<BR/>
+AXISCPP-453<BR/>
+AXISCPP-451<BR/>
+AXISCPP-450<BR/>
+AXISCPP-447<BR/>
+AXISCPP-446<BR/>
+AXISCPP-444<BR/>
+AXISCPP-443<BR/>
+AXISCPP-442<BR/>
+AXISCPP-441<BR/>
+AXISCPP-437<BR/>
+AXISCPP-436<BR/>
+AXISCPP-433<BR/>
+AXISCPP-431<BR/>
+AXISCPP-430<BR/>
+AXISCPP-428<BR/>
+AXISCPP-425<BR/>
+AXISCPP-420<BR/>
+AXISCPP-419<BR/>
+AXISCPP-418<BR/>
+AXISCPP-417<BR/>
+AXISCPP-415<BR/>
+AXISCPP-414<BR/>
+AXISCPP-413<BR/>
+AXISCPP-410<BR/>
+AXISCPP-409<BR/>
+AXISCPP-408<BR/>
+AXISCPP-407<BR/>
+AXISCPP-403<BR/>
+AXISCPP-400<BR/>
+AXISCPP-398<BR/>
+AXISCPP-392<BR/>
+AXISCPP-390<BR/>
+AXISCPP-389<BR/>
+AXISCPP-385<BR/>
+AXISCPP-383<BR/>
+AXISCPP-376<BR/>
+AXISCPP-375<BR/>
+AXISCPP-371<BR/>
+AXISCPP-364<BR/>
+AXISCPP-355<BR/>
+AXISCPP-348<BR/>
+AXISCPP-346<BR/>
+AXISCPP-344<BR/>
+AXISCPP-341<BR/>
+AXISCPP-340<BR/>
+AXISCPP-335<BR/>
+AXISCPP-331<BR/>
+AXISCPP-310<BR/>
+AXISCPP-306<BR/>
+AXISCPP-305<BR/>
+AXISCPP-303<BR/>
+AXISCPP-300<BR/>
+AXISCPP-293<BR/>
+AXISCPP-288<BR/>
+AXISCPP-270<BR/>
+AXISCPP-268<BR/>
+AXISCPP-242<BR/>
+AXISCPP-216<BR/>
+AXISCPP-207<BR/>
+AXISCPP-164</FONT><br/>
 </p>
 
-<h1>The Bug Fixes </h1>
-<p>
-
-AXISCPP-605 <br>
-AXISCPP-602<br>
-AXISCPP-600<br>
-AXISCPP-596<br>
-AXISCPP-594<br>
-AXISCPP-593<br>
-AXISCPP-592<br>
-AXISCPP-591<br>
-AXISCPP-590<br>
-AXISCPP-589<br>
-AXISCPP-587<br>
-AXISCPP-586<br>
-AXISCPP-585<br>
-AXISCPP-584<br>
-AXISCPP-583<br>
-AXISCPP-582<br>
-AXISCPP-581<br>
-AXISCPP-579<br>
-AXISCPP-576<br>
-AXISCPP-575<br>
-AXISCPP-569<br>
-AXISCPP-568<br>
-AXISCPP-567<br>
-AXISCPP-566<br>
-AXISCPP-564<br>
-AXISCPP-562<br>
-AXISCPP-561<br>
-AXISCPP-560<br>
-AXISCPP-556<br>
-AXISCPP-555<br>
-AXISCPP-553<br>
-AXISCPP-550<br>
-AXISCPP-549<br>
-AXISCPP-545<br>
-AXISCPP-534<br>
-AXISCPP-532<br>
-AXISCPP-531<br>
-AXISCPP-530<br>
-AXISCPP-528<br>
-AXISCPP-525<br>
-AXISCPP-524<br>
-AXISCPP-523<br>
-AXISCPP-521<br>
-AXISCPP-520<br>
-AXISCPP-518<br>
-AXISCPP-517<br>
-AXISCPP-516<br>
-AXISCPP-514<br>
-AXISCPP-513<br>
-AXISCPP-511<br>
-AXISCPP-510<br>
-AXISCPP-509<br>
-AXISCPP-508<br>
-AXISCPP-507<br>
-AXISCPP-504<br>
-AXISCPP-503<br>
-AXISCPP-502<br>
-AXISCPP-501<br>
-AXISCPP-500<br>
-AXISCPP-499<br>
-AXISCPP-498<br>
-AXISCPP-497<br>
-AXISCPP-496<br>
-AXISCPP-495<br>
-AXISCPP-494<br>
-AXISCPP-493<br>
-AXISCPP-492<br>
-AXISCPP-491<br>
-AXISCPP-490<br>
-AXISCPP-489<br>
-AXISCPP-488<br>
-AXISCPP-487<br>
-AXISCPP-486<br>
-AXISCPP-485<br>
-AXISCPP-484<br>
-AXISCPP-483<br>
-AXISCPP-482<br>
-AXISCPP-481<br>
-AXISCPP-480<br>
-AXISCPP-479<br>
-AXISCPP-478<br>
-AXISCPP-477<br>
-AXISCPP-475<br>
-AXISCPP-474<br>
-AXISCPP-472<br>
-AXISCPP-470<br>
-AXISCPP-469<br>
-AXISCPP-468<br>
-AXISCPP-466<br>
-AXISCPP-465<br>
-AXISCPP-464<br>
-AXISCPP-463<br>
-AXISCPP-462<br>
-AXISCPP-459<br>
-AXISCPP-457<br>
-AXISCPP-456<br>
-AXISCPP-454<br>
-AXISCPP-453<br>
-AXISCPP-451<br>
-AXISCPP-450<br>
-AXISCPP-447<br>
-AXISCPP-446<br>
-AXISCPP-444<br>
-AXISCPP-443<br>
-AXISCPP-442<br>
-AXISCPP-441<br>
-AXISCPP-437<br>
-AXISCPP-436<br>
-AXISCPP-433<br>
-AXISCPP-431<br>
-AXISCPP-430<br>
-AXISCPP-428<br>
-AXISCPP-425<br>
-AXISCPP-420<br>
-AXISCPP-419<br>
-AXISCPP-418<br>
-AXISCPP-417<br>
-AXISCPP-415<br>
-AXISCPP-414<br>
-AXISCPP-413<br>
-AXISCPP-410<br>
-AXISCPP-409<br>
-AXISCPP-408<br>
-AXISCPP-407<br>
-AXISCPP-403<br>
-AXISCPP-400<br>
-AXISCPP-398<br>
-AXISCPP-392<br>
-AXISCPP-390<br>
-AXISCPP-389<br>
-AXISCPP-385<br>
-AXISCPP-383<br>
-AXISCPP-376<br>
-AXISCPP-375<br>
-AXISCPP-371<br>
-AXISCPP-364<br>
-AXISCPP-355<br>
-AXISCPP-348<br>
-AXISCPP-346<br>
-AXISCPP-344<br>
-AXISCPP-341<br>
-AXISCPP-340<br>
-AXISCPP-335<br>
-AXISCPP-331<br>
-AXISCPP-310<br>
-AXISCPP-306<br>
-AXISCPP-305<br>
-AXISCPP-303<br>
-AXISCPP-300<br>
-AXISCPP-293<br>
-AXISCPP-288<br>
-AXISCPP-270<br>
-AXISCPP-268<br>
-AXISCPP-242<br>
-AXISCPP-216<br>
-AXISCPP-207<br>
-AXISCPP-164<br>
+<H2>Known Issues</H2>
+<P>
+<A name="Known issues"></A>
+<UL>
+	<LI>C support is not complete.</LI>
+	<LI>There are no vc projects for samples</LI>
+</ul>
+</P>
+<br/>We hope you will enjoy using Axis C++. <BR/>
+<BR/>
+Numerous efforts are currently underway to improve Axis C++ as a whole. <BR/>
+We value your feed back very much. <p><BR/>
+Please report any bugs in <a href="http://issues.apache.org/jira/secure/Dashboard.jspa">Jira</a> and feel free to let us know your thoughts and/or problems in <a href="mailto:axis-c-user@ws.apache.org">axis-c-user@ws.apache.org</a> <br/> <br/>
+We welcome contributions to Axis C++ so please join the  discussions in <a href="mailto:axis-c-dev@ws.apache.org">axis-c-dev@ws.apache.org</a>
 </p>
-
-<h1>Known Issues</h1>
-<p>GNU make based build system is not working.<br> <br>
-Out of the two parsers Expat and Xerces, only Xerces is supported. <br> <br>
- C support is not complete.<br> <br>
- There are no vc projects for samples <br> <br>
- Pending bugs in Jira.<br> <br>  
-
-</p>
-
-
-
-
-<br>
- <p>We hope you will enjoy using Axis C++. <br> <br>
- Numerous efforts are currently underway to improve Axis C++ as a whole. Please have a look at the <a href="http://wiki.apache.org/ws/FrontPage/AxisC_2b_2b">TODO page </a> to learn about 1.5 plans for Axis C++. <br> <br>
-We value your feed back very much. </p> <br> 
-<p>Please report any bugs in <a href="http://issues.apache.org/jira/secure/Dashboard.jspa">Jira</a> and feel free to let us know your thoughts and/or problems in <a href="mailto:axis-c-user@ws.apache.org">axis-c-user@ws.apache.org</a> <br> <br>
-We welcome you to contribute to Axis C++ and  please join the  discussions in <a href="mailto:axis-c-dev@ws.apache.org">axis-c-dev@ws.apache.org</a>
-</p>
-
-
-
-
-
-
-
-
 </body>
 </html>
 

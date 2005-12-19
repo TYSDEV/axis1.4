@@ -8,80 +8,35 @@
 <HR size="1" noshade="noshade">
 <p><strong>Contents</strong></p>
 
-<p>
-<a href="#intro">1 Introduction</a> 
-</p>
 
-<p>
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="#codegen">1.1 Source Code Generation</a>
-</p>
-
-<p>
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="#proglang">1.2 Programming Languages</a>
-</p>
-
-<p>
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="#encode">1.3 Encoding Styles</a>
-</p>
-
-<p>
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="#svcstyle">1.4 Styles of Services</a>
-</p>
-
-<p>
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="#complext">1.5 Support for Complex Types </a>
-</p>
-
-<p>
-<a href="#usage">2 Using the Tool</a> 
-</p>
-
-<p>
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="#dependencies">2.1 Dependencies on Axis Java tool</a>
-</p>
-
-<p>
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="#building">2.2 Building the Tool</a>
-</p>
-
-<p>
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="#synopsis">2.3 Synopsis</a>
-</p>
-
-<p>
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="#classpath">2.4 Setting up CLASSPATH</a>
-</p>
-
-<p>
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="#runtool">2.5 Running the Tool</a>
-</p>
-
-<p>
-<a href="#test">3 Architecture</a>
-</p>
-
-<p>
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="#test1">3.1 Outline</a>
-</p>
-
-<p>
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="#test2">3.2 Mediator WebServiceContext</a>
-</p>
-
-<p>
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="#test3">3.3 Generator</a>
-</p>
-
-<p>
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="#test4">3.4 Flow of Execution</a>
-</p>
-
-<p>
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="#test5">3.5 Sequence Diagram</a>
-</p>
-
-<p><a name="intro"></a></p>
-
+<UL>
+	<LI><A href="#intro">1 Introduction</A></LI>
+	<UL>
+		<LI><A href="#codegen">1.1 Source Code Generation</A></LI>
+		<LI><A href="#proglang">1.2 Programming Languages</A></LI>
+		<LI><A href="#encode">1.3 Encoding Styles</A></LI>
+		<LI><A href="#svcstyle">1.4 Styles of Services</A></LI>
+		<LI><A href="#complext">1.5 Support for Complex Types </A></LI>
+	</UL>
+	
+	<LI><A href="#usage">2 Using the Tool</A></LI>
+	<UL>
+		<LI><A href="#dependencies">2.1 Dependencies on Axis Java tool</A></LI>
+		<LI><A href="#building">2.2 Building the Tool</A></LI>
+		<LI><A href="#synopsis">2.3 Synopsis</A></LI>
+		<LI><A href="#classpath">2.4 Setting up CLASSPATH</A></LI>
+		<LI><A href="#runtool">2.5 Running the Tool</A></LI>
+	</UL>
+	<LI><A href="#test">3 Architecture</A></LI>
+	<UL>
+		<LI><A href="#test1">3.1 Outline</A></LI>
+		<LI><A href="#test2">3.2 Mediator WebServiceContext</A></LI>
+		<LI><A href="#test3">3.3 Generator</A></LI>
+		<LI><A href="#test4">3.4 Flow of Execution</A></LI>
+		<LI><A href="#test5">3.5 Sequence Diagram</A></LI>
+	</UL>
+</UL><p>
+<a name="intro"></a></p>
 <h1>1 Introduction</h1>
 
       <p>The WSDL2Ws tool that comes with Axis C++ can be used to generate different types of wrapper classes / skeletons for the server side and wrapper classes / stubs for the client side for a given WSDL file. WSDL2Ws tool is written in  Java and is based on the WSDL tools by Axis Java project.

@@ -104,10 +104,7 @@ Stub class is also equipped with iterator methods to traverse through the curren
 
 <p> If a target handler access a Header Block created by the deserializer then it is the responsibility of the Handler to delete it.
 
-<h2><a NAME="Open Issues"></a>Open Issues</h2>
-<p> As C++ is an object oriented language, one would ideally like to leverage constructors and destructors for memory management. However, the Axis C++ engine uses structs in some cases (e.g. Arrays) and uses <i>malloc()</i> to allocate memory. Hence the C++ programmer would be forced to use <i>free()</i> at times. When using <i>malloc()</i> and <i>free()</i> constructors and destructors are not called. However, as the Axis C++ engine currently supports both C and C++, it is not simple to replace all <i>malloc()</i> with <i>new</i> or <i>free()</i> with <i>delete</i>. At the same time, there are some places where <i>new</i> and <i>delete</i> are being used. They too cannot be replaced with <i>malloc()</i> and <i>free()</i> overnight. This memory management complexity is the price paid for dual support of C and C++. Efforts are under way to clean up the memory management mix-ups and still support both C and C++. Currently the proposed solution is to make the Axis C++ engine pure C++ and use a wrapper mechanism to support C. 
-
-<p> When an array is de-serialized it uses C style memory re-allocation mechanism in the present code. C++ does not support <i>realloc()</i> and if we use <i>new</i> instead we have to allocate fresh memory blocks each time we need to increase the array size. This can be more expensive than using <i>realloc()</i>. Again the price paid for efficiency is that one has to use <i>free()</i> and not <i>delete []</i>  from C++ code. 
+<h2><a NAME="Open Issues"></a>Open Issues</h2><p> When an array is de-serialized it uses C style memory re-allocation mechanism in the present code. C++ does not support <i>realloc()</i> and if we use <i>new</i> instead we have to allocate fresh memory blocks each time we need to increase the array size. This can be more expensive than using <i>realloc()</i>. Again the price paid for efficiency is that one has to use <i>free()</i> and not <i>delete []</i>  from C++ code. 
 
 </body>
 </html>
