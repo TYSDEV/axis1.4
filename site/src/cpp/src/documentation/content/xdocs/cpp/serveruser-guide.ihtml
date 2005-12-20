@@ -1,0 +1,151 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<HTML>
+<HEAD>
+  <TITLE>Axis C++ Server User's Guide</TITLE>
+</HEAD>
+
+<BODY><H1>Contents</H1>
+<UL>
+	<LI><A href="#Introduction">Introduction</A></LI>
+	<LI><A href="#Pre-requisites">Pre-requisites</A></LI>
+	<LI><A href="#Generating_and_deploying_services">Generating and
+	deploying services</A></LI>
+	<UL>
+		<LI><A href="#Generating_the_service_skeletons">Generating the service
+		skeletons</A></LI>
+		<LI><A href="#Code_the_service">Code the service</A></LI>
+		<LI><A href="#Build_the_server">Build the service</A></LI>
+		<LI><A href="#Deploy_the_service">Deploy the service</A>
+		<UL>
+			<LI><A href="#Deploying_your_service_manually">manually</A></LI>
+			<LI><A href="#Deploying_your_service_using_the_admin_tool">using the
+			AdminClient</A></LI>
+		</UL>
+		</LI><LI><A href="#Checking_the_config">Checking your deployment</A></LI>
+	</UL>
+</UL>
+<H1>Introduction</H1>
+<P><A name="Introduction"></A>In order to use web services you need to create client-side stubs that access the service and, if you are also responsible for writing the service you need to create the service skeletons and then complete them. This document explains how to use the Axis CPP tooling (WSDL2Ws) to generate the server code. It then goes on to show how to deploy a generated service to an Apache webserver (and by implication the simple_axis_server).</P>
+<H1>Pre-requisites</H1>
+<P><A name="Pre-requisites"></A>WSDL2Ws is a 100% java tool and requires a version of Java to be on the machine that you create your stubs and skeletons on. The version of Java that is required is &gt;= 1.4<BR/>WSDL2Ws also has a number of pre-requisite jar files that need to be added to your classpath when you run the tooling<BR/>
+<BR/>&lt;AxisCPP Install dir&gt;/lib/axis/wsdl2ws.jar: Contains the main WSDL2Ws code.<BR/>&lt;AxisCPP Install dir&gt;/lib/axisjava/axis.jar: Contains the Axis java code which WSDL2Ws is based on<BR/>&lt;AxisCPP Install dir&gt;/lib/axisjava/commons-discovery.jar:<BR/>
+&lt;AxisCPP Install dir&gt;/lib/axisjava/commons-logging.jar;<BR/>
+&lt;AxisCPP Install dir&gt;/lib/axisjava/jaxrpc.jar; <BR/>
+&lt;AxisCPP Install dir&gt;/lib/axisjava/saaj.jar;<BR/>
+&lt;AxisCPP Install dir&gt;/lib/axisjava/wsdl4j.jar
+</P><H1>Generating and deploying services</H1>
+
+<P><A name="Generating_and_deploying_services"></A>
+</P><H2>Generate the service skeletons</H2>
+<P><A name="Generating_and_deploying_services"></A>
+As <A href="clientuser-guide.html">with the client-side</A> we will use the Calculator service to show you how to use the tooling and deploy the generated service to the server runtime</P>
+<P>Inside the folder <STRONG>&lt;Axis installation directory&gt;/wsdls/ </STRONG>you will find Calculator.wsdl file which we will use to generate the server-side skeleton and Wrappers. Here is the command line arguments to
+generate the skeleton.</P>
+<P><STRONG>IMPORTANT:In this sample we generate the skeletons using
+Calculator.wsdl and the WSDL2Ws tool. But in the folder &lt;Axis Installation directory&gt;/samples/server/calculator you will find
+already generated files. If you wish to use those without generating new
+ones you can do so. We recommend that you deploy the sample with the
+already generated files in the first round and later do the same with code generated from Calculator.wsdl.<BR/>
+</STRONG></P>
+
+
+<B>Note: </B>Don't forget to add all of the <A
+	href="#Pre-requisites">pre-requisite</A> jar files into your classpath before running the WSDL2Ws tooling
+<STRONG><BR/>
+<BR/>
+cd &lt;Axis Installation directory&gt;/samples/server/calculator</STRONG><BR/>
+<P><BR/><STRONG> java org.apache.axis.wsdl.wsdl2ws.WSDL2Ws
+Calculator.wsdl -lc++ -sserver</STRONG>
+<B><BR/>
+<BR/>
+Note:</B> If you give <STRONG>-o &lt;output directory name&gt; </STRONG>then the output folder is generated for you and the generated source put there.
+If you do not specify this option then the source is put in the folder where the tool is run.
+</P>
+
+
+<H2>Code the Service</H2>
+<P><A name="Code_the_service"></A>Now that you have generated your service skeletons you need to fill out the logic that the service will perform. As we've already mentioned, in the case of the calculator example we have given you pre-filled  skeletons in the <STRONG>&lt;Axis
+Installation directory&gt;</STRONG>/samples/server/calculator directory to show you how it's done.
+</P>
+
+<H2>Build the service<A></A></H2>
+<P><A name="Build the server"></A>Once you've filled in the skeletons for your service you need to build
+the service into a library that can be deployed to the Axis server
+runtime.
+</P>
+<P><B>For example:</B> To build the service library (example using linux and g++)</P>
+
+<P><STRONG> g++ -shared -I&lt;Axis Installation directory&gt;/include -olibcalculator.so *.cpp
+</STRONG></P>
+
+<P>libcalculator.so is the name you give to your service library. You can
+give your own libraries any name you wish. But remember (on linux) to prefix with lib and suffix with
+.so.</P>
+
+<H2>Deploy the service<A></A></H2>
+<P><A name="Deploy_the_service"></A>You can either deploy the file manually to the server or using a provided administration tool  (AdminClient). The first section
+shows you how to deploy your Web Service manually, without using the
+AdminClient tool.
+</P>
+
+<H3>Deploying your service manually<A></A></H3>
+<P><A name="Deploying_your_service_manually"></A>Lets say that the Apache installation folder is &lt;Apache_Folder&gt;.
+<BR/>
+Let's also say that you have
+<A href="install-guide.html#Configure server axiscpp.conf">set up</A>
+your Axis configuration file (axiscpp.conf) to use the &lt;Apache_Folder&gt;/Axis/conf/server.wsdd server configuration file<BR/>
+<OL>
+	<LI>
+Copy the above <B>libcalculator.so</B> to the folder<B>
+	&lt;Apache_Folder&gt;/Axis/webservices.</B><BR/>
+	</LI>
+	<LI> Add the following to the server.wsdd at the service level.
+	(Please make sure you add these lines at the service level and no other) The example below uses linux path and library names<BR/>
+	<BR/>
+	<B>&lt;service name="Calculator" provider="CPP:RPC"
+	description="Calculator Web Service"&gt; <BR/>
+	&lt;parameter name="className"
+	value="&lt;Apache_Folder&gt;/Axis/webservices/libcalculator.so"/&gt;
+	<BR/>
+	&lt;/service&gt; </B><BR/>
+	</LI>
+	<LI><A href="#Checking the config">Check your deployment</A> has succeeded <BR/>
+	</LI>
+	<LI>That's all there is to it ! You should now be able to <A
+		href="clientuser-guide.html#Running Calculator Client">run the calculator client</A> against this service.</LI>
+</OL>
+
+<H3>Deploying your service using the AdminClient Tool</H3>
+
+<p><A name="Deploying_your_service_using_the_admin_tool"></A>As an alternative to manually deploying the service to the server you can use the <B>AdminClient</B> tool supplied with Axis CPP.<BR/>
+The wsdl2ws Tool generates the deploy.wsdd and the undeploy.wsdd files which are needed for the AdminClient. Once you have these files, you can deploy the web service (in this case the calculator service) using the AdminClient. <BR/>
+<BR/>
+The client takes in the following parameters<BR/>
+<BR/>
+<B>AdminClient &lt;server machine name &gt; &lt;Port that axis is configured for&gt; &lt;server wsddfile to deploy&gt;</B>
+<BR/>
+<BR/>
+<BR/>Before running this command make sure that the contents of the wsdd file are correct for your configuration - especially the location of the libraries containing your service.<BR/>
+<BR/>
+A typical invocation of the AdminClient looks like this....<BR/>
+<BR/>
+<B>AdminClient localhost 80 deploy.wsdd</B><BR/>
+where <B>localhost</B> is the server where the Axis cpp server is hosted and <B>80</B> is the port where Axis is configured for.
+</P>
+
+<H2>Checking your deployment configuration</H2>
+<P><A name="Checking_the_config"></A>
+
+<OL>
+	<LI>Ensure that your server is started<BR/>
+	</LI>
+	<LI>Open a browser and enter the link <B>http://localhost/axis</B> . <BR/>
+	If
+	the service is correctly deployed then it will be displayed in a table
+	of deployed services which contain information such as service name,
+	link to wsdl and a description of the service.</LI>
+</OL>
+</P>
+</BODY>
+</HTML>
