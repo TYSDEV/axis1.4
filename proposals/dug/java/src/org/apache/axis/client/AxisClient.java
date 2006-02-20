@@ -60,6 +60,25 @@ public class AxisClient extends AxisEngine {
     RMInterface           rmImpl      = null ;
     WSSecInterface        secImpl     = null ;
 
+    private void loadImpls(MessageContext msgContext) throws Exception {
+      if ( rmImpl != null ) return ;
+      if ( secImpl != null ) return ;
+
+      // Look for WSSecurity impl
+      String cls = msgContext.getStrProp( "WSSecurityImpl" );
+      if ( cls == null ) 
+        cls = (String) msgContext.getAxisEngine().getOption("WSSecurityImpl");
+      if ( cls != null )
+        secImpl = (WSSecInterface) Class.forName(cls).newInstance();
+
+      // Look for WSRM impl
+      cls = msgContext.getStrProp( "WSRMImpl" );
+      if ( cls == null ) 
+        cls = (String) msgContext.getAxisEngine().getOption("WSRMImpl");
+      if ( cls != null )
+        rmImpl = (RMInterface) Class.forName(cls).newInstance();
+    }
+
     public AxisClient(EngineConfiguration config) {
         super(config);
     }
@@ -78,6 +97,8 @@ public class AxisClient extends AxisEngine {
 
     public void invokeOutbound(MessageContext msgContext) throws Exception {
         Handler h = null ;
+
+        loadImpls(msgContext);
 
         /* Process the Service Specific Request Chain */
         /**********************************************/
@@ -119,7 +140,6 @@ public class AxisClient extends AxisEngine {
           }
         }
 
-        // Run the security code - Init security sessions if needed
         if ( secImpl != null )
           secImpl.init( msgContext );
     }
@@ -136,6 +156,8 @@ public class AxisClient extends AxisEngine {
          */
         String  hName = msgContext.getTransportName();
         Handler h     = null ;
+
+        loadImpls(msgContext);
 
         if ( hName != null && (h = getTransport( hName )) != null )  {
           // Piggy-back any RM headers (like ACKs)
@@ -240,20 +262,7 @@ public class AxisClient extends AxisEngine {
             // set active context
             setCurrentMessageContext(msgContext);
 
-            // Look for WSSecurity impl
-            String cls = msgContext.getStrProp( "WSSecurityImpl" );
-            if ( cls == null ) 
-              cls = (String) msgContext.getAxisEngine()
-                                       .getOption("WSSecurityImpl");
-            if ( cls != null )
-              secImpl = (WSSecInterface) Class.forName(cls).newInstance();
-
-            // Look for WSRM impl
-            cls = msgContext.getStrProp( "WSRMImpl" );
-            if ( cls == null ) 
-              cls = (String) msgContext.getAxisEngine().getOption("WSRMImpl");
-            if ( cls != null )
-              rmImpl = (RMInterface) Class.forName(cls).newInstance();
+            loadImpls(msgContext);
 
             // Do WSA processing first
             WSAHandler.invoke( msgContext );
