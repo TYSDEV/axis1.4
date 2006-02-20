@@ -39,6 +39,7 @@ import org.apache.axis.message.SOAPBodyElement;
 import org.apache.axis.message.SOAPHeaderElement;
 import org.apache.axis.wsrm.RMInterface ;
 import org.apache.axis.wsa.MIHeader;
+import org.apache.axis.wsa.WSAConstants;
 import org.apache.axis.wsa.WSAHandler;
 
 import java.util.Map;
@@ -264,8 +265,7 @@ public class AxisServer extends AxisEngine
         // If WSA isn't turned on then just rethrow it
         // Dug - fix this, it should not do this we need to make this
         // work even when WSA is turned on
-        if ( MIHeader.fromRequest() == null ) throw exp ;
-
+        if ( msgContext.getProperty(WSAConstants.REQ_MIH) == null ) throw exp ;
         if ( !(exp instanceof AxisFault) )
           exp = AxisFault.makeFault( exp );
 
