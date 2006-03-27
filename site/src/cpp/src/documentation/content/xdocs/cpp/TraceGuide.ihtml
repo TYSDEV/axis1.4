@@ -1,0 +1,111 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>The Axis C++ Trace Guide</title>
+<meta name="generator"
+	content="amaya 8.1b, see http://www.w3.org/Amaya/">
+</head>
+
+<body>
+<H1>Introducion</H1>
+<P>This documents describes the trace facilities within Axis C++, how to
+enable them and how to make use of the produced trace.</P>
+<H1>Contents</H1>
+<UL>
+	<LI><A href="#RuntimeTrace">Runtime Trace</A>
+	<UL>
+		<LI><A href="#enablingRuntimeTrace">Enabling runtime trace</A></LI>
+		<LI><A href="#readingRuntimeTrace">Reading runtime trace</A></LI>
+	</UL></LI>
+	<LI><A href="#StartupTrace">Startup Trace</A>
+	<UL>
+		<LI><A href="#enablingStartupTrace">Enabling startup trace</A></LI>
+	</UL></LI>
+	<LI><A href="#InterestingTraceEntries">Interesting Trace Entries</A></LI>
+</UL>
+<P><a name="RuntimeTrace"></a></P>
+<H1>Runtime Trace</H1>
+<P>To aid the development team in understanding the problems of users,
+the Axis C++ engine has been instrumented with trace.</P>
+<P><A name="enablingRuntimeTrace"></A></P>
+<H2>Enabling runtime trace</H2>
+<P>Trace is enabled at runtime by adding the following to <CODE>axiscpp.conf</CODE>:</P>
+<P><CODE>ClientLogPath:&lt;path to log file&gt;</CODE></P>
+<P><A name="readingRuntimeTrace"></A></P>
+<H2>Reading runtime trace</H2>
+<P>The Axis C++ runtime trace is produced in a format compatible with
+the Trace Analyzer for WebSphere Application Server, which is available
+from here:</P>
+<P><A href="http://www.alphaworks.ibm.com/tech/ta4was">Trace Analyzer
+for WebSphere Application Server</A></P>
+<P>However, it is also possible to use any text editor.  Each line is made up of the following columns:</P>
+<UL>
+<LI>date/time</LI>
+	<LI>thread ID</LI>
+	<LI>Class name, a - indicates a c-style gloval function</LI>
+	<LI>Trace type:
+	<UL>
+		<LI>&gt; (entry)</LI>
+		<LI>&lt; (exit)</LI>
+		<LI>X (exception)</LI>
+		<LI>I (information)</LI>
+	</UL></LI>
+	<LI>Method name</LI>
+	<LI><CODE>this</CODE> pointer for instance methods</LI>
+	<LI>comma seperated list of parameters
+	<UL>
+		<LI>[nnnnnnnn] Data in hex</LI>
+		<LI>&lt;...&gt; Data in ascii</LI>
+		<LI>For pointers address is given before data</LI>
+		<LI>For void*, only 1st byte of data is given, as there is no way of knowing size of data.</LI>
+	</UL></LI>
+</UL>
+<P>So, a typical entry would be:</P>
+<P><CODE>[27/03/2006 16:21:48:945 Time] 4220 AxisConfig &gt; getAxisConfProperty @00376358,[00000000] &lt;....&gt;</CODE></P>
+
+<P>Some other things to watch for are:</P>
+<UL>
+	<LI>An entry containing: <CODE>------------&gt;</CODE> indicates that it is a multiline entry</LI>
+	<LI><CODE>&lt;BADPOINTER&gt;</CODE> means the trace attempted to dereference a pointer causing a SIGSEGV which the trace has caught.</LI>
+	<LI><CODE>&lt;UNKNOWNTYPE&gt;</CODE> means the trace tool and runtime have got out of step.  You have found a bug!</LI>
+	<LI><CODE>&lt;ANONYMOUS&gt;</CODE> means that it is unnamed in the method signature.</LI>
+</UL>
+
+<P><a name="StartUpTrace"></a></P>
+<H1>Startup Trace</H1>
+<P>One shortcoming of the runtime trace is that it only begins tracing
+after the configuration file has been loaded and the <CODE>ClientLogPath</CODE>
+entry read. This means any problems that occur before this, for example
+while reading the configuration file, are missed. To overcome this the
+Axis C++ engine has also been instrumented with startup trace, this
+starts tracing at the first call into the Axis engine and everything up
+to the point at which runtime trace starts.</P>
+<P>Startup trace uses the same formatting as the runtime trace.</P>
+<P><A name="enablingStartupTrace"></A></P>
+<H2>Enabling startup trace</H2>
+<P>Startup trace is enabled by setting the following environment
+variable:</P>
+<P><CODE>AXISCPP_STARTUP_TRACE=&lt;path to startup log file&gt;</CODE></P>
+<P><a name="InterestingTraceEntries"></a></P>
+<H1>Interesting Trace Entries</H1>
+<P>Here are a few entries well worth looking for when you first receive
+a trace file.</P>
+<H2>Stub Destructor</H2>
+<P>Check lines in the trace file immediately preceding the entry for
+~Stub, as this is typically the first method run following a <CODE>SIGSEGV</CODE>.</P>
+<H2>Exception Entries</H2>
+<P>Check any exception entries, which is indicated by an X in the 3rd
+column. These actually indicate that an exception has been caught. If
+you see <CODE>@&lt;number&gt;</CODE> this indicates which catch block,
+if more than one present in the current method. You can use this, along
+with the trace lines immediately preceding, to determine fairly closely
+exactly where the trace was thrown. You will also see trace entries for
+the exception constructor if it is an Axis C++ exception.</P>
+<H2>HTTPChannel::operator&lt;&lt;</H2>
+<P>The entry trace for <CODE>operator&lt;&lt;</CODE> on <CODE>HTTPChannel</CODE>shows
+the message that will sent on the wire. Although the HTTP Header and
+SOAP message tend to be in seperate calls to this method. This allows
+for diagnosis of some problems with the message, without requiring the
+use of a tcp/ip monitoring tool.</P>
+</body>
+</html>
