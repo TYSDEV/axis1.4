@@ -186,13 +186,10 @@ Channel_HTTP_SSL:C:\Axis\axis-c-1.6-Win32-bin\bin\HTTPSSLChannel.dll<BR/>
 <P>
 The AxisConfiguration executable can also be run with a number of command line options to aid automated configuration (an example of this can be found in the ant script axis-c-1.6-Win32-bin\build\executeBuild.xml, target name 'createConfigurationFile').  The available options are listed below.<BR/><BR/>
 <TABLE>
-<TR><TD>command</TD><TD>Description</TD><TD>Example</TD></TR>
+<TR><TD>Command</TD><TD>Description</TD><TD>Example</TD></TR>
 <TR><TD>-acd</TD><TD>Directory to write axiscpp.conf once it has been configured.  This overrides the '-a' value (which defines where axiscpp.conf would normally reside).</TD><TD>-acd c:\Axis\Different</TD></TR>
 <TR><TD>-a</TD><TD>Root directory of Axis download (AXISCPP_HOME).</TD><TD>-a c:\Axis</TD></TR>
 <TR><TD>-o</TD><TD>Directory offset from AXISCPP_HOME to object files.</TD><TD>-o axis-c-1.6-Win32-bin\bin</TD></TR>
-<TR><TD>-th</TD><TD>Transport library name.  If -a and -o have both already been defined, then only the filename is required.  Otherwise the fully qualified path will be required (NB: You can still override the -a and -o definitions by using a fully qualified path).</TD><TD>(with -a and -o defined): -th HTTPTransport.dll, (without -a and -o defined): -th c:\Axis\axis-c-1.6-Win32-bin\bin\HTTPTransport.dll</TD></TR>
-<TR><TD>-c</TD><TD>Channel library name.  If -a and -o have both already been defined, then only the filename is required.  Otherwise the fully qualified path will be required (NB: You can still override the -a and -o definitions by using a fully qualified path).</TD><TD>(with -a and -o defined): -c HTTPChannel.dll, (without -a and -o defined): -c c:\Axis\axis-c-1.6-Win32-bin\bin\HTTPChannel.dll</TD></TR>
-<TR><TD>-cs</TD><TD>SSL channel library name.  If -a and -o have both already been defined, then only the filename is required.  Otherwise the fully qualified path will be required (NB: You can still override the -a and -o definitions by using a fully qualified path).</TD><TD>(with -a and -o defined): -cs HTTPSSLChannel.dll, (without -a and -o defined): -cs c:\Axis\axis-c-1.6-Win32-bin\bin\HTTPSSLChannel.dll</TD></TR>
 <TR><TD>-x</TD><TD>Xerces library name.  If -a and -o have both already been defined, then only the filename is required.  Otherwise the fully qualified path will be required (NB: You can still override the -a and -o definitions by using a fully qualified path).</TD><TD>(with -a and -o defined): -x AxisXMLParserXerces.dll, (without -a and -o defined): -x c:\Axis\axis-c-1.6-Win32-bin\bin\AxisXMLParserXerces.dll</TD></TR>
 <TR><TD>-m</TD><TD>Merge with existing configuration file.</TD><TD>-m on|off (the default is 'off' meaning 'overwrite')</TD></TR>
 <TR><TD>-pi</TD><TD>Change the progress information output during the construction of the configuration file.</TD><TD>-pi normal|quiet (the default is 'normal' meaning "give full descriptions").</TD></TR>
@@ -205,7 +202,10 @@ Client Specific<BR/>
 ---------------<BR/>
 </P>
 <TABLE>
-<TR><TD>command</TD><TD>Description</TD><TD>Example</TD></TR>
+<TR><TD>Command</TD><TD>Description</TD><TD>Example</TD></TR>
+<TR><TD>-th</TD><TD>Transport library name.  If -a and -o have both already been defined, then only the filename is required.  Otherwise the fully qualified path will be required (NB: You can still override the -a and -o definitions by using a fully qualified path).</TD><TD>(with -a and -o defined): -th HTTPTransport.dll, (without -a and -o defined): -th c:\Axis\axis-c-1.6-Win32-bin\bin\HTTPTransport.dll</TD></TR>
+<TR><TD>-c</TD><TD>Channel library name.  If -a and -o have both already been defined, then only the filename is required.  Otherwise the fully qualified path will be required (NB: You can still override the -a and -o definitions by using a fully qualified path).</TD><TD>(with -a and -o defined): -c HTTPChannel.dll, (without -a and -o defined): -c c:\Axis\axis-c-1.6-Win32-bin\bin\HTTPChannel.dll</TD></TR>
+<TR><TD>-cs</TD><TD>SSL channel library name.  If -a and -o have both already been defined, then only the filename is required.  Otherwise the fully qualified path will be required (NB: You can still override the -a and -o definitions by using a fully qualified path).</TD><TD>(with -a and -o defined): -cs HTTPSSLChannel.dll, (without -a and -o defined): -cs c:\Axis\axis-c-1.6-Win32-bin\bin\HTTPSSLChannel.dll</TD></TR>
 <TR><TD>-cl</TD><TD>Client log filename.  If -a has been defined, then only the filename is required.  Otherwise the fully qualified path will be required.  (NB: You can still override the -a and -o definitions by using a fully qulified path).  To ignore the client log, using 'ignore' instead of a filename.</TD><TD>(without -a defined): -cl c:\Axis\client.log.</TD></TR>
 <TR><TD>-cw</TD><TD>Client WSDD filename.  If -a and -o have both already been defined, then only the filename is required.  Otherwise the fully qualified path will be required (NB: You can still override the -a and -o definitions by using a fully qulified path).</TD><TD>(with -a and -o defined): -cw client.wsdd, (without -a and -o defined): -cw c:\Axis\WSDD\client.wsdd</TD></TR>
 </TABLE>
@@ -214,7 +214,7 @@ Server Specific<BR/>
 ---------------<BR/>
 </P>
 <TABLE>
-<TR><TD>command</TD><TD>Description</TD><TD>Example</TD></TR>
+<TR><TD>Command</TD><TD>Description</TD><TD>Example</TD></TR>
 <TR><TD>-sl</TD><TD>Server log filename.  If -a has been defined, then only the filename is required.  Otherwise the fully qualified path will be required.  (NB: You can still override the -a and -o definitions by using a fully qulified path).</TD><TD>(with -a defined): -sl server.log, (without -a defined): -sl c:\Axis\server.log</TD></TR>
 <TR><TD>-sw</TD><TD>Server WSDD filename.  If -a and -o have both already been defined, then only the filename is required.  Otherwise the fully qualified path will be required (NB: You can still override the -a and -o definitions by using a fully qulified path).</TD><TD>(with -a and -o defined): -sw server.wsdd, (without -a and -o defined): -sw c:\Axis\WSDD\server.wsdd</TD></TR>
 </TABLE>
