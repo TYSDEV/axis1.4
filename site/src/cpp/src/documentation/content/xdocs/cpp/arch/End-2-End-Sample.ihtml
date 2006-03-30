@@ -1,0 +1,259 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/>
+<title>End-to-End Calculator Sample Tutorial</title>
+<link href="axis.css" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+<h1>Contents</h1>
+<ul>
+<li>
+<a href="#Introduction">Introduction</a>
+</li>
+<li>
+<a href="#GettingStarted">Getting Started</a>
+</li>
+<li>
+<a href="#CreatingServerSideCode">Creating the server side code</a>
+</li>
+<li>
+<a href="#BuildingServerSideCode">Building the server side code</a>
+</li>
+<li>
+<a href="#DeployingServerSideCode">Deploying the server side code</a>
+</li>
+<li>
+<a href="#CreatingClientSideCode">Creating the client side code</a>
+</li>
+<li>
+<a href="#BuildingClientSideCode">Building the client side code</a>
+</li>
+<li>
+<a href="#RunningClientSideCode">Running the client side code</a>
+</li>
+</ul>
+
+<p><a name="Introduction"/></p>
+<h2>Introduction</h2>
+<p>
+The purpose of this page is to give the user a step-by-step guide to create a simple web service client/server example using Apache Axis.
+<BR/>
+It is assumed that the user has downloaded the latest version of the Axis code (from page <A href="../download.html">http://ws.apache.org/axis/cpp/download.html</A>) and they also have the prerequisites as described in the Pre-requisite section (from page http://ws.apache.org/axis/cpp/install-guide.html ) and has set-up any environment variables required by Axis or its prerequisite applications.
+</p>
+<p><a name="GettingStarted"/></p>
+<h2>Getting Started</h2>
+<p>
+Before beginning, check that there is the following directory structure and that you have all of the libraries on the ‘path’ (especially all the prerequisites).  Below is a typical directory structure that you should expect to find if you have just downloaded and unzipped the package.
+</p>
+<p>
+<PRE>
++- Axis<BR/>
+|    +- samples<BR/>
+|    |    +- client<BR/>
+|    |    |    +- calculator<BR/>
+|    |    |    |    +- Client.cpp<BR/>
+:    :    :    :<BR/>
+|    |    +- server<BR/>
+|    |    |    +- calculator<BR/>
+|    |    |    |    +- Calculator.cpp<BR/>
+:    :<BR/>
+|    +- deploy<BR/>
+|    |    +- wsdls<BR/>
+|    |    |    +- calculator.wsdl<BR/>
+:    :<BR/>
+|    +- lib<BR/>
+|    |    +- axis<BR/>
+|    |    |    +- wsdl2ws.jar<BR/>
+|    |    |    +- axis_client.lib or libaxis_client.so<BR/>
+|    |    |    +- axis_server.lib or libaxis_server.so
+:    :
+</PRE>
+<center>Fig 1. Portion of a typical Axis directory structure containing the required sample client/server components.</center>
+</p>
+<p>
+<b>Note: The user must also have the correct level of Java on the build/test machine.</b>
+</p>
+<p><a name="CreatingServerSideCode"/></p>
+<h2>Creating the server side code</h2>
+<p>
+The first stage in creating the server side code is to create the server side stubs for the web service.  This can be done very simply by using the Java application wsdl2ws.jar.  This application will create both client and server side ‘stubs’ from which the user can create their web service application.  (These ‘stubs’ remove the need for the user to have a deep understanding of how web services work, but the user should have some appreciation and at least a working knowledge of web service basics.)  The key to web services is the WSDL file.  This file contains a complete description of what methods are available in the service as well as the parameters names and types required by each method.  In short, it provides a description of the interface.  For this example, we will be using the calculator wsdl.  In the following command line example, <i>&lt;inst_dir&gt;</i> is assumed to be the directory to which Axis was unzipped and <i>&lt;samp_dir&gt;</i> is assumed to be the directory in which the server side calculator sample is to be created.  To create the server side stubs for the calculator sample, type the following at the command line:-
+</p>
+<TABLE>
+<TR><TD><center>Windows/Unix</center></TD></TR>
+<TR><TD><TT>java –classpath <i>&lt;inst_dir&gt;</i>/lib/axis/wsdl2ws.jar;<i>&lt;inst_dir&gt;</i>/lib/axisjava/axis.jar;<i>&lt;inst_dir&gt;</i>/lib/axisjava/commons-discovery.jar;<i>&lt;inst_dir&gt;</i>/lib/axisjava/commons-logging.jar;<i>&lt;inst_dir&gt;</i>/lib/axisjava/jaxrpc.jar;<i>&lt;inst_dir&gt;</i>/lib/axisjava/saaj.jar;<i>&lt;inst_dir&gt;</i>/lib/axisjava/wsdl4j.jar org.apache.axis.wsdl.wsdl2ws.WSDL2Ws <i>&lt;inst_dir&gt;</i>/deploy/wsdls/calculator.wsdl -sserver -o<i>&lt;samp_dir&gt;</i>/Server</TT></TD></TR>
+</TABLE>
+<p>
+<center>Fig 2. Command line to create the server side stubs from the calculator.wsdl</center>
+</p>
+<p>
+After running wsdl2ws, there should now be a new directory under the <i>&lt;samp_dir&gt;</i> called ‘Server’ which should contain 9 files as follows:-
+<PRE>
+AxisServiceException.cpp
+AxisServiceException.hpp
+Calculator.cpp
+Calculator.hpp
+CalculatorService.cpp
+CalculatorWrapper.cpp
+CalculatorWrapper.hpp
+deploy.wsdd
+undeploy.wsdd
+</PRE>
+<center>Fig 3. Files produced by running the wsdl2ws application with the calculator wsdl file.</center>
+</p>
+<p>
+<b>Note: wsdl2ws will only generate files if they do not already exist.  If the wsdl changes, the user must remember to delete the ‘old’ stubs before using wsdl2ws to generate the updated ones.</b>
+</p>
+<p><a name="BuildingServerSideCode"/></p>
+<h2>Building the server side code</h2>
+<p>
+Before building the server side you might want to familiarise yourself with the content of the generated files.  In particular, the Calculator.cpp file which will contain the server side of the web service methods.  If we concentrate on the ‘add’ method, the raw code produced by the stub is as follows:-
+<PRE>
+xsd__int Calculator::add(xsd__int Value0,xsd__int Value1)  
+{
+}
+</PRE>
+<center>Fig 4. Raw server side Calculator::add method code produced by the wsdl2ws application.</center>
+</p>
+<p>
+At present, the code will not compile because there is no ‘return’ value.  Also, there is no method code content.  Before the code has any use, the programmer will have to add the necessary program logic that the method is supposed to provide.  In this case, it is to add the two numbers in the parameter list and return the result.
+<BR/>
+You can either add the content or use the already prepared Calculator.cpp file supplied in the <i>&lt;inst_dir&gt;</i>/samples/server/calculator directory.
+<PRE>
+xsd__int Calculator::add( xsd__int Value0, xsd__int Value1)
+{
+	return Value0 + Value1;
+}
+</PRE>
+<center>Fig 5. Server side Calculator::add method from the samples/server/calculator directory.</center>
+</p>
+<p>
+Once the logic within the Calculator.cpp file has been completed, the server side library can be built using the appropriate c/c++ compiler.  Below are the compiler commands for each platform:-
+<TABLE>
+<TR><TD><center>Windows</center></TD><TD><center>Unix</center></TD></TR>
+<TR><TD><TT>cl *.cpp /GX /MD /D "WIN32" /I<i>&lt;inst_dir&gt;</i>/include /link<i>&lt;inst_dir&gt;</i>/lib/axis/axis_server.lib /DLL /OUT:"Calculator.dll"</TT></TD><TD><TT>gcc *.cpp -I <i>&lt;inst_dir&gt;</i>/include -L<i>&lt;inst_dir&gt;</i>/lib/axis/axis_server.so  -o Calculator.so</TT></TD></TR>
+</TABLE>
+<center>Fig 6. Command line to create the server side calculator library</center>
+</p>
+<p>
+After compilation, the appropriate library file should have been created.
+</p>
+<p><a name="DeployingServerSideCode"/></p>
+<h2>Deploying the server side code</h2>
+<p>
+The SimpleAxisServer application uses a wsdd file to identify the connection between a web service name and the server library.  The axiscpp.conf file contains a tag to identify the location of the wsdd file to be used by the server.  The axiscpp.conf file can be found in the directory identified by the AXISCPP_DEPLOY environment variable.  Below is the line containing the tag that identifies where the server wsdd file is located.
+<BR/>
+<BR/>
+<TT>
+WSDDFilePath: <i>&lt;samp_dir&gt;</i>/Server/deploy.wsdd
+</TT>
+<center>Fig 7. Server WSDD tag in the axiscpp.conf used by SimpleAxisServer to locate services to be deployed.</center>
+<BR/>
+<b>Note:  If more than one service is to be deployed then the user will have to concatenate the deploy.wsdd files generated by the wsdl2ws tool.</b>
+</p>
+<p>
+The contents of the automatically generated deploy.wsdd file should be as follows:-
+<PRE>
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;deployment xmlns=http://xml.apache.org/axis/wsdd/
+            xmlns:CPP=http://xml.apache.org/axis/wsdd/providers/CPP&gt;
+    &lt;service name="Calculator"
+             provider="CPP:RPC"
+             description="Axis C++ web service"&gt;
+        &lt;parameter name="className"
+                  value="/user/local/apache/axis/Calculator.dll"/&gt;
+        &lt;parameter name="allowedMethods"
+                  value="add addRequest sub subRequest mul mulRequest div divRequest "/&gt;
+    &lt;/service&gt;
+&lt;/deployment&gt;
+</PRE>
+<center>Fig 8. Contents of the deploy.wsdd file created by the wsdl2ws tool.</center>
+</p>
+<p>
+Before deployment, the wsdd file needs one alteration for the location of the library.  Currently it is set to “/user/local/apache/axis/…”, this needs to be edited to <i>&lt;samp_dir&gt;</i>\Server\Calculator.dll or <i>&lt;samp_dir&gt;</i>/Server/Calculator.so, depending on the operating system.
+<BR/>
+<BR/>
+After making this alteration, the server side is now ready to run.  More information on how to run the SimpleAxisServer can be found at <A href="../install-guide.html#Simple_Axis_Server_Installation_and_Configuration">http://ws.apache.org/axis/cpp/install-guide.html#Simple_Axis_Server_Installation_and_Configuration</A>.
+</p>
+<p><a name="CreatingClientSideCode"/></p>
+<h2>Creating the client side code</h2>
+<p>
+The first stage in creating the client side code is to create the client side stubs for the web service.  This can be done very simply by using the Java application wsdl2ws.jar.  This application will create both client and server side ‘stubs’ from which the user can create their web service application.  (These ‘stubs’ remove the need for the user to have a deep understanding of how web services work, but the user should have some appreciation and at least a working knowledge of web service basics.)  The key to web services is the WSDL file.  This file contains a complete description of what methods are available in the service as well as the parameters names and types required by each method.  In short, it provides a description of the interface.  For this example, we will be using the calculator wsdl.  In the following command line example, <i>&lt;inst_dir&gt;</i> is assumed to be the directory to which Axis was unzipped and <i>&lt;samp_dir&gt;</i> is assumed to be the directory in which the client side calculator sample is to be created.  To create the client side stubs for the calculator sample, type the following at the command line:-
+<TABLE>
+<TR><TD><center>Windows/Unix</center></TD></TR>
+<TR><TD><TT>java –classpath <i>&lt;inst_dir&gt;</i>/lib/axis/wsdl2ws.jar; <i>&lt;inst_dir&gt;</i>/lib/axisjava/axis.jar;<i>&lt;inst_dir&gt;</i>/lib/axisjava/commons-discovery.jar;<i>&lt;inst_dir&gt;</i>/lib/axisjava/commons-logging.jar;<i>&lt;inst_dir&gt;</i>/lib/axisjava/jaxrpc.jar;<i>&lt;inst_dir&gt;</i>/lib/axisjava/saaj.jar;<i>&lt;inst_dir&gt;</i>/lib/axisjava/wsdl4j.jar org.apache.axis.wsdl.wsdl2ws.WSDL2Ws <i>&lt;inst_dir&gt;</i>/deploy/wsdls/calculator.wsdl –sclient -o<i>&lt;samp_dir&gt;</i>/Client</TT></TD></TR>
+</TABLE>
+<center>Fig 9. Command line to create the client side stubs from the calculator.wsdl</center>
+</p>
+<p>
+After running wsdl2ws, there should now be a new directory under the <i>&lt;samp_dir&gt;</i> called ‘Client’ which should contain 2 files as follows:-
+<PRE>
+Calculator.cpp
+Calculator.hpp
+</PRE>
+<center>Fig 10. Files produced by running the wsdl2ws application with the calculator wsdl file.</center>
+</p>
+<p><a name="BuildingClientSideCode"/></p>
+<h2>Building the client side code</h2>
+<p>
+Before building the client side you might want to familiarise yourself with the content of the generated files.  In particular, the Calculator.cpp file which will contain the client side of the web service methods.
+<BR/>
+<BR/>
+At present, there is no ‘client’ code, just the stub code.  Before the stub code can be compiled, the programmer will have to provide a client program that will use one or more of the methods provided by the web service.  In the following example, a client has been written that requires the function provided by the ‘add’ method in the calculator web service.
+<BR/>
+<BR/>
+The client application writter can either provide their own client cpp file or use the already prepared Client.cpp file supplied in the <i>&lt;inst_dir&gt;</i>/samples/client/calculator directory, an extract from which follows:-
+<PRE>
+try
+{
+    Calculator	ws( “http://localhost:9080/axis/Calculator”);
+    xsd__int	iValue1 = 25;
+    xsd__int	iValue2 = 25;
+    xsd__int	iResult = ws.add( iValue1, iValue2);
+    xsd__int	iExpected = iValue1 + iValue2;
+
+    cout << “Web Service:  ” << iValue1 << “ + “ << iValue2 << “ = “ << iResult << endl;
+    cout << “Local Machine:” << iValue1 << “ + “ << iValue2 << “ = “ << iExpected << endl;
+}
+catch( AxisException & e)
+{
+    cout << "Axis Exception : " << e.what() << endl;
+}
+catch( exception & e)
+{
+    cout << "Exception : " << e.what() << endl;
+}
+catch( ...)
+{
+    cout << "Unknown exception " << endl;
+}
+</PRE>
+<center>Fig 11. Extract from the client side application that uses the ‘add’ method from the samples/server/calculator web service.</center>
+</p>
+<p>
+Once the logic within the Client.cpp file has been completed, the client side executable can be built using the appropriate c/c++ compiler.  Below are the compiler commands for each platform:-
+<TABLE>
+<TR><TD><center>Windows</center></TD><TD><center>Unix</center></TD></TR>
+<TR><TD><TT>cl *.cpp /GX /MD /D "WIN32" /I<i>&lt;inst_dir&gt;</i>/include /link<i>&lt;inst_dir&gt;</i>/lib/axis/axis_client.lib /OUT:"Calculator.exe"</TT></TD><TD><TT>gcc *.cpp -I <i>&lt;inst_dir&gt;</i>/include -L<i>&lt;inst_dir&gt;</i>/lib/axis/libaxis_client.so  -o Calculator</TT></TD></TR>
+</TABLE>
+<center>Fig 12. Command line to create the client side calculator executable</center>
+</p>
+<p>
+After compilation, the appropriate executable file should have been created.
+</p>
+<p><a name="BuildingClientSideCode"/></p>
+<h2>Running the client side code</h2>
+<p>
+With the SimpleAxisServer application already running and with the correct wsdd file deployed, the Calculator client application can now be run from the command line as follows:-
+
+<TABLE>
+<TR><TD><center>Windows</center></TD><TD><center>Unix</center></TD></TR>
+<TR><TD><TT>Calculator add 25 25 http://localhost:9080/axis/Calculator</TT></TD><TD><TT>./Calculator add 25 25 http://localhost:9080/axis/Calculator</TT></TD></TR>
+</TABLE>
+<center>Fig 13. Command line to run the client side calculator executable.</center>
+</p>
+<p>
+More information on how to run the Client application can be found at <A href="../install-guide.html#Installing_Client">http://ws.apache.org/axis/cpp/install-guide.html#Installing_Client</A>.
+</p>
+</body>
+</html>

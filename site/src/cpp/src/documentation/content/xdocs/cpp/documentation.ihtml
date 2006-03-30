@@ -23,7 +23,8 @@
 <li>
 <a href="serveruser-guide.html">Server User Guide</a>
 </li>
-	<LI><A href="arch/handler.html">Handler Tutorial</A></LI>
+<LI><A href="arch/handler.html">Handler Tutorial</A></LI>
+<LI><A href="arch/End-2-End-Sample.html">End-to-end Calculator sample Tutorial</A></LI>
 </ul>
 <P></P>
 <H1>Developer Guides</H1>
