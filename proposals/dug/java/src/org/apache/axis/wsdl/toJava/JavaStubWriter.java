@@ -403,7 +403,7 @@ public class JavaStubWriter extends JavaClassWriter {
 
         pw.println("            return _call;");
         pw.println("        }");
-        pw.println("        catch (java.lang.Throwable _t) {");
+        pw.println("        catch (java.lang.Exception _t) {");
         pw.println("            throw new org.apache.axis.AxisFault(\""
                 + Messages.getMessage("badCall01") + "\", _t);");
         pw.println("        }");
@@ -549,7 +549,8 @@ public class JavaStubWriter extends JavaClassWriter {
             if ((i % OPERDESC_PER_BLOCK) == 0) {
                 k++;
 
-                pw.println("    }\n");
+                pw.println("    }");
+                pw.println();
                 pw.println("    private static void _initOperationDesc" + k
                         + "(){");
                 pw.println(
