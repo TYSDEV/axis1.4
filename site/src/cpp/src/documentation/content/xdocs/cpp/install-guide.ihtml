@@ -344,15 +344,6 @@ The steps to follow are:
 </ol> 
 
 <p>
-To do the same you can you can use scripts in $AXISCPP_DEPLOY/bin.</p>
-
-<b>cd $AXISCPP_DEPLOY/bin </b> <BR/> 
-<p>                                       
-To deploy with Apache 2.0.x </p>
-<b>sh deploy_apache2.sh </b> <BR/>
-<p>
-To deploy with Apache 1.3.x </p>
-<b>sh deploy_apache.sh </b>
 
 <H4>9. See Axis C++ in action</H4>
 <p>
