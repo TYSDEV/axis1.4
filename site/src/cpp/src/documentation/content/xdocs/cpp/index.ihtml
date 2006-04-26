@@ -19,12 +19,11 @@ as Axis2 C implementation has progressed far enough to take over its role.</p>
 	<LI><A href="#Features">Features</A></LI>
 	<LI><A href="#QualityAssurance">Quality Assurance</A></LI>
 	<LI><A href="#Schedules"> Schedules</A></LI>
-	<LI><A href="#LatestRelease">Axis C++ 1.6 Beta</A></LI>
+	<LI><A href="#LatestRelease">Axis C++ 1.6</A></LI>
 	
 	<UL>
-		<LI><A href="#Key Features">Key Features</A></LI>
-		<LI><A href="#BugFixList">Fix List</A></LI>
-		<LI><A href="#Known issues">Known issues</A></LI>
+		<LI><A href="#KeyFeatures">Key Features</A></LI>
+		<LI><A href="#KnownIssues">Known issues</A></LI>
 	</UL>
 	
 </UL>
@@ -43,307 +42,44 @@ as Axis2 C implementation has progressed far enough to take over its role.</p>
 <LI>Sample web services and client applications.</LI>
 </ul>
 
+<P><A name="QualityAssurance"/></P>
 <H2>Quality Assurance</H2>
-<P><A name="QualityAssurance"></A>In the past two years, the comprehensive test-suite has been created and maintained to a high-level.
+<P>In the past two years, the comprehensive test-suite has been created and maintained to a high-level.
 The suite is run over all the nightly builds. If bugs are found then tests are added to ensure that the code does not regress - this is your assurance of quality.
 </P>
 
-
+<P><A name="Schedules"/></P>
 <H2>Schedules</H2>
-<p><A name="Schedules"></A> At any time you can get a copy of the latest <a href="http://cvs.apache.org/dist/axis/nightly/">overnight build</a> and we try to produce a full release at least every 6 months.</p>
-<p>The current level of Axis CPP that we recommend is 1.6 Beta.</p>
-<p>At the moment we envisage 1.6 being released in mid March. This will have many bug fixes in it for the more complex scenarios that we see Axis CPP being used in over recent months.</p>
+<p>At any time you can get a copy of the latest <a href="http://cvs.apache.org/dist/axis/nightly/">overnight build</a> and we try to produce a full release at least every 6 months.</p>
+<p>The current level of Axis CPP that we recommend is 1.6. This has many bug fixes in it for the more complex scenarios that we have seen Axis CPP being used in over recent months.</p>
 
-
-<h1><P><A name="LatestRelease">Axis C++ 1.6 Beta</A></P> </h1>
-Axis C++ is currently at release 1.6 Beta. This implementation is a lot more stable than previous releases and has much better memory management.
+<P><A name="LatestRelease"/></P>
+<h1>Axis C++ 1.6</h1>
+Axis C++ is currently at release 1.6. This implementation is a lot more stable than previous releases and has much better memory management.
 
 <p><a href="download.html">Download the latest release of Axis C++</a></p>
-<h2><P><A name="Key Features">Key features of Axis C++ 1.6 Beta</A></P></h2> 
-
-
+<P><A name="KeyFeatures"/></P>
+<h2>Key features of Axis C++ 1.6</h2> 
 <UL>
 	<LI>WSDL tool fixes to support optional types.</LI>
 	<LI>Supports all XSD built-in simple types.</LI>
 	<LI>Supports Broader XSD Any types</LI>
 	<LI>Some support for xsd:choice and xsd:all</LI>
 </UL>
-<p></p>
 
-<H2><P><A name="BugFixList">The Bug Fixes</A></P> </H2>
-<p><FONT size="-1">AXISCPP-36</BR>
-AXISCPP-104</BR>
-AXISCPP-139</BR>
-AXISCPP-146</BR>
-AXISCPP-149</BR>
-AXISCPP-191</BR>
-AXISCPP-194</BR>
-AXISCPP-197</BR>
-AXISCPP-208</BR>
-AXISCPP-228</BR>
-AXISCPP-239</BR>
-AXISCPP-245</BR>
-AXISCPP-248</BR>
-AXISCPP-250</BR>
-AXISCPP-256</BR>
-AXISCPP-257</BR>
-AXISCPP-259</BR>
-AXISCPP-275</BR>
-AXISCPP-282</BR>
-AXISCPP-309</BR>
-AXISCPP-318</BR>
-AXISCPP-322</BR>
-AXISCPP-326</BR>
-AXISCPP-329</BR>
-AXISCPP-339</BR>
-AXISCPP-342</BR>
-AXISCPP-343</BR>
-AXISCPP-345</BR>
-AXISCPP-359</BR>
-AXISCPP-378</BR>
-AXISCPP-380</BR>
-AXISCPP-406</BR>
-AXISCPP-411</BR>
-AXISCPP-412</BR>
-AXISCPP-416</BR>
-AXISCPP-426</BR>
-AXISCPP-434</BR>
-AXISCPP-445</BR>
-AXISCPP-452</BR>
-AXISCPP-458</BR>
-AXISCPP-467</BR>
-AXISCPP-471</BR>
-AXISCPP-473</BR>
-AXISCPP-506</BR>
-AXISCPP-515</BR>
-AXISCPP-517</BR>
-AXISCPP-519</BR>
-AXISCPP-522</BR>
-AXISCPP-536</BR>
-AXISCPP-539</BR>
-AXISCPP-546</BR>
-AXISCPP-548</BR>
-AXISCPP-558</BR>
-AXISCPP-563</BR>
-AXISCPP-565</BR>
-AXISCPP-572</BR>
-AXISCPP-573</BR>
-AXISCPP-577</BR>
-AXISCPP-580</BR>
-AXISCPP-585</BR>
-AXISCPP-588</BR>
-AXISCPP-596</BR>
-AXISCPP-598</BR>
-AXISCPP-599</BR>
-AXISCPP-601</BR>
-AXISCPP-602</BR>
-AXISCPP-603</BR>
-AXISCPP-604</BR>
-AXISCPP-606</BR>
-AXISCPP-608</BR>
-AXISCPP-609</BR>
-AXISCPP-611</BR>
-AXISCPP-613</BR>
-AXISCPP-614</BR>
-AXISCPP-615</BR>
-AXISCPP-621</BR>
-AXISCPP-622</BR>
-AXISCPP-623</BR>
-AXISCPP-625</BR>
-AXISCPP-626</BR>
-AXISCPP-628</BR>
-AXISCPP-629</BR>
-AXISCPP-631</BR>
-AXISCPP-635</BR>
-AXISCPP-636</BR>
-AXISCPP-639</BR>
-AXISCPP-644</BR>
-AXISCPP-647</BR>
-AXISCPP-648</BR>
-AXISCPP-649</BR>
-AXISCPP-650</BR>
-AXISCPP-651</BR>
-AXISCPP-652</BR>
-AXISCPP-653</BR>
-AXISCPP-655</BR>
-AXISCPP-656</BR>
-AXISCPP-658</BR>
-AXISCPP-659</BR>
-AXISCPP-660</BR>
-AXISCPP-662</BR>
-AXISCPP-664</BR>
-AXISCPP-665</BR>
-AXISCPP-666</BR>
-AXISCPP-669</BR>
-AXISCPP-670</BR>
-AXISCPP-671</BR>
-AXISCPP-674</BR>
-AXISCPP-675</BR>
-AXISCPP-676</BR>
-AXISCPP-678</BR>
-AXISCPP-679</BR>
-AXISCPP-681</BR>
-AXISCPP-682</BR>
-AXISCPP-684</BR>
-AXISCPP-685</BR>
-AXISCPP-687</BR>
-AXISCPP-689</BR>
-AXISCPP-690</BR>
-AXISCPP-691</BR>
-AXISCPP-692</BR>
-AXISCPP-693</BR>
-AXISCPP-694</BR>
-AXISCPP-695</BR>
-AXISCPP-696</BR>
-AXISCPP-698</BR>
-AXISCPP-700</BR>
-AXISCPP-701</BR>
-AXISCPP-702</BR>
-AXISCPP-703</BR>
-AXISCPP-704</BR>
-AXISCPP-705</BR>
-AXISCPP-706</BR>
-AXISCPP-707</BR>
-AXISCPP-708</BR>
-AXISCPP-709</BR>
-AXISCPP-714</BR>
-AXISCPP-715</BR>
-AXISCPP-717</BR>
-AXISCPP-718</BR>
-AXISCPP-719</BR>
-AXISCPP-720</BR>
-AXISCPP-721</BR>
-AXISCPP-722</BR>
-AXISCPP-723</BR>
-AXISCPP-724</BR>
-AXISCPP-726</BR>
-AXISCPP-727</BR>
-AXISCPP-730</BR>
-AXISCPP-731</BR>
-AXISCPP-732</BR>
-AXISCPP-733</BR>
-AXISCPP-734</BR>
-AXISCPP-735</BR>
-AXISCPP-737</BR>
-AXISCPP-739</BR>
-AXISCPP-746</BR>
-AXISCPP-747</BR>
-AXISCPP-750</BR>
-AXISCPP-751</BR>
-AXISCPP-752</BR>
-AXISCPP-753</BR>
-AXISCPP-754</BR>
-AXISCPP-756</BR>
-AXISCPP-758</BR>
-AXISCPP-762</BR>
-AXISCPP-765</BR>
-AXISCPP-766</BR>
-AXISCPP-769</BR>
-AXISCPP-772</BR>
-AXISCPP-773</BR>
-AXISCPP-775</BR>
-AXISCPP-776</BR>
-AXISCPP-777</BR>
-AXISCPP-778</BR>
-AXISCPP-779</BR>
-AXISCPP-781</BR>
-AXISCPP-782</BR>
-AXISCPP-783</BR>
-AXISCPP-786</BR>
-AXISCPP-787</BR>
-AXISCPP-788</BR>
-AXISCPP-790</BR>
-AXISCPP-791</BR>
-AXISCPP-792</BR>
-AXISCPP-798</BR>
-AXISCPP-799</BR>
-AXISCPP-800</BR>
-AXISCPP-802</BR>
-AXISCPP-804</BR>
-AXISCPP-805</BR>
-AXISCPP-808</BR>
-AXISCPP-809</BR>
-AXISCPP-810</BR>
-AXISCPP-811</BR>
-AXISCPP-812</BR>
-AXISCPP-813</BR>
-AXISCPP-814</BR>
-AXISCPP-815</BR>
-AXISCPP-816</BR>
-AXISCPP-817</BR>
-AXISCPP-818</BR>
-AXISCPP-819</BR>
-AXISCPP-820</BR>
-AXISCPP-821</BR>
-AXISCPP-822</BR>
-AXISCPP-824</BR>
-AXISCPP-825</BR>
-AXISCPP-826</BR>
-AXISCPP-829</BR>
-AXISCPP-832</BR>
-AXISCPP-833</BR>
-AXISCPP-834</BR>
-AXISCPP-837</BR>
-AXISCPP-838</BR>
-AXISCPP-839</BR>
-AXISCPP-843</BR>
-AXISCPP-844</BR>
-AXISCPP-846</BR>
-AXISCPP-847</BR>
-AXISCPP-848</BR>
-AXISCPP-849</BR>
-AXISCPP-850</BR>
-AXISCPP-851</BR>
-AXISCPP-852</BR>
-AXISCPP-853</BR>
-AXISCPP-854</BR>
-AXISCPP-857</BR>
-AXISCPP-859</BR>
-AXISCPP-860</BR>
-AXISCPP-861</BR>
-AXISCPP-863</BR>
-AXISCPP-866</BR>
-AXISCPP-867</BR>
-AXISCPP-868</BR>
-AXISCPP-870</BR>
-AXISCPP-875</BR>
-AXISCPP-877</BR>
-AXISCPP-880</BR>
-AXISCPP-892</BR>
-AXISCPP-895</BR>
-AXISCPP-897</BR>
-AXISCPP-901</BR>
-AXISCPP-902</BR>
-AXISCPP-903</BR>
-AXISCPP-919</BR>
-AXISCPP-920</BR>
-AXISCPP-933</BR>
-AXISCPP-934</BR>
-AXISCPP-935</BR>
-AXISCPP-936</BR>
-AXISCPP-937</BR>
-AXISCPP-938</BR>
-AXISCPP-939</BR>
-AXISCPP-940</BR>
-AXISCPP-942</FONT><br/>
-</p>
-
+<P><A name="KnownIssues"/></P>
 <H2>Known Issues</H2>
-<P>
-<A name="Known issues"></A>
 <UL>
 	<LI>C support is not complete.</LI>
 	<LI>There are no vc projects for samples</LI>
 	<LI>Optional and nillable elements within xsd:choice or xsd:all</LI>
+	<LI>Binary distribution requires Apache Xerces-C version 1.5, however, Axis C++ can be built from source, without modification, to use Xerces-C version 1.6.</LI>
 </ul>
-</P>
-<br/>We hope you will enjoy using Axis C++. <BR/>
-<BR/>
-Numerous efforts are currently underway to improve Axis C++ as a whole. <BR/>
-We value your feed back very much. <p><BR/>
-Please report any bugs in <a href="http://issues.apache.org/jira/secure/Dashboard.jspa">Jira</a> and feel free to let us know your thoughts and/or problems in <a href="mailto:axis-c-user@ws.apache.org">axis-c-user@ws.apache.org</a> <br/> <br/>
-We welcome contributions to Axis C++ so please join the  discussions in <a href="mailto:axis-c-dev@ws.apache.org">axis-c-dev@ws.apache.org</a>
-</p>
+<P>We hope you will enjoy using Axis C++.</P>
+<P>Numerous efforts are currently underway to improve Axis C++ as a whole.</P>
+<P>We value your feedback very much.</P>
+<P>Please report any bugs in <a href="http://issues.apache.org/jira/secure/Dashboard.jspa">Jira</a> and feel free to let us know your thoughts and/or problems in <a href="mailto:axis-c-user@ws.apache.org">axis-c-user@ws.apache.org</a> <br/> <br/>
+We welcome contributions to Axis C++ so please join the  discussions in <a href="mailto:axis-c-dev@ws.apache.org">axis-c-dev@ws.apache.org</a></P>
 </body>
 </html>
 
