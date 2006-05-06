@@ -25,8 +25,8 @@
 <section>
 <title>Checking out ws-axis and ws-site module</title>
 
-<p>Check out <b>'ws-axis/site/src'</b> and <b>'ws-site/target/axis'</b> module via your favorite CVS tools.<br/>
-Please follow the guildeline written <a href="site:cvs">here</a>.</p>
+<p>Check out <b>'http://svn.apache.org/repos/asf/webservices/axis/trunk/site/src/java'</b> and <b>'http://svn.apache.org/repos/asf/webservices/axis/site'</b> module via your favorite SVN tools.<br/>
+Please follow the guideline written <a href="site:cvs">here</a>.</p>
 
 </section>
 

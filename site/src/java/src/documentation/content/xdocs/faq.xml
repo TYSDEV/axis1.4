@@ -101,9 +101,6 @@ We are hoping for a 1.0 release in the Summer of 2002.</blockquote>
 <link href="http://www.apache.org/~rubys/ApacheClientInterop.html">Sam Ruby's
 Axis/SOAP interop page</link></li>
 
-<li>
-<link href="http://cvs.apache.org/viewcvs/~checkout~/ws-axis/java/docs/requirements.html?content-type=text/html">The
-requirements &amp; status page.</link></li>
 </ul>
 </blockquote>
 <a name="faq5"></a><i>Why do some classes fail to load under Tomcat?</i>

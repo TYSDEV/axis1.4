@@ -46,16 +46,6 @@ read.</p>
 
 <p><b><a href="http://java.sun.com/docs/codeconv/html/CodeConvTOC.doc.html">The Java Code Conventions</a></b><br/>
   This Sun document specifies the de-facto standard way of formatting Java code. All code written for this project must follow these conventions.</p>
-
-<p><b><a href="http://cvsbook.red-bean.com/">Open Source Development with CVS</a></b><br/>
-  Written by Karl Fogel, this is an online version of many of the primary chapters from the dead-tree version of his book.</p>
-
-<p><b><a href="http://www.cvshome.org/docs/blandy.html">Introduction to CVS</a></b><br/>
-  Written by Jim Blandy, this brief introduction gives a first look into CVS. If you have never used CVS before, you'll want to start here.</p>
-
-<p><b><a href="https://www.cvshome.org/docs/manual/">Version Management with CVS</a></b><br/>
-  Written by Per Cederqvist et al, this is the main manual for CVS. It provides details on all documented CVS features.</p>
-
 </section>
 
   </body>

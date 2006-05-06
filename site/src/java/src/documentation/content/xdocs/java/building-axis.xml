@@ -56,7 +56,7 @@
 <title>Building without Any Optional Components</title>
 
 <ol>
-  <li>Download the xml-axis project from cvs. (http://ws.apache.org/axis/cvs.html)</li>
+  <li>Download the axis project from SVN. (http://ws.apache.org/axis/cvs.html)</li>
 
   <li>Download activation.jar to $(axis.home)/java/lib.<br/>
 You can download this from <a href="http://java.sun.com/products/javabeans/glasgow/jaf.html">http://java.sun.com/products/javabeans/glasgow/jaf.html</a><br/>

@@ -19,7 +19,7 @@
 <p>Using the products,reporting bugs, making feature requests, etc. is by far the most important role. It's your feedback that allows the technology to evolve.
   <ul>
     <li><a href="mail.html">Join Mailing Lists</a></li>
-    <li><a href="releases.html">Download Binary Builds</a></li>
+    <li><a href="http://ws.apache.org/axis/java/releases.html">Download Binary Builds</a></li>
     <li><a href="bugs.html">Report bugs/Request additional features</a></li>
   </ul>
 </p>
@@ -30,8 +30,7 @@
   <ul>
     <li><a href="mailguide.html">Read Guidelines</a></li>
     <li><a href="ref.html">Review Reference Library</a></li>
-    <li><a href="http://cvs.apache.org/viewcvs/ws-axis/">Download the Source Code</a></li>
-    <li><a href="cvs.html">Access CVS Repository</a></li>
+    <li><a href="cvs.html">Access SVN Repository</a></li>
   </ul>
 </p>
 
