@@ -423,4 +423,62 @@ public class SOAPFault extends SOAPBodyElement implements javax.xml.soap.SOAPFau
             }
         }
     }
+    
+    // SAAJ 1.3 API
+    
+    public void setFaultCode(QName faultCode) throws SOAPException {
+        fault.setFaultCode(faultCode);
+    }
+    
+    public QName getFaultCodeAsQName() {
+        return fault.getFaultCode();
+    }
+    
+    public Iterator getFaultSubcodes() {
+        throw new UnsupportedOperationException("Not implemented.");
+    }
+    
+    public void removeAllFaultSubcodes() {
+        throw new UnsupportedOperationException("Not implemented.");
+    }
+    
+    public void appendFaultSubcode(QName subcode) throws SOAPException {
+        throw new UnsupportedOperationException("Not implemented.");
+    }
+    
+    public boolean hasDetail() {
+        return (getDetail() != null);
+    }
+    
+    public void addFaultReasonText(String text, Locale locale) throws SOAPException {
+        throw new UnsupportedOperationException("Not implemented.");
+    }
+    
+    public String getFaultReasonText(Locale locale) throws SOAPException {
+        throw new UnsupportedOperationException("Not implemented.");
+    }
+    
+    public Iterator getFaultReasonTexts() throws SOAPException {
+        throw new UnsupportedOperationException("Not implemented.");
+    }
+    
+    public Iterator getFaultReasonLocales() throws SOAPException {
+        throw new UnsupportedOperationException("Not implemented.");
+    }
+    
+    public String getFaultRole() {
+        throw new UnsupportedOperationException("Not implemented.");
+    }
+    
+    public void setFaultRole(String uri) throws SOAPException {
+        throw new UnsupportedOperationException("Not implemented.");
+    }
+    
+    public String getFaultNode() {
+        throw new UnsupportedOperationException("Not implemented.");
+    }
+    
+    public void setFaultNode(String uri) throws SOAPException {
+        throw new UnsupportedOperationException("Not implemented.");
+    }
 }

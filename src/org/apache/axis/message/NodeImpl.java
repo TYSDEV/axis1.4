@@ -30,6 +30,7 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
+import org.w3c.dom.UserDataHandler;
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.AttributesImpl;
 
@@ -857,4 +858,55 @@ public class NodeImpl implements org.w3c.dom.Node, javax.xml.soap.Node,
         }	
         this._isDirty = false;
     }
+    
+    // DOM 1.3 API
+
+    public short compareDocumentPosition(Node other) throws DOMException {
+        throw new DOMException(DOMException.NOT_SUPPORTED_ERR, "");
+    }
+
+    public String getBaseURI() {
+        throw new DOMException(DOMException.NOT_SUPPORTED_ERR, "");
+    }
+
+    public Object getFeature(String feature, String version) {
+        throw new DOMException(DOMException.NOT_SUPPORTED_ERR, "");
+    }
+
+    public String getTextContent() throws DOMException {
+        throw new DOMException(DOMException.NOT_SUPPORTED_ERR, "");
+    }
+
+    public Object getUserData(String key) {
+        throw new DOMException(DOMException.NOT_SUPPORTED_ERR, "");
+    }
+
+    public boolean isDefaultNamespace(String namespaceURI) {
+        throw new DOMException(DOMException.NOT_SUPPORTED_ERR, "");
+    }
+
+    public boolean isEqualNode(Node arg) {
+        throw new DOMException(DOMException.NOT_SUPPORTED_ERR, "");
+    }
+
+    public boolean isSameNode(Node other) {
+        throw new DOMException(DOMException.NOT_SUPPORTED_ERR, "");
+    }
+
+    public String lookupNamespaceURI(String prefix) {
+        throw new DOMException(DOMException.NOT_SUPPORTED_ERR, "");
+    }
+
+    public String lookupPrefix(String namespaceURI) {
+        throw new DOMException(DOMException.NOT_SUPPORTED_ERR, "");
+    }
+
+    public void setTextContent(String textContent) throws DOMException {
+        throw new DOMException(DOMException.NOT_SUPPORTED_ERR, "");
+    }
+
+    public Object setUserData(String key, Object data, UserDataHandler handler) {
+        throw new DOMException(DOMException.NOT_SUPPORTED_ERR, "");
+    }
+        
 }

@@ -306,4 +306,22 @@ public class SOAPBody extends MessageElement
     public void setSAAJEncodingCompliance(boolean comply) {
         this.doSAAJEncodingCompliance = true;
     }
+    
+    // SAAJ 1.3 API
+    
+    public javax.xml.soap.SOAPBodyElement addBodyElement(QName name) throws SOAPException {
+        return addBodyElement(new PrefixedQName(name));
+    }
+    
+    public javax.xml.soap.SOAPFault addFault(QName name, String s) throws SOAPException {
+        return addFault(new PrefixedQName(name), s);
+    }
+    
+    public javax.xml.soap.SOAPFault addFault(QName name, String s, Locale locale) throws SOAPException {
+        return addFault(new PrefixedQName(name), s, locale);
+    }
+    
+    public Document extractContentAsDocument() throws SOAPException {
+        throw new UnsupportedOperationException("Not implemented.");
+    }
 }

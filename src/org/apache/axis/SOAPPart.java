@@ -34,6 +34,7 @@ import org.apache.commons.logging.Log;
 import org.w3c.dom.Attr;
 import org.w3c.dom.CDATASection;
 import org.w3c.dom.Comment;
+import org.w3c.dom.DOMConfiguration;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
@@ -46,9 +47,11 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.ProcessingInstruction;
 import org.w3c.dom.Text;
+import org.w3c.dom.UserDataHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.transform.Source;
@@ -1279,6 +1282,126 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
     
     public boolean isBodyStream() {
         return (currentForm == SOAPPart.FORM_INPUTSTREAM || currentForm == SOAPPart.FORM_BODYINSTREAM);        
+    }
+
+    // DOM 3 API
+
+    public String getDocumentURI() {
+        return document.getDocumentURI();
+    }
+
+    public DOMConfiguration getDomConfig() {
+        return document.getDomConfig();
+    }
+
+    public String getInputEncoding() {
+        return document.getInputEncoding();
+    }
+
+    public String getXmlEncoding() {
+        return document.getXmlEncoding();
+    }
+
+    public boolean getXmlStandalone() {
+        return document.getXmlStandalone();
+    }
+
+    public String getXmlVersion() {
+        return document.getXmlVersion();
+    }
+
+    public void normalizeDocument() {
+        document.normalizeDocument();        
+    }
+
+    public Node renameNode(Node n, String namespaceURI, String qualifiedName) throws DOMException {
+        return document.renameNode(n, namespaceURI, qualifiedName);
+    }
+
+    public void setDocumentURI(String documentURI) {
+       document.setDocumentURI(documentURI);        
+    }
+
+    public void setXmlStandalone(boolean xmlStandalone) throws DOMException {
+        document.setXmlStandalone(xmlStandalone);        
+    }
+
+    public void setXmlVersion(String xmlVersion) throws DOMException {
+        document.setXmlVersion(xmlVersion);        
+    }
+
+    public short compareDocumentPosition(Node other) throws DOMException {
+        return document.compareDocumentPosition(other);
+    }
+
+    public String getBaseURI() {
+        return document.getBaseURI();
+    }
+
+    public Object getFeature(String feature, String version) {
+        return document.getFeature(feature, version);
+    }
+
+    public String getTextContent() throws DOMException {
+        return document.getTextContent();
+    }
+
+    public Object getUserData(String key) {
+        return document.getUserData(key);
+    }
+
+    public boolean isDefaultNamespace(String namespaceURI) {
+        return document.isDefaultNamespace(namespaceURI);
+    }
+
+    public boolean isEqualNode(Node arg) {
+        return document.isEqualNode(arg);
+    }
+
+    public boolean isSameNode(Node other) {
+        return document.isSameNode(other);
+    }
+
+    public String lookupNamespaceURI(String prefix) {
+        return document.lookupNamespaceURI(prefix);
+    }
+
+    public String lookupPrefix(String namespaceURI) {
+        return document.lookupPrefix(namespaceURI);
+    }
+
+    public void setTextContent(String textContent) throws DOMException {
+        document.setTextContent(textContent);        
+    }
+
+    public Object setUserData(String key, Object data, UserDataHandler handler) {
+        return document.setUserData(key, data, handler);
+    }
+   
+    // SOAP Node methods (since SOAPPart now implements SOAP Node)
+    
+    public void detachNode() {
+        throw new UnsupportedOperationException("Not implemented.");  
+    }
+
+    public SOAPElement getParentElement() {
+        throw new UnsupportedOperationException("Not implemented."); 
+    }
+
+    public String getValue() {
+        throw new UnsupportedOperationException("Not implemented."); 
+    }
+
+    public void recycleNode() {
+        throw new UnsupportedOperationException("Not implemented.");         
+    }
+
+    public void setParentElement(SOAPElement arg0) throws SOAPException {
+        throw new UnsupportedOperationException("Not implemented.");         
+    }
+
+    public void setValue(String arg0) {
+        throw new UnsupportedOperationException("Not implemented.");         
     }
 }
 

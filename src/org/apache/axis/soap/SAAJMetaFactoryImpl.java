@@ -1,5 +1,5 @@
 /*
- * Copyright 2001-2004 The Apache Software Foundation.
+ * Copyright 2002-2004 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,20 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package javax.xml.soap;
+package org.apache.axis.soap;
 
-/**
- * A representation of a node whose value is text. A <CODE>
- *   Text</CODE> object may represent text that is content or text
- *   that is a comment.
- */
-public interface Text extends Node, org.w3c.dom.Text {
+import javax.xml.soap.MessageFactory;
+import javax.xml.soap.SAAJMetaFactory;
+import javax.xml.soap.SOAPException;
+import javax.xml.soap.SOAPFactory;
 
-    /**
-     * Retrieves whether this <CODE>Text</CODE> object
-     * represents a comment.
-     * @return  <CODE>true</CODE> if this <CODE>Text</CODE> object is
-     *     a comment; <CODE>false</CODE> otherwise
-     */
-    public abstract boolean isComment();
+public class SAAJMetaFactoryImpl extends SAAJMetaFactory {
+
+    protected MessageFactory newMessageFactory(String arg0) throws SOAPException {
+        return new MessageFactoryImpl();
+    }
+
+    protected SOAPFactory newSOAPFactory(String arg0) throws SOAPException {
+        return new SOAPFactoryImpl();
+    }
+    
 }

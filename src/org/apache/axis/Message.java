@@ -18,8 +18,8 @@ package org.apache.axis;
 
 import org.apache.axis.attachments.Attachments;
 import org.apache.axis.components.logger.LogFactory;
-import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.MimeHeaders;
+import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.soap.SOAPConstants;
 import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.axis.utils.ClassUtils;
@@ -28,6 +28,7 @@ import org.apache.axis.utils.XMLUtils;
 import org.apache.commons.logging.Log;
 
 import javax.xml.soap.AttachmentPart;
+import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPHeader;
@@ -759,4 +760,15 @@ public class Message extends javax.xml.soap.SOAPMessage
             mAttachments.dispose();
         }
     }
+    
+    // SAAJ 1.3 API
+    
+    public AttachmentPart getAttachment(SOAPElement element) throws SOAPException {
+        throw new UnsupportedOperationException("Not implemented.");        
+    }
+    
+    public void removeAttachments(javax.xml.soap.MimeHeaders headers) {
+        throw new UnsupportedOperationException("Not implemented.");
+    }
+    
 }

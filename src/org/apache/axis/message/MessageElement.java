@@ -41,6 +41,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.TypeInfo;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
@@ -2142,5 +2143,75 @@ public class MessageElement extends NodeImpl implements SOAPElement,
             doc = new SOAPDocumentImpl(null);
         }
         return doc;
+    }
+    
+    // SAAJ 1.3 API
+    
+    public SOAPElement addChildElement(QName qname) throws SOAPException {
+        return addChildElement(new PrefixedQName(qname));
+    }
+    
+    public SOAPElement addAttribute(QName qname, String value) throws SOAPException {
+        return addAttribute(new PrefixedQName(qname), value);
+    }
+    
+    public String getAttributeValue(QName qname) {
+        return getAttributeValue(new PrefixedQName(qname));
+    }
+    
+    public Iterator getAllAttributesAsQNames() {
+        int num = attributes.getLength();
+        Vector attrs = new Vector(num);
+        for (int i = 0; i < num; i++) {
+            String q = attributes.getQName(i);
+            String prefix = "";
+            if (q != null) {
+                int idx = q.indexOf(":");
+                if (idx > 0) {
+                    prefix = q.substring(0, idx);
+                } else {
+                    prefix= "";
+                }
+            }
+
+            attrs.add(new QName(attributes.getURI(i),
+                                attributes.getLocalName(i),
+                                prefix));
+        }
+        return attrs.iterator();
+    }
+    
+    public QName createQName(String localName, String prefix) throws SOAPException {
+        return new QName(getNamespaceURI(prefix), localName, prefix);
+    }
+    
+    public QName getElementQName() {
+        return new QName(getNamespaceURI(), getName(), getPrefix());
+    }
+    
+    public SOAPElement setElementQName(QName newName) throws SOAPException {
+        throw new UnsupportedOperationException("Not implemented.");
+    }
+    
+    public boolean removeAttribute(QName qname) {
+        return removeAttribute(new PrefixedQName(qname));
+    }
+    
+    // DOM 3 API
+    
+    public TypeInfo getSchemaTypeInfo() {
+        return null;
+    }
+    
+    public void setIdAttribute(String name, boolean isId) throws DOMException {
+        throw new DOMException(DOMException.NOT_SUPPORTED_ERR, "");
+    }
+    
+    public void setIdAttributeNS(String namespaceURI, String localName, boolean isId) throws DOMException {
+        throw new DOMException(DOMException.NOT_SUPPORTED_ERR, "");
+    }
+    
+    public void setIdAttributeNode(Attr idAttr, boolean isId) throws DOMException {
+        throw new DOMException(DOMException.NOT_SUPPORTED_ERR, "");
     }
 }

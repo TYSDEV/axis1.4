@@ -16,6 +16,7 @@
 
 package org.apache.axis.message;
 
+import javax.xml.namespace.QName;
 import javax.xml.soap.DetailEntry;
 import javax.xml.soap.Name;
 import javax.xml.soap.SOAPException;
@@ -51,5 +52,11 @@ public class Detail extends SOAPFaultElement implements javax.xml.soap.Detail {
      */
     public Iterator getDetailEntries() {
         return this.getChildElements();
+    }
+    
+    // SAAJ 1.3 API
+    
+    public DetailEntry addDetailEntry(QName name) throws SOAPException {
+        return addDetailEntry(new PrefixedQName(name));
     }
 }

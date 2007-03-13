@@ -400,4 +400,26 @@ public class SOAPHeader extends MessageElement
         }
         return headerElement;
     }
+    
+    // SAAJ 1.3 API
+    
+    public javax.xml.soap.SOAPHeaderElement addHeaderElement(QName name) throws SOAPException {
+        return addHeaderElement(new PrefixedQName(name));
+    }
+    
+    public javax.xml.soap.SOAPHeaderElement addNotUnderstoodHeaderElement(QName name) throws SOAPException {
+        throw new UnsupportedOperationException("Not implemented.");
+    }
+    
+    public javax.xml.soap.SOAPHeaderElement addUpgradeHeaderElement(Iterator supportedSOAPURIs) throws SOAPException {
+        throw new UnsupportedOperationException("Not implemented.");
+    }
+    
+    public javax.xml.soap.SOAPHeaderElement addUpgradeHeaderElement(String[] supportedSoapUris) throws SOAPException {
+        throw new UnsupportedOperationException("Not implemented.");
+    }
+    
+    public javax.xml.soap.SOAPHeaderElement addUpgradeHeaderElement(String supportedSoapUri) throws SOAPException {
+        throw new UnsupportedOperationException("Not implemented.");
+    }
 }

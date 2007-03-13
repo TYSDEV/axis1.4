@@ -25,6 +25,7 @@ import org.apache.axis.utils.XMLUtils;
 import org.w3c.dom.Attr;
 import org.w3c.dom.CDATASection;
 import org.w3c.dom.Comment;
+import org.w3c.dom.DOMConfiguration;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
@@ -36,6 +37,7 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.ProcessingInstruction;
+import org.w3c.dom.UserDataHandler;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.soap.SOAPException;
@@ -679,6 +681,112 @@ implements org.w3c.dom.Document, java.io.Serializable {
     }
 
     public boolean hasAttributes() {
+        throw new DOMException(DOMException.NOT_SUPPORTED_ERR, "");
+    }
+
+    // DOM 3 API
+    
+    public Node adoptNode(Node source) throws DOMException {
+        throw new DOMException(DOMException.NOT_SUPPORTED_ERR, "");
+    }
+
+    public String getDocumentURI() {
+        throw new DOMException(DOMException.NOT_SUPPORTED_ERR, "");
+    }
+
+    public DOMConfiguration getDomConfig() {
+        throw new DOMException(DOMException.NOT_SUPPORTED_ERR, "");
+    }
+
+    public String getInputEncoding() {
+        throw new DOMException(DOMException.NOT_SUPPORTED_ERR, "");
+    }
+
+    public boolean getStrictErrorChecking() {
+        throw new DOMException(DOMException.NOT_SUPPORTED_ERR, "");
+    }
+
+    public String getXmlEncoding() {
+        throw new DOMException(DOMException.NOT_SUPPORTED_ERR, "");
+    }
+
+    public boolean getXmlStandalone() {
+        throw new DOMException(DOMException.NOT_SUPPORTED_ERR, "");
+    }
+
+    public String getXmlVersion() {
+        throw new DOMException(DOMException.NOT_SUPPORTED_ERR, "");
+    }
+
+    public void normalizeDocument() {
+        throw new DOMException(DOMException.NOT_SUPPORTED_ERR, "");
+    }
+
+    public Node renameNode(Node n, String namespaceURI, String qualifiedName) throws DOMException {
+        throw new DOMException(DOMException.NOT_SUPPORTED_ERR, "");
+    }
+
+    public void setDocumentURI(String documentURI) {
+        throw new DOMException(DOMException.NOT_SUPPORTED_ERR, "");
+    }
+
+    public void setStrictErrorChecking(boolean strictErrorChecking) {
+        throw new DOMException(DOMException.NOT_SUPPORTED_ERR, "");
+    }
+
+    public void setXmlStandalone(boolean xmlStandalone) throws DOMException {
+        throw new DOMException(DOMException.NOT_SUPPORTED_ERR, "");
+    }
+
+    public void setXmlVersion(String xmlVersion) throws DOMException {
+        throw new DOMException(DOMException.NOT_SUPPORTED_ERR, "");
+    }
+
+    public short compareDocumentPosition(Node other) throws DOMException {
+        throw new DOMException(DOMException.NOT_SUPPORTED_ERR, "");
+    }
+
+    public String getBaseURI() {
+        throw new DOMException(DOMException.NOT_SUPPORTED_ERR, "");
+    }
+
+    public Object getFeature(String feature, String version) {
+        throw new DOMException(DOMException.NOT_SUPPORTED_ERR, "");
+    }
+
+    public String getTextContent() throws DOMException {
+        throw new DOMException(DOMException.NOT_SUPPORTED_ERR, "");
+    }
+
+    public Object getUserData(String key) {
+        throw new DOMException(DOMException.NOT_SUPPORTED_ERR, "");
+    }
+
+    public boolean isDefaultNamespace(String namespaceURI) {
+        throw new DOMException(DOMException.NOT_SUPPORTED_ERR, "");
+    }
+
+    public boolean isEqualNode(Node arg) {
+        throw new DOMException(DOMException.NOT_SUPPORTED_ERR, "");
+    }
+
+    public boolean isSameNode(Node other) {
+        throw new DOMException(DOMException.NOT_SUPPORTED_ERR, "");
+    }
+
+    public String lookupNamespaceURI(String prefix) {
+        throw new DOMException(DOMException.NOT_SUPPORTED_ERR, "");
+    }
+
+    public String lookupPrefix(String namespaceURI) {
+        throw new DOMException(DOMException.NOT_SUPPORTED_ERR, "");
+    }
+
+    public void setTextContent(String textContent) throws DOMException {
+        throw new DOMException(DOMException.NOT_SUPPORTED_ERR, "");
+    }
+
+    public Object setUserData(String key, Object data, UserDataHandler handler) {
         throw new DOMException(DOMException.NOT_SUPPORTED_ERR, "");
     }
 }

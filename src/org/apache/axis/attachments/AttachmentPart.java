@@ -18,6 +18,7 @@ package org.apache.axis.attachments;
 import org.apache.axis.Part;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.components.image.ImageIOFactory;
+import org.apache.axis.encoding.Base64;
 import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.SessionUtils;
@@ -28,8 +29,10 @@ import javax.activation.DataHandler;
 import javax.xml.soap.SOAPException;
 import javax.xml.transform.stream.StreamSource;
 import java.util.Iterator;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 
 /**
@@ -546,4 +549,68 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart
         //we get to release memory anyway
         datahandler = null;
     }
+    
+    // SAAJ 1.3 API
+    
+    public InputStream getRawContent() throws SOAPException {
+        if (datahandler == null) {
+            throw new SOAPException(Messages.getMessage("noContent"));
+        }
+
+        try {
+            return datahandler.getDataSource().getInputStream();
+        } catch (IOException ex) {
+            throw new SOAPException(Messages.getMessage("javaIOException01", ex.getMessage()), ex);
+        }
+    }
+    
+    public byte[] getRawContentBytes() throws SOAPException {
+        if (datahandler == null) {
+            throw new SOAPException(Messages.getMessage("noContent"));
+        }
+        ByteArrayOutputStream bout = new ByteArrayOutputStream();
+        try {
+            datahandler.writeTo(bout);
+        } catch (IOException ex) {
+            throw new SOAPException(Messages.getMessage("javaIOException01", ex.getMessage()), ex);
+        }
+        return bout.toByteArray();
+    }
+    
+    public InputStream getBase64Content() throws SOAPException {
+        byte[] rawBytes = getRawContentBytes();
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        try {
+            Base64.encode(rawBytes, 0, rawBytes.length, out);
+        } catch (IOException ex) {
+            throw new SOAPException(Messages.getMessage("javaIOException01", ex.getMessage()), ex);
+        }
+        byte[] encodedBytes = out.toByteArray();
+        return new ByteArrayInputStream(encodedBytes);
+    }
+    
+    public void setBase64Content(InputStream content, String contentType) throws SOAPException {
+        byte[] buf = new byte[1024];
+        int read = 0;
+        ByteArrayOutputStream encoded = new ByteArrayOutputStream();
+        try {
+            while ((read = content.read(buf, 0, buf.length)) != -1) {
+                encoded.write(buf, 0, read);
+            }
+        } catch (IOException ex) {
+            throw new SOAPException(Messages.getMessage("javaIOException01", ex.getMessage()), ex);
+        }
+        byte[] rawData = Base64.decode(encoded.toString());
+        setRawContentBytes(rawData, 0, rawData.length, contentType);
+    }
+    
+    public void setRawContent(InputStream content, String contentType) throws SOAPException {        
+        setContent(content, contentType);
+    }
+    
+    public void setRawContentBytes(byte[] content, int offset, int len, String contentType) throws SOAPException {
+        ByteArrayInputStream in = new ByteArrayInputStream(content, offset, len);
+        setContent(in, contentType);
+    }
+    
 }
