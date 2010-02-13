@@ -1,5 +1,0 @@
-FaultCode = ns2008922717:DivByZeroStruct
-FaultString = org.soapinterop.DivByZeroStruct
-FaultActor = NULL
-SoapFaultException: org.soapinterop.DivByZeroStruct
----------------------- TEST COMPLETE -----------------------------

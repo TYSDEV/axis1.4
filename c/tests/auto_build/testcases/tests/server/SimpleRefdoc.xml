@@ -1,8 +1,0 @@
-<service>
-    <name>SimpleRefDoc</name>
-    <description>SimpleRefDoc Service</description>
-    <serviceLang>cpp</serviceLang>
-    <serviceCode>RefTestPortType.cpp</serviceCode>
-    <wsdl>SimpleRefDoc.wsdl</wsdl>
-	<servicename></servicename>
-</service>

@@ -1,8 +1,0 @@
-<service>
-    <name>HiddenMessageParts</name>
-    <description>HiddenMessageParts_RPC service</description>
-    <serviceLang>cpp</serviceLang>
-    <serviceCode>PruebasBugPortType.cpp</serviceCode>
-    <wsdl>HiddenMessageParts_RPC.wsdl</wsdl>
-	<servicename></servicename>
-</service>

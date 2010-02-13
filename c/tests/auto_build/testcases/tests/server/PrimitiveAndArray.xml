@@ -1,8 +1,0 @@
-<service>
-    <name>PrimitiveAndArray</name>
-    <description>PrimitiveAndArray</description>
-    <serviceLang>cpp</serviceLang>
-    <serviceCode>PrimitiveAndArray.cpp</serviceCode>
-    <wsdl>PrimitiveAndArray.wsdl</wsdl>
-	<servicename></servicename>
-</service>

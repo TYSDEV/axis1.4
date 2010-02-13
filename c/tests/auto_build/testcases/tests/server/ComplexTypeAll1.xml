@@ -1,8 +1,0 @@
-<service>
-    <name>ComplexTypeAll1</name>
-    <description>ComplexTypeAll1</description>
-    <serviceLang>cpp</serviceLang>
-    <serviceCode>operations.cpp</serviceCode>
-    <wsdl>ComplexTypeAll1.wsdl</wsdl>
-	<servicename></servicename>
-</service>

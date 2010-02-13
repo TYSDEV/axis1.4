@@ -1,8 +1,0 @@
-<service>
-    <name>RPCAll</name>
-    <description>RPCAllTest</description>
-    <serviceLang>cpp</serviceLang>
-    <serviceCode>ADEC_MAST_Port.cpp</serviceCode>
-    <wsdl>RPCAllTest.wsdl</wsdl>
-	<servicename></servicename>
-</service>

@@ -1,9 +1,0 @@
-<service>
-    <name>FaultMapping</name>
-    <description>FaultMapping</description>
-    <serviceLang>cpp</serviceLang>
-    <serviceCode>FaultMappingDoc.cpp</serviceCode>
-    <wsdl>FaultMapping.wsdl</wsdl>
-    <removeFile>MathOps.cpp</removeFile>	
-	<servicename></servicename>
-</service>

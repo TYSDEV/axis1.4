@@ -1,8 +1,0 @@
-<service>
-    <name>UnboundedStringChoice</name>
-    <description>UnboundedStringChoice</description>
-    <serviceLang>cpp</serviceLang>
-    <serviceCode>ChoiceTestSoap.cpp</serviceCode>
-    <wsdl>UnboundedStringChoice.wsdl</wsdl>
-	<servicename></servicename>
-</service>

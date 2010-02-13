@@ -1,8 +1,0 @@
-<service>
-    <name>XSDAttribute</name>
-    <description>XSDAttribute Service</description>
-    <serviceLang>cpp</serviceLang>
-    <serviceCode>XSDAttribute.cpp</serviceCode>
-    <wsdl>XSDAttribute.wsdl</wsdl>
-	<servicename></servicename>
-</service>
