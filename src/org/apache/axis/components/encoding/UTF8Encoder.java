@@ -1,12 +1,12 @@
 /*
  * Copyright 2001-2004 The Apache Software Foundation.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,7 +22,7 @@ import java.io.Writer;
 
 /**
  * UTF-8 Encoder.
- * 
+ *
  * @author <a href="mailto:jens@void.fm">Jens Schumann</a>
  * @see <a href="http://encoding.org">encoding.org</a>
  * @see <a href="http://czyborra.com/utf/#UTF-8">UTF 8 explained</a>
@@ -30,7 +30,7 @@ import java.io.Writer;
 class UTF8Encoder extends AbstractXMLEncoder {
     /**
      * gets the encoding supported by this encoder
-     * 
+     *
      * @return string
      */
     public String getEncoding() {
@@ -39,7 +39,7 @@ class UTF8Encoder extends AbstractXMLEncoder {
 
     /**
      * write the encoded version of a given string
-     * 
+     *
      * @param writer    writer to write this string to
      * @param xmlString string to be encoded
      */
@@ -82,10 +82,6 @@ class UTF8Encoder extends AbstractXMLEncoder {
                                 "invalidXmlCharacter00",
                                 Integer.toHexString(character),
                                 xmlString.substring(0, i)));
-                    } else if (character > 0x7F) {
-                        writer.write("&#x");
-                        writer.write(Integer.toHexString(character).toUpperCase());
-                        writer.write(";");
                     } else {
                         writer.write(character);
                     }
