@@ -34,9 +34,6 @@
 
 <!-- directories -->
 <property name="src.dir" location="${axis.home}/src"/>
-<property name="docs.dir" location="${axis.home}/docs"/>
-<property name="samples.dir" location="${axis.home}/samples"/>
-<property name="test.dir" location="${axis.home}/test"/>
 
 <!-- we resolve the lib dir twice, to ensure that any
   paths from Gump are absolute -->
@@ -63,9 +60,6 @@
 <property name="regexp.jar" location="${test.dir}/lib/jakarta-oro-2.0.5.jar"/>
 <property name="xmlunit.jar" location="${test.dir}/lib/xmlunit1.0.jar"/>
 
-<!-- pull this in from the compiler -->
-<property name="tools.jar" location="${java.home}/../lib/tools.jar"/>
-
 <property name="packages" value="org.*,javax.*" />
 <property name="jaxrpc" value="jaxrpc" />
 
@@ -76,39 +70,8 @@
 <property name="build.dir" location="${axis.home}/build"/>
 <property name="build.dest" location="${build.dir}/classes"/>
 <property name="build.lib" location="${build.dir}/lib"/>
-<property name="build.samples" location="${build.dir}/classes/samples"/>
-<property name="build.javadocs" location="${build.dir}/javadocs"/>
-<property name="build.webapp" location="${build.dir}/webapps/axis"/>
-<property name="axis.war.filename" value="axis.war"/>
-<property name="axis.war" location="${build.dir}/${axis.war.filename}"/>
 
-<property name="webapp" location="${axis.home}/webapps/axis" />
 <property name="dist.dir" location="${axis.home}/axis-${axis.dirname}" />
-
-<property name="test.setup.dir" location="${test.dir}/setup" />
-<property name="test.build.dir" location="${build.dir}/test/" />
-<property name="test.reports.dir" location="${test.build.dir}/reports" />
-<!-- axis convention is to build into the same hierarchy as the main source -->
-<property name="test.classes.dir" location="${build.dest}"/>
-<property name="test.data.dir" location="${test.build.dir}/data"/>
-<property name="test.output.printsummary" value="withOutAndErr"/>
-
-<property name="test.functional.remote" value="no" />
-<property name="test.functional.local" value="yes" />
-<property name="test.functional.both" value="no" />
-<property name="test.functional.usefile" value="true" />
-<property name="test.functional.reportdir" location="${axis.home}/test-reports" />
-<property name="test.functional.SimpleAxisPort" value="8080" />
-<property name="test.functional.ServicePort" value="8080"/>
-<property name="test.functional.TCPListenerPort" value="8088" />
-<property name="test.functional.serverurl"
-  value="http://localhost:${test.functional.TCPListenerPort}" />
-<property name="test.functional.webapp.url"
-  value="http://localhost:${test.functional.TCPListenerPort}/axis" />
-<property name="test.functional.TCPListener.url"
-  value="tcp://localhost:${test.functional.TCPListenerPort}" />
-
-<property name="test.functional.fail" value="yes" />
 
 <property name="javax.xml.parsers.DocumentBuilderFactory" value="org.apache.xerces.jaxp.DocumentBuilderFactoryImpl"/>
 <property name="javax.xml.parsers.SAXParserFactory" value="org.apache.xerces.jaxp.SAXParserFactoryImpl"/>

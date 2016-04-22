@@ -360,7 +360,7 @@ public class ProjectResourceBundle extends ResourceBundle {
     /**
      * Clears the internal cache
      */
-    public static void clearCache()
+    public static void clearCacheEx()
     {
         bundleCache.clear();
     }
